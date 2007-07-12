@@ -38,7 +38,7 @@ public class ReadTextFile extends HttpServlet
         String sFileName  = request.getParameter( "fileName"  );
         String sEncoding  = request.getParameter( "encoding"  );
         
-        try
+        /*try
         {
             int nFileId = Integer.parseInt( sFileId );
             
@@ -68,7 +68,7 @@ public class ReadTextFile extends HttpServlet
         catch( Exception exc )
         {
             getServletContext().log( "Exception occurred ", exc );
-        }
+        }*/
     }
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
