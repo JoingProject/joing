@@ -149,7 +149,7 @@ public class BridgeServletBaseImpl
         }
 
         /**
-         * Users of this class should explicitely invoke this.close(), but just
+         * Users of this class should explicitly invoke this.close(), but just
          * in case it is forgotten, it is done by the destructor.
          */
         @Override

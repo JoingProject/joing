@@ -6,7 +6,7 @@
 
 package servlets.vfs;
 
-import ejb.vfs.FileManagerRemote;
+import ejb.vfs.FileManagerLocal;
 import java.io.*;
 import java.net.*;
 import javax.ejb.EJB;
@@ -22,7 +22,7 @@ import javax.servlet.http.*;
 public class ReadTextFile extends HttpServlet
 {
     @EJB
-    private FileManagerRemote fileManagerBean;
+    private FileManagerLocal fileManagerBean;
     
     //------------------------------------------------------------------------//
     
@@ -32,43 +32,56 @@ public class ReadTextFile extends HttpServlet
      */
     protected void processRequest( HttpServletRequest request, HttpServletResponse response )
               throws ServletException, IOException
-    {
-        String sSessionId = request.getParameter( "sessionId" );
-        String sFileId    = request.getParameter( "fileId"    );
-        String sFileName  = request.getParameter( "fileName"  );
-        String sEncoding  = request.getParameter( "encoding"  );
+    {        
+        ObjectInputStream reader = new ObjectInputStream( request.getInputStream() );
+        BufferedReader    in     = null;
+        PrintWriter       out    = null;
         
-        /*try
+        try
         {
-            int nFileId = Integer.parseInt( sFileId );
+            // Read from client (desktop)
+            String       sSessionId = (String)  reader.readObject();
+            int          nFileId    = (Integer) reader.readObject();
+            String       sEncoding  = (String)  reader.readObject();
+            java.io.File fNative    = fileManagerBean.getNativeFile( sSessionId, nFileId, false );
             
-            BufferedReader br = fileManagerBean.readTextFile( sSessionId, nFileId, sEncoding );
-            
-            if( br != null )
+            if( fNative != null && fNative.exists() )
             {
                 response.setContentType( "text/txt" );
-                response.setContentLength( fNative.length() );
+                response.setContentLength( (int) fNative.length() );
                 response.setCharacterEncoding( sEncoding );
-                response.setHeader( "Content-Disposition", "attachment; filename=" + sFileName );
+                // TODO: ¿es esto necesario? -> response.setHeader( "Content-Disposition", "attachment; filename=" + sFileName );
                 
-                PrintWriter out = response.getWriter();
+                FileInputStream   fis = new FileInputStream( fNative );
+                InputStreamReader isw = new InputStreamReader( fis, sEncoding );
+                
+                in  = new BufferedReader( isw );
+                out = response.getWriter();
                 
                 // Stream to the requester.
                 char[] cBuffer = new char[ 1024*4 ];
                 int    length  = 0;
                 
-                while( (length = br.read( cBuffer )) != -1 )                    
+                while( (length = in.read( cBuffer )) != -1 )                    
                     out.write( cBuffer, 0, length );
                 
                 out.flush();
-                out.close();
-                br.close();
             }
         }
-        catch( Exception exc )
+        catch( ClassNotFoundException exc )
         {
-            getServletContext().log( "Exception occurred ", exc );
-        }*/
+            log( "Error in Servlet: "+ getClass().getName(), exc );
+        }
+        finally
+        {
+            if( reader != null )
+                try{ reader.close(); } catch( IOException exc ) { }
+            
+            if( in != null )
+                try{ in.close(); } catch( IOException exc ) { }
+            
+            out.close();
+        }
     }
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

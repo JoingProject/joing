@@ -24,6 +24,11 @@ public class WriteTextFile extends HttpServlet
     @EJB()
     private FileManagerLocal fileManagerBean;
     
+    // Hay que poner un límite al tamaño del fichero que el usuario envía
+    // si el límite se supera, el fichero queda truncado.
+    // Si el límite es 0, el tamaño es ilimitado.
+    // Este valor se guarda en UserEntity.
+    
     /** Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
      * @param response servlet response

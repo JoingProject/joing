@@ -22,14 +22,6 @@
 
 package org.joing.runtime;
 
-import java.applet.Applet;
-import java.awt.Cursor;
-import java.awt.Image;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.InvalidParameterException;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
