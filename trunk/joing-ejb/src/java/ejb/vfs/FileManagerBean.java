@@ -365,8 +365,8 @@ public class FileManagerBean
             FileEntity _file = getFileEntityById( nFileId );
                        _file.setAccessed( new Date() );
                        
-                       if( bToWrite )
-                           _file.setModified( new Date() );
+            if( bToWrite )
+                _file.setModified( new Date() );
             
             em.persist( _file );
         }
@@ -522,7 +522,7 @@ public class FileManagerBean
         return file;
     }
     
-    // Recursively deletes a file or a directory
+    // Recursively deletes a file or a directory in DB (not in FS)
     private boolean _delete( String sAccount, FileEntity _file )
     {
         boolean bSuccess = false;
@@ -537,7 +537,7 @@ public class FileManagerBean
                     Query query = this.em.createNamedQuery( "FileEntity.findByIdParent" );
                           query.setParameter( "idParent", _file.getIdFile() );
                           
-                    List<FileEntity> _files = query.getResultList();
+                    List<FileEntity> _files = (List<FileEntity>) query.getResultList();
                     
                     for( FileEntity _f : _files )
                         _delete( sAccount, _f );
@@ -628,6 +628,7 @@ public class FileManagerBean
         return bIsOwner;
     }
     
+    // Returns an instance of FileEntity based on an File ID
     private FileEntity getFileEntityById( int nFileId )
     {
         FileEntity _file = null;
