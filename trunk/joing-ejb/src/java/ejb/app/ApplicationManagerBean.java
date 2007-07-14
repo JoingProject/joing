@@ -42,8 +42,8 @@ public class ApplicationManagerBean
     private static final int APPS_INSTALLED     = 1;
     private static final int APPS_NOT_INSTALLED = 2;
     
-    @Resource(name = "webpc")
-    private DataSource dbWebPC;
+    @Resource(name = "joing_db")
+    private DataSource joing_db;
     
     @PersistenceContext
     private EntityManager em;
@@ -93,7 +93,7 @@ public class ApplicationManagerBean
             if( sFileExtension.charAt( 0 ) == '.' )
                 sFileExtension = sFileExtension.substring( 1 );
                 
-            Query query = this.em.createNamedQuery( "AppPreferredEntity.findByFileExtension" );
+            Query query = em.createNamedQuery( "AppPreferredEntity.findByFileExtension" );
                   query.setParameter( "fileExtension", sFileExtension );
                   
             try
@@ -125,8 +125,8 @@ public class ApplicationManagerBean
         {
             try
             {
-                UserEntity _user = this.em.find( UserEntity.class, sAccount );
-                Connection conn  = this.dbWebPC.getConnection(); 
+                UserEntity _user = em.find( UserEntity.class, sAccount );
+                Connection conn  = joing_db.getConnection(); 
                 Statement  stmt  = conn.createStatement( ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
                 ResultSet  rs    = stmt.executeQuery( getQuery( sAccount, 
                                                                 _user.getIdLocale().getIdLocale(),
@@ -141,7 +141,7 @@ public class ApplicationManagerBean
                         apps.add( new AppsByGroup( sGroup ) );
                     }
                     
-                    Query query = this.em.createNamedQuery( "ApplicationEntity.findByIdApplication" );
+                    Query query = em.createNamedQuery( "ApplicationEntity.findByIdApplication" );
                           query.setParameter( "idApplication", rs.getInt( "ID_APPLICATION" ) );
                           
                     Application app = new Application( (ApplicationEntity) query.getSingleResult() );
@@ -204,14 +204,14 @@ public class ApplicationManagerBean
         {
             try
             {
-                Query query = this.em.createQuery( "SELECT a FROM Users_with_Apps a"+
+                Query query = em.createQuery( "SELECT a FROM Users_with_Apps a"+
                                                    " WHERE a.name = :name AND a.version = :version" );
                       query.setParameter( "name"   , app.getName()    );
                       query.setParameter( "version", app.getVersion() );
                       
                 ApplicationEntity _app = (ApplicationEntity) query.getSingleResult();
                 
-                Connection conn = this.dbWebPC.getConnection();
+                Connection conn = joing_db.getConnection();
                 Statement  stmt = conn.createStatement();
                            stmt.execute( "UPDATE USERS_WITH_APPS"+
                                          "   SET IS_INSTALLED = "+ (bInstall ? 1 : 0) +

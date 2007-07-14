@@ -20,7 +20,7 @@ on Libraries node in Projects view can be used to add the JSTL 1.1 library.
     <body>
 
     <h1>Join'g Project Home Page</h1>
-    
+    This is the sample Join'g project page.
     <%--
     This example uses JSTL, uncomment the taglib directive above.
     To test, display the page like this: index.jsp?sayHello=true&name=Murphy
