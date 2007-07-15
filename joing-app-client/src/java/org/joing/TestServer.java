@@ -57,10 +57,15 @@ public class TestServer
             System.out.println("User Name    = "+ user.getFirstName() +" "+ user.getSecondName() );
             System.out.println("User Locale  = "+ user.getLocale() );
             System.out.println("-------------------------------------------");
-            //Application app = b2s.getAppBridge().getPreferredForType( "txt" );
-            //System.out.println("App Name  = "+ app.getName() );
-            //System.out.println("App Desc. = "+ app.getDescription() );
-            //b2s.getSessionBridge().logout();
+            
+            Application app = b2s.getAppBridge().getPreferredForType( "txt" );
+            if( app != null )
+            {
+                System.out.println("App Name  = "+ app.getName() );
+                System.out.println("App Desc. = "+ app.getDescription() );
+            }
+            
+            b2s.getSessionBridge().logout();
         }
         else
         {

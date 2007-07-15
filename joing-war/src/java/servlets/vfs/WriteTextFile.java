@@ -48,8 +48,6 @@ public class WriteTextFile extends HttpServlet
             // Write to Client (desktop) the result of the operation
             writer.writeObject( bSuccess );
             writer.flush();
-            writer.close();
-            reader.close();
         }
         catch( ClassNotFoundException exc )
         {

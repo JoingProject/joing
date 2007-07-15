@@ -32,7 +32,7 @@ public class UpdateUser extends HttpServlet
      * @param response servlet response
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException
+              throws ServletException, IOException
     {
         response.setContentType( "application/octet-stream" );
         
