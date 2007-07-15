@@ -54,7 +54,7 @@ public class ReadBinaryFile extends HttpServlet
             }
             else
             {
-                writer.writeObject( "null" );    // TODO: mirar qué hacer en estos casos
+                writer.writeObject( null );    // TODO: mirar qué hacer en estos casos
             }
         }
         catch( ClassNotFoundException exc )

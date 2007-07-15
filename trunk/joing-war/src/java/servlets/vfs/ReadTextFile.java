@@ -53,12 +53,10 @@ public class ReadTextFile extends HttpServlet
                 
                 writer.writeObject( fileText );
                 writer.flush();
-                writer.close();
-                reader.close();
             }
             else
             {
-                writer.writeObject( "null" );    // TODO: mirar qué hacer en estos casos
+                writer.writeObject( null );    // TODO: mirar qué hacer en estos casos
             }
         }
         catch( ClassNotFoundException exc )

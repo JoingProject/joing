@@ -24,7 +24,12 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "APPLICATIONS")
-@NamedQueries({@NamedQuery(name = "ApplicationEntity.findByIdApplication", query = "SELECT a FROM ApplicationEntity a WHERE a.idApplication = :idApplication"), @NamedQuery(name = "ApplicationEntity.findByName", query = "SELECT a FROM ApplicationEntity a WHERE a.applicationEntityPK.name = :name"), @NamedQuery(name = "ApplicationEntity.findByVersion", query = "SELECT a FROM ApplicationEntity a WHERE a.applicationEntityPK.version = :version"), @NamedQuery(name = "ApplicationEntity.findByExtraPath", query = "SELECT a FROM ApplicationEntity a WHERE a.extraPath = :extraPath"), @NamedQuery(name = "ApplicationEntity.findByExecutable", query = "SELECT a FROM ApplicationEntity a WHERE a.executable = :executable"), @NamedQuery(name = "ApplicationEntity.findByFileTypes", query = "SELECT a FROM ApplicationEntity a WHERE a.fileTypes = :fileTypes")})
+@NamedQueries({@NamedQuery(name = "ApplicationEntity.findByIdApplication", query = "SELECT a FROM ApplicationEntity a WHERE a.idApplication = :idApplication"), 
+               @NamedQuery(name = "ApplicationEntity.findByName", query = "SELECT a FROM ApplicationEntity a WHERE a.applicationEntityPK.name = :name"), 
+               @NamedQuery(name = "ApplicationEntity.findByVersion", query = "SELECT a FROM ApplicationEntity a WHERE a.applicationEntityPK.version = :version"), 
+               @NamedQuery(name = "ApplicationEntity.findByExtraPath", query = "SELECT a FROM ApplicationEntity a WHERE a.extraPath = :extraPath"), 
+               @NamedQuery(name = "ApplicationEntity.findByExecutable", query = "SELECT a FROM ApplicationEntity a WHERE a.executable = :executable"), 
+               @NamedQuery(name = "ApplicationEntity.findByFileTypes", query = "SELECT a FROM ApplicationEntity a WHERE a.fileTypes = :fileTypes")})
 public class ApplicationEntity implements Serializable {
     @EmbeddedId
     protected ApplicationEntityPK applicationEntityPK;

@@ -87,18 +87,30 @@ public class ApplicationManagerBean
         Application application = null;
         
         if( sAccount != null )
-        {
+        {            
             sFileExtension = sFileExtension.trim().toLowerCase();
 
             if( sFileExtension.charAt( 0 ) == '.' )
                 sFileExtension = sFileExtension.substring( 1 );
-                
-            Query query = em.createNamedQuery( "AppPreferredEntity.findByFileExtension" );
-                  query.setParameter( "fileExtension", sFileExtension );
-                  
+            
             try
             {
-                application = new Application( (ApplicationEntity) query.getSingleResult() );
+                Query query;
+                
+                // Finds the AppPreferredEntity instance associated with the file extension
+                query = em.createNamedQuery( "AppPreferredEntity.findByFileExtension" );
+                query.setParameter( "fileExtension", sFileExtension );
+                
+                AppPreferredEntity _appPref = (AppPreferredEntity) query.getSingleResult();
+                
+                // Finds the ApplicationEntity assoacited with the AppPreferredEntity
+                query = em.createNamedQuery( "ApplicationEntity.findByIdApplication" );
+                query.setParameter( "idApplication", _appPref.getIdApplication() );
+                
+                ApplicationEntity _app = (ApplicationEntity) query.getSingleResult();
+                
+                // Creates the Application instance based on the ApplicationEntity
+                application = new Application( _app );
             }
             catch( NoResultException exc )
             {
@@ -106,9 +118,12 @@ public class ApplicationManagerBean
             }
             catch( Exception exc )
             {
+javax.swing.JOptionPane.showMessageDialog( null, "exc = "+ exc );
                 Constant.getLogger().throwing( getClass().getName(), "getPreferredForType(...)", exc );
             }
         }
+        
+javax.swing.JOptionPane.showMessageDialog( null, "App = "+ application );
         
         return application;
     }
