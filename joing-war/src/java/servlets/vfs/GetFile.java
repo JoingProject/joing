@@ -43,7 +43,7 @@ public class GetFile extends HttpServlet
             // Read from client (desktop)
             String       sSessionId = (String) reader.readObject();
             String       sPath      = (String) reader.readObject();
-            ejb.vfs.File file       = null;
+            ejb.vfs.FileDescriptor file       = null;
             
             // Process request
             file = fileManagerBean.getFile( sSessionId, sPath );
@@ -56,6 +56,7 @@ public class GetFile extends HttpServlet
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
         }
+
         finally
         {
             if( reader != null )

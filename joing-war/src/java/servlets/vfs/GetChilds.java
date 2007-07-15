@@ -42,7 +42,7 @@ public class GetChilds extends HttpServlet
             // Read from client (desktop)
             String             sSessionId = (String) reader.readObject();
             Object             o2ndParam  =          reader.readObject();
-            List<ejb.vfs.File> files      = null;
+            List<ejb.vfs.FileDescriptor> files      = null;
             
             // Process request
             if( o2ndParam instanceof Integer )
@@ -66,6 +66,7 @@ public class GetChilds extends HttpServlet
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
         }
+
         finally
         {
             if( reader != null )

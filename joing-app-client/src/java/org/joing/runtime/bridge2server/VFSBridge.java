@@ -9,9 +9,9 @@
 
 package org.joing.runtime.bridge2server;
 
-import ejb.vfs.File;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
+import ejb.vfs.FileBinary;
+import ejb.vfs.FileDescriptor;
+import ejb.vfs.FileText;
 import java.util.List;
 
 /**
@@ -23,25 +23,25 @@ public interface VFSBridge
     //------------------------------------------------------------------------//
     // VfsFileRemote
     
-    File getFile( String sFilePath );
+    FileDescriptor getFile( String sFilePath );
     
-    File createDirectory( int nParentId, String sDirName );
+    FileDescriptor createDirectory( int nParentId, String sDirName );
     
-    File createFile( int nParentId, String sFileName );
+    FileDescriptor createFile( int nParentId, String sFileName );
     
-    BufferedReader readText( int nFileId, String sEncoding );
+    FileText readText( int nFileId, String sEncoding );
     
-    FileInputStream readBinary( int nFileId );
+    FileBinary readBinary( int nFileId );
     
-    boolean writeText( int nFileId, BufferedReader reader, String sEncoding );
+    boolean writeText( FileText ft );
     
-    boolean writeBinary( int nFileId, FileInputStream reader );
+    boolean writeBinary( FileBinary fb );
     
-    File update( File file );
+    FileDescriptor update( FileDescriptor file );
     
-    boolean copy( int nFileId, int toDir );
+    boolean copy( int nFileId, int nToDir );
     
-    boolean move( int nFileId, int toDir );
+    boolean move( int nFileId, int nToDir );
     
     boolean trashcan( int[] anFileId, boolean bInTrashCan );
     
@@ -54,11 +54,11 @@ public interface VFSBridge
     //------------------------------------------------------------------------//
     // VfsListRemote
     
-    List<File> getChilds( Integer nFileId );
+    List<FileDescriptor> getChilds( Integer nFileId );
     
-    List<File> getChilds( String sBaseDir );
+    List<FileDescriptor> getChilds( String sBaseDir );
     
-    List<File> getByNotes( String sSubString );
+    List<FileDescriptor> getByNotes( String sSubString );
     
-    List<File> getTrashCan();
+    List<FileDescriptor> getTrashCan();
 }

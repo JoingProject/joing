@@ -22,7 +22,9 @@
 
 package org.joing.runtime.bridge2server;
 
-import ejb.vfs.File;
+import ejb.vfs.FileBinary;
+import ejb.vfs.FileDescriptor;
+import ejb.vfs.FileText;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.util.List;
@@ -47,42 +49,42 @@ public class VFSBridgeDirectImpl
         super( context );
     }   
 
-    public File getFile( String sFilePath )
+    public FileDescriptor getFile( String sFilePath )
     {
         return null;
     }
 
-    public File createDirectory( int nParentId, String sDirName )
+    public FileDescriptor createDirectory( int nParentId, String sDirName )
     {
         return null;
     }
 
-    public File createFile( int nParentId, String sFileName )
+    public FileDescriptor createFile( int nParentId, String sFileName )
     {
         return null;
     }
 
-    public BufferedReader readText(int nFileId, String sEncoding)
+    public FileText readText(int nFileId, String sEncoding)
     {
         return null;
     }
 
-    public FileInputStream readBinary(int nFileId)
+    public FileBinary readBinary(int nFileId)
     {
         return null;
     }
 
-    public boolean writeText(int nFileId, BufferedReader reader, String sEncoding)
+    public boolean writeText(FileText fileText)
     {
         return false;
     }
 
-    public boolean writeBinary(int nFileId, FileInputStream reader)
+    public boolean writeBinary(FileBinary fileBinary)
     {
         return false;
     }
 
-    public File update(File file)
+    public FileDescriptor update(FileDescriptor file)
     {
         return null;
     }
@@ -117,22 +119,22 @@ public class VFSBridgeDirectImpl
         return false;
     }
 
-    public List<File> getChilds(Integer nFileId)
+    public List<FileDescriptor> getChilds(Integer nFileId)
     {
         return null;
     }
 
-    public List<File> getChilds(String sBaseDir)
+    public List<FileDescriptor> getChilds(String sBaseDir)
     {
         return null;
     }
 
-    public List<File> getByNotes(String sSubString)
+    public List<FileDescriptor> getByNotes(String sSubString)
     {
         return null;
     }
 
-    public List<File> getTrashCan()
+    public List<FileDescriptor> getTrashCan()
     {
         return null;
     }

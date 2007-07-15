@@ -21,6 +21,8 @@
  */
 package org.joing;
 
+import ejb.app.Application;
+import ejb.session.LoginResult;
 import ejb.user.User;
 import javax.swing.JOptionPane;
 import org.joing.runtime.bridge2server.Bridge2Server;
@@ -41,12 +43,14 @@ public class TestServer
         
         System.out.println("Main started");
         
-        if( b2s.getSessionBridge().login( "peyrona", "admin" ) )
+        LoginResult result = b2s.getSessionBridge().login( "peyrona", "admin" );
+        
+        if( result != null && result.isLoginValid() )
         {
             String sId = b2s.getSessionId();
             
             JOptionPane.showMessageDialog( null, "Session ID = "+ sId );
-        
+            
             System.out.println("-------------------------------------------");
             User user = b2s.getUserBridge().getUser();
             System.out.println("User Account = "+ user.getAccount() );
@@ -56,11 +60,15 @@ public class TestServer
             //Application app = b2s.getAppBridge().getPreferredForType( "txt" );
             //System.out.println("App Name  = "+ app.getName() );
             //System.out.println("App Desc. = "+ app.getDescription() );
-            b2s.getSessionBridge().logout();
+            //b2s.getSessionBridge().logout();
         }
         else
         {
-            JOptionPane.showMessageDialog( null, "Can't login" );
+            if( ! result.isAccountValid() )
+                JOptionPane.showMessageDialog( null, "Can't login: invalid account" );
+            
+            if( ! result.isPasswordValid() )
+                JOptionPane.showMessageDialog( null, "Can't login: invalid password" );
         }
         
         System.out.println("Main finished");

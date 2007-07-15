@@ -42,5 +42,5 @@ public interface FileManagerLocal extends FileManagerRemote
      * @param bToWrite <code>true</code> if the file is going to be used to 
      *        write and <code>false</code> if will be used to read only.
      */
-    java.io.File getNativeFile( String sSessionId, int nFileId, boolean bToWrite );
+    //java.io.File getNativeFile( String sSessionId, int nFileId, boolean bToWrite );
 }

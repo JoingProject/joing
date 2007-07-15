@@ -22,9 +22,9 @@
 
 package org.joing.runtime.bridge2server;
 
-import ejb.vfs.File;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
+import ejb.vfs.FileBinary;
+import ejb.vfs.FileDescriptor;
+import ejb.vfs.FileText;
 import java.util.List;
 
 /**
@@ -47,16 +47,16 @@ public class VFSBridgeServletImpl
     {
     }
 
-    public File getFile( String sFilePath )
+    public FileDescriptor getFile( String sFilePath )
     {
-        File file = null;
+        FileDescriptor file = null;
         
         try
         {
             Channel channel = new Channel( VFS_GET_FILE );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( sFilePath );
-                    file = (File) channel.read();
+                    file = (FileDescriptor) channel.read();
                     channel.close();
         }
         catch( Exception exc )
@@ -67,9 +67,9 @@ public class VFSBridgeServletImpl
         return file;
     }
 
-    public File createDirectory( int nParentId, String sDirName )
+    public FileDescriptor createDirectory( int nParentId, String sDirName )
     {
-        File file = null;
+        FileDescriptor file = null;
         
         try
         {
@@ -77,7 +77,7 @@ public class VFSBridgeServletImpl
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( nParentId );
                     channel.write( sDirName  );
-                    file = (File) channel.read();
+                    file = (FileDescriptor) channel.read();
                     channel.close();
         }
         catch( Exception exc )
@@ -88,9 +88,9 @@ public class VFSBridgeServletImpl
         return file;
     }
 
-    public File createFile( int nParentId, String sFileName )
+    public FileDescriptor createFile( int nParentId, String sFileName )
     {
-        File file = null;
+        FileDescriptor file = null;
         
         try
         {
@@ -98,7 +98,7 @@ public class VFSBridgeServletImpl
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( nParentId );
                     channel.write( sFileName );
-                    file = (File) channel.read();
+                    file = (FileDescriptor) channel.read();
                     channel.close();
         }
         catch( Exception exc )
@@ -109,34 +109,95 @@ public class VFSBridgeServletImpl
         return file;
     }
 
-    public BufferedReader readText( int nFileId, String sEncoding )
+    public FileText readText( int nFileId, String sEncoding )
     {
-        return null;   // TODO: hacerlo
+        FileText file = null;
+        
+        try
+        {
+            Channel channel = new Channel( VFS_READ_TEXT_FILE );
+                    channel.write( Bridge2Server.getInstance().getSessionId() );
+                    channel.write( nFileId );
+                    channel.write( sEncoding );
+                    file = (FileText) channel.read();
+                    channel.close();
+        }
+        catch( Exception exc )
+        {
+            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+        }
+        
+        return file;
     }
 
-    public FileInputStream readBinary( int nFileId )
+    public FileBinary readBinary( int nFileId )
     {
-        return null;  // TODO: hacerlo
+        FileBinary file = null;
+        
+        try
+        {
+            Channel channel = new Channel( VFS_READ_BINARY_FILE );
+                    channel.write( Bridge2Server.getInstance().getSessionId() );
+                    channel.write( nFileId );
+                    file = (FileBinary) channel.read();
+                    channel.close();
+        }
+        catch( Exception exc )
+        {
+            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+        }
+        
+        return file;
     }
 
-    public boolean writeText( int nFileId, BufferedReader reader, String sEncoding )
+    public boolean writeText( FileText file )
     {
-        return false;  // TODO: hacerlo
+        boolean bSuccess = false;
+        
+        try
+        {
+            Channel channel = new Channel( VFS_WRITE_TEXT_FILE );
+                    channel.write( Bridge2Server.getInstance().getSessionId() );
+                    channel.write( file );
+            bSuccess = (Boolean) channel.read();
+                    channel.close();
+        }
+        catch( Exception exc )
+        {
+            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+        }
+        
+        return bSuccess;
     }
 
-    public boolean writeBinary( int nFileId, FileInputStream reader )
+    public boolean writeBinary( FileBinary file )
     {
-        return false;  // TODO: hacerlo
+        boolean bSuccess = false;
+        
+        try
+        {
+            Channel channel = new Channel( VFS_WRITE_BINARY_FILE );
+                    channel.write( Bridge2Server.getInstance().getSessionId() );
+                    channel.write( file );
+            bSuccess = (Boolean) channel.read();
+                    channel.close();
+        }
+        catch( Exception exc )
+        {
+            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+        }
+        
+        return bSuccess;
     }
 
-    public File update( File file )
+    public FileDescriptor update( FileDescriptor file  )
     {
         try
         {
             Channel channel = new Channel( VFS_UPDATE );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( file );
-                    file = (File) channel.read();
+                    file = (FileDescriptor) channel.read();
                     channel.close();
         }
         catch( Exception exc )
@@ -271,16 +332,16 @@ public class VFSBridgeServletImpl
         return bSuccess;
     }
 
-    public List<File> getChilds( Integer nFileId )
+    public List<FileDescriptor> getChilds( Integer nFileId )
     {
-        List<File> files = null;
+        List<FileDescriptor> files = null;
         
         try
         {
             Channel channel = new Channel( VFS_GET_CHILDS );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( nFileId );
-                    files = (List<File>) channel.read();
+                    files = (List<FileDescriptor>) channel.read();
                     channel.close();
         }
         catch( Exception exc )
@@ -291,16 +352,16 @@ public class VFSBridgeServletImpl
         return files;
     }
 
-    public List<File> getChilds( String sBaseDir )
+    public List<FileDescriptor> getChilds( String sBaseDir )
     {
-        List<File> files = null;
+        List<FileDescriptor> files = null;
         
         try
         {
             Channel channel = new Channel( VFS_GET_CHILDS );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( sBaseDir );
-                    files = (List<File>) channel.read();
+                    files = (List<FileDescriptor>) channel.read();
                     channel.close();
         }
         catch( Exception exc )
@@ -311,16 +372,16 @@ public class VFSBridgeServletImpl
         return files;
     }
 
-    public List<File> getByNotes( String sSubString )
+    public List<FileDescriptor> getByNotes( String sSubString )
     {
-        List<File> files = null;
+        List<FileDescriptor> files = null;
         
         try
         {
             Channel channel = new Channel( VFS_GET_BY_NOTES );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( sSubString );
-                    files = (List<File>) channel.read();
+                    files = (List<FileDescriptor>) channel.read();
                     channel.close();
         }
         catch( Exception exc )
@@ -331,15 +392,15 @@ public class VFSBridgeServletImpl
         return files;
     }
 
-    public List<File> getTrashCan()
+    public List<FileDescriptor> getTrashCan()
     {
-        List<File> files = null;
+        List<FileDescriptor> files = null;
         
         try
         {
             Channel channel = new Channel( VFS_GET_TRASHCAN );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
-                    files = (List<File>) channel.read();
+                    files = (List<FileDescriptor>) channel.read();
                     channel.close();
         }
         catch( Exception exc )

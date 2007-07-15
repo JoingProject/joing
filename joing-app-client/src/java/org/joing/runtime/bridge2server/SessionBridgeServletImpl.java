@@ -22,6 +22,8 @@
 
 package org.joing.runtime.bridge2server;
 
+import ejb.session.LoginResult;
+
 /**
  * Access the Server (EJBs) by using WebServices.
  * <p>
@@ -42,27 +44,27 @@ public class SessionBridgeServletImpl
     {
     }
     
-    public boolean login( String sAccount, String sPassword )
+    public LoginResult login( String sAccount, String sPassword )
     {
-        String sSessionId = null;
+        LoginResult result = null;
         
         try
         {
             Channel channel = new Channel( SESSION_LOGIN );
                     channel.write( sAccount );
                     channel.write( sPassword );
-                    sSessionId = (String) channel.read();
+                    result = (LoginResult) channel.read();
                     channel.close();
             
             // Store Session ID to be used by all calls to Server
-            Bridge2Server.getInstance().setSessionId( sSessionId );
+            Bridge2Server.getInstance().setSessionId( result.getSessionId() );
         }
         catch( Exception exc )
         {
             org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
         }
         
-        return sSessionId != null;
+        return result;
     }
     
     public void logout()

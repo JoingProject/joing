@@ -50,7 +50,7 @@ public interface ListManagerRemote
      * @return All files in passed directory ID or <code>null</code> if
      *         sSessionId and/or nFileId are invalid.
      */
-    List<File> getChilds( String sSessionId, int nFileId );
+    List<FileDescriptor> getChilds( String sSessionId, int nFileId );
     
     /**
      * Get all files in passed directory.
@@ -71,7 +71,7 @@ public interface ListManagerRemote
      * @return All files in passed directory or <code>null</code> if
      *         sSessionId and/or sDirPath are invalid.
      */
-    List<File> getChilds( String sSessionId, String sDirPath );
+    List<FileDescriptor> getChilds( String sSessionId, String sDirPath );
     
     /**
      * Searches files that contain passed string in the 'Notes' associated field.
@@ -84,7 +84,7 @@ public interface ListManagerRemote
      * @param sSessionId The client session ID
      * @param sSubString Sub-string to be searched in 'Notes' field
      */
-    List<File> getByNotes( String sSessionId, String sSubString );
+    List<FileDescriptor> getByNotes( String sSessionId, String sSubString );
     
     /**
      * Return all files in trash can.
@@ -93,5 +93,5 @@ public interface ListManagerRemote
      * @return All files in trash can or <code>null</code> if sSessionId is 
      *         invalid.
      */
-    List<File> getTrashCan( String sSessionId );
+    List<FileDescriptor> getTrashCan( String sSessionId );
 }

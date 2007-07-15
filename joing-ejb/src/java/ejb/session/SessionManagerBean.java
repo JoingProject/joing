@@ -35,33 +35,41 @@ public class SessionManagerBean
     //------------------------------------------------------------------------//
     // INTERFACE REMOTE
     
-    public String login( String sAccount, String sPassword )
+    public LoginResult login( String sAccount, String sPassword )
     {
-        String sSessionId = null;
+        LoginResult result = new LoginResult();
         
         if( sAccount != null && sPassword != null )
         {
             UserEntity _user = this.em.find( UserEntity.class, sAccount );
 
-            // @TODO: la password tiene que estar encriptada en la DB,
-            //        por lo que aquí habría que des-encriptarla
-            if( _user != null && _user.getPassword().equals( sPassword ) )
+            // TODO: la password tiene que estar encriptada en la DB,
+            //       por lo que aquí habría que des-encriptarla
+            if( _user != null )
             {
-                // If _user has already a Session (an entry in Sessions table),
-                // it will be deleted by the SessionTimer at due time: It is more
-                // secure to create a new SessionId than using an existing one.
-                SessionEntity _session = new SessionEntity();
-                              _session.setIdSession( generateSessionId() );
-                              _session.setAccount( _user.getAccount() );
-                              _session.setCreated(  new Date() );
-                              _session.setAccessed( new Date() );
-                              
-                this.em.persist( _session );
-                sSessionId = _session.getIdSession();
+                result.setAccountValid( true );
+                
+                if( _user.getPassword().equals( sPassword ) )
+                {
+                    result.setPasswordValid( true );
+                    
+                    // If _user has already a Session (an entry in Sessions 
+                    // table), it will be deleted by the SessionTimer at due 
+                    // time: it is more secure to create a new SessionId than 
+                    // using an existing one.
+                    SessionEntity _session = new SessionEntity();
+                                  _session.setIdSession( generateSessionId() );
+                                  _session.setAccount( _user.getAccount() );
+                                  _session.setCreated(  new Date() );
+                                  _session.setAccessed( new Date() );
+
+                    em.persist( _session );
+                    result.setSessionId( _session.getIdSession() );
+                }
             }
         }
         
-        return sSessionId;
+        return result;
     }
     
     public void logout( String sSessionId )
@@ -127,7 +135,7 @@ public class SessionManagerBean
 
         return String.valueOf( ac );
         
-        // @TODO: la que está aquí debajo es la buena, pero hay que probarla
+        // TODO: la que está aquí debajo es la buena, pero hay que probarla
         /*char[] ac   = new char[32];
         Random rnd  = new Random();
         int    nLen = sVALID4ID.length();

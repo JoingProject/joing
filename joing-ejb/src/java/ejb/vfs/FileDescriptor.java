@@ -31,7 +31,7 @@ import java.util.Date;
  *
  * @author Francisco Morero Peyrona
  */
-public class File implements Serializable    // TODO hacer el serializable
+public class FileDescriptor implements Serializable    // TODO hacer el serializable
 {
     // PK --------------------
     private int     idParent;          // hidden variable (no set and no get)
@@ -60,7 +60,7 @@ public class File implements Serializable    // TODO hacer el serializable
     //------------------------------------------------------------------------//    
     
     /** Creates a new instance of File DTO */
-    public File( FileEntity _file )
+    public FileDescriptor( FileEntity _file )
     {
         this.idParent      = _file.getFileEntityPK().getIdParent();
         this.name          = _file.getFileEntityPK().getName();

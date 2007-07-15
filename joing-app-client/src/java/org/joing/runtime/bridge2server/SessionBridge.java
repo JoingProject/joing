@@ -9,6 +9,8 @@
 
 package org.joing.runtime.bridge2server;
 
+import ejb.session.LoginResult;
+
 /**
  *
  * @author fmorero
@@ -21,7 +23,7 @@ public interface SessionBridge
      * @param sPassword
      * @return <code>true</code> if login was ok.
      */
-    boolean login( String sAccount, String sPassword );
+    LoginResult login( String sAccount, String sPassword );
     
     void logout();
 }
