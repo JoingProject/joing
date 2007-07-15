@@ -6,6 +6,7 @@
 
 package servlets.session;
 
+import ejb.session.LoginResult;
 import ejb.session.SessionManagerLocal;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -55,10 +56,10 @@ public class Login extends HttpServlet
             String sPassword = (String) reader.readObject();
             
             // Get the session ID from the EJB
-            String sSessionId = sessionManagerBean.login( sAccount, sPassword );
+            LoginResult result = sessionManagerBean.login( sAccount, sPassword );
             
             // Write to Client (desktop)
-            writer.writeObject( sSessionId  );
+            writer.writeObject( result );
             writer.flush();
         }
         catch( ClassNotFoundException exc )

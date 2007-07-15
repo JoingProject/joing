@@ -40,7 +40,7 @@ public interface FileManagerRemote
      *         or directory denoted by passed path or <code>null</code> if the 
      *         path does not corresponds with an existing file.
      */
-    File getFile( String sSessionId, String sFilePath );
+    FileDescriptor getFile( String sSessionId, String sFilePath );
     
     /**
      * Updates <code>File</code> information (file propeties) including file
@@ -52,7 +52,7 @@ public interface FileManagerRemote
      *         or more properties could change during the updating process), or
      *         <code>null</code> if something goes wrong.
      */
-    File updateFile( String sSessionId, File file );
+    FileDescriptor updateFile(  String sSessionId, FileDescriptor file  );
     
     /**
      * Creates a new emtpy directory.
@@ -73,7 +73,7 @@ public interface FileManagerRemote
      * @return An instance of class <code>File</code> or <code>null</code> if
      *         something goes wrong.
      */
-    File createDirectory( String sSessionId, int nParentId, String sDirName );
+    FileDescriptor createDirectory( String sSessionId, int nParentId, String sDirName );
     
     /**
      * Creates a new emtpy file.
@@ -94,7 +94,7 @@ public interface FileManagerRemote
      * @return An instance of class <code>File</code> or <code>null</code> if
      *         something goes wrong.
      */
-    File createFile( String sSessionId, int nParentId, String sFileName );
+    FileDescriptor createFile( String sSessionId, int nParentId, String sFileName );
     
     /**
      * Returns a stream to read requested text file using requested encoding.
@@ -107,7 +107,7 @@ public interface FileManagerRemote
      *         Or <code>null</code> if something went wrong.
      * @see #writeText
      */
-    //BufferedReader readTextFile( String sSessionId, int nFileId, String sEncoding );
+    FileText  readTextFile( String sSessionId, int nFileId, String sEncoding );
     
     /**
      * Returns a stream to read requested binary file.
@@ -119,7 +119,7 @@ public interface FileManagerRemote
      *         Or <code>null</code> if something went wrong.
      * @see #writeText
      */
-    //FileInputStream readBinaryFile( String sSessionId, int nFileId );
+    FileBinary readBinaryFile( String sSessionId, int nFileId );
     
     /**
      * Writes contents from a stream to disk.
@@ -138,7 +138,7 @@ public interface FileManagerRemote
      * @return 
      * @see #writeText
      */
-    //boolean writeTextFile( String sSessionId, int nFileId, BufferedReader reader, String sEncoding );
+    boolean writeTextFile( String sSessionId, FileText fileText );
     
     /**
      *
@@ -147,7 +147,7 @@ public interface FileManagerRemote
      * @param reader
      * @return 
      */
-    //boolean writeBinaryFile( String sSessionId, int nFileId, FileInputStream reader );
+    boolean writeBinaryFile( String sSessionId, FileBinary fileBinary );
     
     boolean copy( String sSessionId, int nFileId, int nToDirId );
     

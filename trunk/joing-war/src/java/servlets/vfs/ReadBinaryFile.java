@@ -6,6 +6,7 @@
 
 package servlets.vfs;
 
+import ejb.vfs.FileBinary;
 import ejb.vfs.FileManagerLocal;
 import java.io.*;
 import java.net.*;
@@ -32,68 +33,43 @@ public class ReadBinaryFile extends HttpServlet
      */
     protected void processRequest( HttpServletRequest request, HttpServletResponse response )
     throws ServletException, IOException
-    {
-        ObjectInputStream   reader = new ObjectInputStream( request.getInputStream() );
-        ServletOutputStream out    = response.getOutputStream();
-        FileInputStream     in     = null; 
+    {        
+        ObjectInputStream  reader = new ObjectInputStream(  request.getInputStream()   );
+        ObjectOutputStream writer = new ObjectOutputStream( response.getOutputStream() );
         
         try
         {
             // Read from client (desktop)
-            String       sSessionId = (String)  reader.readObject();
-            int          nFileId    = (Integer) reader.readObject();
-            java.io.File fNative    = fileManagerBean.getNativeFile( sSessionId, nFileId, false );
-            
-            if( fNative != null && fNative.exists() )
+            String     sSessionId = (String)  reader.readObject();
+            int        nFileId    = (Integer) reader.readObject();
+            FileBinary fileBinary = fileManagerBean.readBinaryFile( sSessionId, nFileId );
+     
+            if( fileBinary != null )
             {
-                response.setContentType( "text/txt" );
-                response.setContentLength( (int) fNative.length() );
-                // TODO: ¿es esto necesario? -> response.setHeader( "Content-Disposition", "attachment; filename=" + sFileName );
-                
-                in  = new FileInputStream( fNative );
-                
-                // Stream to the requester.
-                byte[] cBuffer = new byte[ 1024*4 ];
-                int    length  = 0;
-                
-                while( (length = in.read( cBuffer )) != -1 )                    
-                    out.write( cBuffer, 0, length );
-                
-                out.flush();
+                response.setHeader( "Content-Disposition", 
+                                    "attachment; filename=" + fileBinary.getName() );
+                response.setContentLength( (int) fileBinary.getSize() );
+                writer.writeObject( fileBinary );
+                writer.flush();
+            }
+            else
+            {
+                writer.writeObject( "null" );    // TODO: mirar qué hacer en estos casos
             }
         }
         catch( ClassNotFoundException exc )
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
+            // TODO: habría que enviar un error de vuelta, porque el cliente está a la espera
         }
         finally
         {
             if( reader != null )
                 try{ reader.close(); } catch( IOException exc ) { }
             
-            if( in != null )
-                try{ in.close(); } catch( IOException exc ) { }
-            
-            out.close();
+            if( writer != null )
+                try{ writer.close(); } catch( IOException exc ) { }
         }
-        
-        /* TODO: hacerlo
-        response.setHeader( "Content-Disposition", "attachment; filename=" + sFileName );
-                
-        ServletOutputStream sos = response.getOutputStream();
-
-        // Stream to the requester.
-        byte[] bBuffer = new byte[ 1024*4 ];
-        int    length  = 0;
-
-        while( (length = br.read( bBuffer )) != -1 )                    
-            sos.write( bBuffer, 0, length );
-
-        sos.flush();
-        sos.close();
-        br.close();
-        
-        response.setContentType("text/html;charset=UTF-8");*/
     }
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

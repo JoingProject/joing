@@ -40,10 +40,10 @@ public class ListManagerBean
     //------------------------------------------------------------------------//
     // REMOTE INTERFACE
     
-    public List<File> getChilds( String sSessionId, int nFileDirId )
+    public List<FileDescriptor> getChilds( String sSessionId, int nFileDirId )
     {
         String     sAccount = sessionManagerBean.getUserAccount( sSessionId );
-        List<File> files    = null;
+        List<FileDescriptor> files    = null;
             
         if( sAccount != null )
         {
@@ -73,9 +73,9 @@ public class ListManagerBean
         return files;
     }
     
-    public List<File> getChilds( String sSessionId, String sDirPath )
+    public List<FileDescriptor> getChilds( String sSessionId, String sDirPath )
     {
-        List<File> files    = null;
+        List<FileDescriptor> files    = null;
         String     sAccount = sessionManagerBean.getUserAccount( sSessionId );
 
         if( sAccount != null )
@@ -92,10 +92,10 @@ public class ListManagerBean
         return files;
     }
     
-    public List<File> getByNotes( String sSessionId, String sSubString )
+    public List<FileDescriptor> getByNotes( String sSessionId, String sSubString )
     {
         String     sAccount = sessionManagerBean.getUserAccount( sSessionId );
-        List<File> files    = null;
+        List<FileDescriptor> files    = null;
         
         if( sAccount != null )
         {
@@ -111,10 +111,10 @@ public class ListManagerBean
         return files;
     }
     
-    public List<File> getTrashCan( String sSessionId )
+    public List<FileDescriptor> getTrashCan( String sSessionId )
     {
         String     sAccount = sessionManagerBean.getUserAccount( sSessionId );
-        List<File> files    = null;
+        List<FileDescriptor> files    = null;
         
         if( sAccount != null )
         {
@@ -132,7 +132,7 @@ public class ListManagerBean
     //------------------------------------------------------------------------//
     // PRIVATES
     
-    private List<File> _getChilds( String sAccount, Integer nFileDirId )
+    private List<FileDescriptor> _getChilds( String sAccount, Integer nFileDirId )
     {
         String sQuery = "SELECT f FROM FileEntity f"+
                         " WHERE f.fileEntityPK.idParent = "+ nFileDirId +
@@ -143,12 +143,12 @@ public class ListManagerBean
         return fromEntity2DTO( (List<FileEntity>) query.getResultList() );
     }
     
-    private List<File> fromEntity2DTO( List<FileEntity> fes )
+    private List<FileDescriptor> fromEntity2DTO( List<FileEntity> fes )
     {
-        List<File> files = new ArrayList<File>( fes.size() );
+        List<FileDescriptor> files = new ArrayList<FileDescriptor>( fes.size() );
         
         for( FileEntity fe : fes )
-            files.add( new File( fe ) );
+            files.add( new FileDescriptor( fe )  );
         
         return files;
     }

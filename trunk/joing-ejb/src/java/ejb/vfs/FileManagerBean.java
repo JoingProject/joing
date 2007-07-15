@@ -24,6 +24,13 @@ package ejb.vfs;
 
 import ejb.Constant;
 import ejb.session.SessionManagerLocal;
+import java.io.InputStream;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -53,9 +60,9 @@ public class FileManagerBean
     
     //------------------------------------------------------------------------//
     
-    public File getFile( String sSessionId, String sPath )
+    public FileDescriptor getFile( String sSessionId, String sPath )
     {
-        File    file     = null;
+        FileDescriptor    file     = null;
         String  sAccount = sessionManagerBean.getUserAccount( sSessionId );
         
         if( sAccount != null )
@@ -63,16 +70,16 @@ public class FileManagerBean
             FileEntity _file = path2File( sAccount, sPath );
             
             if( _file != null )
-                file = new File( _file );
+                file = new FileDescriptor( _file );
         }
         
         return file;
     }
     
-    public File updateFile( String sSessionId, File file )
+    public FileDescriptor updateFile(  String sSessionId, FileDescriptor file  )
     {
         String sAccount = sessionManagerBean.getUserAccount( sSessionId );
-        File   fileRet  = null;
+        FileDescriptor   fileRet  = null;
         
         if( sAccount != null && isOwnerOfFile( sAccount, file.getId() ) )
         {
@@ -99,7 +106,7 @@ public class FileManagerBean
                 
                 _fileNew.setAccessed( new Date() );  // Modified is only when modifiying contents
                 em.persist( _fileNew );
-                fileRet = new File( _fileNew );
+                fileRet = new FileDescriptor( _fileNew );
             }
             catch( Exception exc )
             {
@@ -110,26 +117,27 @@ public class FileManagerBean
         return fileRet;
     }
     
-    public File createDirectory( String sSessionId, int nParentId, String sDirName )
+    public FileDescriptor createDirectory( String sSessionId, int nParentId, String sDirName )
     {
         return createEntry( sSessionId, nParentId, sDirName, true );
     }
     
-    public File createFile( String sSessionId, int nParentId, String sFileName )
+    public FileDescriptor createFile( String sSessionId, int nParentId, String sFileName )
     {
         return createEntry( sSessionId, nParentId, sFileName, false );
     }
 
-    /* TODO: Pensar qué hacer con esto: habría que poner la duda en los foros.
+    /* TODO: para read y write files
+     * Pensar qué hacer con esto:
      * El problema es que no se puede serializar (RMI/IIOP) un stream, y sin
      * embargo, los métodos de los EJBs tienen que ser serializables.
      * Por lo que no sé cómo obtener un stream desde una invocación @Remote a 
-     * un EJB.
+     * un EJB.*/
     // Help at: http://java.sun.com/docs/books/tutorial/i18n/text/stream.html
-    public BufferedReader readTextFile( String sSessionId, int nFileId, String sEncoding )
-    {
-        BufferedReader reader   = null;
-        String         sAccount = sessionManagerBean.getUserAccount( sSessionId );
+    public FileText readTextFile( String sSessionId, int nFileId, String sEncoding )
+    {        
+        FileText fileText = null;
+        String   sAccount = sessionManagerBean.getUserAccount( sSessionId );
         
         if( sAccount != null && isOwnerOfFile( sAccount, nFileId ) )
         {
@@ -140,26 +148,32 @@ public class FileManagerBean
             {
                 FileInputStream   fis = new FileInputStream( fNative );
                 InputStreamReader isw = new InputStreamReader( fis, sEncoding );
+                BufferedReader    br  = new BufferedReader( isw );
                 
-                reader = new BufferedReader( isw );   // Has to be before updating Accessed field
-        
                 FileEntity _file = getFileEntityById( nFileId );
                            _file.setAccessed( new Date() );
-                this.em.persist( _file );
+                           
+                em.persist( _file );
+                
+                fileText = new FileText( _file );
+                fileText.setMimetype( null );   // TODO: averiguarlo
+                fileText.setContents( br );
+                
+                br.close();
             }
             catch( Exception exc )
             {
-                Constant.getLogger().throwing( getClass().getName(), "readText(...)", exc );
+                Constant.getLogger().throwing( getClass().getName(), "readTextFile(...)", exc );
             }
         }
         
-        return reader;
+        return fileText;
     }
     
-    public FileInputStream readBinaryFile( String sSessionId, int nFileId )
+    public FileBinary readBinaryFile( String sSessionId, int nFileId )
     {
-        FileInputStream fis      = null;
-        String          sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        FileBinary fileBinary = null;
+        String     sAccount   = sessionManagerBean.getUserAccount( sSessionId );
         
         if( sAccount != null && isOwnerOfFile( sAccount, nFileId ) )
         {
@@ -168,54 +182,66 @@ public class FileManagerBean
 
             try
             {
-                fis = new FileInputStream( fNative );  // Has to be before updating Accessed field
+                FileInputStream fis = new FileInputStream( fNative );
                 
                 FileEntity _file = getFileEntityById( nFileId );
                            _file.setAccessed( new Date() );
-                this.em.persist( _file );
+                em.persist( _file );
+
+                fileBinary = new FileBinary( _file );
+                fileBinary.setContents( fis );
+                
+                fis.close();
             }
-            catch( FileNotFoundException exc )  // It could be that nFileId is a directory
+            catch( IOException exc )
             {
-                Constant.getLogger().throwing( getClass().getName(), "readBinary(...)", exc );
+                Constant.getLogger().throwing( getClass().getName(), "readBinaryFile(...)", exc );
             }
         }
         
-        return fis;
+        return fileBinary;
     }
     
-    public boolean writeTextFile( String sSessionId, int nFileId, 
-                                  BufferedReader reader, String sEncoding )
+    // TODO: Para writeTextFile y writeBinaryFile
+    // Hay que poner un límite al tamaño del fichero que el usuario envía
+    // si el límite se supera, el fichero queda truncado.
+    // Si el límite es 0, el tamaño es ilimitado.
+    // Este valor se guarda en UserEntity.
+    public boolean writeTextFile( String sSessionId, FileText fileText )
     {
         boolean bSuccess = false;
         String  sAccount = sessionManagerBean.getUserAccount( sSessionId );
         
-        if( sAccount != null && isOwnerOfFile( sAccount, nFileId ) )
+        if( sAccount != null && isOwnerOfFile( sAccount, fileText.getId() ) )
         {
-            String       sNative = Integer.toString( nFileId );
-            java.io.File fNative = FileSystemTools.getFile( sAccount, sNative );
-            
             try
-            {
-                FileOutputStream   fos      = new FileOutputStream( fNative );
-                OutputStreamWriter writer   = new OutputStreamWriter( fos, "UTF16" );
-                char[]             acBuffer = new char[ nBUFFER_SIZE ];
+            {                
+                String       sNative = Integer.toString( fileText.getId() );
+                java.io.File fNative = FileSystemTools.getFile( sAccount, sNative );
                 
-                while( true )
+                BufferedReader     reader   = fileText.getContent();
+                OutputStreamWriter writer   = new OutputStreamWriter( new FileOutputStream( fNative ), "UTF16" );
+                char[]             acBuffer = new char[ 1024*8 ];
+                int                nReaded  = 0;
+                
+                while( nReaded != -1 )
                 {
-                    int nRead = reader.read( acBuffer );
+                     nReaded = reader.read( acBuffer );
                     
-                    if( nRead == -1 )
-                        break;
-                        
-                    writer.write( acBuffer, 0, nRead );
+                    if( nReaded != -1 )                     
+                        writer.write( acBuffer, 0, nReaded );
                 }
                 
-                bSuccess = true;
-                // Even if updating flag fields fails, I would consider that operation have been successful
-                FileEntity _file = getFileEntityById( nFileId );
+                writer.flush();
+                writer.close();
+                reader.close();
+                
+                FileEntity _file = getFileEntityById( fileText.getId() );
                            _file.setAccessed( new Date() );
                            _file.setModified( new Date() );
-                this.em.persist( _file );
+                em.persist( _file );
+                
+                bSuccess = true;
             }
             catch( Exception exc )
             {
@@ -226,37 +252,41 @@ public class FileManagerBean
         return bSuccess;
     }
     
-    public boolean writeBinaryFile( String sSessionId, int nFileId, FileInputStream reader )
+    public boolean writeBinaryFile( String sSessionId, FileBinary fileBinary )
     {
         boolean bSuccess = false;
         String  sAccount = sessionManagerBean.getUserAccount( sSessionId );
-
-        if( sAccount != null && isOwnerOfFile( sAccount, nFileId ) )
+        
+        if( sAccount != null && isOwnerOfFile( sAccount, fileBinary.getId() ) )
         {
-            String       sNative = Integer.toString( nFileId );
-            java.io.File fNative = FileSystemTools.getFile( sAccount, sNative );
-            
             try
             {
+                String       sNative = Integer.toString( fileBinary.getId() );
+                java.io.File fNative = FileSystemTools.getFile( sAccount, sNative );
+                
+                InputStream      reader   = fileBinary.getContent();
                 FileOutputStream writer   = new FileOutputStream( fNative );
-                byte[]           acBuffer = new byte[ nBUFFER_SIZE ];
+                byte[]           abBuffer = new byte[ 1024*8 ];
+                int              nReaded  = 0;
                 
-                while( true )
+                while( nReaded != -1 )
                 {
-                    int nRead = reader.read( acBuffer );
+                     nReaded = reader.read( abBuffer );
                     
-                    if( nRead == -1 )
-                        break;
-                        
-                    writer.write( acBuffer, 0, nRead );
+                    if( nReaded != -1 )                     
+                        writer.write( abBuffer, 0, nReaded );
                 }
                 
-                bSuccess = true;
-                // Even if updating flag fields fails, I would consider that operation have been successful
-                FileEntity _file = getFileEntityById( nFileId );
+                writer.flush();
+                writer.close();
+                reader.close();
+                
+                FileEntity _file = getFileEntityById( fileBinary.getId() );
                            _file.setAccessed( new Date() );
                            _file.setModified( new Date() );
-                this.em.persist( _file );
+                em.persist( _file );
+                
+                bSuccess = true;
             }
             catch( Exception exc )
             {
@@ -266,7 +296,6 @@ public class FileManagerBean
         
         return bSuccess;
     }
-    */
     
     public boolean copy( String sSessionId, int nFileId, int nToDirId )
     {
@@ -353,7 +382,7 @@ public class FileManagerBean
         return bSuccess;
     }
     
-    public java.io.File getNativeFile( String sSessionId, int nFileId, boolean bToWrite )
+    /*public java.io.File getNativeFile( String sSessionId, int nFileId, boolean bToWrite )
     {
         java.io.File fNative  = null;
         String       sAccount = sessionManagerBean.getUserAccount( sSessionId );
@@ -372,7 +401,7 @@ public class FileManagerBean
         }
         
         return fNative;
-    }
+    }*/
     
     //------------------------------------------------------------------------//
     // PACKAGE SCOPE
@@ -456,9 +485,9 @@ public class FileManagerBean
     // PRIVATE SCOPE
  
     // Creates a new entry: either a directory or a file
-    private File createEntry( String sSessionId, int nParentId, String sChild, boolean bIsDir )
+    private FileDescriptor createEntry( String sSessionId, int nParentId, String sChild, boolean bIsDir )
     {
-        File   file     = null;
+        FileDescriptor   file     = null;
         String sAccount = sessionManagerBean.getUserAccount( sSessionId );
         
         if( sAccount != null && isOwnerOfFile( sAccount, nParentId ) && isValidName( sChild ) )
@@ -505,12 +534,13 @@ public class FileManagerBean
                     // If code arrives to this point, everything was OK: now can commit
                     this.em.getTransaction().commit();
                     
-                    file = new File( _file );
+                    file = new FileDescriptor( _file );
                 }
                 catch( Exception exc )
                 {
                     Constant.getLogger().throwing( getClass().getName(), "create(...)", exc );
                 }
+
                 finally
                 {
                     if( this.em.getTransaction().isActive() )

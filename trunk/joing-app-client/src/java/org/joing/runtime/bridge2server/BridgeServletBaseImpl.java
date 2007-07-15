@@ -54,19 +54,21 @@ public class BridgeServletBaseImpl
     static final String APP_GET_PREFERRED     = "app/GetPreferredForType";
     
     // VFS
-    static final String VFS_GET_FILE     = "vfs/GetFile";
-    static final String VFS_CREATE_DIR   = "vfs/CreateDirectory";
-    static final String VFS_CREATE_FILE  = "vfs/CreateFile";
-    
-    static final String VFS_UPDATE       = "vfs/UpdateFile";
-    static final String VFS_COPY         = "vfs/Copy";
-    static final String VFS_MOVE         = "vfs/Move";
-    static final String VFS_TRASHCAN     = "vfs/Trashcan";
-    static final String VFS_DELETE       = "vfs/Delete";
-    
-    static final String VFS_GET_CHILDS   = "vfs/GetChilds";
-    static final String VFS_GET_BY_NOTES = "vfs/GetByNotes";
-    static final String VFS_GET_TRASHCAN = "vfs/GetTrashcan";
+    static final String VFS_GET_FILE          = "vfs/GetFile";
+    static final String VFS_CREATE_DIR        = "vfs/CreateDirectory";
+    static final String VFS_CREATE_FILE       = "vfs/CreateFile";
+    static final String VFS_READ_TEXT_FILE    = "vfs/ReadTextFile";
+    static final String VFS_READ_BINARY_FILE  = "vfs/ReadBinaryFile";
+    static final String VFS_WRITE_TEXT_FILE   = "vfs/WriteTextFile";
+    static final String VFS_WRITE_BINARY_FILE = "vfs/WriteBinaryFile";
+    static final String VFS_UPDATE            = "vfs/UpdateFile";
+    static final String VFS_COPY              = "vfs/Copy";
+    static final String VFS_MOVE              = "vfs/Move";
+    static final String VFS_TRASHCAN          = "vfs/Trashcan";
+    static final String VFS_DELETE            = "vfs/Delete";
+    static final String VFS_GET_CHILDS        = "vfs/GetChilds";
+    static final String VFS_GET_BY_NOTES      = "vfs/GetByNotes";
+    static final String VFS_GET_TRASHCAN      = "vfs/GetTrashcan";
     
     // CLASS VARIABLES
     private String sBaseURL;

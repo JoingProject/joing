@@ -22,6 +22,7 @@
 
 package org.joing.runtime.bridge2server;
 
+import ejb.session.LoginResult;
 import ejb.session.SessionManagerBean;
 import javax.naming.Context;
 
@@ -61,13 +62,13 @@ public class SessionBridgeDirectImpl
         }
     }
     
-    public boolean login( String sAccount, String sPassword )
+    public LoginResult login( String sAccount, String sPassword )
     {
-        String sSessionId = this.smb.login( sAccount, sPassword );
+        LoginResult result = smb.login( sAccount, sPassword );
         
-        Bridge2Server.getInstance().setSessionId( sSessionId );
+        Bridge2Server.getInstance().setSessionId( result.getSessionId() );
         
-        return sSessionId != null;
+        return result;
     }
     
     public void logout()

@@ -30,7 +30,7 @@ public interface SessionManagerRemote
      *                meanwhile the session is alive. Or <code>null</null> if the
      *                Account and/or Password were invalid.
      */
-    String login( String sAccount, String sPassword );
+    LoginResult login( String sAccount, String sPassword );
     
     /**
      * Closes an existing session.

@@ -42,7 +42,7 @@ public class CreateDirectory extends HttpServlet
             String       sSessionId = (String)  reader.readObject();
             int          nParentId  = (Integer) reader.readObject();
             String       sDirName   = (String)  reader.readObject();
-            ejb.vfs.File file       = null;
+            ejb.vfs.FileDescriptor file       = null;
             
             // Process request
             file = fileManagerBean.createDirectory( sSessionId, nParentId, sDirName );
@@ -55,6 +55,7 @@ public class CreateDirectory extends HttpServlet
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
         }
+
         finally
         {
             if( reader != null )

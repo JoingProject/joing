@@ -40,7 +40,7 @@ public class UpdateFile extends HttpServlet
         {
             // Read from client (desktop)
             String       sSessionId = (String)       reader.readObject();
-            ejb.vfs.File file       = (ejb.vfs.File) reader.readObject();
+            ejb.vfs.FileDescriptor file       = (ejb.vfs.FileDescriptor) reader.readObject();
             
             // Process request
             file = fileManagerBean.updateFile( sSessionId, file );
@@ -53,6 +53,7 @@ public class UpdateFile extends HttpServlet
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
         }
+
         finally
         {
             if( reader != null )

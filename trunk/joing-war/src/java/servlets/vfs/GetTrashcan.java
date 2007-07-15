@@ -41,7 +41,7 @@ public class GetTrashcan extends HttpServlet
         {
             // Read from client (desktop)
             String             sSessionId = (String) reader.readObject();
-            List<ejb.vfs.File> files      = null;
+            List<ejb.vfs.FileDescriptor> files      = null;
             
             // Process request
             files = fileManagerBean.getTrashCan( sSessionId );
@@ -54,6 +54,7 @@ public class GetTrashcan extends HttpServlet
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
         }
+
         finally
         {
             if( reader != null )

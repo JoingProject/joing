@@ -6,6 +6,7 @@
 
 package servlets.vfs;
 
+import ejb.vfs.FileBinary;
 import ejb.vfs.FileManagerLocal;
 import java.io.*;
 import java.net.*;
@@ -24,11 +25,6 @@ public class WriteBinaryFile extends HttpServlet
     @EJB()
     private FileManagerLocal fileManagerBean;
     
-    // Hay que poner un límite al tamaño del fichero que el usuario envía
-    // si el límite se supera, el fichero queda truncado.
-    // Si el límite es 0, el tamaño es ilimitado.
-    // Este valor se guarda en UserEntity.
-    
     /** Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
      * @param response servlet response
@@ -36,6 +32,7 @@ public class WriteBinaryFile extends HttpServlet
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException
     {
+        // Response is binary because the answer is a serialized object
         response.setContentType( "application/octet-stream" );
         
         ObjectInputStream  reader = new ObjectInputStream(  request.getInputStream()   );
@@ -44,20 +41,20 @@ public class WriteBinaryFile extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String       sSessionId = (String)  reader.readObject();
-            int          nFileId    = (Integer) reader.readObject();
-            Boolean      bSuccess   = false;
+            String     sSessionId = (String)     reader.readObject();
+            FileBinary fileBinary = (FileBinary) reader.readObject();
+            boolean    bSuccess   = fileManagerBean.writeBinaryFile( sSessionId, fileBinary );
             
-            // Process request
-            // TODO hacerlo --> bSuccess = fileManagerBean.writeBinaryFile( sSessionId, nFileId );
-            
-            // Write to Client (desktop)
+            // Write to Client (desktop) the result of the operation
             writer.writeObject( bSuccess );
             writer.flush();
+            writer.close();
+            reader.close();
         }
         catch( ClassNotFoundException exc )
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
+            // TODO: habría que enviar un error de vuelta, porque el cliente está a la espera
         }
         finally
         {
