@@ -127,18 +127,21 @@ public class BridgeServletBaseImpl
         
         protected void write( Object o ) throws IOException
         {
-            if( bUseSSL )
-                writeSSL( o );
-            else
-                _write( o );
+            // IO streams must be init here: can't be done in constructor
+            if( writer == null )
+                writer = new ObjectOutputStream( connServer.getOutputStream() );
+            
+            writer.writeObject( o );
+            writer.flush();
         }
         
         protected Object read() throws IOException, ClassNotFoundException
         {
-            if( bUseSSL )
-                return readSSL();
-            else
-                return _read();
+            // IO streams must be init here: can't be done in constructor
+            if( reader == null )
+                reader = new ObjectInputStream( connServer.getInputStream() );
+            
+            return reader.readObject();
         }
 
         protected void close()
@@ -164,39 +167,6 @@ public class BridgeServletBaseImpl
             
             if( reader != null )
                 try{ reader.close(); } catch( Exception exc ){ }
-        }
-        
-        //--------------------------------------------------------------------//
-        
-        private void _write( Object o ) throws IOException
-        {
-            // IO streams must be init here: can't be done in constructor
-            if( writer == null )
-                writer = new ObjectOutputStream( connServer.getOutputStream() );
-            
-            writer.writeObject( o );
-            writer.flush();
-        }
-        
-        private Object _read() throws IOException, ClassNotFoundException
-        {
-            // IO streams must be init here: can't be done in constructor
-            if( reader == null )
-                reader = new ObjectInputStream( connServer.getInputStream() );
-            
-            return reader.readObject();
-        }
-        
-        // TODO: enviar vía SSL
-        private void writeSSL( Object o ) throws IOException
-        {
-            _write( o );
-        }
-
-        // TODO: recibir vía SSL
-        private Object readSSL() throws IOException, ClassNotFoundException
-        {
-            return _read();
         }
     }
 }

@@ -39,7 +39,7 @@ public class Main
         {
             public void run( )
             {
-                // TODO: poner aquí el código que lanza el desktop
+                // Poner aquí el código que lanza el desktop
                 throw new UnsupportedOperationException( "Not supported yet." );
             }
         } );

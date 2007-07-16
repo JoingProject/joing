@@ -49,7 +49,6 @@ public final class Runtime
             
     private Runtime()
     {
-        // TODO: ¿algo aquí?
     }
     
     //-------------------------------------------------------------------------//
@@ -74,9 +73,9 @@ public final class Runtime
      */
     public void showException( Throwable exc, String sTitle )
     {
-        exc.printStackTrace();   // TODO: quitarlo en la version final
+        exc.printStackTrace();
 
-        /*  TODO: hacer q JShowException herede de DesktopDialog y q actue en consecuencia
+        /*  TODO: hacer q JShowException herede de JDesktopDialog y q actue en consecuencia:
         JShowException dialog = new JShowException( sTitle, exc );
                        dialog.setLocationRelativeTo( getDesktop() );
                        dialog.setVisible( true );*/

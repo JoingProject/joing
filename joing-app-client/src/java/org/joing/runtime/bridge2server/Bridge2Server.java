@@ -125,7 +125,7 @@ public class Bridge2Server
     {
         /* TODO: revisar esto: hay que mirar si se puede conectar directamente
         Hashtable env = new Hashtable();
-                  //TODO: creo que esto no hace falta --> env.put( Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory" );
+                  //Creo que esto no hace falta --> env.put( Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory" );
                   //env.put( Context.PROVIDER_URL, "iiop://localhost/" ); 
                   env.put( Context.PROVIDER_URL, "jnp://localhost/" ); 
         try
@@ -135,7 +135,7 @@ public class Bridge2Server
         }
         catch( Exception exc )
         {
-            // TODO reportarlo vía notificación de errores del desktop
+            // TODO: Reportarlo vía notificación de errores del desktop
             exc.printStackTrace();
         }*/
     }

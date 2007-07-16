@@ -145,7 +145,7 @@ public class SessionManagerBean
             for( int n = 0; n < 16; n++ )
                 ac[n] = sVALID.charAt( rnd.nextInt( nLen ) );
         } // Search if generated ID already exists (even if it is almost impossible)
-        while( this.em.find( SessionEntity.class, String.valueOf( ac ) ) != null );
+        while( em.find( SessionEntity.class, String.valueOf( ac ) ) != null );
         
         return String.valueOf( ac );*/
     }
