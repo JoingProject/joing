@@ -29,7 +29,7 @@ import javax.persistence.Query;
  */
 @Stateless
 public class ListManagerBean 
-       implements ListManagerLocal, ListManagerRemote, Serializable // TODO hacer el serializable
+       implements ListManagerRemote, ListManagerLocal, Serializable
 {
     @PersistenceContext
     private EntityManager em;
@@ -41,8 +41,9 @@ public class ListManagerBean
     // REMOTE INTERFACE
     
     public List<FileDescriptor> getChilds( String sSessionId, int nFileDirId )
+           throws JoingServerVFSException
     {
-        String     sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        String               sAccount = sessionManagerBean.getUserAccount( sSessionId );
         List<FileDescriptor> files    = null;
             
         if( sAccount != null )
@@ -50,19 +51,17 @@ public class ListManagerBean
             if( nFileDirId == 0 )    // Invoking is asking for root ("/")
             {
                 // Makes nFileDirId to have the value of root
-                String sQuery = "SELECT f FROM FileEntity f"+
-                                " WHERE f.name = '/'"+
-                                "   AND f.account = '"+ sAccount +"'";
-                Query  query  = this.em.createQuery( sQuery );
-
+                Query query = em.createQuery( "SELECT f FROM FileEntity f"+
+                                              " WHERE f.name = '/'"+
+                                              "   AND f.account = '"+ sAccount +"'" );
                 try
                 {
                    nFileDirId = ((FileEntity) query.getSingleResult()).getIdFile();
                 }
                 catch( Exception exc )
                 {
-                    Constant.getLogger().throwing( getClass().getName(), 
-                                                   "getChilds( sSessionId, nFileId )", exc );
+                    Constant.getLogger().throwing( getClass().getName(), "getChilds(String,int)", exc );
+                    throw new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
                 }
             }
             
@@ -74,9 +73,10 @@ public class ListManagerBean
     }
     
     public List<FileDescriptor> getChilds( String sSessionId, String sDirPath )
+           throws JoingServerVFSException
     {
         List<FileDescriptor> files    = null;
-        String     sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        String               sAccount = sessionManagerBean.getUserAccount( sSessionId );
 
         if( sAccount != null )
         {
@@ -93,37 +93,57 @@ public class ListManagerBean
     }
     
     public List<FileDescriptor> getByNotes( String sSessionId, String sSubString )
+           throws JoingServerVFSException
     {
-        String     sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        String               sAccount = sessionManagerBean.getUserAccount( sSessionId );
         List<FileDescriptor> files    = null;
         
         if( sAccount != null )
         {
-            String sQuery = "SELECT f FROM FileEntity f" +
-                            " WHERE f.account = '"+ sAccount +"'"+
-                            "   AND f.is_system = 0"+
-                            "   AND f.notes _fepk.set '%"+ sSubString +"%'";
-            Query  query  = this.em.createQuery( sQuery );
+            StringBuilder sbQuery = new StringBuilder( 1024 );
+                          sbQuery.append( "SELECT f FROM FileEntity f" )
+                                 .append( " WHERE f.account = '" ).append( sAccount ).append( '\'' )
+                                 .append( "   AND f.is_system = 0" )
+                                 .append( "   AND f.notes _fepk.set '%" ).append( sSubString ).append( "%'" );
+            try
+            {
+                Query query = em.createQuery( sbQuery.toString() );
             
-            files = fromEntity2DTO( (List<FileEntity>) query.getResultList() );
+                files = fromEntity2DTO( (List<FileEntity>) query.getResultList() );
+            }
+            catch( RuntimeException exc )
+            {
+                Constant.getLogger().throwing( getClass().getName(), "getTrashCan(...)", exc );
+                throw new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
+            }
         }
         
         return files;
     }
     
     public List<FileDescriptor> getTrashCan( String sSessionId )
+           throws JoingServerVFSException
     {
-        String     sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        String               sAccount = sessionManagerBean.getUserAccount( sSessionId );
         List<FileDescriptor> files    = null;
         
         if( sAccount != null )
         {
-            String sQuery = "SELECT f FROM FileEntity f" +
-                            " WHERE f.account = '"+ sAccount +"'"+
-                            "   AND f.is_in_trashcan = 1";
-            Query  query  = this.em.createQuery( sQuery );
+            StringBuilder sbQuery = new StringBuilder( 512 );
+                          sbQuery.append( "SELECT f FROM FileEntity f" )
+                                 .append( " WHERE f.account = '" ).append( sAccount ).append( '\'' )
+                                 .append( "   AND f.is_in_trashcan = 1" );
+            try
+            {
+                Query query = em.createQuery( sbQuery.toString() );
 
-            files = fromEntity2DTO( (List<FileEntity>) query.getResultList() );
+                files = fromEntity2DTO( (List<FileEntity>) query.getResultList() );
+            }
+            catch( RuntimeException exc )
+            {
+                Constant.getLogger().throwing( getClass().getName(), "getTrashCan(...)", exc );
+                throw new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
+            }
         }
         
         return files;
@@ -133,14 +153,31 @@ public class ListManagerBean
     // PRIVATES
     
     private List<FileDescriptor> _getChilds( String sAccount, Integer nFileDirId )
+            throws JoingServerVFSException
     {
-        String sQuery = "SELECT f FROM FileEntity f"+
-                        " WHERE f.fileEntityPK.idParent = "+ nFileDirId +
-                        "   AND f.account = '"+ sAccount +"'"+    // It is not necessary but enforces security
-                        "   AND f.is_in_trashcan = 0";
-        Query  query  = this.em.createQuery( sQuery );
-        
-        return fromEntity2DTO( (List<FileEntity>) query.getResultList() );
+        StringBuilder sbQuery = new StringBuilder( 1024 );
+                          sbQuery.append( "SELECT f FROM FileEntity f" )
+                                 .append( " WHERE f.fileEntityPK.idParent = " ).append( nFileDirId )
+                                 .append( "   AND f.account = '" ).append( sAccount ).append( '\'' )    // It is not necessary but enforces security
+                                 .append( "   AND f.is_in_trashcan = 0" );
+        try
+        {
+            Query query = em.createQuery( sbQuery.toString() );
+
+            return fromEntity2DTO( (List<FileEntity>) query.getResultList() );
+        }
+        catch( RuntimeException exc )
+        {
+            /*                if( ! (exc instanceof JoingServerException) )
+                {
+                    Constant.getLogger().throwing( getClass().getName(), "updateFile(...)", exc );
+                    exc = new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
+                }
+                
+                throw exc;*/
+            Constant.getLogger().throwing( getClass().getName(), "_getChilds(...)", exc );
+            throw new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
+        }
     }
     
     private List<FileDescriptor> fromEntity2DTO( List<FileEntity> fes )

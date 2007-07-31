@@ -24,16 +24,58 @@ insert into app_groups ( ICON_PNG, ICON_SVG )   -- ID_APP_GROUP = 2
 -- ------------------------------------------------------------------
 
 insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
-     values (1, 1, 'Accessories' );
+     values (1, 1, 'Business & Finance');
 
 insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
-     values (1, 2, 'Accesorios' );
+     values (1, 2, 'Negocios y Finanzas');
 
 insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
-     values (2, 1, 'Graphics' );
+     values (2, 1, 'Desktop Enhancements & Screensavers');
 
 insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
-     values (2, 2, 'Gráficos' );
+     values (2, 2, 'Mejoras de escritorio y Salva-pantallas');
+
+insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
+     values (3, 1, 'Games');
+
+insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
+     values (3, 2, 'Juegos');
+
+insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
+     values (4, 1, 'Home & Education');
+
+insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
+     values (4, 2, 'Hogar y Educativo');
+
+insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
+     values (5, 1, 'Internet');
+
+insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
+     values (5, 2, 'Internet');
+
+insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
+     values (6, 1, 'Multimedia & Design');
+
+insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
+     values (6, 2, 'Multimedia y Diseño');
+
+insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
+     values (7, 1, 'Security & Privacy');
+
+insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
+     values (7, 2, 'Seguridad y Privacidad');
+
+insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
+     values (8, 1, 'Programming & Software Development');
+
+insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
+     values (8, 2, 'Programación y Desarrollo de software');
+
+insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
+     values (9, 1, 'System Utilities');
+
+insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
+     values (9, 2, 'Utilidades del sistema');
 
 -- ------------------------------------------------------------------
 

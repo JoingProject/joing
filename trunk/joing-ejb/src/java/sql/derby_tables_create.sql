@@ -52,8 +52,8 @@ CREATE TABLE LOCALES(
 CREATE TABLE APP_DESCRIPTIONS(    -- Application descriptions in different languages
    PRIMARY KEY (ID_APPLICATION, ID_LOCALE),
    ID_APPLICATION INT          NOT NULL,
-   ID_LOCALE      INT          NOT NULL,  -- Language (as in java.util.Locale)
-   DESCRIPTION    VARCHAR(255) NOT NULL );
+   ID_LOCALE      INT          NOT NULL,   -- Language (as in java.util.Locale)
+   DESCRIPTION    VARCHAR(512) NOT NULL );
 
 CREATE TABLE APP_GROUPS(          -- Application groups (categories)
    PRIMARY KEY (ID_APP_GROUP),

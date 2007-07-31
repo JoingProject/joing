@@ -20,7 +20,8 @@ public interface SessionManagerLocal extends SessionManagerRemote
      * @param sAccount Account to be checked
      * @return <code>true</code> if passed account is available.
      */
-    boolean isAccountAvailable( String sAccount );
+    boolean isAccountAvailable( String sAccount )
+            throws JoingServerSessionException;
     
     /**
      * Return the <code>User.Account</code> based on a Session ID.
@@ -34,5 +35,6 @@ public interface SessionManagerLocal extends SessionManagerRemote
      * @return String <code>User.Account</code> (the User ID) or 
      *                <code>null</code> if SessionId does not exists.
      */
-    String getUserAccount( String sSessionId );
+    String getUserAccount( String sSessionId )
+           throws JoingServerSessionException;
 }

@@ -10,12 +10,15 @@
 package ejb.app;
 
 import ejb.Constant;
+import ejb.JoingServerException;
 import ejb.session.SessionManagerLocal;
 import ejb.user.UserEntity;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -36,7 +39,7 @@ import javax.sql.DataSource;
  */
 @Stateless
 public class ApplicationManagerBean 
-       implements ApplicationManagerLocal, ApplicationManagerRemote, Serializable  // TODO hacer el serializable
+       implements ApplicationManagerRemote, ApplicationManagerLocal, Serializable
 {
     private static final int APPS_ALL           = 0;
     private static final int APPS_INSTALLED     = 1;
@@ -54,39 +57,42 @@ public class ApplicationManagerBean
     //------------------------------------------------------------------------//
     
     public List<AppsByGroup> getAvailableForUser( String sSessionId )
+           throws JoingServerAppException
     {   
         return getApplications( sSessionId, APPS_ALL );
     }
     
     public List<AppsByGroup> getNotInstalledForUser( String sSessionId )
+           throws JoingServerAppException
     {   
         return getApplications( sSessionId, APPS_NOT_INSTALLED );
     }
     
     public List<AppsByGroup> getInstalledForUser( String sSessionId )
+           throws JoingServerAppException
     {
         return getApplications( sSessionId, APPS_INSTALLED );
     }
     
     public boolean install( String sSessionId, Application app )
+           throws JoingServerAppException
     {
         return install( sSessionId, app, true );
     }
     
     public boolean uninstall( String sSessionId, Application app )
+           throws JoingServerAppException
     {
         return install( sSessionId, app, false );
     }
     
     public Application getPreferredForType( String sSessionId, String sFileExtension )
+           throws JoingServerAppException
     {
-        if( sFileExtension == null )
-            return null;
-        
         String      sAccount    = sessionManagerBean.getUserAccount( sSessionId );
         Application application = null;
         
-        if( sAccount != null )
+        if( sAccount != null && sFileExtension != null )
         {            
             sFileExtension = sFileExtension.trim().toLowerCase();
 
@@ -116,14 +122,12 @@ public class ApplicationManagerBean
             {
                 // Nothing to do: app is already equals to null
             }
-            catch( Exception exc )
+            catch( RuntimeException exc )
             {
-javax.swing.JOptionPane.showMessageDialog( null, "exc = "+ exc );
                 Constant.getLogger().throwing( getClass().getName(), "getPreferredForType(...)", exc );
+                throw new JoingServerAppException( JoingServerException.ACCESS_DB, exc );
             }
         }
-        
-javax.swing.JOptionPane.showMessageDialog( null, "App = "+ application );
         
         return application;
     }
@@ -132,9 +136,10 @@ javax.swing.JOptionPane.showMessageDialog( null, "App = "+ application );
     // PRIVATES
     
     private List<AppsByGroup> getApplications( String sSessionId, int nWhich )
+            throws JoingServerAppException
     {
-        List<AppsByGroup> apps     = null;
         String            sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        List<AppsByGroup> apps     = new ArrayList<AppsByGroup>();
         
         if( sAccount != null )
         {
@@ -169,9 +174,15 @@ javax.swing.JOptionPane.showMessageDialog( null, "App = "+ application );
                 stmt.close();
                 conn.close();
             }
-            catch( Exception exc )
+            catch( RuntimeException exc )
             {
                 Constant.getLogger().throwing( getClass().getName(), "getApplications(...)", exc );
+                throw new JoingServerAppException( JoingServerException.ACCESS_DB, exc );
+            }
+            catch( SQLException exc )
+            {
+                Constant.getLogger().throwing( getClass().getName(), "getApplications(...)", exc );
+                throw new JoingServerAppException( JoingServerException.ACCESS_DB, exc );
             }
         }
         
@@ -180,19 +191,19 @@ javax.swing.JOptionPane.showMessageDialog( null, "App = "+ application );
     
     private String getQuery( String sAccount, int nLocaleId, int nWhich )
     {
-        StringBuilder sbQuery = new StringBuilder( 
-            "SELECT APP_GROUP_DESCRIPTIONS.DESCRIPTION GROUP_DESC," ).append(
-            "       APPLICATIONS.ID_APPLICATION," ).append(
-            "       APP_DESCRIPTIONS.DESCRIPTION APP_DESC" ).append(
-            "  FROM USERS_WITH_APPS, APPLICATIONS, APP_DESCRIPTIONS," ).append(
-            "       APPS_WITH_GROUPS, APP_GROUPS, APP_GROUP_DESCRIPTIONS, LOCALE" ).append(
-            " WHERE LOCALE.ID_LOCALE = "+ nLocaleId  ).append(
-            "   AND USERS_WITH_APPS.ACCOUNT = '"+ sAccount +"'" ).append(
-            "   AND APPLICATIONS.ID_APPLICATION = USERS_WITH_APPS.ID_APPLICATION" ).append(
+        StringBuilder sbQuery = new StringBuilder( 1024 ).append(
+            "SELECT APP_GROUP_DESCRIPTIONS.DESCRIPTION GROUP_DESC,"                ).append(
+            "       APPLICATIONS.ID_APPLICATION,"                                  ).append(
+            "       APP_DESCRIPTIONS.DESCRIPTION APP_DESC"                         ).append(
+            "  FROM USERS_WITH_APPS, APPLICATIONS, APP_DESCRIPTIONS,"              ).append(
+            "       APPS_WITH_GROUPS, APP_GROUPS, APP_GROUP_DESCRIPTIONS, LOCALE"  ).append(
+            " WHERE LOCALE.ID_LOCALE = "+ nLocaleId                                ).append(
+            "   AND USERS_WITH_APPS.ACCOUNT = '"+ sAccount +"'"                    ).append(
+            "   AND APPLICATIONS.ID_APPLICATION = USERS_WITH_APPS.ID_APPLICATION"  ).append(
             "   AND APP_DESCRIPTIONS.ID_APPLICATION = APPLICATIONS.ID_APPLICATION" ).append(
-            "   AND APP_DESCRIPTIONS.ID_LOCALE = LOCALE.ID_LOCALE" ).append(
+            "   AND APP_DESCRIPTIONS.ID_LOCALE = LOCALE.ID_LOCALE"                 ).append(
             "   AND APPS_WITH_GROUPS.ID_APPLICATION = APPLICATIONS.ID_APPLICATION" ).append(
-            "   AND APP_GROUPS.ID_APP_GROUP = APPS_WITH_GROUPS.ID_APP_GROUP" ).append(
+            "   AND APP_GROUPS.ID_APP_GROUP = APPS_WITH_GROUPS.ID_APP_GROUP"       ).append(
             "   AND APP_GROUP_DESCRIPTIONS.ID_APP_GROUP = APP_GROUPS.ID_APP_GROUP" ).append(
             "   AND APP_GROUP_DESCRIPTIONS.ID_LOCALE = LOCALE.ID_LOCALE" );
         
@@ -200,7 +211,8 @@ javax.swing.JOptionPane.showMessageDialog( null, "App = "+ application );
         {
             case APPS_INSTALLED    : sbQuery.append( " AND USERS_WITH_APPS.IS_INSTALLED = 1" ); break;
             case APPS_NOT_INSTALLED: sbQuery.append( " AND USERS_WITH_APPS.IS_INSTALLED = 0" ); break;
-            case APPS_ALL          : break;
+            case APPS_ALL          : 
+            default                : break; 
         }
         
         sbQuery.append( " ORDER BY APP_GROUP_DESCRIPTIONS.DESCRIPTION," ).append(
@@ -211,8 +223,9 @@ javax.swing.JOptionPane.showMessageDialog( null, "App = "+ application );
     
     // To install and uninstall apps
     private boolean install( String sSessionId, Application app, boolean bInstall )
+            throws JoingServerAppException
     {
-        boolean bSuccess = true;
+        boolean bSuccess = false;
         String  sAccount = sessionManagerBean.getUserAccount( sSessionId );
         
         if( sAccount != null )
@@ -232,11 +245,19 @@ javax.swing.JOptionPane.showMessageDialog( null, "App = "+ application );
                                          "   SET IS_INSTALLED = "+ (bInstall ? 1 : 0) +
                                          " WHERE ACCOUNT = "+ sAccount +
                                          "   AND ID_APPLICATION = "+ _app.getIdApplication() );
+               stmt.close();
+               conn.close();
+               bSuccess = true;
             }
-            catch( Exception exc )
+            catch( RuntimeException exc )
             {
-                bSuccess = false;
-                Constant.getLogger().throwing( getClass().getName(), "executeUpdate(...)", exc );
+                Constant.getLogger().throwing( getClass().getName(), "install(...)", exc );
+                throw new JoingServerAppException( JoingServerException.ACCESS_DB, exc );
+            }
+            catch( SQLException exc )
+            {
+                Constant.getLogger().throwing( getClass().getName(), "install(...)", exc );
+                throw new JoingServerAppException( JoingServerException.ACCESS_DB, exc );
             }
         }
         
