@@ -45,8 +45,14 @@ public class FileSystemTools
      * @return <code>true</code> if everything goes fine.
      */
     public static boolean createAccount( String sAccount )
+           throws IOException
     {
-        return getUserHome( sAccount ).mkdirs();
+        boolean bSuccess = getUserHome( sAccount ).mkdirs();
+        
+        if( ! bSuccess )
+            throw new IOException( "Can't create user home directory." );
+        
+        return bSuccess;
     }
     
     /**

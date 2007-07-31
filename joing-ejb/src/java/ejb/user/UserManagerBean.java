@@ -23,6 +23,7 @@
 package ejb.user;
 
 import ejb.Constant;
+import ejb.JoingServerException;
 import ejb.session.*;
 import ejb.vfs.FileEntity;
 import ejb.vfs.FileEntityPK;
@@ -33,11 +34,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import sun.util.logging.resources.logging;
 
 /**
  * This class is charge of all methods related with users management.
@@ -48,8 +52,11 @@ import javax.persistence.Query;
  */
 @Stateless
 public class UserManagerBean
-    implements UserManagerRemote, UserManagerLocal, Serializable  // TODO: implementar el serializable
+    implements UserManagerRemote, UserManagerLocal
 {
+    static final int nMIN_LEN =  6;   // For account and password
+    static final int nMAX_LEN = 32;   // For account and password
+    
     @PersistenceContext
     private EntityManager em;
     
@@ -59,59 +66,86 @@ public class UserManagerBean
     //------------------------------------------------------------------------//
     // REMOTE INTERFACE
     
-    public User getUser( String sSessionId )
+    public User getUser( String sSessionId ) 
+           throws JoingServerUserException
     {
         User   user     = null;
         String sAccount = sessionManagerBean.getUserAccount( sSessionId );
         
         if( sAccount != null )
         {
-            UserEntity _user = this.em.find( UserEntity.class, sAccount );
-            
-            if( _user != null )
+            try
             {
+                UserEntity _user = em.find( UserEntity.class, sAccount );
+            
                 user = new User( _user );
                 // Injected (for more info, refer to these methods in User class)
                 user.setUsedSpace( FileSystemTools.getUsedSpace( sAccount ) );
                 user.setFreeSpace( FileSystemTools.getDiskFreeSpace() );
             }
+            catch( RuntimeException exc )
+            {
+                Constant.getLogger().throwing( getClass().getName(), "getUser(...)", exc );
+                throw new JoingServerUserException( JoingServerException.ACCESS_DB, exc );
+            }
         }
-                
+        
         return user;
     }
     
-    public void updateUser( String sSessionId, User user )
+    public void updateUser( String sSessionId, User user ) 
+           throws JoingServerUserException
     {
-        String  sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        String sAccount = sessionManagerBean.getUserAccount( sSessionId );
         
-        if( sAccount != null && sAccount.equals( user.getAccount() ) )
+        if( sAccount != null )
         {
-            // I have to do em.find(...), because if I would make: 
-            // UserEntity _user = new UserEntity();
-            // the password field would be sat to null at persist(...)
-            // (password field does not exists in User class)
-            UserEntity _user = em.find( UserEntity.class, user.getAccount() );
+            if( ! sAccount.equals( user.getAccount() ) )
+                throw new JoingServerUserException( JoingServerUserException.NOT_ATTRIBUTES_OWNER );
             
-            user.update( _user );
-            em.persist( _user );
+            try
+            {
+                // I have to do em.find(...), because if I would make: 
+                // UserEntity _user = new UserEntity();
+                // the password field would be sat to null at persist(...)
+                // (password field does not exists in User class)
+                UserEntity _user = em.find( UserEntity.class, user.getAccount() );
+                
+                user.update( _user );
+                em.persist( _user );
+            }
+            catch( RuntimeException exc )
+            {
+                Constant.getLogger().throwing( getClass().getName(), "updateUser(...)", exc );
+                throw new JoingServerUserException( JoingServerException.ACCESS_DB, exc );
+            }
         }
     }
     
-    public List<Local> getAvailableLocales( String sSessionId )
+    public List<Local> getAvailableLocales( String sSessionId ) 
+           throws JoingServerUserException
     {
         String      sAccount = sessionManagerBean.getUserAccount( sSessionId );
         List<Local> locals   = null;
         
         if( sAccount != null )
         {
-            Query query = this.em.createQuery( "SELECT l FROM LocaleEntity" );
+            try
+            {
+                Query query = em.createQuery( "SELECT l FROM LocaleEntity" );
 
-            List<LocaleEntity> _locales = (List<LocaleEntity>) query.getResultList();
+                List<LocaleEntity> _locales = (List<LocaleEntity>) query.getResultList();
 
-            locals = new ArrayList( _locales.size() );
-
-            for( LocaleEntity _locale : _locales )
-                locals.add( new Local( _locale ) );
+                locals = new ArrayList( _locales.size() );
+                
+                for( LocaleEntity _locale : _locales )
+                    locals.add( new Local( _locale ) );
+            }
+            catch( RuntimeException exc )
+            {
+                Constant.getLogger().throwing( getClass().getName(), "getAvailableLocales(...)", exc );
+                throw new JoingServerUserException( JoingServerException.ACCESS_DB, exc );
+            }
         }
         
         return locals;
@@ -123,132 +157,163 @@ public class UserManagerBean
     public User createUser( String sAccount, String sPassword, String sEmail,
                             String sFirstName, String sSecondName, 
                             boolean bIsMale, Locale locale, int nQuota )
+           throws JoingServerUserException
     {
         User user = null;
         
+        if( ! isValidAccount( sAccount ) )
+            new JoingServerUserException( JoingServerUserException.INVALID_ACCOUNT );
+        
+        if( ! isValidPassword( sPassword ) )
+            new JoingServerUserException( JoingServerUserException.INVALID_PASSWORD );
+        
         // By checking here the availability, we ensure that all
-        // operations will be made in same transaction
-        if( isValidAccount(  sAccount  )  &&
-            isValidPassword( sPassword )  &&
-            sessionManagerBean.isAccountAvailable( sAccount ) )
+        // operations will be made in same transaction.
+        if( ! sessionManagerBean.isAccountAvailable( sAccount ) )
+            new JoingServerUserException( JoingServerSessionException.LOGIN_EXISTS );
+            
+        try
         {
-            try
-            {
-                this.em.getTransaction().begin();
-                
-                if( locale == null )
-                    Locale.getDefault();
-                
-                // Creates user in USERS DB table
-                UserEntity _user = new UserEntity();
-                           _user.setAccount( sAccount );
-                           _user.setEmail( sEmail );
-                           _user.setFirstName( sFirstName );
-                           _user.setIsMale( (short) (bIsMale ? 1 : 0) );
-                           _user.setIdLocale( findIdLocale( locale ) );
-                           _user.setPassword( sPassword );
-                           _user.setSecondName( sSecondName );
-                           _user.setQuota( nQuota );
-                           
-                this.em.persist( _user );
-                
-                // Creates root ("/") in FILES DB table
-                FileEntityPK _fepk = new FileEntityPK();   // TODO: no estoy seguro que esto sirva
-                           //_fepk.setIdParent( null );
-                             _fepk.setIsDir( (short) 1 );
-                             _fepk.setName( "/" );
-                             
-                FileEntity _file = new FileEntity();
-                           _file.setFileEntityPK( _fepk );
-                           _file.setAccount( _user.getAccount() );
-                           _file.setFullPath( "/" );
-                           _file.setIsAlterable(  (short) 0 );
-                           _file.setIsDeleteable( (short) 0 );
-                           _file.setIsDuplicable( (short) 0 );
-                           _file.setIsExecutable( (short) 0 );
-                           _file.setIsHidden(     (short) 0 );
-                           _file.setIsInTrashcan( (short) 0 );
-                           _file.setIsLocked(     (short) 0 );
-                           _file.setIsModifiable( (short) 0 );
-                           _file.setIsPublic(     (short) 0 );
-                           _file.setIsSystem(     (short) 1 );
-                           _file.setAccessed( new Date() );
-                           _file.setCreated(  new Date() );
-                           _file.setModified( new Date() );                       
+            em.getTransaction().begin();
 
-                this.em.persist( _file );
+            LocaleEntity _local = findLocale( locale );
+            
+            if( _local == null )
+                _local = getDefaultLocale();
+            
+            // Creates user in USERS DB table
+            UserEntity _user = new UserEntity();
+                       _user.setAccount( sAccount );
+                       _user.setEmail( sEmail );
+                       _user.setFirstName( sFirstName );
+                       _user.setIsMale( (short) (bIsMale ? 1 : 0) );
+                       _user.setIdLocale( _local );
+                       _user.setPassword( sPassword );
+                       _user.setSecondName( sSecondName );
+                       _user.setQuota( nQuota );
 
-                // Create home directory for user
-                if( FileSystemTools.createAccount( _user.getAccount() ) )
-                {
-                    user = new User( _user );
-                    
-                    // When code arrives to this point, everything was OK: now can commit
-                    this.em.getTransaction().commit();
-                }
-                else
-                {
-                    throw new IOException( "Can't create user home directory" );
-                }
-            }
-            catch( Exception exc )
-            {
-                Constant.getLogger().severe( "Error creating user\n"+
-                                             "Check that AppServer has enough priviledges." );
-            }
-            finally 
-            {
-                if( this.em.getTransaction().isActive() )
-                    this.em.getTransaction().rollback();
-            }
+            em.persist( _user );
+
+            // Creates root ("/") in FILES DB table
+            FileEntityPK _fepk = new FileEntityPK();   // TODO: no estoy seguro que esto sirva
+                       //_fepk.setIdParent( null );
+                         _fepk.setIsDir( (short) 1 );
+                         _fepk.setName( "/" );
+
+            FileEntity _file = new FileEntity();
+                       _file.setFileEntityPK( _fepk );
+                       _file.setAccount( _user.getAccount() );
+                       _file.setFullPath( "/" );
+                       _file.setIsAlterable(  (short) 0 );
+                       _file.setIsDeleteable( (short) 0 );
+                       _file.setIsDuplicable( (short) 0 );
+                       _file.setIsExecutable( (short) 0 );
+                       _file.setIsHidden(     (short) 0 );
+                       _file.setIsInTrashcan( (short) 0 );
+                       _file.setIsLocked(     (short) 0 );
+                       _file.setIsModifiable( (short) 0 );
+                       _file.setIsPublic(     (short) 0 );
+                       _file.setIsSystem(     (short) 1 );
+                       _file.setAccessed( new Date() );
+                       _file.setCreated(  _file.getAccessed() );
+                       _file.setModified( _file.getAccessed() );                       
+
+            em.persist( _file );
+
+            // Create home directory for user
+            FileSystemTools.createAccount( _user.getAccount() );
+
+            user = new User( _user );
+
+            // When code arrives to this point, everything was OK: now can commit
+            em.getTransaction().commit();
+        }
+        catch( RuntimeException exc )
+        {
+            Constant.getLogger().throwing( getClass().getName(), "createUser(...)", exc );
+            throw new JoingServerUserException( JoingServerException.ACCESS_DB, exc );
+        }
+        catch( IOException exc )
+        {
+            Constant.getLogger().log( Level.SEVERE, "Error creating user. Check that AppServer has enough priviledges." );
+            Constant.getLogger().throwing( getClass().getName(), "createUser(...)", exc );
+            throw new JoingServerUserException( JoingServerException.ACCESS_NFS );
+        }
+
+        finally 
+        {
+            if( em.getTransaction().isActive() )
+                em.getTransaction().rollback();
         }
         
         return user;
     }
     
     public void removeUser( User user )
+           throws JoingServerUserException
     {
         try
         {
-            this.em.getTransaction().begin();
+            em.getTransaction().begin();
      
             // Removes user from USERS table
             UserEntity _user = new UserEntity();
                         
             user.update( _user );
 
-            this.em.remove( _user );
+            em.remove( _user );
 
             // Removes all files from FILES table
-            Query query = this.em.createQuery( "delete from FileEntity f where f.account = "+ user.getAccount() );
+            Query query = em.createQuery( "delete from FileEntity f where f.account = "+ user.getAccount() );
                   query.executeUpdate();
 
             // Removes all files from FS
-            FileSystemTools.removeAccount( _user.getAccount() );
+            if( ! FileSystemTools.removeAccount( _user.getAccount() ) )
+                Constant.getLogger().log( Level.SEVERE, "Can't delete user directory ("+ user.getAccount() +
+                                                        "): has to be done manually." );
             
-            this.em.getTransaction().commit();
+            em.getTransaction().commit();
         }
-        catch( Exception exc )
+        catch( RuntimeException exc )
         {
-            Constant.getLogger().severe( "Error deleting user\n"+
-                                         "Check that AppServer has enough priviledges." );
+            Constant.getLogger().throwing( getClass().getName(), "removeUser(...)", exc );
+            throw new JoingServerUserException( JoingServerException.ACCESS_DB, exc );
         }
         finally 
         {
-            if( this.em.getTransaction().isActive() )
-                this.em.getTransaction().rollback();
+            if( em.getTransaction().isActive() )
+                em.getTransaction().rollback();
         }
+    }
+    
+    static String getAccountRestrictions()
+    {
+        return "Invalid account (user name). It has to follow these rules:"+ 
+               "\n   * Minimum length = "+ nMIN_LEN +
+               "\n   * Maximum length = "+ nMAX_LEN +
+               "\n   * Numbers and lowercase letters"+
+               "\n   * Following characters: '.' '-' '_'";
+    }
+    
+    static String getPasswordRestrictions()
+    {
+        return "Invalid password length, minimum = "+ 
+               nMIN_LEN +" and maximum = "+ nMAX_LEN + 
+               "characters.";
     }
     
     //------------------------------------------------------------------------//
     
     private boolean isValidAccount( String s )
     {
-        boolean bValid = (s != null) && (s.length() >= 6) && (s.length() <= 32);
-        char[]  ac     = s.toCharArray();  // Unicode can be converted to char (both are 16 bits)
+        boolean bValid = false;
         
-        if( bValid )
+        if( (s != null)              && 
+            (s.length() >= nMIN_LEN) && 
+            (s.length() <= nMAX_LEN) )
         {
+            char[] ac = s.toCharArray();  // Unicode can be converted to char (both are 16 bits)
+            
             for( int n = 0; n < ac.length; n++ )
             {
                 bValid = (ac[n] >= 48 && ac[n] <=  57) ||   // Is number
@@ -267,29 +332,48 @@ public class UserManagerBean
     
     private boolean isValidPassword( String s )
     {
-        return (s != null        && 
-                s.length() >=  6 && 
-                s.length() <= 32);
+        return (s != null              && 
+                s.length() >= nMIN_LEN && 
+                s.length() <= nMAX_LEN );
     }
     
-    private LocaleEntity findIdLocale( Locale locale )
+    private LocaleEntity findLocale( Locale locale )
+            throws JoingServerUserException
     {
         LocaleEntity _local = null;
         
-        Query query = this.em.createQuery( "SELECT l FROM LocaleEntity "+
-                                           " WHERE l.language = '"+ locale.getLanguage() +"'"+ 
-                                           "   AND l.country ='"+ locale.getCountry() +"'" );
+        if( locale == null )
+            Locale.getDefault();
+        
         try
         {
+            Query query = em.createQuery( "SELECT l FROM LocaleEntity "+
+                                      " WHERE l.language = '"+ locale.getLanguage() +"'"+ 
+                                      "   AND l.country ='"+ locale.getCountry() +"'" );
+            
             _local = (LocaleEntity) query.getSingleResult();
         }
-        catch( Exception exc )
+        catch( NoResultException exc )
         {
-            // Nothing to do: requested locale does not exists (and it is already == 1)
+            // Nothing to do: requested locale does not exists (and it is already == null)
+        }
+        catch( RuntimeException exc )
+        {
+            Constant.getLogger().throwing( getClass().getName(), "findLocale(...)", exc );
+            throw new JoingServerUserException( JoingServerException.ACCESS_DB, exc );
         }
         
+        return _local;
+    }
+    
+    // The locale returned when the requested one does not exists
+    private LocaleEntity getDefaultLocale()
+            throws JoingServerUserException
+    {
+        LocaleEntity _local = findLocale( Locale.US );
+        
         if( _local == null )
-            _local = this.em.find( LocaleEntity.class, 1 );
+            Constant.getLogger().log( Level.SEVERE, "Table with Locales is wmpty: can't work." );
         
         return _local;
     }

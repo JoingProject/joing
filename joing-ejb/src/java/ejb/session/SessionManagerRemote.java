@@ -30,12 +30,14 @@ public interface SessionManagerRemote
      *                meanwhile the session is alive. Or <code>null</null> if the
      *                Account and/or Password were invalid.
      */
-    LoginResult login( String sAccount, String sPassword );
+    LoginResult login( String sAccount, String sPassword )
+                throws JoingServerSessionException;
     
     /**
      * Closes an existing session.
      *
      * @param sSessionId An existing Session ID.
      */
-    void logout( String sSessionId );
+    void logout( String sSessionId )
+         throws JoingServerSessionException;
 }

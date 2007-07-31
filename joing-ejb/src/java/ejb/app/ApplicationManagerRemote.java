@@ -22,9 +22,10 @@ public interface ApplicationManagerRemote
      * went wrong.
      *
      * @param sSessionId A valid session (sSessionId in order to obtain the user).
-     * @return List  of applications matching the criteria.
+     * @return List of applications matching the criteria.
      */
-    List<AppsByGroup> getAvailableForUser( String sSessionId );
+    List<AppsByGroup> getAvailableForUser( String sSessionId )
+                      throws JoingServerAppException;
     
     /**
      * Retrieve a <code>List</code> with instances of <code>Application</code> 
@@ -36,9 +37,10 @@ public interface ApplicationManagerRemote
      * or will be <code>null</code> if something went wrong.
      *
      * @param sSessionId A valid session (sSessionId in order to obtain the user).
-     * @return List  of applications matching the criteria.
+     * @return List of applications matching the criteria.
      */
-    List<AppsByGroup> getNotInstalledForUser( String sSessionId );
+    List<AppsByGroup> getNotInstalledForUser( String sSessionId )
+                      throws JoingServerAppException;
     
     /**
      * Retrieve a <code>List</code> with instances of <code>Application</code> 
@@ -50,9 +52,10 @@ public interface ApplicationManagerRemote
      * or will be <code>null</code> if something went wrong.
      *
      * @param sSessionId A valid session (sSessionId in order to obtain the user).
-     * @return List  of applications matching the criteria.
+     * @return List of applications matching the criteria.
      */
-    List<AppsByGroup> getInstalledForUser( String sSessionId );
+    List<AppsByGroup> getInstalledForUser( String sSessionId )
+                      throws JoingServerAppException;
     
     /**
      * Mark an application as to be installed for certain user.
@@ -60,9 +63,10 @@ public interface ApplicationManagerRemote
      * This only means that the application will be shown in the user's menu.
      *
      * @param sSessionId A valid session (sSessionId in order to obtain the user).
-     * @param app The <CODE>Application</CODE> instance to be installed.
+     * @param app The <code>Application</code> instance to be installed.
      */
-    boolean install( String sSessionId, Application app );
+    boolean install( String sSessionId, Application app )
+            throws JoingServerAppException;
     
     /**
      * Mark an application as not installed for certain user.
@@ -70,9 +74,10 @@ public interface ApplicationManagerRemote
      * This only means that the application will not be shown in the user's menu.
      *
      * @param sSessionId A valid session (sSessionId in order to obtain the user).
-     * @param app The <CODE>Application</CODE> instance to be uninstalled.
+     * @param app The <code>Application</code> instance to be uninstalled.
      */
-    boolean uninstall( String sSessionId, Application app );
+    boolean uninstall( String sSessionId, Application app )
+            throws JoingServerAppException;
     
     /**
      * Returns the prefrerred application (if any) for requested file extension.
@@ -86,5 +91,6 @@ public interface ApplicationManagerRemote
      * @return The prefrerred application or <code>null</code> if there is not a
      *         registered application for this file extension
      */
-    Application getPreferredForType( String sSessionId, String sFileExtension );
+    Application getPreferredForType( String sSessionId, String sFileExtension )
+                throws JoingServerAppException;
 }

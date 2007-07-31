@@ -10,6 +10,7 @@
 package ejb.session;
 
 import ejb.Constant;
+import ejb.JoingServerException;
 import ejb.user.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -27,7 +28,7 @@ import javax.persistence.EntityManager;
  */
 @Stateless
 public class SessionManagerBean
-       implements SessionManagerLocal, SessionManagerRemote, Serializable // TODO Hacer lo del seriazable
+       implements SessionManagerRemote, SessionManagerLocal, Serializable
 {
     @PersistenceContext
     private EntityManager em;
@@ -36,36 +37,45 @@ public class SessionManagerBean
     // INTERFACE REMOTE
     
     public LoginResult login( String sAccount, String sPassword )
+           throws JoingServerSessionException
     {
         LoginResult result = new LoginResult();
         
         if( sAccount != null && sPassword != null )
         {
-            UserEntity _user = this.em.find( UserEntity.class, sAccount );
-
-            // TODO: la password tiene que estar encriptada en la DB,
-            //       por lo que aquí habría que des-encriptarla
-            if( _user != null )
+            try
             {
-                result.setAccountValid( true );
-                
-                if( _user.getPassword().equals( sPassword ) )
-                {
-                    result.setPasswordValid( true );
-                    
-                    // If _user has already a Session (an entry in Sessions 
-                    // table), it will be deleted by the SessionTimer at due 
-                    // time: it is more secure to create a new SessionId than 
-                    // using an existing one.
-                    SessionEntity _session = new SessionEntity();
-                                  _session.setIdSession( generateSessionId() );
-                                  _session.setAccount( _user.getAccount() );
-                                  _session.setCreated(  new Date() );
-                                  _session.setAccessed( new Date() );
+                UserEntity _user = em.find( UserEntity.class, sAccount );
 
-                    em.persist( _session );
-                    result.setSessionId( _session.getIdSession() );
+                // TODO: la password tiene que estar encriptada en la DB,
+                //       por lo que aquí habría que des-encriptarla
+                if( _user != null )
+                {
+                    result.setAccountValid( true );
+
+                    if( _user.getPassword().equals( sPassword ) )
+                    {
+                        result.setPasswordValid( true );
+
+                        // If _user has already a Session (an entry in Sessions 
+                        // table), it will be deleted by the SessionTimer at due 
+                        // time: it is more secure to create a new SessionId than 
+                        // using an existing one.
+                        SessionEntity _session = new SessionEntity();
+                                      _session.setIdSession( generateSessionId() );
+                                      _session.setAccount( _user.getAccount() );
+                                      _session.setCreated(  new Date() );
+                                      _session.setAccessed( new Date() );
+
+                        em.persist( _session );
+                        result.setSessionId( _session.getIdSession() );
+                    }
                 }
+            }
+            catch( RuntimeException exc )
+            {
+                Constant.getLogger().throwing( getClass().getName(), "login(...)", exc );
+                throw new JoingServerSessionException( JoingServerException.ACCESS_DB, exc );
             }
         }
         
@@ -73,19 +83,21 @@ public class SessionManagerBean
     }
     
     public void logout( String sSessionId )
+           throws JoingServerSessionException
     {
         if( sSessionId != null )
         {
             try
             {
-                SessionEntity _session = this.em.find( SessionEntity.class, sSessionId );
+                SessionEntity _session = em.find( SessionEntity.class, sSessionId );
 
                 if( _session != null )
-                    this.em.remove( _session );
+                    em.remove( _session );
             }
-            catch( Exception exc )
+            catch( RuntimeException exc )
             {
                 Constant.getLogger().throwing( getClass().getName(), "logout(...)", exc );
+                throw new JoingServerSessionException( JoingServerException.ACCESS_DB, exc );
             }
         }
     }
@@ -94,24 +106,39 @@ public class SessionManagerBean
     // INTERFACE LOCAL
     
     public String getUserAccount( String sSessionId )
+           throws JoingServerSessionException
     {
-        SessionEntity _session = this.em.find( SessionEntity.class, sSessionId );
-            
-        // As User.Account is used extensively, getUserAccount(...) will be invoked
-        // very frecuently, and therefore is a good place to update the TimeStamp
-        // (last time the session was accessed).
-        _session.setAccessed( new Date( System.currentTimeMillis() ) );
-        this.em.persist( _session );
-                
+        SessionEntity _session = null;
+        
+        try
+        {
+            _session = em.find( SessionEntity.class, sSessionId );
+        
+            // As User.Account is used extensively, getUserAccount(...) will be invoked
+            // very frecuently, and therefore is a good place to update the TimeStamp
+            // (last time the session was accessed).
+            if( _session != null )
+            {
+                _session.setAccessed( new Date( System.currentTimeMillis() ) );
+                this.em.persist( _session );
+            }
+        }
+        catch( RuntimeException exc )
+        {
+            Constant.getLogger().throwing( getClass().getName(), "getUserAccount(...)", exc );
+            throw new JoingServerSessionException( JoingServerException.ACCESS_DB, exc );
+        }
+        
         return ((_session == null) ? null : _session.getAccount());
     }
     
     public boolean isAccountAvailable( String sAccount )
+           throws JoingServerSessionException
     {
         if( sAccount == null )
             return false;
         else
-            return (this.em.find( UserEntity.class, sAccount ) == null);
+            return (em.find( UserEntity.class, sAccount ) == null);
     }
     
     //------------------------------------------------------------------------//

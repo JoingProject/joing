@@ -19,7 +19,8 @@ public interface UserManagerRemote
      * @return User A DTO representing the UserEntity that holds this Session,
      *         or <code>null</code> if sSessionId was not found.
      */
-    User getUser( String sSessionId );
+    User getUser( String sSessionId )
+         throws JoingServerUserException;
     
     /**
      * Update user information.
@@ -27,7 +28,8 @@ public interface UserManagerRemote
      * @param  sSessionId An existing SessionId
      * @param user The user to be updated
      */
-    void updateUser( String sSessionId, User user );
+    void updateUser( String sSessionId, User user )
+         throws JoingServerUserException;
 
     /**
      * Returns all available locales (can be used by users to select their one).
@@ -35,5 +37,6 @@ public interface UserManagerRemote
      * @param  sSessionId An existing SessionId
      * @return All available locales or null if something goes wrong.
      */
-    List<Local> getAvailableLocales( String sSessionId );
+    List<Local> getAvailableLocales( String sSessionId )
+                throws JoingServerUserException;
 }

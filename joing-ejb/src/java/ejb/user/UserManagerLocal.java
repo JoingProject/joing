@@ -46,12 +46,14 @@ public interface UserManagerLocal extends UserManagerRemote
      */
     User createUser( String sAccount, String sPassword, String sEmail,
                      String sFirstName, String sSecondName, 
-                     boolean bIsMale, Locale locale, int nQuota );
+                     boolean bIsMale, Locale locale, int nQuota )
+         throws JoingServerUserException;
     
     /**
      * Delete the user and all his/her information.
      *
      * @param user The user to be deleted
      */
-    void removeUser( User user );
+    void removeUser( User user )
+         throws JoingServerUserException;
 }

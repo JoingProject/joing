@@ -18,6 +18,7 @@
             </test-roots>
             <included-library files="1">reference.joing-ejb.dist</included-library>
         </data>
+        <junit-version xmlns="http://www.netbeans.org/ns/junit/1" value="junit4"/>
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>
                 <foreign-project>joing-ejb</foreign-project>

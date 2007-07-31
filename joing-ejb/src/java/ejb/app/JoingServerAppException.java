@@ -1,33 +1,46 @@
 /*
- * VfsFileManagerBean.java
- *
- * Created on 8 de junio de 2007, 11:59
- *
- * Copyright (C) 2007 Francisco Morero Peyrona
- *
+ * JoingServerAppException.java
+ * 
+ * Created on 31-jul-2007, 10:05:32
+ * 
+ * Author: Francisco Morero Peyrona.
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or (at
  * your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+package ejb.app;
 
-package ejb.vfs;
-
-import javax.ejb.Local;
+import ejb.JoingServerException;
 
 /**
- * This is the business interface for VfsFileManager enterprise bean.
+ *
+ * @author fmorero
  */
-@Local
-public interface FileManagerLocal extends FileManagerRemote
+public class JoingServerAppException extends JoingServerException
 {
+    public JoingServerAppException() 
+    {
+        super();
+    }
+    
+    public JoingServerAppException( String message )
+    {
+        super( message );
+    }
+    
+    public JoingServerAppException( String message, Throwable cause )
+    {
+        super( message, cause );
+    }
 }
