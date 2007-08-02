@@ -6,14 +6,17 @@
 
 package servlets.app;
 
-import ejb.app.Application;
+import ejb.JoingServerException;
+import ejb.app.AppDescriptor;
 import ejb.app.ApplicationManagerLocal;
+import ejb.vfs.JoingServerVFSException;
 import java.io.*;
 import java.net.*;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import servlets.JoingServerServletException;
 
 /**
  *
@@ -41,7 +44,7 @@ public class Install extends HttpServlet
         {
             // Read from client (desktop)
             String      sSessionId  = (String)      reader.readObject();
-            Application application = (Application) reader.readObject();
+            AppDescriptor application = (AppDescriptor) reader.readObject();
             
             // Process request
             boolean bSuccess = applicationManagerBean.install( sSessionId, application );
@@ -53,6 +56,12 @@ public class Install extends HttpServlet
         catch( ClassNotFoundException exc )
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
+            throw new JoingServerServletException( getClass(), exc );
+        }
+        catch( JoingServerException exc )
+        {
+            writer.writeObject( exc );
+            writer.flush();
         }
         finally
         {

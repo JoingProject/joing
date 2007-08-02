@@ -16,8 +16,10 @@ import java.util.Locale;
  *
  * @author fmorero
  */
-public class User implements Serializable   // TODO: terminar el serializable
+public class User implements Serializable
 {
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    
     private String  account;      // read-only
     private String  email;
     private String  firstName;

@@ -21,11 +21,11 @@
  */
 package org.joing;
 
-import ejb.app.Application;
+import org.joing.runtime.bridge2server.*;
+import ejb.app.AppDescriptor;
 import ejb.session.LoginResult;
 import ejb.user.User;
 import javax.swing.JOptionPane;
-import org.joing.runtime.bridge2server.Bridge2Server;
 
 /**
  *
@@ -41,7 +41,7 @@ public class TestServer
     {
         Bridge2Server b2s = Bridge2Server.getInstance();
         
-        System.out.println("Main started");
+        System.out.println( "Main started" );
         
         LoginResult result = b2s.getSessionBridge().login( "peyrona", "admin" );
         
@@ -58,11 +58,12 @@ public class TestServer
             System.out.println("User Locale  = "+ user.getLocale() );
             System.out.println("-------------------------------------------");
             
-            Application app = b2s.getAppBridge().getPreferredForType( "txt" );
+            AppDescriptor app = b2s.getAppBridge().getPreferredForType( "txt" );
             if( app != null )
             {
                 System.out.println("App Name  = "+ app.getName() );
                 System.out.println("App Desc. = "+ app.getDescription() );
+                System.out.println("-------------------------------------------");
             }
             
             b2s.getSessionBridge().logout();
@@ -76,6 +77,6 @@ public class TestServer
                 JOptionPane.showMessageDialog( null, "Can't login: invalid password" );
         }
         
-        System.out.println("Main finished");
+        System.out.println( "Main finished" );
     }
 }

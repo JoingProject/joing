@@ -54,6 +54,8 @@ import javax.persistence.Query;
 public class FileManagerBean 
        implements FileManagerRemote, FileManagerLocal, Serializable
 {
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    
     @PersistenceContext
     private EntityManager em;
     
@@ -89,7 +91,7 @@ public class FileManagerBean
             try
             {
                 if( ! isOwnerOfFile( sAccount, fileIn.getId() ) )
-                    throw new JoingServerVFSException( JoingServerException.INVALID_OWNER );
+                    throw new JoingServerVFSException( JoingServerVFSException.INVALID_OWNER );
                 
                 // Get the original file
                 FileEntity _file = em.find( FileEntity.class, fileIn.getId() );
@@ -109,7 +111,7 @@ public class FileManagerBean
                         throw new JoingServerVFSException( sNameErrors );
 
                     if( exists( _file.getFileEntityPK().getIdParent(), sNameNew, fileIn.isDirectory() ) )
-                        throw new JoingServerVFSException( "New file name '"+ sNameNew +"' already exists." );
+                        throw new JoingServerVFSException( JoingServerVFSException.FILE_NAME_EXISTS );
                     
                     _file.getFileEntityPK().setName( sNameNew );
                 }
@@ -127,7 +129,7 @@ public class FileManagerBean
                 if( ! (exc instanceof JoingServerException) )
                 {
                     Constant.getLogger().throwing( getClass().getName(), "updateFile(...)", exc );
-                    exc = new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
+                    exc = new JoingServerVFSException( JoingServerException.ACCESS_DB, exc );
                 }
                 
                 throw exc;
@@ -165,12 +167,13 @@ public class FileManagerBean
         if( sAccount != null )
         {
             if( ! isOwnerOfFile( sAccount, nFileId ) )
-                throw new JoingServerVFSException( JoingServerException.INVALID_OWNER );
+                throw new JoingServerVFSException( JoingServerVFSException.INVALID_OWNER );
             
             try
             {
                 String            sNative = Integer.toString( nFileId );
                 java.io.File      fNative = FileSystemTools.getFile( sAccount, sNative );
+                
                 FileInputStream   fis     = new FileInputStream( fNative );
                 InputStreamReader isw     = new InputStreamReader( fis, sEncoding );
                 BufferedReader    br      = new BufferedReader( isw );
@@ -191,7 +194,7 @@ public class FileManagerBean
                 if( ! (exc instanceof JoingServerException) )
                 {
                     Constant.getLogger().throwing( getClass().getName(), "readTextFile(...)", exc );
-                    exc = new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
+                    exc = new JoingServerVFSException( JoingServerException.ACCESS_DB, exc );
                 }
                 
                 throw exc;
@@ -199,7 +202,7 @@ public class FileManagerBean
             catch( IOException exc )
             {
                 Constant.getLogger().throwing( getClass().getName(), "readTextFile(...)", exc );
-                throw new JoingServerVFSException( JoingServerVFSException.ACCESS_NFS, exc );
+                throw new JoingServerVFSException( JoingServerException.ACCESS_NFS, exc );
             }
         }
         
@@ -215,12 +218,13 @@ public class FileManagerBean
         if( sAccount != null )
         {
             if( ! isOwnerOfFile( sAccount, nFileId ) )
-                throw new JoingServerVFSException( JoingServerException.INVALID_OWNER );
+                throw new JoingServerVFSException( JoingServerVFSException.INVALID_OWNER );
             
             try
             {
                 String          sNative = Integer.toString( nFileId );
                 java.io.File    fNative = FileSystemTools.getFile( sAccount, sNative );
+                
                 FileInputStream fis     = new FileInputStream( fNative );
                 FileEntity      _file   = em.find( FileEntity.class, nFileId );
                                 _file.setAccessed( new Date() );
@@ -236,7 +240,7 @@ public class FileManagerBean
                 if( ! (exc instanceof JoingServerException) )
                 {
                     Constant.getLogger().throwing( getClass().getName(), "readBinaryFile(...)", exc );
-                    exc = new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
+                    exc = new JoingServerVFSException( JoingServerException.ACCESS_DB, exc );
                 }
                 
                 throw exc;
@@ -244,7 +248,7 @@ public class FileManagerBean
             catch( IOException exc )
             {
                 Constant.getLogger().throwing( getClass().getName(), "readBinaryFile(...)", exc );
-                throw new JoingServerVFSException( JoingServerVFSException.ACCESS_NFS, exc );
+                throw new JoingServerVFSException( JoingServerException.ACCESS_NFS, exc );
             }
         }
         
@@ -265,12 +269,13 @@ public class FileManagerBean
         if( sAccount != null )
         {
             if( ! isOwnerOfFile( sAccount, fileText.getId() ) )
-                throw new JoingServerVFSException( JoingServerException.INVALID_OWNER );
+                throw new JoingServerVFSException( JoingServerVFSException.INVALID_OWNER );
             
             try
             {
                 String             sNative  = Integer.toString( fileText.getId() );
                 java.io.File       fNative  = FileSystemTools.getFile( sAccount, sNative );
+                
                 BufferedReader     reader   = fileText.getContent();
                 OutputStreamWriter writer   = new OutputStreamWriter( new FileOutputStream( fNative ), "UTF16" );
                 char[]             acBuffer = new char[ 1024*8 ];
@@ -300,7 +305,7 @@ public class FileManagerBean
                 if( ! (exc instanceof JoingServerException) )
                 {
                     Constant.getLogger().throwing( getClass().getName(), "writeTextFile(...)", exc );
-                    exc = new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
+                    exc = new JoingServerVFSException( JoingServerException.ACCESS_DB, exc );
                 }
                 
                 throw exc;
@@ -308,7 +313,7 @@ public class FileManagerBean
             catch( IOException exc )
             {
                 Constant.getLogger().throwing( getClass().getName(), "writeTextFile(...)", exc );
-                throw new JoingServerVFSException( JoingServerVFSException.ACCESS_NFS, exc );
+                throw new JoingServerVFSException( JoingServerException.ACCESS_NFS, exc );
             }
         }
         
@@ -324,12 +329,13 @@ public class FileManagerBean
         if( sAccount != null )
         {
             if( ! isOwnerOfFile( sAccount, fileBinary.getId() ) )
-                throw new JoingServerVFSException( JoingServerException.INVALID_OWNER );
+                throw new JoingServerVFSException( JoingServerVFSException.INVALID_OWNER );
             
             try
             {
                 String           sNative  = Integer.toString( fileBinary.getId() );
                 java.io.File     fNative  = FileSystemTools.getFile( sAccount, sNative );
+                
                 InputStream      reader   = fileBinary.getContent();
                 FileOutputStream writer   = new FileOutputStream( fNative );
                 byte[]           abBuffer = new byte[ 1024*8 ];
@@ -359,7 +365,7 @@ public class FileManagerBean
                 if( ! (exc instanceof JoingServerException) )
                 {
                     Constant.getLogger().throwing( getClass().getName(), "writeBinaryFile(...)", exc );
-                    exc = new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
+                    exc = new JoingServerVFSException( JoingServerException.ACCESS_DB, exc );
                 }
                 
                 throw exc;
@@ -367,7 +373,7 @@ public class FileManagerBean
             catch( IOException exc )
             {
                 Constant.getLogger().throwing( getClass().getName(), "writeBinaryFile(...)", exc );
-                throw new JoingServerVFSException( JoingServerVFSException.ACCESS_NFS, exc );
+                throw new JoingServerVFSException( JoingServerException.ACCESS_NFS, exc );
             }
         }
         
@@ -393,7 +399,7 @@ public class FileManagerBean
         if( sAccount != null )
         {
             if( ! isOwnerOfFile( sAccount, nFileId ) )
-                throw new JoingServerVFSException( JoingServerException.INVALID_OWNER );
+                throw new JoingServerVFSException( JoingServerVFSException.INVALID_OWNER );
               
             // TODO: hacerlo
             /*
@@ -487,6 +493,8 @@ public class FileManagerBean
         return anFileErr;
     }
     
+    //------------------------------------------------------------------------//
+    // LOCAL INTERFACE
     /**
      * This is a method needed just because I can't find a way to return an 
      * stream from an EJB method (streams can't be serialized).
@@ -494,22 +502,21 @@ public class FileManagerBean
      * <p>
      * This is the reason why this method is accesible only from @Local.
      * 
-     * @param sSessionId The session ID assigned to client at login
+     * @param sAccount The user account
      * @param nFileId The result of invokink <code>File.getId()</code>
      * @param bToWrite <code>true</code> if the file is going to be used to 
      *        write and <code>false</code> if will be used to read only.
      */
-    //java.io.File getNativeFile( String sSessionId, int nFileId, boolean bToWrite );
-    /*public java.io.File getNativeFile( String sSessionId, int nFileId, boolean bToWrite )
+    //java.io.File getNativeFile( String sAccount, int nFileId, boolean bToWrite );
+    /*public java.io.File getNativeFile( String sAccount, int nFileId, boolean bToWrite )
     {
-        java.io.File fNative  = null;
-        String       sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        java.io.File fNative = null;
         
-        if( sAccount != null && isOwnerOfFile( sAccount, nFileId ) )
+        if( isOwnerOfFile( sAccount, nFileId ) )
         {            
             fNative = FileSystemTools.getFile( sAccount, Integer.toString( nFileId ) );
             
-            FileEntity _file = getFileEntityById( nFileId );
+            FileEntity _file = em.find( FileEntity.class, nFileId );
                        _file.setAccessed( new Date() );
                        
             if( bToWrite )
@@ -605,7 +612,7 @@ public class FileManagerBean
                 if( ! (exc instanceof JoingServerException) )
                 {
                     Constant.getLogger().throwing( getClass().getName(), "path2File(...)", exc );
-                    exc = new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
+                    exc = new JoingServerVFSException( JoingServerException.ACCESS_DB, exc );
                 }
             
                 throw exc;
@@ -633,7 +640,7 @@ public class FileManagerBean
                 throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
             
             if( ! _file.getAccount().equals( sAccount ) )   // Is sAccount the owner of the file? 
-                throw new JoingServerVFSException( JoingServerException.INVALID_OWNER );
+                throw new JoingServerVFSException( JoingServerVFSException.INVALID_OWNER );
 
             if( _file.getFileEntityPK().getIsDir() != 0 )   // Is a directory
             {
@@ -662,7 +669,7 @@ public class FileManagerBean
             if( ! (exc instanceof JoingServerException) )
             {
                 Constant.getLogger().throwing( getClass().getName(), "_trashcan(...)", exc );
-                exc = new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
+                exc = new JoingServerVFSException( JoingServerException.ACCESS_DB, exc );
             }
             
             throw exc;
@@ -689,7 +696,7 @@ public class FileManagerBean
                 throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
             
             if( ! _file.getAccount().equals( sAccount ) )   // Is sAccount the owner of the file?
-                throw new JoingServerVFSException( JoingServerException.INVALID_OWNER );
+                throw new JoingServerVFSException( JoingServerVFSException.INVALID_OWNER );
 
             if( _file.getIsDeleteable() == 0 )   // Marked as not deleteable
                 throw new JoingServerVFSException( JoingServerVFSException.NOT_DELETEABLE );
@@ -726,7 +733,7 @@ public class FileManagerBean
             if( ! (exc instanceof JoingServerException) )
             {
                 Constant.getLogger().throwing( getClass().getName(), "_delete(...)", exc );
-                exc = new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
+                exc = new JoingServerVFSException( JoingServerException.ACCESS_DB, exc );
             }
             
             throw exc;
@@ -750,7 +757,7 @@ public class FileManagerBean
         if( sAccount != null )
         {
             if( ! isOwnerOfFile( sAccount, nParentId ) )
-                throw new JoingServerVFSException( JoingServerException.INVALID_OWNER );
+                throw new JoingServerVFSException( JoingServerVFSException.INVALID_OWNER );
                 
             String sNameErrors = validateName( sChild );
             
@@ -813,7 +820,7 @@ public class FileManagerBean
                 if( ! (exc instanceof JoingServerException) )
                 {
                     Constant.getLogger().throwing( getClass().getName(), "createEntry(...)", exc );
-                    exc = new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
+                    exc = new JoingServerVFSException( JoingServerException.ACCESS_DB, exc );
                 }
             
                 throw exc;
@@ -821,7 +828,7 @@ public class FileManagerBean
             catch( IOException exc )
             {
                 Constant.getLogger().throwing( getClass().getName(), "createEntry(...)", exc );
-                throw new JoingServerVFSException( JoingServerVFSException.ACCESS_NFS, exc );
+                throw new JoingServerVFSException( JoingServerException.ACCESS_NFS, exc );
             }
             finally
             {
@@ -846,7 +853,7 @@ public class FileManagerBean
         catch( RuntimeException exc )
         {
             Constant.getLogger().throwing( getClass().getName(), "getParentEntity(...)", exc );
-            throw new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
+            throw new JoingServerVFSException( JoingServerException.ACCESS_DB, exc );
         }
         
         return _feParent;
@@ -872,7 +879,7 @@ public class FileManagerBean
         catch( RuntimeException exc )
         {
             Constant.getLogger().throwing( getClass().getName(), "exists(...)", exc );
-            throw new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
+            throw new JoingServerVFSException( JoingServerException.ACCESS_DB, exc );
         }
         
         return bExists;
@@ -897,7 +904,7 @@ public class FileManagerBean
         catch( RuntimeException exc )
         {
             Constant.getLogger().throwing( getClass().getName(), "isOwnerOfFile(...)", exc );
-            throw new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );    
+            throw new JoingServerVFSException( JoingServerException.ACCESS_DB, exc );    
         }
         
         return bIsOwner;

@@ -6,6 +6,7 @@
 
 package servlets.user;
 
+import ejb.JoingServerException;
 import ejb.user.User;
 import ejb.user.UserManagerLocal;
 import java.io.*;
@@ -14,6 +15,7 @@ import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import servlets.JoingServerServletException;
 
 /**
  *
@@ -36,7 +38,8 @@ public class UpdateUser extends HttpServlet
     {
         response.setContentType( "application/octet-stream" );
         
-        ObjectInputStream reader = new ObjectInputStream( request.getInputStream() );
+        ObjectInputStream reader  = new ObjectInputStream( request.getInputStream() );
+        ObjectOutputStream writer = new ObjectOutputStream( response.getOutputStream() );
         
         try
         {
@@ -45,11 +48,21 @@ public class UpdateUser extends HttpServlet
             User   user       = (User)   reader.readObject();
             
             // Process request
-            userManagerBean.updateUser( sSessionId, user );
+            user = userManagerBean.updateUser( sSessionId, user );
+            
+            // Write to Client (desktop)
+            writer.writeObject( user );
+            writer.flush();
         }
         catch( ClassNotFoundException exc )
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
+            throw new JoingServerServletException( getClass(), exc );
+        }
+        catch( JoingServerException exc )
+        {
+            writer.writeObject( exc );
+            writer.flush();
         }
         finally
         {

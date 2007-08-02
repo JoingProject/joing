@@ -1,39 +1,53 @@
 /*
- * GetChilds.java
- *
- * Created on 1 de julio de 2007, 18:03
+ * GetApplication.java
+ * 
+ * Created on 01-ago-2007, 16:28:50
+ * 
+ * Author: Francisco Morero Peyrona.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-
-package servlets.vfs;
+package servlets.app;
 
 import ejb.JoingServerException;
-import servlets.JoingServerServletException;
+import ejb.app.Application;
+import ejb.app.ApplicationManagerLocal;
 import ejb.vfs.JoingServerVFSException;
-import ejb.vfs.ListManagerLocal;
 import java.io.*;
 import java.net.*;
-import java.util.List;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import servlets.JoingServerServletException;
 
 /**
  *
  * @author fmorero
- * @version
  */
-public class GetChilds extends HttpServlet
-{
+public class GetApplication extends HttpServlet
+{   
     @EJB
-    private ListManagerLocal listManagerBean;
+    private ApplicationManagerLocal applicationManagerBean;
     
     /** Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
      * @param response servlet response
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-              throws ServletException, IOException
+    throws ServletException, IOException
     {
         response.setContentType( "application/octet-stream" );
         
@@ -43,26 +57,14 @@ public class GetChilds extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String sSessionId = (String) reader.readObject();
-            Object o2ndParam  =          reader.readObject();
-            List<ejb.vfs.FileDescriptor> files = null;
+            String sSessionId = (String)  reader.readObject();
+            int    nAppId     = (Integer) reader.readObject();
             
             // Process request
-            if( o2ndParam instanceof Integer )
-            {
-                Integer nFileDirId = (Integer) o2ndParam;
-                
-                files = listManagerBean.getChilds( sSessionId, nFileDirId );
-            }
-            else
-            {
-                String sDirPath = (String) o2ndParam;
-                
-                files = listManagerBean.getChilds( sSessionId, sDirPath );
-            }
+            Application app = applicationManagerBean.getApplication( sSessionId, nAppId );
             
             // Write to Client (desktop)
-            writer.writeObject( files );
+            writer.writeObject( app );
             writer.flush();
         }
         catch( ClassNotFoundException exc )
@@ -84,32 +86,32 @@ public class GetChilds extends HttpServlet
                 try{ writer.close(); } catch( IOException exc ) { }
         }
     }
-    
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     */
+    /** 
+    * Handles the HTTP <code>GET</code> method.
+    * @param request servlet request
+    * @param response servlet response
+    */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException
-    {
+    throws ServletException, IOException {
         processRequest(request, response);
-    }
-    
-    /** Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     */
+    } 
+
+    /** 
+    * Handles the HTTP <code>POST</code> method.
+    * @param request servlet request
+    * @param response servlet response
+    */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException
-    {
+    throws ServletException, IOException {
         processRequest(request, response);
     }
-    
-    /** Returns a short description of the servlet.
-     */
-    public String getServletInfo()
-    {
+
+    /** 
+    * Returns a short description of the servlet.
+    */
+    public String getServletInfo() {
         return "Short description";
     }
     // </editor-fold>

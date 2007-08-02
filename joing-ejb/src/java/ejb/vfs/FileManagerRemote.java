@@ -109,12 +109,13 @@ public interface FileManagerRemote
             throws JoingServerVFSException;
     
     /**
-     * Returns a stream to read requested text file using requested encoding.
+     * Returns an instance of FileText to read requested text file using 
+     * requested encoding.
      *
      * @param sSessionId The session ID assigned to client at login
      * @param nFileId The result of invokink <code>File.getId()</code>
      * @param sEncoding A valid encondig (see )
-     * @return An instance of <code>BufferedReader</code> class that wraps an
+     * @return An instance of <code>FileText</code> class that wraps an
      *         stream where the contents of the file will be dropped.
      *         Or <code>null</code> if something went wrong.
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 
@@ -125,11 +126,11 @@ public interface FileManagerRemote
             throws JoingServerVFSException;
     
     /**
-     * Returns a stream to read requested binary file.
+     * Returns an instance of FileBinary to read requested binary file.
      *
      * @param sSessionId The session ID assigned to client at login
      * @param nFileId The result of invokink <code>File.getId()</code>
-     * @return An instance of <code>BufferedReader</code> class that wraps an
+     * @return An instance of <code>FileBinary</code> class that wraps an
      *         stream where the contents of the file will be dropped.
      *         Or <code>null</code> if something went wrong.
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 
@@ -140,7 +141,7 @@ public interface FileManagerRemote
             throws JoingServerVFSException;
     
     /**
-     * Writes contents from a stream to disk.
+     * Writes a text file contents to disk.
      * <p>
      * Internally, all text files are stored in Unicode (UTF-16), which is the
      * internal representation in Java.<br>
@@ -153,7 +154,7 @@ public interface FileManagerRemote
      * @param nFileId The result of invokink <code>File.getId()</code>
      * @param reader
      * @param sEncoding
-     * @return 
+     * @return <code>true</code> if everything goes fine.
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      * @see #writeText
@@ -162,11 +163,12 @@ public interface FileManagerRemote
             throws JoingServerVFSException;
     
     /**
-     *
+     * Writes a binary file contents to disk.
+     * 
      * @param sSessionId The session ID assigned to client at login
      * @param nFileId The result of invokink <code>File.getId()</code>
      * @param reader
-     * @return 
+     * @return <code>true</code> if everything goes fine.
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */

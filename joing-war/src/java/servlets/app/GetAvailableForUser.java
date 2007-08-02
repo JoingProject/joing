@@ -6,6 +6,7 @@
 
 package servlets.app;
 
+import ejb.JoingServerException;
 import ejb.app.ApplicationManagerLocal;
 import ejb.app.AppsByGroup;
 import java.io.*;
@@ -15,6 +16,7 @@ import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import servlets.JoingServerServletException;
 
 /**
  *
@@ -53,6 +55,12 @@ public class GetAvailableForUser extends HttpServlet
         catch( ClassNotFoundException exc )
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
+            throw new JoingServerServletException( getClass(), exc );
+        }
+        catch( JoingServerException exc )
+        {
+            writer.writeObject( exc );
+            writer.flush();
         }
         finally
         {

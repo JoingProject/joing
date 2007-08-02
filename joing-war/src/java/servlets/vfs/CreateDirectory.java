@@ -6,7 +6,10 @@
 
 package servlets.vfs;
 
+import ejb.JoingServerException;
+import servlets.JoingServerServletException;
 import ejb.vfs.FileManagerLocal;
+import ejb.vfs.JoingServerVFSException;
 import java.io.*;
 import java.net.*;
 import javax.ejb.EJB;
@@ -54,8 +57,13 @@ public class CreateDirectory extends HttpServlet
         catch( ClassNotFoundException exc )
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
+            throw new JoingServerServletException( getClass(), exc );
         }
-
+        catch( JoingServerException exc )
+        {
+            writer.writeObject( exc );
+            writer.flush();
+        }
         finally
         {
             if( reader != null )

@@ -6,14 +6,17 @@
 
 package servlets.app;
 
-import ejb.app.Application;
+import ejb.JoingServerException;
+import ejb.app.AppDescriptor;
 import ejb.app.ApplicationManagerLocal;
+import ejb.vfs.JoingServerVFSException;
 import java.io.*;
 import java.net.*;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import servlets.JoingServerServletException;
 
 /**
  *
@@ -44,7 +47,7 @@ public class GetPreferredForType extends HttpServlet
             String sFileType  = (String) reader.readObject();
             
             // Process request
-            Application application = applicationManagerBean.getPreferredForType( sSessionId, sFileType );
+            AppDescriptor application = applicationManagerBean.getPreferredForType( sSessionId, sFileType );
             
             // Write to Client (desktop)
             writer.writeObject( application );
@@ -53,8 +56,13 @@ public class GetPreferredForType extends HttpServlet
         catch( ClassNotFoundException exc )
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
+            throw new JoingServerServletException( getClass(), exc );
         }
-        finally
+        catch( JoingServerException exc )
+        {
+            writer.writeObject( exc );
+            writer.flush();
+        }        finally
         {
             if( reader != null )
                 try{ reader.close(); } catch( IOException exc ) { }

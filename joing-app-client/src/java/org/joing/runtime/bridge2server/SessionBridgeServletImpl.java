@@ -22,7 +22,10 @@
 
 package org.joing.runtime.bridge2server;
 
+import ejb.JoingServerException;
 import ejb.session.LoginResult;
+import java.io.IOException;
+import java.util.ResourceBundle;
 
 /**
  * Access the Server (EJBs) by using WebServices.
@@ -35,6 +38,11 @@ public class SessionBridgeServletImpl
        extends BridgeServletBaseImpl
        implements SessionBridge
 {
+    private org.joing.runtime.Runtime runtime;
+    private ResourceBundle            boundle;
+    
+    //------------------------------------------------------------------------//
+    
     /**
      * Creates a new instance of SessionBridgeServletImpl
      * 
@@ -42,6 +50,8 @@ public class SessionBridgeServletImpl
      */
     SessionBridgeServletImpl()
     {
+        runtime = org.joing.runtime.Runtime.getRuntime();
+        boundle = ResourceBundle.getBundle( "org/joing/runtime/bridge2server/messages" );
     }
     
     public LoginResult login( String sAccount, String sPassword )
@@ -53,15 +63,26 @@ public class SessionBridgeServletImpl
             Channel channel = new Channel( SESSION_LOGIN );
                     channel.write( sAccount );
                     channel.write( sPassword );
-                    result = (LoginResult) channel.read();
+            result = (LoginResult) channel.read();
                     channel.close();
             
             // Store Session ID to be used by all calls to Server
             Bridge2Server.getInstance().setSessionId( result.getSessionId() );
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return result;
@@ -75,9 +96,9 @@ public class SessionBridgeServletImpl
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.close();
         }
-        catch( Exception exc )
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
         }
     }
 }

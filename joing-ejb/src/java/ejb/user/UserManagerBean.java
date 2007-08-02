@@ -41,7 +41,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import sun.util.logging.resources.logging;
 
 /**
  * This class is charge of all methods related with users management.
@@ -52,8 +51,10 @@ import sun.util.logging.resources.logging;
  */
 @Stateless
 public class UserManagerBean
-    implements UserManagerRemote, UserManagerLocal
+    implements UserManagerRemote, UserManagerLocal, Serializable
 {
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    
     static final int nMIN_LEN =  6;   // For account and password
     static final int nMAX_LEN = 32;   // For account and password
     
@@ -93,7 +94,7 @@ public class UserManagerBean
         return user;
     }
     
-    public void updateUser( String sSessionId, User user ) 
+    public User updateUser( String sSessionId, User user ) 
            throws JoingServerUserException
     {
         String sAccount = sessionManagerBean.getUserAccount( sSessionId );
@@ -120,6 +121,8 @@ public class UserManagerBean
                 throw new JoingServerUserException( JoingServerException.ACCESS_DB, exc );
             }
         }
+        
+        return user;
     }
     
     public List<Local> getAvailableLocales( String sSessionId ) 

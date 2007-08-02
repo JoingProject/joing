@@ -65,7 +65,7 @@ public interface ApplicationManagerRemote
      * @param sSessionId A valid session (sSessionId in order to obtain the user).
      * @param app The <code>Application</code> instance to be installed.
      */
-    boolean install( String sSessionId, Application app )
+    boolean install(    String sSessionId, AppDescriptor app    )
             throws JoingServerAppException;
     
     /**
@@ -76,7 +76,7 @@ public interface ApplicationManagerRemote
      * @param sSessionId A valid session (sSessionId in order to obtain the user).
      * @param app The <code>Application</code> instance to be uninstalled.
      */
-    boolean uninstall( String sSessionId, Application app )
+    boolean uninstall(    String sSessionId, AppDescriptor app    )
             throws JoingServerAppException;
     
     /**
@@ -91,6 +91,20 @@ public interface ApplicationManagerRemote
      * @return The prefrerred application or <code>null</code> if there is not a
      *         registered application for this file extension
      */
-    Application getPreferredForType( String sSessionId, String sFileExtension )
+    AppDescriptor getPreferredForType( String sSessionId, String sFileExtension )
                 throws JoingServerAppException;
+    /**
+     * Returns an instance of Application to read requested application file.
+     *
+     * @param sSessionId The session ID assigned to client at login
+     * @param nAppId The result of invokink <code>ApplicationDescriptor.getId()</code>
+     * @return An instance of <code>Application</code> class that wraps an
+     *         stream where the contents of the file will be dropped.
+     *         Or <code>null</code> if something went wrong.
+     * @throws JoingServerVFSException if any prerequisite was not satisfied or 
+     *         a wrapped third-party exception if something went wrong.
+     * @see #writeText
+     */
+    Application getApplication( String sSessionId, int nAppId )
+            throws JoingServerAppException;
 }

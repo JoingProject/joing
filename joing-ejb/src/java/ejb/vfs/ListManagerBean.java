@@ -31,6 +31,8 @@ import javax.persistence.Query;
 public class ListManagerBean 
        implements ListManagerRemote, ListManagerLocal, Serializable
 {
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    
     @PersistenceContext
     private EntityManager em;
     

@@ -31,6 +31,7 @@ public class JoingServerVFSException extends JoingServerException
 {
     final static String INVALID_OWNER         = "Operation can not be performed because the account does not ownes the file.";
     final static String FILE_NOT_EXISTS       = "File does not exists.";
+    final static String FILE_NAME_EXISTS      = "File name already exists.";
     final static String NOT_DELETEABLE        = "Can not delete: file or directory is marked as not deleteable.";
     final static String NOT_ALTERABLE         = "Can not modfify attributes: file or directory is marked as not alterable.";
     final static String PARENT_DIR_NOT_EXISTS = "Invalid parent directory: it does not exists.";

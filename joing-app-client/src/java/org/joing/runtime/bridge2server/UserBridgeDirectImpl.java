@@ -51,8 +51,9 @@ public class UserBridgeDirectImpl
         return null;
     }
 
-    public void updateUser( User user )
+    public User updateUser( User user )
     {
+        return null;
     }
 
     public List<Local> getAvailableLocales()
