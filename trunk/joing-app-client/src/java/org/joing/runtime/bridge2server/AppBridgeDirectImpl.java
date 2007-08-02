@@ -22,6 +22,7 @@
 
 package org.joing.runtime.bridge2server;
 
+import ejb.app.AppDescriptor;
 import ejb.app.Application;
 import ejb.app.AppsByGroup;
 import java.util.List;
@@ -61,17 +62,22 @@ public class AppBridgeDirectImpl
         return null;
     }
 
-    public boolean install( Application app )
+    public boolean install( AppDescriptor app    )
     {
         return false;
     }
 
-    public boolean uninstall( Application app )
+    public boolean uninstall( AppDescriptor app    )
     {
         return false;
     }
 
-    public Application getPreferredForType(String sFileExtension)
+    public AppDescriptor getPreferredForType(String sFileExtension)
+    {
+        return null;
+    }
+
+    public Application getApplication( int nAppId )
     {
         return null;
     }

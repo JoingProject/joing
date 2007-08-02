@@ -6,6 +6,7 @@
 
 package servlets.session;
 
+import ejb.JoingServerException;
 import ejb.session.LoginResult;
 import ejb.session.SessionManagerLocal;
 import java.io.BufferedInputStream;
@@ -22,6 +23,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import servlets.JoingServerServletException;
 
 /**
  *
@@ -65,6 +67,12 @@ public class Login extends HttpServlet
         catch( ClassNotFoundException exc )
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
+            throw new JoingServerServletException( getClass(), exc );
+        }
+        catch( JoingServerException exc )
+        {
+            writer.writeObject( exc );
+            writer.flush();
         }
         finally
         {

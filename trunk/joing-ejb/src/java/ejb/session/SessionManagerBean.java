@@ -30,6 +30,8 @@ import javax.persistence.EntityManager;
 public class SessionManagerBean
        implements SessionManagerRemote, SessionManagerLocal, Serializable
 {
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    
     @PersistenceContext
     private EntityManager em;
     

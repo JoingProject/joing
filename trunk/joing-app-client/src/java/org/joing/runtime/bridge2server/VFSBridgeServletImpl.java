@@ -22,10 +22,13 @@
 
 package org.joing.runtime.bridge2server;
 
+import ejb.JoingServerException;
 import ejb.vfs.FileBinary;
 import ejb.vfs.FileDescriptor;
 import ejb.vfs.FileText;
+import java.io.IOException;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -36,6 +39,9 @@ public class VFSBridgeServletImpl
        extends BridgeServletBaseImpl
        implements VFSBridge
 {
+    private org.joing.runtime.Runtime runtime;
+    private ResourceBundle            boundle;
+    
     //------------------------------------------------------------------------//
     
     /**
@@ -45,6 +51,8 @@ public class VFSBridgeServletImpl
      */
     VFSBridgeServletImpl()
     {
+        runtime = org.joing.runtime.Runtime.getRuntime();
+        boundle = ResourceBundle.getBundle( "org/joing/runtime/bridge2server/messages" );
     }
 
     public FileDescriptor getFile( String sFilePath )
@@ -56,12 +64,23 @@ public class VFSBridgeServletImpl
             Channel channel = new Channel( VFS_GET_FILE );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( sFilePath );
-                    file = (FileDescriptor) channel.read();
+            file = (FileDescriptor) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return file;
@@ -77,12 +96,23 @@ public class VFSBridgeServletImpl
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( nParentId );
                     channel.write( sDirName  );
-                    file = (FileDescriptor) channel.read();
+            file = (FileDescriptor) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return file;
@@ -98,12 +128,23 @@ public class VFSBridgeServletImpl
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( nParentId );
                     channel.write( sFileName );
-                    file = (FileDescriptor) channel.read();
+            file = (FileDescriptor) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return file;
@@ -119,7 +160,7 @@ public class VFSBridgeServletImpl
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( nFileId );
                     channel.write( sEncoding );
-                    file = (FileText) channel.read();
+            file = (FileText) channel.read();
                     channel.close();
         }
         catch( Exception exc )
@@ -139,12 +180,23 @@ public class VFSBridgeServletImpl
             Channel channel = new Channel( VFS_READ_BINARY_FILE );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( nFileId );
-                    file = (FileBinary) channel.read();
+            file = (FileBinary) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return file;
@@ -162,9 +214,20 @@ public class VFSBridgeServletImpl
             bSuccess = (Boolean) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return bSuccess;
@@ -182,9 +245,20 @@ public class VFSBridgeServletImpl
             bSuccess = (Boolean) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return bSuccess;
@@ -197,7 +271,7 @@ public class VFSBridgeServletImpl
             Channel channel = new Channel( VFS_UPDATE );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( file );
-                    file = (FileDescriptor) channel.read();
+            file = (FileDescriptor) channel.read();
                     channel.close();
         }
         catch( Exception exc )
@@ -218,12 +292,23 @@ public class VFSBridgeServletImpl
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( nFileId  );
                     channel.write( nToDirId );
-                    bSuccess = (Boolean) channel.read();
+            bSuccess = (Boolean) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return bSuccess;
@@ -239,12 +324,23 @@ public class VFSBridgeServletImpl
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( nFileId  );
                     channel.write( nToDirId );
-                    bSuccess = (Boolean) channel.read();
+            bSuccess = (Boolean) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return bSuccess;
@@ -260,12 +356,23 @@ public class VFSBridgeServletImpl
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( anFileId    );
                     channel.write( bInTrashCan );
-                    bSuccess = (Boolean) channel.read();
+            bSuccess = (Boolean) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return bSuccess;
@@ -281,12 +388,23 @@ public class VFSBridgeServletImpl
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( nFileId );
                     channel.write( bInTrashCan );
-                    bSuccess = (Boolean) channel.read();
+            bSuccess = (Boolean) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return bSuccess;
@@ -301,12 +419,23 @@ public class VFSBridgeServletImpl
             Channel channel = new Channel( VFS_DELETE );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( anFileId );
-                    bSuccess = (Boolean) channel.read();
+            bSuccess = (Boolean) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return bSuccess;
@@ -321,12 +450,23 @@ public class VFSBridgeServletImpl
             Channel channel = new Channel( VFS_DELETE );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( nFileId );
-                    bSuccess = (Boolean) channel.read();
+            bSuccess = (Boolean) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return bSuccess;
@@ -341,12 +481,23 @@ public class VFSBridgeServletImpl
             Channel channel = new Channel( VFS_GET_CHILDS );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( nFileId );
-                    files = (List<FileDescriptor>) channel.read();
+            files = (List<FileDescriptor>) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return files;
@@ -361,12 +512,23 @@ public class VFSBridgeServletImpl
             Channel channel = new Channel( VFS_GET_CHILDS );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( sBaseDir );
-                    files = (List<FileDescriptor>) channel.read();
+            files = (List<FileDescriptor>) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return files;
@@ -381,12 +543,23 @@ public class VFSBridgeServletImpl
             Channel channel = new Channel( VFS_GET_BY_NOTES );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( sSubString );
-                    files = (List<FileDescriptor>) channel.read();
+            files = (List<FileDescriptor>) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return files;
@@ -400,12 +573,23 @@ public class VFSBridgeServletImpl
         {
             Channel channel = new Channel( VFS_GET_TRASHCAN );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
-                    files = (List<FileDescriptor>) channel.read();
+            files = (List<FileDescriptor>) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return files;

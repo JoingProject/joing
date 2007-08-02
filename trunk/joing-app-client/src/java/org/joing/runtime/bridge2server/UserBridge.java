@@ -21,7 +21,7 @@ public interface UserBridge
 {
     User getUser();
     
-    void updateUser( User user );
+    User updateUser( User user );
     
     List<Local> getAvailableLocales();
 }

@@ -36,7 +36,7 @@ public class AppsByGroup
     private byte[] iconPNG;
     private byte[] iconSVG;
     
-    private List<Application> apps;
+    private List<AppDescriptor> apps;
     
     /**
      * Creates a new instance of AppsByGroup
@@ -54,27 +54,27 @@ public class AppsByGroup
         this.description = sDescription;
         this.iconPNG     = null;
         this.iconSVG     = null;
-        this.apps        = new ArrayList();   // Good practices: better empty than null
+        this.apps        = new ArrayList<AppDescriptor>();
     }
     
     public String getDescription()
     {
-        return this.description;
+        return description;
     }
     
     public byte[] getIconPNG()
     {
-        return this.iconPNG;
+        return iconPNG;
     }
     
     public byte[] getIconSVG()
     {
-        return this.iconSVG;
+        return iconSVG;
     }
     
     public List getApplications()
     {
-        return this.apps;
+        return apps;
     }
     
     //------------------------------------------------------------------------//
@@ -87,24 +87,40 @@ public class AppsByGroup
     
     void setIconPNG( byte[] icon )
     {
-        this.iconPNG = icon;
+        if( icon != null )
+        {
+            byte[] copy = new byte[ icon.length ];
+            System.arraycopy( icon, 0, copy, 0, icon.length );   // defensive copy
+            iconPNG = copy;
+        }
+        else
+        {
+            iconPNG = null;
+        }
     }
     
     void setIconSVG( byte[] icon )
     {
-        this.iconSVG = icon;
+        if( icon != null )
+        {
+            byte[] copy = new byte[ icon.length ];
+            System.arraycopy( icon, 0, copy, 0, icon.length );   // defensive copy
+            iconSVG = copy;
+        }
+        else
+        {
+            iconSVG = null;
+        }
     }
     
-    void addApplication( Application app )
+    void addApplication( AppDescriptor app    )
     {
-        this.apps.add( app );
+        apps.add( app );
     }
     
-    void addApplications( List<Application> apps )
+    void addApplications( List<AppDescriptor> apps    )
     {
         if( apps != null )
             this.apps = apps;
-        else
-            throw new NullPointerException( "The parameter can't be null" );
     }
 }

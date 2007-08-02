@@ -31,8 +31,10 @@ import java.util.Date;
  *
  * @author Francisco Morero Peyrona
  */
-public class FileDescriptor implements Serializable    // TODO hacer el serializable
+public class FileDescriptor implements Serializable
 {
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    
     // PK --------------------
     private int     idParent;          // hidden variable (no set and no get)
     private String  name;              // read-only   TODO: mirar cómo hacer el rename

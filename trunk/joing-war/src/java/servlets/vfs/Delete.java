@@ -6,7 +6,10 @@
 
 package servlets.vfs;
 
+import ejb.JoingServerException;
+import servlets.JoingServerServletException;
 import ejb.vfs.FileManagerLocal;
+import ejb.vfs.JoingServerVFSException;
 import java.io.*;
 import java.net.*;
 import javax.ejb.EJB;
@@ -39,29 +42,35 @@ public class Delete extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String  sSessionId = (String)  reader.readObject();
-            Object  o2ndParam  =           reader.readObject();
-            Boolean bSuccess   = null;
+            String sSessionId = (String)  reader.readObject();
+            Object o2ndParam  =           reader.readObject();
+            int[]  anIdError  = null;     // Files ID that could not be deleted
             
             // Process request
             if( o2ndParam instanceof Integer )
             {
                 int nFileId = (Integer) o2ndParam;
-                bSuccess = new Boolean( fileManagerBean.delete( sSessionId, nFileId ) );
+                anIdError = fileManagerBean.delete( sSessionId, nFileId );
             }
             else
             {
                 int[] anFileIds = (int[]) o2ndParam;
-                bSuccess = new Boolean( fileManagerBean.delete( sSessionId, anFileIds) );
+                anIdError = fileManagerBean.delete( sSessionId, anFileIds);
             }
             
             // Write to Client (desktop)
-            writer.writeObject( bSuccess );
+            writer.writeObject( anIdError );
             writer.flush();
         }
         catch( ClassNotFoundException exc )
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
+            throw new JoingServerServletException( getClass(), exc );
+        }
+        catch( JoingServerException exc )
+        {
+            writer.writeObject( exc );
+            writer.flush();
         }
         finally
         {

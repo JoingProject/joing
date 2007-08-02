@@ -1,7 +1,7 @@
 /*
- * JoingServerAppException.java
+ * JavaServerServletException.java
  * 
- * Created on 31-jul-2007, 10:05:32
+ * Created on 01-ago-2007, 13:42:39
  * 
  * Author: Francisco Morero Peyrona.
  * 
@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package ejb.app;
+package servlets;
 
 import ejb.JoingServerException;
 
@@ -27,23 +27,21 @@ import ejb.JoingServerException;
  *
  * @author fmorero
  */
-public class JoingServerAppException extends JoingServerException
+public class JoingServerServletException extends JoingServerException
 {
-    static final String INVALID_OWNER  = "The account does not has priviledges to execute this application.";
-    static final String APP_NOT_EXISTS = "Requested application does not exists.";
-    
-    public JoingServerAppException() 
+
+    public JoingServerServletException()
     {
         super();
     }
     
-    public JoingServerAppException( String message )
+    public JoingServerServletException( Class clazz, String message )
     {
-        super( message );
+        super( "Error in servlet ["+ clazz.getName() +"]\n"+ message );
     }
     
-    public JoingServerAppException( String message, Throwable cause )
+    public JoingServerServletException( Class clazz, Throwable cause )
     {
-        super( message, cause );
+        super( "Error in servlet ["+ clazz.getName() +"]", cause );
     }
 }

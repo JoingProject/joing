@@ -6,6 +6,9 @@
 
 package servlets.vfs;
 
+import ejb.JoingServerException;
+import servlets.JoingServerServletException;
+import ejb.vfs.JoingServerVFSException;
 import ejb.vfs.ListManagerLocal;
 import java.io.*;
 import java.net.*;
@@ -40,9 +43,9 @@ public class GetByNotes extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String             sSessionId = (String) reader.readObject();
-            String             sSubString = (String) reader.readObject();
-            List<ejb.vfs.FileDescriptor> files      = null;
+            String sSessionId = (String) reader.readObject();
+            String sSubString = (String) reader.readObject();
+            List<ejb.vfs.FileDescriptor> files = null;
             
             // Process request
             files = listManagerBean.getByNotes( sSessionId, sSubString );
@@ -54,8 +57,13 @@ public class GetByNotes extends HttpServlet
         catch( ClassNotFoundException exc )
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
+            throw new JoingServerServletException( getClass(), exc );
         }
-
+        catch( JoingServerException exc )
+        {
+            writer.writeObject( exc );
+            writer.flush();
+        }
         finally
         {
             if( reader != null )

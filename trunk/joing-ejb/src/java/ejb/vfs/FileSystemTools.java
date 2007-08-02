@@ -94,6 +94,15 @@ public class FileSystemTools
     }
     
     /**
+     * 
+     * 
+     */
+    public static java.io.File getApplication( String sAppName )
+    {
+        return (new java.io.File( getAppDir(), sAppName ));
+    }
+    
+    /**
      * Deletes a file from the FS
      *
      * @param sAccount An user account
@@ -152,6 +161,11 @@ public class FileSystemTools
     private static java.io.File getUserHome( String sAccount )
     {
         return (new java.io.File( Constant.getUserDir(), sAccount ));
+    }
+    
+    private static java.io.File getAppDir()
+    {
+        return (new java.io.File( Constant.getBaseDir(), "applications" ) );
     }
     
     // Nota: no pongo éste método en la clase vfs.File porque no quiero que 

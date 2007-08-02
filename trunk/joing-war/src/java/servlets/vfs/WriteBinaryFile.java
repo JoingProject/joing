@@ -6,8 +6,11 @@
 
 package servlets.vfs;
 
+import ejb.JoingServerException;
+import servlets.JoingServerServletException;
 import ejb.vfs.FileBinary;
 import ejb.vfs.FileManagerLocal;
+import ejb.vfs.JoingServerVFSException;
 import java.io.*;
 import java.net.*;
 import javax.ejb.EJB;
@@ -52,7 +55,12 @@ public class WriteBinaryFile extends HttpServlet
         catch( ClassNotFoundException exc )
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
-            // TODO: habría que enviar un error de vuelta, porque el cliente está a la espera
+            throw new JoingServerServletException( getClass(), exc );
+        }
+        catch( JoingServerException exc )
+        {
+            writer.writeObject( exc );
+            writer.flush();
         }
         finally
         {

@@ -35,7 +35,7 @@ public class Logout extends HttpServlet
     protected void processRequest( HttpServletRequest request, HttpServletResponse response )
               throws ServletException, IOException
     {
-        ObjectInputStream reader = new ObjectInputStream( request.getInputStream() );
+        ObjectInputStream reader  = new ObjectInputStream( request.getInputStream() );
         
         try
         {
@@ -45,6 +45,7 @@ public class Logout extends HttpServlet
         }
         catch( ClassNotFoundException exc )
         {
+            // As logout(...) does not return this exception do not need to be reported (throw)
             log( "Error in Servlet: "+ getClass().getName(), exc );
         }
         finally

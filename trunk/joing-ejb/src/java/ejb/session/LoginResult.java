@@ -31,6 +31,8 @@ import java.io.Serializable;
  */
 public class LoginResult implements Serializable
 {
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    
     private boolean bAccountValid;
     private boolean bPasswordValid;
     private String  sSessionId;

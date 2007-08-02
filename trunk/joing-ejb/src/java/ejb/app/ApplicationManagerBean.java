@@ -13,12 +13,15 @@ import ejb.Constant;
 import ejb.JoingServerException;
 import ejb.session.SessionManagerLocal;
 import ejb.user.UserEntity;
+import ejb.vfs.FileSystemTools;
+import java.io.IOException;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -41,6 +44,8 @@ import javax.sql.DataSource;
 public class ApplicationManagerBean 
        implements ApplicationManagerRemote, ApplicationManagerLocal, Serializable
 {
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    
     private static final int APPS_ALL           = 0;
     private static final int APPS_INSTALLED     = 1;
     private static final int APPS_NOT_INSTALLED = 2;
@@ -59,38 +64,38 @@ public class ApplicationManagerBean
     public List<AppsByGroup> getAvailableForUser( String sSessionId )
            throws JoingServerAppException
     {   
-        return getApplications( sSessionId, APPS_ALL );
+        return getApplicationDescriptors( sSessionId, APPS_ALL );
     }
     
     public List<AppsByGroup> getNotInstalledForUser( String sSessionId )
            throws JoingServerAppException
     {   
-        return getApplications( sSessionId, APPS_NOT_INSTALLED );
+        return getApplicationDescriptors( sSessionId, APPS_NOT_INSTALLED );
     }
     
     public List<AppsByGroup> getInstalledForUser( String sSessionId )
            throws JoingServerAppException
     {
-        return getApplications( sSessionId, APPS_INSTALLED );
+        return getApplicationDescriptors( sSessionId, APPS_INSTALLED );
     }
     
-    public boolean install( String sSessionId, Application app )
+    public boolean install( String sSessionId, AppDescriptor app )
            throws JoingServerAppException
     {
         return install( sSessionId, app, true );
     }
     
-    public boolean uninstall( String sSessionId, Application app )
+    public boolean uninstall( String sSessionId, AppDescriptor app )
            throws JoingServerAppException
     {
         return install( sSessionId, app, false );
     }
     
-    public Application getPreferredForType( String sSessionId, String sFileExtension )
+    public AppDescriptor getPreferredForType( String sSessionId, String sFileExtension )
            throws JoingServerAppException
     {
-        String      sAccount    = sessionManagerBean.getUserAccount( sSessionId );
-        Application application = null;
+        String sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        AppDescriptor appDescriptor = null;
         
         if( sAccount != null && sFileExtension != null )
         {            
@@ -116,7 +121,7 @@ public class ApplicationManagerBean
                 ApplicationEntity _app = (ApplicationEntity) query.getSingleResult();
                 
                 // Creates the Application instance based on the ApplicationEntity
-                application = new Application( _app );
+                appDescriptor = new AppDescriptor( _app );
             }
             catch( NoResultException exc )
             {
@@ -129,13 +134,48 @@ public class ApplicationManagerBean
             }
         }
         
-        return application;
+        return appDescriptor;
+    }
+    
+    public Application getApplication( String sSessionId, int nAppId ) 
+           throws JoingServerAppException
+    {
+        Application app      = null;
+        String      sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        
+        if( sAccount != null )
+        {
+            if( ! hasAccess( sAccount, nAppId ) )
+                throw new JoingServerAppException( JoingServerAppException.INVALID_OWNER );
+            
+            try
+            {
+                ApplicationEntity _app = em.find( ApplicationEntity.class, nAppId );
+                
+                if( _app != null )
+                    app = new Application( _app );
+                else
+                    throw new JoingServerAppException( JoingServerAppException.APP_NOT_EXISTS );
+            }
+            catch( RuntimeException exc )
+            {
+                if( ! (exc instanceof JoingServerException) )
+                {
+                    Constant.getLogger().throwing( getClass().getName(), "getApplication(...)", exc );
+                    exc = new JoingServerAppException( JoingServerException.ACCESS_DB, exc );
+                }
+                
+                throw exc;
+            }
+        }
+        
+        return app;
     }
     
     //------------------------------------------------------------------------//
     // PRIVATES
     
-    private List<AppsByGroup> getApplications( String sSessionId, int nWhich )
+    private List<AppsByGroup> getApplicationDescriptors( String sSessionId, int nWhich )
             throws JoingServerAppException
     {
         String            sAccount = sessionManagerBean.getUserAccount( sSessionId );
@@ -143,16 +183,20 @@ public class ApplicationManagerBean
         
         if( sAccount != null )
         {
+            Connection conn  = null; 
+            Statement  stmt  = null;
+            ResultSet  rs    = null;
+            
             try
             {
-                UserEntity _user = em.find( UserEntity.class, sAccount );
-                Connection conn  = joing_db.getConnection(); 
-                Statement  stmt  = conn.createStatement( ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
-                ResultSet  rs    = stmt.executeQuery( getQuery( sAccount, 
-                                                                _user.getIdLocale().getIdLocale(),
-                                                                nWhich ) );
-                String sGroup    = "";
+                UserEntity _user  = em.find( UserEntity.class, sAccount );
+                String     sGroup = "";
                 
+                conn  = joing_db.getConnection(); 
+                stmt  = conn.createStatement( ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
+                rs    = stmt.executeQuery( getQuery( sAccount, 
+                                                     _user.getIdLocale().getIdLocale(),
+                                                     nWhich ) );
                 while( rs.next() )
                 {
                     if( ! sGroup.equals( rs.getString( "GROUP_DESC" ) ) )
@@ -164,15 +208,11 @@ public class ApplicationManagerBean
                     Query query = em.createNamedQuery( "ApplicationEntity.findByIdApplication" );
                           query.setParameter( "idApplication", rs.getInt( "ID_APPLICATION" ) );
                           
-                    Application app = new Application( (ApplicationEntity) query.getSingleResult() );
-                                app.setDescription( rs.getString( "APP_DESC" ) );
+                    AppDescriptor app = new AppDescriptor( (ApplicationEntity) query.getSingleResult() );
+                                  app.setDescription( rs.getString( "APP_DESC" ) );
                         
                     apps.get( apps.size() - 1 ).addApplication( app );
                 }
-                
-                rs.close();
-                stmt.close();
-                conn.close();
             }
             catch( RuntimeException exc )
             {
@@ -183,6 +223,14 @@ public class ApplicationManagerBean
             {
                 Constant.getLogger().throwing( getClass().getName(), "getApplications(...)", exc );
                 throw new JoingServerAppException( JoingServerException.ACCESS_DB, exc );
+            }
+
+
+            finally
+            {
+                try{ if(rs   != null) rs.close();   }catch( SQLException x ){ /* */ }
+                try{ if(stmt != null) stmt.close(); }catch( SQLException x ){ /* */ }
+                try{ if(conn != null) conn.close(); }catch( SQLException x ){ /* */ }
             }
         }
         
@@ -222,7 +270,7 @@ public class ApplicationManagerBean
     }
     
     // To install and uninstall apps
-    private boolean install( String sSessionId, Application app, boolean bInstall )
+    private boolean install(    String sSessionId, AppDescriptor app, boolean bInstall    )
             throws JoingServerAppException
     {
         boolean bSuccess = false;
@@ -230,6 +278,9 @@ public class ApplicationManagerBean
         
         if( sAccount != null )
         {
+            Connection conn = null;
+            Statement  stmt = null;
+            
             try
             {
                 Query query = em.createQuery( "SELECT a FROM Users_with_Apps a"+
@@ -239,14 +290,13 @@ public class ApplicationManagerBean
                       
                 ApplicationEntity _app = (ApplicationEntity) query.getSingleResult();
                 
-                Connection conn = joing_db.getConnection();
-                Statement  stmt = conn.createStatement();
-                           stmt.execute( "UPDATE USERS_WITH_APPS"+
-                                         "   SET IS_INSTALLED = "+ (bInstall ? 1 : 0) +
-                                         " WHERE ACCOUNT = "+ sAccount +
-                                         "   AND ID_APPLICATION = "+ _app.getIdApplication() );
-               stmt.close();
-               conn.close();
+                conn = joing_db.getConnection();
+                stmt = conn.createStatement();
+                stmt.execute( "UPDATE USERS_WITH_APPS"+
+                              "   SET IS_INSTALLED = "+ (bInstall ? 1 : 0) +
+                              " WHERE ACCOUNT = "+ sAccount +
+                              "   AND ID_APPLICATION = "+ _app.getIdApplication() );
+                
                bSuccess = true;
             }
             catch( RuntimeException exc )
@@ -259,9 +309,39 @@ public class ApplicationManagerBean
                 Constant.getLogger().throwing( getClass().getName(), "install(...)", exc );
                 throw new JoingServerAppException( JoingServerException.ACCESS_DB, exc );
             }
+            finally
+            {
+                try{ if(stmt != null) stmt.close(); }catch( SQLException x ){ /* */ }
+                try{ if(conn != null) conn.close(); }catch( SQLException x ){ /* */ }
+            }
         }
         
         return bSuccess;
+    }
+    
+     // Checks that the user is the owner of the file (a security measure)
+    private boolean hasAccess( String sAccount, int nIdFile ) 
+            throws JoingServerAppException
+    {
+        boolean bIsOwner = true;
+        /*Query   query    = em.createQuery( "SELECT f FROM FileEntity f "+
+                                           " WHERE f.idFile = "+ nIdFile +
+                                           "   AND f.account ='"+ sAccount +"'" );
+        try
+        {
+            query.getSingleResult();
+        }
+        catch( NoResultException exc )    // Impossible to retun more than one result
+        {
+            bIsOwner = false;
+        }
+        catch( RuntimeException exc )
+        {
+            Constant.getLogger().throwing( getClass().getName(), "isOwnerOfFile(...)", exc );
+            throw new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );    
+        }
+        */
+        return bIsOwner;
     }
     
 //SELECT

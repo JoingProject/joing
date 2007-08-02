@@ -76,6 +76,7 @@ public final class Runtime
         exc.printStackTrace();
 
         /*  TODO: hacer q JShowException herede de JDesktopDialog y q actue en consecuencia:
+         *  Nota: utilizar getLocalizedMessage()
         JShowException dialog = new JShowException( sTitle, exc );
                        dialog.setLocationRelativeTo( getDesktop() );
                        dialog.setVisible( true );*/

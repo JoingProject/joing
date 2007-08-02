@@ -6,7 +6,10 @@
 
 package servlets.vfs;
 
+import ejb.JoingServerException;
+import servlets.JoingServerServletException;
 import ejb.vfs.FileManagerLocal;
+import ejb.vfs.JoingServerVFSException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -41,9 +44,9 @@ public class GetFile extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String       sSessionId = (String) reader.readObject();
-            String       sPath      = (String) reader.readObject();
-            ejb.vfs.FileDescriptor file       = null;
+            String sSessionId = (String) reader.readObject();
+            String sPath      = (String) reader.readObject();
+            ejb.vfs.FileDescriptor file = null;
             
             // Process request
             file = fileManagerBean.getFile( sSessionId, sPath );
@@ -55,8 +58,13 @@ public class GetFile extends HttpServlet
         catch( ClassNotFoundException exc )
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
+            throw new JoingServerServletException( getClass(), exc );
         }
-
+        catch( JoingServerException exc )
+        {
+            writer.writeObject( exc );
+            writer.flush();
+        }
         finally
         {
             if( reader != null )

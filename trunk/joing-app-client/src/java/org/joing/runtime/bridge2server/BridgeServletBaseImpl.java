@@ -22,6 +22,7 @@
 
 package org.joing.runtime.bridge2server;
 
+import ejb.JoingServerException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -52,6 +53,7 @@ public class BridgeServletBaseImpl
     static final String APP_INSTALL           = "app/Install";
     static final String APP_UNINSTALL         = "app/Uninstall";
     static final String APP_GET_PREFERRED     = "app/GetPreferredForType";
+    static final String APP_GET_APPLICATION   = "app/GetApplication";
     
     // VFS
     static final String VFS_GET_FILE          = "vfs/GetFile";
@@ -86,6 +88,8 @@ public class BridgeServletBaseImpl
         
         if( ! sBaseURL.endsWith( "/" ) )
             sBaseURL += "/";
+        
+        sBaseURL += "servlets/";
     }
     
     //------------------------------------------------------------------------//
@@ -135,13 +139,19 @@ public class BridgeServletBaseImpl
             writer.flush();
         }
         
-        protected Object read() throws IOException, ClassNotFoundException
+        protected Object read() 
+                  throws IOException, ClassNotFoundException, JoingServerException
         {
             // IO streams must be init here: can't be done in constructor
             if( reader == null )
                 reader = new ObjectInputStream( connServer.getInputStream() );
             
-            return reader.readObject();
+            Object o = reader.readObject();
+            
+            if( o instanceof JoingServerException )
+                throw (JoingServerException) o;
+            
+            return o;
         }
 
         protected void close()
@@ -163,10 +173,10 @@ public class BridgeServletBaseImpl
             super.finalize();
             
             if( writer != null )
-                try{ writer.close(); } catch( Exception exc ){ }
+                try{ writer.close(); } catch( IOException exc ){ }
             
             if( reader != null )
-                try{ reader.close(); } catch( Exception exc ){ }
+                try{ reader.close(); } catch( IOException exc ){ }
         }
     }
 }

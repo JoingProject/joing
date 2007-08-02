@@ -22,9 +22,13 @@
 
 package org.joing.runtime.bridge2server;
 
+import ejb.JoingServerException;
 import ejb.app.Application;
+import ejb.app.AppDescriptor;
 import ejb.app.AppsByGroup;
+import java.io.IOException;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -34,7 +38,12 @@ import java.util.List;
 public class AppBridgeServletImpl
        extends BridgeServletBaseImpl
        implements AppBridge
-{    
+{
+    private org.joing.runtime.Runtime runtime;
+    private ResourceBundle            boundle;
+    
+    //------------------------------------------------------------------------//
+       
     /**
      * Creates a new instance of AppBridgeServletImpl
      * 
@@ -42,6 +51,9 @@ public class AppBridgeServletImpl
      */
     AppBridgeServletImpl()
     {
+        runtime = org.joing.runtime.Runtime.getRuntime();
+        // TODO: Leer el Locale preferido por el User y añadirlo (esto mismo hacerlo con todos los .java de este paquete)
+        boundle = ResourceBundle.getBundle( "org/joing/runtime/bridge2server/messages" );
     }
 
     public List<AppsByGroup> getAvailableForUser()
@@ -52,12 +64,23 @@ public class AppBridgeServletImpl
         {
             Channel channel = new Channel( APP_GET_AVAILABLES );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
-                    apps = (List<AppsByGroup>) channel.read();
+            apps = (List<AppsByGroup>) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return apps;
@@ -71,12 +94,23 @@ public class AppBridgeServletImpl
         {
             Channel channel = new Channel( APP_GET_NOT_INSTALLED );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
-                    apps = (List<AppsByGroup>) channel.read();
+            apps = (List<AppsByGroup>) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return apps;
@@ -90,18 +124,29 @@ public class AppBridgeServletImpl
         {
             Channel channel = new Channel( APP_GET_INSTALLED );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
-                    apps = (List<AppsByGroup>) channel.read();
+            apps = (List<AppsByGroup>) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return apps;
     }
 
-    public boolean install( Application app )
+    public boolean install( AppDescriptor app    )
     {
         boolean bSuccess = false;
         
@@ -110,7 +155,7 @@ public class AppBridgeServletImpl
             Channel channel = new Channel( APP_INSTALL );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( app );
-                    bSuccess = (Boolean) channel.read();
+            bSuccess = (Boolean) channel.read();
                     channel.close();            
         }
         catch( Exception exc )
@@ -121,7 +166,7 @@ public class AppBridgeServletImpl
         return bSuccess;
     }
     
-    public boolean uninstall( Application app )
+    public boolean uninstall( AppDescriptor app    )
     {
         boolean bSuccess = false;
         
@@ -130,32 +175,85 @@ public class AppBridgeServletImpl
             Channel channel = new Channel( APP_UNINSTALL );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( app );
-                    bSuccess = (Boolean) channel.read();
+            bSuccess = (Boolean) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return bSuccess;
     }
 
-    public Application getPreferredForType( String sFileExtension )
+    public AppDescriptor getPreferredForType( String sFileExtension )
     {
-        Application application = null;
+        AppDescriptor appDescriptor = null;
         
         try
         {
             Channel channel = new Channel( APP_GET_PREFERRED );
                     channel.write( Bridge2Server.getInstance().getSessionId() );
                     channel.write( sFileExtension );
-                    application = (Application) channel.read();
+            appDescriptor = (AppDescriptor) channel.read();
                     channel.close();
         }
-        catch( Exception exc )
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
         {
-            org.joing.runtime.Runtime.getRuntime().showException( exc, "Error communicating with the server" );
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
+        }
+        
+        return appDescriptor;
+    }
+    
+    public Application getApplication( int nAppId )
+    {
+        Application application = null;
+        
+        try
+        {
+            Channel channel = new Channel( APP_GET_APPLICATION );
+                    channel.write( Bridge2Server.getInstance().getSessionId() );
+                    channel.write( nAppId );
+            application = (Application) channel.read();
+                    channel.close();
+        }
+        catch( JoingServerException exc )
+        {            
+            if( exc.isThirdParty() )
+                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
+            else
+                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
+        }
+        catch( IOException exc )
+        {
+            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
+        }
+        catch( ClassNotFoundException exc )
+        {
+            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
         }
         
         return application;
