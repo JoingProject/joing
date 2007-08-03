@@ -25,9 +25,7 @@ package org.joing.runtime.bridge2server;
 import ejb.JoingServerException;
 import ejb.user.Local;
 import ejb.user.User;
-import java.io.IOException;
 import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  *
@@ -38,11 +36,6 @@ public class UserBridgeServletImpl
        extends BridgeServletBaseImpl
        implements UserBridge
 {
-    private org.joing.runtime.Runtime runtime;
-    private ResourceBundle            boundle;
-    
-    //------------------------------------------------------------------------//
-    
     /**
      * 
      * Creates a new instance of UserBridgeServletImpl
@@ -51,96 +44,45 @@ public class UserBridgeServletImpl
      */
     UserBridgeServletImpl()
     {
-        runtime = org.joing.runtime.Runtime.getRuntime();
-        boundle = ResourceBundle.getBundle( "org/joing/runtime/bridge2server/messages" );
     }
     
     public User getUser()
+           throws JoingServerException
     {
         User user = null;
-        
-        try
-        {
-            Channel channel = new Channel( USER_GET_USER );
-                    channel.write( Bridge2Server.getInstance().getSessionId() );
-            user = (User) channel.read();
-                    channel.close();
-        }
-        catch( JoingServerException exc )
-        {            
-            if( exc.isThirdParty() )
-                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
-            else
-                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
-        }
-        catch( IOException exc )
-        {
-            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
-        }
-        catch( ClassNotFoundException exc )
-        {
-            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
-        }
-        
+ 
+        Channel channel = new Channel( USER_GET_USER );
+                channel.write( Bridge2Server.getInstance().getSessionId() );
+        user = (User) channel.read();
+                channel.close();
+
         return user;
     }
     
     public User updateUser( User user )
+           throws JoingServerException
     {
-        try
-        {
-            Channel channel = new Channel( USER_UPDATE_USER );
-                    channel.write( Bridge2Server.getInstance().getSessionId() );
-                    channel.write( user );
-            user = (User) channel.read();
-                    channel.close();
-        }
-        catch( JoingServerException exc )
-        {            
-            if( exc.isThirdParty() )
-                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
-            else
-                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
-        }
-        catch( IOException exc )
-        {
-            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
-        }
-        catch( ClassNotFoundException exc )
-        {
-            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
-        }
+        User user2Ret = null;
         
-        return user;
+        Channel channel = new Channel( USER_UPDATE_USER );
+                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( user );
+        user2Ret = (User) channel.read();
+                channel.close();
+
+        return user2Ret;
     }
     
     public List<Local> getAvailableLocales()
+           throws JoingServerException
     {
         List<Local> list = null;
         
-        try
-        {
-            Channel channel = new Channel( USER_LOCALS );
-                    channel.write( Bridge2Server.getInstance().getSessionId() );
-            list = (List<Local>) channel.read();
-                    channel.close();
-        }
-        catch( JoingServerException exc )
-        {            
-            if( exc.isThirdParty() )
-                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
-            else
-                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
-        }
-        catch( IOException exc )
-        {
-            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
-        }
-        catch( ClassNotFoundException exc )
-        {
-            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
-        }
+        Channel channel = new Channel( USER_LOCALS );
+                channel.write( Bridge2Server.getInstance().getSessionId() );
+        list = (List<Local>) channel.read();
+                channel.close();
         
         return list;
-    }   
+    }
 }

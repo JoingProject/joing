@@ -38,6 +38,7 @@ public class JoingServerVFSException extends JoingServerException
     final static String INVALID_PARENT        = "Invalid parent: it is not a directory but a file.";
     final static String FILE_ALREADY_EXISTS   = "Invalid name: file already exists.";
     final static String DIR_ALREADY_EXISTS    = "Invalid name: directory already exists.";
+    final static String NO_QUOTA              = "Sorry but file can't be saved: you do not have eought free space in your disk. Please contact with the system administrator.";
     
     public JoingServerVFSException()
     {

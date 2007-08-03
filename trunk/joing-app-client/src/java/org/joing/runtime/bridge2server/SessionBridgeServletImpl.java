@@ -24,8 +24,6 @@ package org.joing.runtime.bridge2server;
 
 import ejb.JoingServerException;
 import ejb.session.LoginResult;
-import java.io.IOException;
-import java.util.ResourceBundle;
 
 /**
  * Access the Server (EJBs) by using WebServices.
@@ -34,15 +32,10 @@ import java.util.ResourceBundle;
  *
  * @author Francisco Morero Peyrona
  */
-public class SessionBridgeServletImpl 
+public class SessionBridgeServletImpl
        extends BridgeServletBaseImpl
        implements SessionBridge
 {
-    private org.joing.runtime.Runtime runtime;
-    private ResourceBundle            boundle;
-    
-    //------------------------------------------------------------------------//
-    
     /**
      * Creates a new instance of SessionBridgeServletImpl
      * 
@@ -50,55 +43,31 @@ public class SessionBridgeServletImpl
      */
     SessionBridgeServletImpl()
     {
-        runtime = org.joing.runtime.Runtime.getRuntime();
-        boundle = ResourceBundle.getBundle( "org/joing/runtime/bridge2server/messages" );
     }
     
     public LoginResult login( String sAccount, String sPassword )
+           throws JoingServerException
     {
         LoginResult result = null;
         
-        try
-        {
-            Channel channel = new Channel( SESSION_LOGIN );
-                    channel.write( sAccount );
-                    channel.write( sPassword );
-            result = (LoginResult) channel.read();
-                    channel.close();
-            
-            // Store Session ID to be used by all calls to Server
+        Channel channel = new Channel( SESSION_LOGIN );
+                channel.write( sAccount );
+                channel.write( sPassword );
+        result = (LoginResult) channel.read();
+                channel.close();
+
+        if( result != null && result.isLoginValid() )
+            // Store Session ID to be used in all invocations to Server
             Bridge2Server.getInstance().setSessionId( result.getSessionId() );
-        }
-        catch( JoingServerException exc )
-        {            
-            if( exc.isThirdParty() )
-                runtime.showException( exc, boundle.getString("EXTERNAL_ERROR")+ exc.getLocalizedMessage() );
-            else
-                runtime.showException( exc, boundle.getString("REQUEST_COULD_NOT_BE_PROCESSED") );
-        }
-        catch( IOException exc )
-        {
-            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
-        }
-        catch( ClassNotFoundException exc )
-        {
-            runtime.showException( exc, boundle.getString("THIS_EXCEPTION_SHOULD_NOT_HAPPEN") );
-        }
         
         return result;
     }
     
     public void logout()
+           throws JoingServerException
     {
-        try
-        {
-            Channel channel = new Channel( SESSION_LOGOUT );
-                    channel.write( Bridge2Server.getInstance().getSessionId() );
-                    channel.close();
-        }
-        catch( IOException exc )
-        {
-            runtime.showException( exc, boundle.getString("ERROR_COMMUNICATING_WITH_SERVER") );
-        }
+        Channel channel = new Channel( SESSION_LOGOUT );
+                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.close();
     }
 }

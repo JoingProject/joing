@@ -34,19 +34,24 @@ import javax.swing.JOptionPane;
  */
 public final class Runtime
 {
-    private static Runtime instance       = null;
-    private static String  sServerBaseURL = null;
+    // Created here to avoid synchronization problems.
+    // See: http://javaboutique.internet.com/tutorials/singleton/index2.html
+    private static Runtime instance = new Runtime();
+    
+    private String  sServerBaseURL        = null;
+    private boolean bAutoHandleExceptions = true;
     
     //-------------------------------------------------------------------------//
     
+    /**
+     * Get class singleton
+     * @return The sole instance of this class
+     */
     public static Runtime getRuntime()
-    {
-        if( instance == null )
-            instance = new Runtime();
-        
+    {        
         return instance;
     }
-            
+    
     private Runtime()
     {
     }
@@ -60,18 +65,37 @@ public final class Runtime
         
         return sServerBaseURL;
     }
+
+    public boolean isAutoHandlingExceptions()
+    {
+        return bAutoHandleExceptions;
+    }
+
+    public void setAutoHandlingExceptions( boolean bAutoHandleExceptions )
+    {
+        this.bAutoHandleExceptions = bAutoHandleExceptions;
+    }
     
     //-------------------------------------------------------------------------//
     // Show exception and messages
     //-------------------------------------------------------------------------//
+    /**
+     * Shows an exception in a dialog.
+     * 
+     * @param exc Exception to be shown
+     */
+    public void showException( Throwable exc )
+    {
+        showException( "Error", exc );
+    }
     
     /**
-     * Shows an exception in a JDialog.
+     * Shows an exception in a dialog.
      * 
+     * @param sTitle Title for the dialog
      * @param exc    Exception to be shown
-     * @param sTitle Title for the JDialog
      */
-    public void showException( Throwable exc, String sTitle )
+    public void showException( String sTitle, Throwable exc )
     {
         exc.printStackTrace();
 
@@ -81,7 +105,7 @@ public final class Runtime
                        dialog.setLocationRelativeTo( getDesktop() );
                        dialog.setVisible( true );*/
     }
-
+    
     /**
      * Shows a message in a dialog with title "Information" and an OK button.
      * 

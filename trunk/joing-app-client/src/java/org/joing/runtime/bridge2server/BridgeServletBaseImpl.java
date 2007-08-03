@@ -29,6 +29,7 @@ import java.io.ObjectOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -99,65 +100,92 @@ public class BridgeServletBaseImpl
     /**
      * Allows to easily communicate with a Servlet.
      */
-    protected class Channel
+    protected class Channel    // TODO: hcaer que pueda ir tb vía SSL
     {
         private URLConnection      connServer;
         private ObjectOutputStream writer;
         private ObjectInputStream  reader;
-        private boolean            bUseSSL;
         
         protected Channel( String sServletName )
-                  throws MalformedURLException, IOException
+                  throws JoingServerException
         {
-            this.bUseSSL = false;    // TODO: leer este dato de algún sitio de la app y 
-                                     //       utilizarlo: crear uno u otro tipo de conexión
-            
-            URL url = new URL( BridgeServletBaseImpl.this.sBaseURL + sServletName );
-            
-            connServer = url.openConnection();
-            
-            // Inform the connection that we will send output and accept input
-            connServer.setDoInput( true );
-            connServer.setDoOutput( true );
-            
-            // Don't use a cached version of URL connection.
-            connServer.setUseCaches( false );
-            connServer.setDefaultUseCaches( false );
-            
-            // Specify the content type
-            connServer.setRequestProperty( "Content-Type", "application/octet-stream" );
-            connServer.connect();
+            try
+            {
+                URL url = new URL( BridgeServletBaseImpl.this.sBaseURL + sServletName );
+
+                connServer = url.openConnection();
+
+                // Inform the connection that we will send output and accept input
+                connServer.setDoInput( true );
+                connServer.setDoOutput( true );
+
+                // Don't use a cached version of URL connection.
+                connServer.setUseCaches( false );
+                connServer.setDefaultUseCaches( false );
+
+                // Specify the content type
+                connServer.setRequestProperty( "Content-Type", "application/octet-stream" );
+                connServer.connect();
+            }
+            catch( MalformedURLException exc )
+            {
+                handle( exc );
+            }
+            catch( IOException exc )
+            {
+                handle( exc );
+            }
         }
         
-        protected void write( Object o ) throws IOException
+        protected void write( Object o ) throws JoingServerException
         {
-            // IO streams must be init here: can't be done in constructor
-            if( writer == null )
-                writer = new ObjectOutputStream( connServer.getOutputStream() );
-            
-            writer.writeObject( o );
-            writer.flush();
+            try
+            {
+                // IO streams must be init here: can't be done in constructor
+                if( writer == null )
+                    writer = new ObjectOutputStream( connServer.getOutputStream() );
+                    
+                writer.writeObject( o );
+                writer.flush();
+            }
+            catch( IOException exc )
+            {
+                handle( exc );
+            }
         }
         
-        protected Object read() 
-                  throws IOException, ClassNotFoundException, JoingServerException
+        protected Object read() throws JoingServerException
         {
-            // IO streams must be init here: can't be done in constructor
-            if( reader == null )
-                reader = new ObjectInputStream( connServer.getInputStream() );
+            Object obj = null;
             
-            Object o = reader.readObject();
+            try
+            {
+                // IO streams must be init here: can't be done in constructor
+                if( reader == null )
+                    reader = new ObjectInputStream( connServer.getInputStream() );
+
+                obj = reader.readObject();
+
+                if( obj instanceof JoingServerException )
+                    handle( (JoingServerException) obj );
+            }
+            catch( IOException exc )
+            {
+                handle( exc );
+            }
+            catch( ClassNotFoundException exc )
+            {
+                org.joing.runtime.Runtime.getRuntime().showException( 
+                        "This exception should not happen", exc );
+            }
             
-            if( o instanceof JoingServerException )
-                throw (JoingServerException) o;
-            
-            return o;
+            return obj;
         }
 
         protected void close()
         {
             if( writer != null )
-                try{ writer.close(); }catch( IOException exc ) {  }
+                try{ writer.close(); }catch( IOException exc ) { }
                 
             if( reader != null )
                 try{ reader.close(); }catch( IOException exc ) { }
@@ -171,12 +199,21 @@ public class BridgeServletBaseImpl
         protected void finalize() throws Throwable
         {
             super.finalize();
-            
-            if( writer != null )
-                try{ writer.close(); } catch( IOException exc ){ }
-            
-            if( reader != null )
-                try{ reader.close(); } catch( IOException exc ){ }
+            close();
+        }
+        
+        //--------------------------------------------------------------------//
+        
+        private void handle( Exception exc ) throws JoingServerException
+        {
+            JoingServerException e;
+
+            if( exc instanceof JoingServerException )
+                e = (JoingServerException) exc;
+            else
+                e = new JoingServerException( "External error: "+ exc.getLocalizedMessage(), exc );
+
+            throw e;
         }
     }
 }
