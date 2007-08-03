@@ -271,6 +271,9 @@ public class FileManagerBean
             if( ! isOwnerOfFile( sAccount, fileText.getId() ) )
                 throw new JoingServerVFSException( JoingServerVFSException.INVALID_OWNER );
             
+            if( ! hasQuota( sAccount, fileText.getSize() ) )
+                throw new JoingServerVFSException( JoingServerVFSException.NO_QUOTA );
+            
             try
             {
                 String             sNative  = Integer.toString( fileText.getId() );
@@ -331,6 +334,9 @@ public class FileManagerBean
             if( ! isOwnerOfFile( sAccount, fileBinary.getId() ) )
                 throw new JoingServerVFSException( JoingServerVFSException.INVALID_OWNER );
             
+            if( ! hasQuota( sAccount, fileBinary.getSize() ) )
+                throw new JoingServerVFSException( JoingServerVFSException.NO_QUOTA );
+            
             try
             {
                 String           sNative  = Integer.toString( fileBinary.getId() );
@@ -383,17 +389,22 @@ public class FileManagerBean
     public boolean copy( String sSessionId, int nFileId, int nToDirId )
            throws JoingServerVFSException
     {
+        throw new JoingServerVFSException( "Operation not yet implemented" );
+        
+        /* TODO: Hacerlo
         boolean bSuccess = false;
         
         // Modificar el ACCESSED en la tabla
-        // TODO: Hacerlo
-        return bSuccess;
+        
+        return bSuccess;*/
     }
     
     public boolean move( String sSessionId, int nFileId, int nToDirId )
            throws JoingServerVFSException
     {
-        boolean bSuccess = false;
+        throw new JoingServerVFSException( "Operation not yet implemented" );
+        
+        /*boolean bSuccess = false;
         String  sAccount = sessionManagerBean.getUserAccount( sSessionId );
         
         if( sAccount != null )
@@ -402,21 +413,21 @@ public class FileManagerBean
                 throw new JoingServerVFSException( JoingServerVFSException.INVALID_OWNER );
               
             // TODO: hacerlo
-            /*
+            
             if( file.isDeleteable() )
             {
                 bSuccess = copy( sSessionId, file, toDir );
 
                 if( bSuccess )
                 {
-                    ///_delete( sAccount, file );
+                    //_delete( sAccount, file );
                     // Modificar el ACCESSED en la tabla
                 }
             }
-            */
+            
         }
         
-        return bSuccess;
+        return bSuccess;*/
     }
     
     public int[] trashcan( String sSessionId, int[] anFileId, boolean bInTrashCan )
@@ -937,5 +948,10 @@ public class FileManagerBean
             sbError.insert( 0, "Invalid file name:\n" );
         
         return sbError.toString();
+    }
+    
+    private boolean hasQuota( String sAccount, long nSize )
+    {
+        return true;   // TODO: implementarlo
     }
 }

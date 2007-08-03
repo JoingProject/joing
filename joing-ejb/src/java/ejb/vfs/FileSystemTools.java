@@ -165,7 +165,7 @@ public class FileSystemTools
     
     private static java.io.File getAppDir()
     {
-        return (new java.io.File( Constant.getBaseDir(), "applications" ) );
+        return (new java.io.File( Constant.getBaseDir(), "apps" ) );
     }
     
     // Nota: no pongo éste método en la clase vfs.File porque no quiero que 

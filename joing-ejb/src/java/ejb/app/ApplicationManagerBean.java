@@ -13,15 +13,12 @@ import ejb.Constant;
 import ejb.JoingServerException;
 import ejb.session.SessionManagerLocal;
 import ejb.user.UserEntity;
-import ejb.vfs.FileSystemTools;
-import java.io.IOException;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -320,28 +317,31 @@ public class ApplicationManagerBean
     }
     
      // Checks that the user is the owner of the file (a security measure)
-    private boolean hasAccess( String sAccount, int nIdFile ) 
+    private boolean hasAccess( String sAccount, int nIdApp ) 
             throws JoingServerAppException
     {
-        boolean bIsOwner = true;
-        /*Query   query    = em.createQuery( "SELECT f FROM FileEntity f "+
-                                           " WHERE f.idFile = "+ nIdFile +
-                                           "   AND f.account ='"+ sAccount +"'" );
+        // TODO: terminar este método
+        /*boolean bHasAccess = false;
+        
         try
         {
-            query.getSingleResult();
+            Query query = em.createNativeQuery( "SELECT * FROM USERS_WITH_APPS "+
+                                                " WHERE ACCOUNT = '"+ sAccount +"'"+
+                                                "   AND ID_APPLICATION = "+ nIdApp );
+                  query.getSingleResult();
         }
         catch( NoResultException exc )    // Impossible to retun more than one result
         {
-            bIsOwner = false;
+            // Nothing to do, bHasAccess is already false
         }
         catch( RuntimeException exc )
         {
             Constant.getLogger().throwing( getClass().getName(), "isOwnerOfFile(...)", exc );
-            throw new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );    
+            throw new JoingServerAppException( JoingServerException.ACCESS_DB, exc );    
         }
-        */
-        return bIsOwner;
+        
+        return bHasAccess;*/
+        return true;
     }
     
 //SELECT

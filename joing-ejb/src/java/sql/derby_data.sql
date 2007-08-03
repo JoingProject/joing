@@ -80,16 +80,16 @@ insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
 -- ------------------------------------------------------------------
 
 insert into applications (NAME, VERSION, EXTRA_PATH, EXECUTABLE, FILE_TYPES)
-     values ('Notes', '0.1', 'apps/accessories', 'notes.jar', 'txt;ini');
+     values ('Notes', '0.1', 'accessories', 'notes.jar', 'txt;ini');
 
 insert into applications (NAME, VERSION, EXTRA_PATH, EXECUTABLE)
-     values ('Calculator', '2.4', 'apps/accessories', 'calculator.jar');
+     values ('Calculator', '2.4', 'accessories', 'calculator.jar');
 
 insert into applications (NAME, VERSION, EXTRA_PATH, EXECUTABLE)
-     values ('Images', '1.1', 'apps/graphics', 'images.jar');
+     values ('Images', '1.1', 'graphics', 'images.jar');
 
 insert into applications (NAME, VERSION, EXTRA_PATH, EXECUTABLE)
-     values ('PhotoArt', '0.5', 'apps/graphics', 'photoart.jar');
+     values ('PhotoArt', '0.5', 'graphics', 'photoart.jar');
 
 -- ------------------------------------------------------------------
 
