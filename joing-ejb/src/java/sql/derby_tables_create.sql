@@ -86,7 +86,7 @@ CREATE TABLE FILES(               -- 'FILE' is an SQL-99 keyword
    ID_ORIGINAL     INT                    ,  -- In case it is a link: Which file is the original?  
    ACCOUNT         VARCHAR(32)   NOT NULL ,  -- User that owns this file or link
    NAME            VARCHAR(255)           ,  -- NULL when ID_ORIGINAL != null
-   FULL_PATH       VARCHAR(2048)          ,  -- Accumulated path (used only to search)
+   FULL_PATH       VARCHAR(2048)          ,  -- Accumulated path (used mainly to search)
    IS_DIR          SMALLINT      DEFAULT 0,  -- 0 == It is a file, 1 == It is a directory
    IS_HIDDEN       SMALLINT      DEFAULT 0,  -- Hidden or not
    IS_PUBLIC       SMALLINT      DEFAULT 1,  -- Allow other users to know this file exist (v.g. can be copied)
@@ -102,6 +102,14 @@ CREATE TABLE FILES(               -- 'FILE' is an SQL-99 keyword
    MODIFIED        TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,  -- Last time it was modified
    ACCESSED        TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,  -- Last time it was accessed
    NOTES           VARCHAR(2048)                         );
+
+-- TODO: Hay que crear una tabla FILE_TYPES algo así:
+--CREATE TABLE FILE_TYPES(
+--   ID_FILE_TYPE INT GENERATED ALWAYS AS IDENTITY,
+--   ID_FILE      INT         NOT NULL       ,
+--   MIME_TYPE    VARCHAR(32)                ,
+--   ICON_PNG     VARCHAR(4096)  FOR BIT DATA,    -- A PNG (24x24) image up to 4Kb
+--   ICON_SVG     VARCHAR(16384) FOR BIT DATA );  -- A SVGZ (compresed) image up to 16Kb
 
 -- ********************************************************************************************************************
 

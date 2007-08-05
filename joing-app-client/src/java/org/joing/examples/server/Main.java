@@ -21,6 +21,8 @@
  */
 package org.joing.examples.server;
 
+import org.joing.examples.server.vfs.VFSPanel;
+import org.joing.examples.server.session.SessionPanel;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
