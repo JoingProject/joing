@@ -24,7 +24,6 @@ package org.joing.runtime.bridge2server;
 
 import javax.naming.Context;
 
-
 /**
  *
  *

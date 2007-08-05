@@ -21,14 +21,19 @@
  */
 package org.joing.desktop.dockbar;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import javax.swing.ImageIcon;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.RenderingHints;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -50,11 +55,17 @@ public class DockBar extends JPanel
     private int nMinIconSize  = 48;   // Size when mouse is far away from icon
     private int nMaxIconSize  = 96;   // Size when mouse is in the heart of the icon
     
+    private boolean bTableVisible;    // Is visible or hidden the table where icons are
+    private Polygon polTable;         // Table points
+    
     //------------------------------------------------------------------------//
     
     public DockBar()
     {
         cml = new ContainerMouseListener();
+        
+        bTableVisible = false;
+        polTable      = null;
         
         setOpaque( false );
         setLayout( new MyFlowLayout( FlowLayout.CENTER ) );
@@ -112,6 +123,17 @@ public class DockBar extends JPanel
         this.nMaxIconSize = nMaxIconSize;
         scaleImages( nMaxIconSize );
     }
+
+    public boolean isTableVisible( )
+    {
+        return bTableVisible;
+    }
+
+    public void setTableVisible( boolean bTableVisible )
+    {
+        this.bTableVisible = bTableVisible;
+        repaint();
+    }
     
     /*public void add( DeskLauncher launcher )
     {
@@ -146,6 +168,42 @@ public class DockBar extends JPanel
                label.putClientProperty( DISTANCE,    -1 );
         
         add( label );
+    }
+    
+    @Override
+    public void paintComponent( Graphics g )
+    {
+        Graphics2D g2 = (Graphics2D) g;
+        
+        super.paintComponent( g );
+        
+        if( bTableVisible )
+        {
+            if( polTable == null )
+                initializeTable();
+            
+            g2.setRenderingHint( RenderingHints.KEY_ANTIALIASING,
+                                 RenderingHints.VALUE_ANTIALIAS_ON );
+            g2.setColor( Color.GRAY );
+            g2.fillPolygon( polTable );
+            g2.setColor( Color.BLACK );
+            g2.drawPolygon( polTable );
+        }
+    }
+    
+    private void initializeTable()
+    {
+        int nTableWidth  = (nMinIconSize * getComponentCount()) + 
+                           (15 * getComponentCount()) +
+                           nMaxIconSize;
+        int nTableHeight = (nMinIconSize / 2);
+
+        polTable = new Polygon();
+        polTable.addPoint( getWidth() - nTableWidth, getHeight() );
+        polTable.addPoint( getWidth() - nTableWidth + 25, getHeight() - nTableHeight );
+        polTable.addPoint( nTableWidth - 25, getHeight() - nTableHeight );
+        polTable.addPoint( nTableWidth, getHeight() );
+        polTable.addPoint( getWidth() - nTableWidth, getHeight() );
     }
     
     //------------------------------------------------------------------------//
