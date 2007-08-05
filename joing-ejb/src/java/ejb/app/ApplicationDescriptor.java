@@ -24,7 +24,7 @@ import java.util.StringTokenizer;
  * 
  * @author Francisco Morero Peyrona
  */
-public class Application implements  Serializable   // TODO hacer el serializable
+public class ApplicationDescriptor implements  Serializable   // TODO hacer el serializable
 {
     private String       name;        // These two fields form the PK
     private String       version;     // These two fields form the PK
@@ -40,7 +40,7 @@ public class Application implements  Serializable   // TODO hacer el serializabl
     /**
      * Creates a new instance of Application
      */
-    Application( ApplicationEntity _app )
+    ApplicationDescriptor( ApplicationEntity _app )
     {
         this.name       = _app.getApplicationEntityPK().getName();
         this.version    = _app.getApplicationEntityPK().getVersion();
