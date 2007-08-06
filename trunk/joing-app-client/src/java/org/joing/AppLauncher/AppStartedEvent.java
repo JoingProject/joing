@@ -1,7 +1,7 @@
 /*
- * AppStatusChangedEvent.java
+ * AppStartedEvent.java
  *
- * Created on 24 de junio de 2007, 11:51
+ * Created on 24 de junio de 2007, 11:28
  *
  * Copyright (C) 2007 Francisco Morero Peyrona
  *
@@ -20,48 +20,37 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.joing.jvmm;
+package org.joing.AppLauncher;
+
+import org.joing.AppLauncher.AppEvent;
+import org.joing.jvmm.*;
 
 /**
- * RAM, CPU y Threads, los he puesto sólo como ejemplo: tú pon lo
- * que quieras y que Java lo permita, claro.
+ *
  *
  * @author Francisco Morero Peyrona
  */
-public class AppStatusChangedEvent extends AppEvent
+public class AppStartedEvent extends AppEvent
 {
-    private int nKb;
-    private int nCPU;
+    private String sName;
     
-    /** 
-     * Creates a new instance of AppStatusChangedEvent
-     * 
-     * @param source 
+    /**
+     * Creates a new instance of AppStartedEvent
      */
-    public AppStatusChangedEvent( Object source )
+    public AppStartedEvent( Object source )
     {
         super( source );
     }
     
-    public int getMemory()
+    public String getName()
     {
-        return this.nKb;
-    }
-    
-    public int getCPU()
-    {
-        return this.nCPU;
+        return this.sName;
     }
     
     //------------------------------------------------------------------------//
     
-    void setMemory( int nKb )
+    void setName( String sName )
     {
-        this.nKb = nKb;
-    }
-    
-    void setCPU( int nCPU )
-    {
-         this.nCPU = (nCPU > 100 ? 100 : (nCPU < 0 ? 0 : nCPU));
+        this.sName = sName;
     }
 }

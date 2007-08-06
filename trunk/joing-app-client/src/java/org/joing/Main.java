@@ -21,27 +21,23 @@
  */
 package org.joing;
 
-import javax.swing.SwingUtilities;
+import org.joing.AppLauncher.Bootstrap;
+import org.joing.jvmm.Platform;
 
 /**
  *
  * @author fmorero
+ * @author Antonio Varela Lizardi <antonio@icon.net.mx>
  */
-public class Main
-{
-    public Main()
-    {
+public class Main {
+
+    public Main() {
     }
-    
-    public static void main( String[] args )
-    {
-        SwingUtilities.invokeLater( new Runnable() 
-        {
-            public void run( )
-            {
-                // Poner aquí el código que lanza el desktop
-                throw new UnsupportedOperationException( "Not supported yet." );
-            }
-        } );
+
+    public static void main(String[] args) {
+        Platform.init();
+
+        Bootstrap.init();
+        Bootstrap.go();
     }
 }

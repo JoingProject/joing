@@ -20,12 +20,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.joing.jvmm;
+package org.joing.AppLauncher;
 
-import org.joing.jvmm.AppLauncherListener;
-import org.joing.jvmm.AppStartedEvent;
-import org.joing.jvmm.AppStatusChangedEvent;
-import org.joing.jvmm.AppStoppedEvent;
+import org.joing.jvmm.*;
+import org.joing.AppLauncher.AppLauncherListener;
+import org.joing.AppLauncher.AppStartedEvent;
+import org.joing.AppLauncher.AppStatusChangedEvent;
+import org.joing.AppLauncher.AppStoppedEvent;
 import javax.swing.event.EventListenerList;
 
 /**
