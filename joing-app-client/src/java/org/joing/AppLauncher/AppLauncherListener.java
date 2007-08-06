@@ -7,11 +7,13 @@
  * and open the template in the editor.
  */
 
-package org.joing.jvmm;
+package org.joing.AppLauncher;
 
-import org.joing.jvmm.AppStartedEvent;
-import org.joing.jvmm.AppStatusChangedEvent;
-import org.joing.jvmm.AppStoppedEvent;
+import org.joing.AppLauncher.gui.*;
+import org.joing.jvmm.*;
+import org.joing.AppLauncher.AppStartedEvent;
+import org.joing.AppLauncher.AppStatusChangedEvent;
+import org.joing.AppLauncher.AppStoppedEvent;
 import java.util.EventListener;
 
 /**

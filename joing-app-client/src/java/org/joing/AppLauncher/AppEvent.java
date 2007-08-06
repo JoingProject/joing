@@ -1,7 +1,7 @@
 /*
- * AppStartedEvent.java
+ * AppEvent.java
  *
- * Created on 24 de junio de 2007, 11:28
+ * Created on 24 de junio de 2007, 11:54
  *
  * Copyright (C) 2007 Francisco Morero Peyrona
  *
@@ -20,36 +20,43 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.joing.jvmm;
+package org.joing.AppLauncher;
 
-import org.joing.jvmm.*;
+import java.util.EventObject;
 
 /**
- *
+ * Common base for App events.
  *
  * @author Francisco Morero Peyrona
  */
-public class AppStartedEvent extends AppEvent
+public class AppEvent extends EventObject
 {
-    private String sName;
+    private long   nWhen;
+    private int    nPID;
     
-    /**
-     * Creates a new instance of AppStartedEvent
-     */
-    public AppStartedEvent( Object source )
+    //------------------------------------------------------------------------//
+    
+    public AppEvent( Object source )
     {
         super( source );
+        
+        this.nWhen = System.currentTimeMillis();
     }
     
-    public String getName()
+    public long getWhen()
     {
-        return this.sName;
+        return this.nWhen;
+    }
+    
+    public int getPID()
+    {
+        return this.nPID;
     }
     
     //------------------------------------------------------------------------//
     
-    void setName( String sName )
+    void setPID( int nPID )
     {
-        this.sName = sName;
+        this.nPID = nPID;
     }
 }
