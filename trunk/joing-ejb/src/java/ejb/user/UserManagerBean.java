@@ -82,7 +82,6 @@ public class UserManagerBean
                 user = new User( _user );
                 // Injected (for more info, refer to these methods in User class)
                 user.setUsedSpace( FileSystemTools.getUsedSpace( sAccount ) );
-                user.setFreeSpace( FileSystemTools.getDiskFreeSpace() );
             }
             catch( RuntimeException exc )
             {

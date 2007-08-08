@@ -23,6 +23,9 @@ package org.joing.runtime;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileSystemView;
 
 /**
@@ -47,10 +50,31 @@ public class JoingFileSystemView extends FileSystemView
         return instance;
     }
     
-    /*public File[] getRoots()
+    @Override
+    public File[] getRoots()
     {
+        URI uri = null;
         
-    }*/
+        try
+        {
+            uri = new URI( "webdav://peyrona:admin@192.168.1.9:8080/apps/editor.jar" );
+        }
+        catch( Exception exc )
+        {
+            JOptionPane.showMessageDialog( null, exc.getLocalizedMessage() );
+        }
+        
+        ArrayList<File> roots = new ArrayList<File>();
+                        roots.add( new File( uri ) );
+                        //roots.add( new File( "Join'g" ) );
+                        
+        
+        //for( File f : local.getRoots() )
+        //    roots.add( f );
+        
+        File[] ret = new File[ roots.size() ];
+        return roots.toArray( ret );
+    }
     
     public File createNewFolder( File containingDir ) throws IOException
     {
