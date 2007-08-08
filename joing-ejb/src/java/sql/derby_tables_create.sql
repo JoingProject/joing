@@ -106,7 +106,7 @@ CREATE TABLE FILES(               -- 'FILE' is an SQL-99 keyword
 -- TODO: Hay que crear una tabla FILE_TYPES algo así:
 --CREATE TABLE FILE_TYPES(
 --   ID_FILE_TYPE INT GENERATED ALWAYS AS IDENTITY,
---   ID_FILE      INT         NOT NULL       ,
+--   ID_FILE      INT            NOT NULL    ,
 --   MIME_TYPE    VARCHAR(32)                ,
 --   ICON_PNG     VARCHAR(4096)  FOR BIT DATA,    -- A PNG (24x24) image up to 4Kb
 --   ICON_SVG     VARCHAR(16384) FOR BIT DATA );  -- A SVGZ (compresed) image up to 16Kb

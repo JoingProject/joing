@@ -85,8 +85,8 @@ public class FileSystemTools
     /**
      * Returns file handler to a physical file.
      *
-     * @param sAccount 
-     * @param sFileName
+     * @param sAccount A valid user account
+     * @param sFileName Absolute file name (from root ('/')
      */
     public static java.io.File getFile( String sAccount, String sFileName )
     {
@@ -126,16 +126,6 @@ public class FileSystemTools
     public static long getFileSize( String sAccount, int nFileId )
     {
         return getAbsoluteFile( sAccount, nFileId ).length();
-    }
-    
-    /**
-     * Returns free disk space
-     *
-     * @return Free disk space
-     */
-    public static long getDiskFreeSpace()
-    {              
-        return Constant.getBaseDir().getFreeSpace();
     }
     
     /**

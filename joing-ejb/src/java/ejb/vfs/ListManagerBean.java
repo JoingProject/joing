@@ -85,7 +85,7 @@ public class ListManagerBean
             if( sDirPath == null || sDirPath.length() == 0 )
                 sDirPath = "/";
             
-            FileEntity _file = (new FileManagerBean()).path2File( sAccount, sDirPath );
+            FileEntity _file = Tools.path2File( sAccount, sDirPath );
 
             if( _file != null )
                 files = getChilds( sSessionId, _file.getIdFile() );

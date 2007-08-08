@@ -30,7 +30,6 @@ public class User implements Serializable
     private String  country;      // hidden
     private long    totalSpace;   // read-only
     private long    usedSpace;    // read-only
-    private long    freeSpace;    // hidden
     
     //------------------------------------------------------------------------//
     
@@ -239,7 +238,7 @@ public class User implements Serializable
      */
     public long getTotalSpace()
     {
-        return ((this.totalSpace == 0) ? freeSpace : this.totalSpace);
+        return ((this.totalSpace == 0) ? Long.MAX_VALUE : this.totalSpace);
     }
     
     /**
@@ -262,11 +261,6 @@ public class User implements Serializable
     
     void setUsedSpace( long usedSpace )
     {
-        this.usedSpace = usedSpace; 
-    }
-    
-    void setFreeSpace( long freeSpace )
-    {
-        this.freeSpace = freeSpace;
+        this.usedSpace = usedSpace;
     }
 }

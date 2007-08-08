@@ -37,11 +37,12 @@ public class FileDescriptor implements Serializable
     
     // PK --------------------
     private int     idParent;          // hidden variable (no set and no get)
-    private String  name;              // read-only   TODO: mirar cómo hacer el rename
+    private String  name;              // read-only
     private boolean isDir;             // read-only
     //------------------------
     private int     idFile;            // read-only
     private int     idOriginal;        // TODO: no creo que esto vaya así: tendría que estar aquí el original y sobrarían el resto de los campos
+    private String  absolutePath;      // read-only
     private String  account;           // hidden variable (no set and no get)
     private boolean isHidden;
     private boolean isPublic;
@@ -70,6 +71,7 @@ public class FileDescriptor implements Serializable
         
         this.idFile        = _file.getIdFile();
         this.idOriginal    = _file.getIdOriginal();
+        this.absolutePath  = _file.getFullPath();
         this.account       = _file.getAccount();
         
         this.isHidden      = _file.getIsHidden()     != 0;
@@ -129,10 +131,20 @@ public class FileDescriptor implements Serializable
     {
         return name;
     }
+    
+    public void setName( String sNewName )
+    {
+        this.name = sNewName;
+    }
 
     public boolean isDirectory()
     {
         return isDir;
+    }
+    
+    public String getAbsolutePath()
+    {
+        return absolutePath;
     }
 
     public boolean isHidden()
@@ -257,7 +269,7 @@ public class FileDescriptor implements Serializable
         return notes;
     }
 
-    public void setNotes(String notes)
+    public void setNotes( String notes )
     {
         this.notes = notes;
     }
@@ -277,5 +289,18 @@ public class FileDescriptor implements Serializable
     public String toString()
     {
         return getClass().getName() +"[isDir="+ isDirectory() +", name="+ getName() +", idParent="+ idParent +"]";
+    }
+    
+    //------------------------------------------------------------------------//
+    
+    /**
+     * Chages file size.
+     * If file is a directory, the new size is ignored.
+     * @param size New file size.
+     */
+    void setSize( long size )
+    {
+        if( ! isDirectory() )
+            this.size = size;
     }
 }
