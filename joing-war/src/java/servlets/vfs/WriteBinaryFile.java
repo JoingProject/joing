@@ -10,8 +10,11 @@ import ejb.JoingServerException;
 import servlets.JoingServerServletException;
 import ejb.vfs.FileBinary;
 import ejb.vfs.FileManagerLocal;
-import ejb.vfs.JoingServerVFSException;
-import java.io.*;
+import ejb.vfs.FileDescriptor;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import java.net.*;
 import javax.ejb.EJB;
 
@@ -44,12 +47,12 @@ public class WriteBinaryFile extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String     sSessionId = (String)     reader.readObject();
-            FileBinary fileBinary = (FileBinary) reader.readObject();
-            boolean    bSuccess   = fileManagerBean.writeBinaryFile( sSessionId, fileBinary );
+            String         sSessionId = (String)     reader.readObject();
+            FileBinary     fileBinary = (FileBinary) reader.readObject();
+            FileDescriptor fileDescr  = fileManagerBean.writeBinaryFile( sSessionId, fileBinary );
             
             // Write to Client (desktop) the result of the operation
-            writer.writeObject( bSuccess );
+            writer.writeObject( fileDescr );
             writer.flush();
         }
         catch( ClassNotFoundException exc )

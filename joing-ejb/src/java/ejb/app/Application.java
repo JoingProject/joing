@@ -35,6 +35,8 @@ import java.io.InputStream;
  */
 public class Application extends AppDescriptor
 {
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    
     private byte[] btContent;
     
     public Application( ApplicationEntity _Application ) 

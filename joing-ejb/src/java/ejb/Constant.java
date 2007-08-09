@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 public class Constant
 {
     private static String sVersion;
+    private static String sSysName;         // System name (decided by Join'g provider)
     private static File   fBaseDir;         // Joing base directory
     private static File   fAppDir;          // Dir for all apps for all users
     private static File   fUserDir;         // Dir for all users home dirs
@@ -33,9 +34,8 @@ public class Constant
     private static long   nSessionTimeOut;
     
     //-----------------------------
+    private static final String sSYSTEM_NAME     = "system_name";  // The provider, vg. "joing.sun.com"
     private static final String sBASE_DIR        = "base_dir";
-    private static final String sAPP_DIR         = "app_dir";
-    private static final String sUSER_DIR        = "user_dir";
     private static final String sEMAIL_SRV       = "email_server";
     private static final String sSESSION_TIMEOUT = "session_timeout";
     
@@ -43,62 +43,19 @@ public class Constant
     
     static
     {
-        // Loading values from properties file
-        Properties props = new Properties();
-        
-        try
-        {
-            FileInputStream in = new FileInputStream( "system.properties" );    
-            props.load( in );
-            in.close();
-        }
-        catch( Exception exc )
-        {
-            // Initialise properties instance with default values
-            props.setProperty( sBASE_DIR       , "/home/fmorero/Joing_App" );
-            props.setProperty( sAPP_DIR        , "apps"                    );
-            props.setProperty( sUSER_DIR       , "users"                   );
-            props.setProperty( sEMAIL_SRV      , "localhost"               );
-            props.setProperty( sSESSION_TIMEOUT, Long.toString( 12*60*60 ) );   // 12 hrs
-        }
-        
-        sVersion = "0.0";   // It is better to hardcode this property than store it in a file
-        fBaseDir = new File( props.getProperty( sBASE_DIR ) );
-        fUserDir = new File( fBaseDir, props.getProperty( sUSER_DIR ) );
-        fAppDir  = new File( fBaseDir, props.getProperty( sUSER_DIR ) );
-        
-        if( ! fBaseDir.exists() )
-            fBaseDir.mkdirs();
-        
-        if( ! fAppDir.exists() )
-            fAppDir.mkdirs();
-        
-        if( ! fUserDir.exists() )
-            fUserDir.mkdirs();        
-        
-        try
-        { 
-            emailServer = new URL( props.getProperty( sEMAIL_SRV ) ); 
-        }
-        catch( MalformedURLException exc ) 
-        {
-        }
-        
-        try
-        {
-            nSessionTimeOut = Long.parseLong( props.getProperty( sSESSION_TIMEOUT ) ) * 1000;   // in milliseconds
-        }
-        catch( NumberFormatException exc ) 
-        {
-            nSessionTimeOut = 12 * 60 * 60 * 1000; 
-        }
+        init();
     }
     
     //------------------------------------------------------------------------//
-    
+
     public static String getVersion()
     {
         return sVersion;
+    }
+    
+    public static String getSystemName()
+    {
+        return sSysName;
     }
     
     public static File getBaseDir()
@@ -109,6 +66,11 @@ public class Constant
     public static File getUserDir()
     {
         return fUserDir;
+    }
+    
+    public static File getAppDir()
+    {
+        return fAppDir;
     }
     
     public static URL getEmailServer()
@@ -128,5 +90,63 @@ public class Constant
     public static Logger getLogger()
     {
         return Logger.getLogger( "joing" );
+    }
+    
+    //------------------------------------------------------------------------//
+    
+    private static void init()
+    {
+        long nTimeOut = 12 * 60 * 60 * 1000;    // Default == 12 hrs
+        
+        // Loading values from properties file
+        Properties props = new Properties();
+        
+        try
+        {
+            FileInputStream in = new FileInputStream( "system.properties" );    
+            props.load( in );
+            in.close();
+        }
+        catch( Exception exc )
+        {
+            // Initialise properties instance with default values
+            props.setProperty( sSYSTEM_NAME    , "joing.peyrona.com"             );
+            props.setProperty( sBASE_DIR       , "/home/fmorero/Joing_App" );
+            props.setProperty( sEMAIL_SRV      , "localhost"               );
+            props.setProperty( sSESSION_TIMEOUT, Long.toString( nTimeOut ) );
+        }
+        
+        sVersion = "0.0";      // It's better to hardcode this property than to store it in a file
+        sSysName = props.getProperty( sSYSTEM_NAME );
+        fBaseDir = new File( props.getProperty( sBASE_DIR ) );
+        fUserDir = new File( fBaseDir, "users" );
+        fAppDir  = new File( fBaseDir, "apps"  );
+        
+        if( ! fBaseDir.exists() )
+            fBaseDir.mkdirs();
+        
+        if( ! fAppDir.exists() )
+            fAppDir.mkdirs();
+        
+        if( ! fUserDir.exists() )
+            fUserDir.mkdirs();
+        
+        try
+        { 
+            emailServer = new URL( props.getProperty( sEMAIL_SRV ) );
+        }
+        catch( MalformedURLException exc ) 
+        {
+            emailServer = null;
+        }
+        
+        try
+        {
+            nSessionTimeOut = Long.parseLong( props.getProperty( sSESSION_TIMEOUT ) ) * 1000;   // in milliseconds
+        }
+        catch( NumberFormatException exc ) 
+        {
+            nSessionTimeOut = nTimeOut;
+        }   
     }
 }

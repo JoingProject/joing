@@ -44,6 +44,7 @@ public class FileDescriptor implements Serializable
     private int     idOriginal;        // TODO: no creo que esto vaya así: tendría que estar aquí el original y sobrarían el resto de los campos
     private String  absolutePath;      // read-only
     private String  account;           // hidden variable (no set and no get)
+    private String  owner;             // read-only
     private boolean isHidden;
     private boolean isPublic;
     private boolean isModifiable;
@@ -104,6 +105,7 @@ public class FileDescriptor implements Serializable
         //--------------------------------------------------------
         _file.setIdOriginal(  this.idOriginal );
         _file.setAccount(     this.account    );
+        _file.setOwner(       this.owner      );
         
         _file.setIsHidden(     (short)(isHidden()     ? 1 : 0) );
         _file.setIsPublic(     (short)(isPublic()     ? 1 : 0) );
@@ -137,6 +139,11 @@ public class FileDescriptor implements Serializable
         this.name = sNewName;
     }
 
+    public String getOwner()
+    {
+        return owner;
+    }
+    
     public boolean isDirectory()
     {
         return isDir;

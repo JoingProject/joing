@@ -119,32 +119,32 @@ public class VFSBridgeServletImpl
         return file;
     }
 
-    public boolean writeText( FileText file )
+    public FileDescriptor writeText( FileText file )
            throws JoingServerException
     {
-        boolean bSuccess = false;
+        FileDescriptor fRet = null;
         
         Channel channel = new Channel( VFS_WRITE_TEXT_FILE );
                 channel.write( Bridge2Server.getInstance().getSessionId() );
                 channel.write( file );
-        bSuccess = (Boolean) channel.read();
+        fRet = (FileDescriptor) channel.read();
                 channel.close();
         
-        return bSuccess;
+        return fRet;
     }
 
-    public boolean writeBinary( FileBinary file )
+    public FileDescriptor writeBinary( FileBinary file )
            throws JoingServerException
     {
-        boolean bSuccess = false;
+        FileDescriptor fRet = null;
         
         Channel channel = new Channel( VFS_WRITE_BINARY_FILE );
                 channel.write( Bridge2Server.getInstance().getSessionId() );
                 channel.write( file );
-        bSuccess = (Boolean) channel.read();
+        fRet = (FileDescriptor) channel.read();
                 channel.close();
         
-        return bSuccess;
+        return fRet;
     }
 
     public FileDescriptor update( FileDescriptor file )

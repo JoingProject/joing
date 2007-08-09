@@ -10,8 +10,11 @@ import ejb.JoingServerException;
 import servlets.JoingServerServletException;
 import ejb.vfs.FileManagerLocal;
 import ejb.vfs.FileText;
-import ejb.vfs.JoingServerVFSException;
-import java.io.*;
+import ejb.vfs.FileDescriptor;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import java.net.*;
 import javax.ejb.EJB;
 
@@ -44,12 +47,12 @@ public class WriteTextFile extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String   sSessionId = (String)   reader.readObject();
-            FileText fileText   = (FileText) reader.readObject();
-            boolean  bSuccess   = fileManagerBean.writeTextFile( sSessionId, fileText );
+            String         sSessionId = (String)   reader.readObject();
+            FileText       fileText   = (FileText) reader.readObject();
+            FileDescriptor fileDescr  = fileManagerBean.writeTextFile( sSessionId, fileText );
             
             // Write to Client (desktop) the result of the operation
-            writer.writeObject( bSuccess );
+            writer.writeObject( fileDescr );
             writer.flush();
         }
         catch( ClassNotFoundException exc )
