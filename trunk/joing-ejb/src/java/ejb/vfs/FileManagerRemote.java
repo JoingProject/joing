@@ -122,7 +122,7 @@ public interface FileManagerRemote
      *         a wrapped third-party exception if something went wrong.
      * @see #writeText
      */
-    FileText  readTextFile( String sSessionId, int nFileId, String sEncoding )
+    FileText readTextFile( String sSessionId, int nFileId, String sEncoding )
             throws JoingServerVFSException;
     
     /**
@@ -154,12 +154,13 @@ public interface FileManagerRemote
      * @param nFileId The result of invokink <code>File.getId()</code>
      * @param reader
      * @param sEncoding
-     * @return The received reference but updated.
+     * @return The updated (new file size) <code>FileDescriptor<code> that 
+               represents this text file.
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      * @see #writeText
      */
-    FileText writeTextFile( String sSessionId, FileText fileText )
+    FileDescriptor writeTextFile( String sSessionId, FileText fileText )
             throws JoingServerVFSException;
     
     /**
@@ -168,11 +169,12 @@ public interface FileManagerRemote
      * @param sSessionId The session ID assigned to client at login
      * @param nFileId The result of invokink <code>File.getId()</code>
      * @param reader
-     * @return The received reference but updated.
+     * @return The updated (new file size) <code>FileDescriptor<code> that 
+               represents this text file.
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
-    FileBinary writeBinaryFile( String sSessionId, FileBinary fileBinary )
+    FileDescriptor writeBinaryFile( String sSessionId, FileBinary fileBinary )
             throws JoingServerVFSException;
     
     boolean copy( String sSessionId, int nFileId, int nToDirId )

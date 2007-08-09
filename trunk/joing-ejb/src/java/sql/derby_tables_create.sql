@@ -85,6 +85,7 @@ CREATE TABLE FILES(               -- 'FILE' is an SQL-99 keyword
    ID_PARENT       INT           NOT NULL ,  -- Which directory is the parent of this dir or file or NULL when it is root or when ID_ORIGINAL != null
    ID_ORIGINAL     INT                    ,  -- In case it is a link: Which file is the original?  
    ACCOUNT         VARCHAR(32)   NOT NULL ,  -- User that owns this file or link
+   OWNER           VARCHAR(128)  NOT NULL ,  -- User that owns this file or link in the from <account>@<joing_name>.<domain>
    NAME            VARCHAR(255)           ,  -- NULL when ID_ORIGINAL != null
    FULL_PATH       VARCHAR(2048)          ,  -- Accumulated path (used mainly to search)
    IS_DIR          SMALLINT      DEFAULT 0,  -- 0 == It is a file, 1 == It is a directory

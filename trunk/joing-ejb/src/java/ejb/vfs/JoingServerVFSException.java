@@ -29,16 +29,16 @@ import ejb.JoingServerException;
  */
 public class JoingServerVFSException extends JoingServerException
 {
-    final static String INVALID_OWNER         = "Operation can not be performed because the account does not ownes the file.";
+    final static String INVALID_OWNER         = "Operation can not be performed because\nthe account does not ownes the file.";
     final static String FILE_NOT_EXISTS       = "File does not exists.";
     final static String FILE_NAME_EXISTS      = "File name already exists.";
     final static String NOT_DELETEABLE        = "Can not delete: file or directory is marked as not deleteable.";
-    final static String NOT_ALTERABLE         = "Can not modfify attributes: file or directory is marked as not alterable.";
+    final static String NOT_ALTERABLE         = "Can not modfify attributes:\nfile or directory is marked as not alterable.\nOnly the owner of the entity is allowed to do it.";
     final static String PARENT_DIR_NOT_EXISTS = "Invalid parent directory: it does not exists.";
     final static String INVALID_PARENT        = "Invalid parent: it is not a directory but a file.";
     final static String FILE_ALREADY_EXISTS   = "Invalid name: file already exists.";
     final static String DIR_ALREADY_EXISTS    = "Invalid name: directory already exists.";
-    final static String NO_QUOTA              = "Sorry but file can't be saved: you do not have eought free space in your disk. Please contact with the system administrator.";
+    final static String NO_QUOTA              = "Sorry but file can't be saved:\nyou do not have enought free space in your disk.\nPlease contact with the system administrator.";
     
     public JoingServerVFSException()
     {

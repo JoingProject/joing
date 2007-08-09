@@ -87,6 +87,9 @@ public class FileEntity implements Serializable {
     
     @Column(name = "ACCOUNT")
     private String account;
+    
+    @Column(name = "OWNER")
+    private String owner;
 
     //------------------------------------------------------------------------//
     
@@ -266,6 +269,24 @@ public class FileEntity implements Serializable {
     public void setAccount(String account)
     {
         this.account = account;
+    }
+    
+    /**
+     * Gets the owner of this FileEntity.
+     * @return the owner
+     */
+    public String getOwner()
+    {
+        return this.owner;
+    }
+
+    /**
+     * Sets the owner of this FileEntity to the specified value.
+     * @param owner the new account
+     */
+    public void setOwner(String owner)
+    {
+        this.owner = owner;
     }
     
     @Override

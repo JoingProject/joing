@@ -74,14 +74,14 @@ public class VFSBridgeDirectImpl
         return null;
     }
 
-    public boolean writeText(FileText fileText)
+    public FileDescriptor writeText(FileText fileText)
     {
-        return false;
+        return null;
     }
 
-    public boolean writeBinary(FileBinary fileBinary)
+    public FileDescriptor writeBinary(FileBinary fileBinary)
     {
-        return false;
+        return null;
     }
 
     public FileDescriptor update(FileDescriptor file)

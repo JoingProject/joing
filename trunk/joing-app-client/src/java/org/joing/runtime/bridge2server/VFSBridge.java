@@ -33,9 +33,9 @@ public interface VFSBridge
     
     FileBinary readBinary( int nFileId );
     
-    boolean writeText( FileText ft );
+    FileDescriptor writeText( FileText ft );
     
-    boolean writeBinary( FileBinary fb );
+    FileDescriptor writeBinary( FileBinary fb );
     
     FileDescriptor update( FileDescriptor file );
     

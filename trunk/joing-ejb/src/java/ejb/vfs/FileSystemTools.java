@@ -69,37 +69,37 @@ public class FileSystemTools
     /**
      * Creates an empty file.
      *
-     * @param sAccount 
-     * @param sFileName
+     * @param sAccount A valid user account
+     * @param nFileId  The file Id (it is used as file name) 
      */
-    public static void createFile( String sAccount, String sFileName ) 
+    public static void createFile( String sAccount, int nFileId  ) 
            throws IOException
     {
-        java.io.File fNew = getFile( sAccount, sFileName );
-                     
+        java.io.File fNew = _getFile( sAccount, nFileId  );
+        
         if( ! fNew.createNewFile() )
-            throw new IOException( "Error creating file ["+ sFileName +"]\n"+
-                                   "for account = ["+ sAccount +"]" );
+            throw new IOException( "Error creating file for account = ["+ sAccount +"]" );   // It is ok in this way: don't add the file name
     }
     
     /**
      * Returns file handler to a physical file.
      *
-     * @param sAccount A valid user account
-     * @param sFileName Absolute file name (from root ('/')
+     * @param sAccount      A valid user account
+     * @param nFileId       The file Id (it is used as file name) 
      */
-    public static java.io.File getFile( String sAccount, String sFileName )
-    {
-        return (new java.io.File( getUserHome( sAccount ), sFileName ));
+    public static java.io.File getFile( String sAccount, int nFileId  )
+    {        
+        return _getFile( sAccount, nFileId  );
     }
     
     /**
      * 
      * 
+     * @param sAppName Full app name including path (if any) from Apps base dir.
      */
     public static java.io.File getApplication( String sAppName )
     {
-        return (new java.io.File( getAppDir(), sAppName ));
+        return new java.io.File( Constant.getAppDir(), sAppName );
     }
     
     /**
@@ -110,7 +110,7 @@ public class FileSystemTools
      */
     public static boolean deleteFile( String sAccount, int nFileId )
     {
-        return getAbsoluteFile( sAccount, nFileId ).delete();
+        return _getFile( sAccount, nFileId ).delete();
     }
     
     /**
@@ -125,7 +125,7 @@ public class FileSystemTools
      */
     public static long getFileSize( String sAccount, int nFileId )
     {
-        return getAbsoluteFile( sAccount, nFileId ).length();
+        return _getFile( sAccount, nFileId ).length();
     }
     
     /**
@@ -147,30 +147,16 @@ public class FileSystemTools
     
     //------------------------------------------------------------------------//
     
+    public static java.io.File _getFile( String sAccount, int nFileId )
+    {
+        return new java.io.File( getUserHome( sAccount ), Integer.toString( nFileId ) );
+    }
+    
     // Retrieves the user home directory
     private static java.io.File getUserHome( String sAccount )
     {
-        return (new java.io.File( Constant.getUserDir(), sAccount ));
-    }
-    
-    private static java.io.File getAppDir()
-    {
-        return (new java.io.File( Constant.getBaseDir(), "apps" ) );
-    }
-    
-    // Nota: no pongo éste método en la clase vfs.File porque no quiero que 
-    //       el Cliente se lleve la referencia a la clase ejb.Constant
-    private static String getAbsolutePath( String sAccount, int nFileId )
-    {
-        return Constant.getBaseDir() +"vfs/"+ sAccount +"/"+ nFileId;
-    }
-    
-    // Nota: no pongo éste método en la clase vfs.File porque no quiero que 
-    //       el Cliente se lleve la referencia a la clase ejb.Constant   
-    private static java.io.File getAbsoluteFile( String sAccount, int nFileId )
-    {
-        return (new java.io.File( getAbsolutePath( sAccount, nFileId ) ));
-    }
+        return new java.io.File( Constant.getUserDir(), sAccount );
+    }    
     
     // Recursively deletes a directory an all its files
     private static boolean deleteDirectory( java.io.File path )
