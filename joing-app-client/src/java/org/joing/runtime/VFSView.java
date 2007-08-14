@@ -31,6 +31,10 @@ import javax.swing.filechooser.FileSystemView;
  */
 public class VFSView extends FileSystemView
 {
+    private static VFSFile[] afRoot = new VFSFile[0];
+    
+    //------------------------------------------------------------------------//
+    
     public VFSView()
     {
     }
@@ -98,7 +102,13 @@ public class VFSView extends FileSystemView
     @Override
     public java.io.File[] getRoots()
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        if( afRoot == null )
+            afRoot = (VFSFile[]) VFSFile.listRoots();
+        
+        VFSFile[] aRet = new VFSFile[ afRoot.length ];
+        System.arraycopy( afRoot, 0, aRet, 0, afRoot.length );
+        
+        return aRet;
     }
     
     /**
@@ -107,7 +117,7 @@ public class VFSView extends FileSystemView
     @Override
     public boolean isHiddenFile( java.io.File file )
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        return file.isHidden();
     }
     
     /**
@@ -116,6 +126,19 @@ public class VFSView extends FileSystemView
     @Override
     public boolean isRoot( java.io.File file )
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        for( int n = 0; n < afRoot.length; n++ )
+            if( afRoot[n] == file )       // Both are the same object (have same reference)
+                return true;
+        
+        return false;
+    }
+    
+    /**
+     * @see javax.swing.filechooser.FileSystemView#isTraversable( java.io.File file )
+     */
+    @Override
+    public Boolean isTraversable( java.io.File file )
+    {
+	return Boolean.valueOf( file.isDirectory() );
     }
 }
