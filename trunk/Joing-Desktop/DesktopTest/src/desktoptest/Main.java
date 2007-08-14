@@ -10,13 +10,10 @@
 package desktoptest;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.UIManager;
-import net.infonode.gui.laf.InfoNodeLookAndFeel;
-import net.infonode.gui.laf.InfoNodeLookAndFeelThemes;
 import org.joing.desktop.api.Application;
 import org.joing.desktop.api.Desktop;
 import org.joing.desktop.api.Wallpaper;
