@@ -41,7 +41,13 @@ public class AppDescriptor implements Serializable
     private boolean allowRemote;      // Used by ApplicationManagerBean class
     
     /**
-     * Creates a new instance of Application
+     * Class constructor (this class is a DTO).
+     * <p>
+     * For security and encapsulation reasons, the constructor has package scope:
+     * only the Manager EJB can create them.<br>
+     * If any other part of the application would need to create for example an
+     * empty instance of this class, then a method can be added to the Manager
+     * EJB (this method can return an empty instance).
      */
     AppDescriptor( ApplicationEntity _app )
     {

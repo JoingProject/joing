@@ -110,9 +110,9 @@ public class Constant
         catch( Exception exc )
         {
             // Initialise properties instance with default values
-            props.setProperty( sSYSTEM_NAME    , "joing.peyrona.com"             );
-            props.setProperty( sBASE_DIR       , "/home/fmorero/Joing_App" );
-            props.setProperty( sEMAIL_SRV      , "localhost"               );
+            props.setProperty( sSYSTEM_NAME    , "joing.peyrona.com" );
+            props.setProperty( sBASE_DIR       , "/home/fmorero/proyectos/Joing/base_dir" );
+            props.setProperty( sEMAIL_SRV      , "localhost" );
             props.setProperty( sSESSION_TIMEOUT, Long.toString( nTimeOut ) );
         }
         

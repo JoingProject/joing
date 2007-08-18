@@ -84,20 +84,21 @@ CREATE TABLE FILES(               -- 'FILE' is an SQL-99 keyword
    ID_FILE         INT GENERATED ALWAYS AS IDENTITY, -- Real file name in real FS
    ID_PARENT       INT           NOT NULL ,  -- Which directory is the parent of this dir or file or NULL when it is root or when ID_ORIGINAL != null
    ID_ORIGINAL     INT                    ,  -- In case it is a link: Which file is the original?  
-   ACCOUNT         VARCHAR(32)   NOT NULL ,  -- User that owns this file or link
+   ACCOUNT         VARCHAR(32)   NOT NULL ,  -- User that has this file or link in his/her disk-space
    OWNER           VARCHAR(128)  NOT NULL ,  -- User that owns this file or link in the from <account>@<joing_name>.<domain>
    NAME            VARCHAR(255)           ,  -- NULL when ID_ORIGINAL != null
    FULL_PATH       VARCHAR(2048)          ,  -- Accumulated path (used mainly to search)
+   LOCKED_BY       VARCHAR(32)            ,  -- The account who requested to lock the file or null when unlocked
    IS_DIR          SMALLINT      DEFAULT 0,  -- 0 == It is a file, 1 == It is a directory
    IS_HIDDEN       SMALLINT      DEFAULT 0,  -- Hidden or not
    IS_PUBLIC       SMALLINT      DEFAULT 1,  -- Allow other users to know this file exist (v.g. can be copied)
+   IS_READABLE     SMALLINT      DEFAULT 1,  -- Contents can be shown
    IS_MODIFIABLE   SMALLINT      DEFAULT 1,  -- Contents can be changed
    IS_DELETEABLE   SMALLINT      DEFAULT 1,  -- File can be deleted
    IS_EXECUTABLE   SMALLINT      DEFAULT 0,  -- It is an executable file
    IS_DUPLICABLE   SMALLINT      DEFAULT 1,  -- Copies of this file are allowed (by the owner and other users), otherwise only a link is allowed
-   IS_LOCKED       SMALLINT      DEFAULT 0,  -- The Client side requested to lock the file
    IS_SYSTEM       SMALLINT      DEFAULT 0,  -- File belongs to the system: user can only see its name
-   IS_ALTERABLE    SMALLINT      DEFAULT 1,  -- Allow users to change its attributes
+   IS_ALTERABLE    SMALLINT      DEFAULT 1,  -- Allow other users than owner to change its attributes
    IS_IN_TRASHCAN  SMALLINT      DEFAULT 0,  -- Is the file in the trash can?
    CREATED         TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,  -- When was created
    MODIFIED        TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,  -- Last time it was modified

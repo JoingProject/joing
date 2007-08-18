@@ -137,7 +137,7 @@ public class SessionManagerBean
     public boolean isAccountAvailable( String sAccount )
            throws JoingServerSessionException
     {
-        if( sAccount == null )
+        if( sAccount == null || sAccount.equals( Constant.getSystemName() ) )
             return false;
         else
             return (em.find( UserEntity.class, sAccount ) == null);

@@ -46,6 +46,9 @@ public class FileEntity implements Serializable {
     @Column(name = "IS_PUBLIC")
     private Short isPublic;
     
+    @Column(name = "IS_READABLE")
+    private Short isReadable;
+    
     @Column(name = "IS_MODIFIABLE")
     private Short isModifiable;
     
@@ -57,9 +60,6 @@ public class FileEntity implements Serializable {
     
     @Column(name = "IS_DUPLICABLE")
     private Short isDuplicable;
-    
-    @Column(name = "IS_LOCKED")
-    private Short isLocked;
     
     @Column(name = "IS_SYSTEM")
     private Short isSystem;
@@ -90,6 +90,9 @@ public class FileEntity implements Serializable {
     
     @Column(name = "OWNER")
     private String owner;
+    
+    @Column(name = "LOCKED_BY")
+    private String lockedBy;
 
     //------------------------------------------------------------------------//
     
@@ -157,6 +160,14 @@ public class FileEntity implements Serializable {
         this.isPublic = isPublic;
     }
 
+    public Short getIsReadable() {
+        return isReadable;
+    }
+
+    public void setIsReadable(Short isReadable) {
+        this.isReadable = isReadable;
+    }
+    
     public Short getIsModifiable() {
         return isModifiable;
     }
@@ -189,12 +200,12 @@ public class FileEntity implements Serializable {
         this.isDuplicable = isDuplicable;
     }
 
-    public Short getIsLocked() {
-        return isLocked;
+    public String getLockedBy() {
+        return lockedBy;
     }
 
-    public void setIsLocked(Short isLocked) {
-        this.isLocked = isLocked;
+    public void setLockedBy(String lockedBy) {
+        this.lockedBy = lockedBy;
     }
 
     public Short getIsSystem() {
