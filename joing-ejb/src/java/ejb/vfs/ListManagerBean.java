@@ -59,6 +59,9 @@ public class ListManagerBean
                 try
                 {
                    nFileDirId = ((FileEntity) query.getSingleResult()).getIdFile();
+                   
+                   if( nFileDirId > 0 )
+                        files = _getChilds( sAccount, nFileDirId );
                 }
                 catch( Exception exc )
                 {
@@ -66,9 +69,6 @@ public class ListManagerBean
                     throw new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
                 }
             }
-            
-            if( nFileDirId > 0 )
-                files = _getChilds( sAccount, nFileDirId );
         }
         
         return files;
@@ -170,13 +170,6 @@ public class ListManagerBean
         }
         catch( RuntimeException exc )
         {
-            /*                if( ! (exc instanceof JoingServerException) )
-                {
-                    Constant.getLogger().throwing( getClass().getName(), "updateFile(...)", exc );
-                    exc = new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
-                }
-                
-                throw exc;*/
             Constant.getLogger().throwing( getClass().getName(), "_getChilds(...)", exc );
             throw new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
         }

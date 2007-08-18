@@ -85,6 +85,10 @@ public class FileManagerBean
         return file;
     }
     
+    // This method does not need to implement the logic to handle (validate) file 
+    // attributes). The logic (validation) is done by class FileDescriptor.
+    // In this way, there is no need to send file attributes to the Server in 
+    // order to be validated.
     public FileDescriptor updateFile( String sSessionId, FileDescriptor fileIn )
            throws JoingServerVFSException
     {
@@ -98,12 +102,14 @@ public class FileManagerBean
                 if( ! isFileInUserSpace( sAccount, fileIn.getId() ) )
                     throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
 
-                // Get the original file
-                FileEntity _file = em.find( FileEntity.class, fileIn.getId() );
                 
-                if( _file.getIsAlterable() == 0   &&              // Attributes can't be changed
-                    ! isOwnerOfFile( sAccount, fileIn.getId() ) ) // and he is not the owner of the file
-                    throw new JoingServerVFSException( JoingServerVFSException.NOT_ALTERABLE );
+                // TODO: Revisar este metodo
+                
+                
+                // Get the original file: this is the only one attribute that has 
+                // to be checked: the rest of them are done in FileDescriptor class,
+                // but obviously the name can't be cheked at Client.
+                FileEntity _file = em.find( FileEntity.class, fileIn.getId() );
                 
                 // Attribute name is changed
                 String sNameNew = fileIn.getName();
@@ -121,11 +127,7 @@ public class FileManagerBean
                     
                     _file.getFileEntityPK().setName( sNameNew );
                 }
-
-                // Attribute
-                // TODO: comprobar todos los permisos y actualizar el JavaDoc
-                //       p.ej. si es un dir, no puede cambiar a tipo fichero, ni a tipo ejecutable, etc.
-
+                
                 _file.setAccessed( new Date() );  // Modified is only when modifiying contents
                 em.persist( _file );
                 fileOut = new FileDescriptor( _file );
@@ -175,6 +177,9 @@ public class FileManagerBean
             if( ! isFileInUserSpace( sAccount, nFileId ) )
                 throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
 
+            if( ! fileText.isReadable() )
+                throw new JoingServerVFSException( JoingServerVFSException.NOT_READABLE );
+            
             try
             {
                 FileEntity _file = em.find( FileEntity.class, nFileId );
@@ -226,6 +231,9 @@ public class FileManagerBean
         {
             if( ! isFileInUserSpace( sAccount, nFileId ) )
                 throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
+            
+            if( ! fileBinary.isReadable() )
+                throw new JoingServerVFSException( JoingServerVFSException.NOT_READABLE );
             
             try
             {
@@ -280,10 +288,13 @@ public class FileManagerBean
         {
             if( ! isFileInUserSpace( sAccount, fileText.getId() ) )
                 throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
-
-            if( ! isOwnerOfFile( sAccount, fileText.getId() ) )
-                throw new JoingServerVFSException( JoingServerVFSException.INVALID_OWNER );
             
+            if( ! fileText.isModifiable() )
+                throw new JoingServerVFSException( JoingServerVFSException.NOT_MODIFIABLE );
+
+            if( ! fileText.ownsLock() )
+                throw new JoingServerVFSException( JoingServerVFSException.LOCKED_BY_ANOTHER );
+                
             if( ! hasQuota( sSessionId, fileText.getSize() ) )
                 throw new JoingServerVFSException( JoingServerVFSException.NO_QUOTA );
             
@@ -345,9 +356,12 @@ public class FileManagerBean
             if( ! isFileInUserSpace( sAccount, fileBinary.getId() ) )
                 throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
             
-            if( ! isOwnerOfFile( sAccount, fileBinary.getId() ) )
-                throw new JoingServerVFSException( JoingServerVFSException.INVALID_OWNER );
-            
+            if( ! fileBinary.isModifiable() )
+                throw new JoingServerVFSException( JoingServerVFSException.NOT_MODIFIABLE );
+
+            if( ! fileBinary.ownsLock() )
+                throw new JoingServerVFSException( JoingServerVFSException.LOCKED_BY_ANOTHER );
+                
             if( ! hasQuota( sSessionId, fileBinary.getSize() ) )
                 throw new JoingServerVFSException( JoingServerVFSException.NO_QUOTA );
             
@@ -630,7 +644,7 @@ public class FileManagerBean
             if( ! _file.getAccount().equals( sAccount ) )   // File is not in user disk space
                 throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
 
-            if( _file.getIsDeleteable() == 0 )   // Marked as not deleteable
+            if( _file.getIsDeleteable() == 0 )   // Marked as not deleteable (to delete: change the attribute and try again)
                 throw new JoingServerVFSException( JoingServerVFSException.NOT_DELETEABLE );
 
             if( _file.getFileEntityPK().getIsDir() != 0 )  // Is a directory
@@ -721,6 +735,7 @@ public class FileManagerBean
                 FileEntity _file = new FileEntity();
                            _file.setAccount( sAccount );
                            _file.setOwner( sAccount +'@'+ Constant.getSystemName() );
+                           _file.setLockedBy( null );
                            _file.setFileEntityPK( _fepk );
                            _file.setIsAlterable(  (short) 1 );
                            _file.setIsDeleteable( (short) 1 );
@@ -728,7 +743,6 @@ public class FileManagerBean
                            _file.setIsExecutable( (short) 0 );
                            _file.setIsHidden(     (short) 0 );
                            _file.setIsInTrashcan( (short) 0 );
-                           _file.setIsLocked(     (short) 0 );
                            _file.setIsModifiable( (short) 1 );
                            _file.setIsPublic(     (short) 0 );
                            _file.setIsSystem(     (short) 0 );
@@ -870,7 +884,7 @@ public class FileManagerBean
         StringBuilder sbError = new StringBuilder();
         
         if( sName == null )
-            sbError.append( "Can not be null." );
+            sbError.append( "\nCan not be null." );
         
         if( sName.length() == 0 )
             sbError.append( "\nCan not be empty." );
@@ -888,7 +902,7 @@ public class FileManagerBean
             sbError.append( "\nCan not end with blank space." );
         
         if( sbError.length() > 0 )
-            sbError.insert( 0, "Invalid file name:\n" );
+            sbError.insert( 0, "Invalid file name:" );
         
         return sbError.toString();
     }

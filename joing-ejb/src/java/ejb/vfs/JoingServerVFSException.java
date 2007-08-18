@@ -33,7 +33,10 @@ public class JoingServerVFSException extends JoingServerException
     final static String FILE_NOT_EXISTS       = "File does not exists.";
     final static String FILE_NAME_EXISTS      = "File name already exists.";
     final static String NOT_DELETEABLE        = "Can not delete: file or directory is marked as not deleteable.";
-    final static String NOT_ALTERABLE         = "Can not modfify attributes:\nfile or directory is marked as not alterable.\nOnly the owner of the entity is allowed to do it.";
+    final static String NOT_ALTERABLE         = "Can not modify attributes:\nfile or directory is marked as not alterable.\nOnly the owner of the entity is allowed to do it.";
+    final static String NOT_READABLE          = "File is marked as no-readable:\nyou have to change this attribute prior to read it.";
+    final static String NOT_MODIFIABLE        = "File is marked as un-modifiable:\nyou have to change this attribute prior to write into it.";
+    final static String LOCKED_BY_ANOTHER     = "Can not write int file:\nit is locked and you do not own the lock.";
     final static String PARENT_DIR_NOT_EXISTS = "Invalid parent directory: it does not exists.";
     final static String INVALID_PARENT        = "Invalid parent: it is not a directory but a file.";
     final static String FILE_ALREADY_EXISTS   = "Invalid name: file already exists.";

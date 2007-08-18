@@ -197,22 +197,23 @@ public class UserManagerBean
             em.persist( _user );
 
             // Creates root ("/") in FILES DB table
-            FileEntityPK _fepk = new FileEntityPK();   // TODO: no estoy seguro que esto sirva
-                       //_fepk.setIdParent( null );
+            FileEntityPK _fepk = new FileEntityPK();
+                         //_fepk.setIdParent( null );  TODO: el parent es él mismo
                          _fepk.setIsDir( (short) 1 );
                          _fepk.setName( "/" );
 
             FileEntity _file = new FileEntity();
                        _file.setFileEntityPK( _fepk );
                        _file.setAccount( _user.getAccount() );
+                       _file.setOwner( Constant.getSystemName() );   // Users can't have SystemName (see: sessionManagerBean.isAccountAvailable)
                        _file.setFullPath( "/" );
+                       _file.setLockedBy( _user.getAccount() );
                        _file.setIsAlterable(  (short) 0 );
                        _file.setIsDeleteable( (short) 0 );
                        _file.setIsDuplicable( (short) 0 );
                        _file.setIsExecutable( (short) 0 );
                        _file.setIsHidden(     (short) 0 );
                        _file.setIsInTrashcan( (short) 0 );
-                       _file.setIsLocked(     (short) 0 );
                        _file.setIsModifiable( (short) 0 );
                        _file.setIsPublic(     (short) 0 );
                        _file.setIsSystem(     (short) 1 );
