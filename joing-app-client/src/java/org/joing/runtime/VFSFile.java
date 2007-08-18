@@ -24,11 +24,14 @@ package org.joing.runtime;
 import ejb.user.User;
 import java.io.File;
 import ejb.vfs.FileDescriptor;
+import ejb.vfs.JoingServerVFSException;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
-import java.net.MalformedURLException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 import org.joing.runtime.bridge2server.Bridge2Server;
 
 /**
@@ -38,82 +41,140 @@ import org.joing.runtime.bridge2server.Bridge2Server;
  */
 public class VFSFile extends File
 {
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    
     private static long nTotalDiskSpace = -1;
     
     private FileDescriptor fd;
     
+    private FileDescriptor fdParent = null;   // Used only to create files and dirs
+    private String         sChild   = null;   // Used only to create files and dirs
+    
     //------------------------------------------------------------------------//
     
-    public VFSFile( File parent, String child )
-    {
-        this( parent.getAbsolutePath(), child );
-    }
-    
-    public VFSFile( String parent, String child ) 
+    /**
+     * Creates a new instance of <code>VFSFile</code>.
+     * The directory or file name must start with root ("/").
+     * <p>
+     * It is recommended that directory names end with file separator ("/").
+     * 
+     * @param parent Parent directory.
+     * @param child  Directory or file name.
+     */
+    public VFSFile( String parent, String child )
     {
         this( parent +'/'+ child );     // VFS uses '/' as path separator
     }
     
-    public VFSFile( URI uri ) throws MalformedURLException
+    /**
+     * Creates a new instance of <code>VFSFile</code>.
+     * The directory or file name must start with root ("/").
+     * <p>
+     * It is recommended that directory names end with file separator ("/").
+     * 
+     * @param sFullName Full directory or file name.
+     */
+    public VFSFile( String sFullName ) throws JoingServerVFSException
     {
-        this( uri.toURL().getFile() );
-    }
-
-    public VFSFile( String pathname )
-    {
-        super( pathname );
-        fd = createFileDescriptor( pathname );
+        super( sFullName );    // Needed but never used
+        
+        sFullName = sFullName.trim();
+        
+        if( sFullName.charAt( 0 ) != '/' )
+            throw new IllegalArgumentException( "Name must be absolute (starting with '/')" );
+        
+        // If fd == null, then file or dir not exists
+        fd = Bridge2Server.getInstance().getFileBridge().getFile( sFullName );
+        
+        if( fd == null )
+        {
+            if( sFullName.endsWith( "/" ) )   // Then, removes last '/'
+                sFullName = sFullName.substring( 0, sFullName.length() - 2 );
+            
+            String sParent = sFullName.substring( 0, sFullName.lastIndexOf( '/' ) );
+            String sHijo   = sFullName.substring( sParent.length() );
+            
+            fdParent = Bridge2Server.getInstance().getFileBridge().getFile( sParent );
+            sChild   = sHijo;
+        }
     }
     
     /**
-     * This constructor is added for speed: whenever the file descriptor is
-     * available, this is the rpeferred way.
-     */ 
-    public VFSFile( FileDescriptor fd )
+     * Creates a new instance of <code>VFSFile</code>.
+     *
+     * @param parent Parent directory.
+     * @param child  Directory or file name.
+     */
+    public VFSFile( VFSFile parent, String child ) throws JoingServerVFSException
     {
-        super( fd.getAbsolutePath() );
+        super( parent.getAbsolutePath() +"/"+ child );    // Needed but never used
+        
+        if( ! parent.isDirectory() )
+            throw new IllegalArgumentException( "parent must be a directory" );
+        
+        // If fd == null, then parent and or child not exists
+        fd = Bridge2Server.getInstance().getFileBridge().getFile( parent.getAbsolutePath() +"/"+ child.trim() );
+        
+        if( fd == null )
+        {
+            fdParent = parent.fd;
+            sChild   = child.trim();
+        }
+    }
+    
+    // Used only internally
+    private VFSFile( FileDescriptor fd )
+    {
+        super( fd.getName() );   // Needed but never used        
         this.fd = fd;
     }
     
     //------------------------------------------------------------------------//
     
     @Override
-    public boolean canExecute()
-    {
-        return (exists() ? fd.isExecutable() : false);
-    }
-    
-    @Override
-    public boolean canRead()
-    {
-        return (exists() ? ! fd.isSystem() : false);
-    }
-    
-    @Override
-    public boolean canWrite()
-    {
-        return (exists() ? fd.isModifiable() : false);
-    }
-    
-    @Override
     public int compareTo( File pathname )
     {
-        // TODO Hacerlo
-        throw new UnsupportedOperationException( "Not supported yet." );
+        int nValue = 1;
+        
+        if( pathname.exists() )
+        {
+            VFSFile file = (VFSFile) pathname;
+        
+            if( exists() )
+                return -1;
+            else
+                return this.fd.getAbsolutePath().compareTo( file.fd.getAbsolutePath() );
+        }
+        else
+        {
+            if( ! exists() )   // None of both exists
+                nValue = 0;
+        }
+        
+        return nValue;
     }
     
     @Override
-    public boolean createNewFile()
+    public boolean createNewFile() throws JoingServerVFSException
     {
-        // TODO Hacerlo
-        throw new UnsupportedOperationException( "Not supported yet." );
+        if( fd == null && fdParent != null && sChild != null )
+            fd = Bridge2Server.getInstance().getFileBridge().createFile( fdParent.getId(), sChild );
+        
+        return fd != null;
     }
     
     @Override
-    public boolean delete()
+    public boolean delete() throws JoingServerVFSException
     {
-        // TODO Hacerlo
-        throw new UnsupportedOperationException( "Not supported yet." );
+        boolean bSuccess = false;
+        
+        if( exists() )
+        {
+            Bridge2Server b2s = Bridge2Server.getInstance();
+            bSuccess = b2s.getFileBridge().delete( fd.getId() );
+        }
+        
+        return bSuccess;
     }
     
     @Override
@@ -121,12 +182,22 @@ public class VFSFile extends File
     {
         throw new UnsupportedOperationException( "Not supported operation." );
     }
- 
+    
     @Override
     public boolean equals( Object obj )
     {
-        // TODO Hacerlo
-        throw new UnsupportedOperationException( "Not supported yet." );        
+        boolean bEquals = false;
+        
+        if( obj instanceof VFSFile )
+        {
+            VFSFile file = (VFSFile) obj;
+            
+            return file.exists() && 
+                   this.exists() &&
+                   file.fd.getId() == this.fd.getId();
+        }
+        
+        return bEquals;
     }
     
     /**
@@ -139,12 +210,15 @@ public class VFSFile extends File
     }
     
     /**
+     * As instances of <code>VFSFile</code> are always absolute, this method 
+     * always return <code>this</code>.
+     * 
      * @see java.io.File#getAbsoluteFile()
      */
     @Override
-    public File getAbsoluteFile()
+    public VFSFile getAbsoluteFile()
     {
-        return (exists() ? new VFSFile( fd.getAbsolutePath() ) : null);
+        return (exists() ? this : null);
     }
     
     /**
@@ -160,7 +234,7 @@ public class VFSFile extends File
      * @see java.io.File#getCanonicalFile()
      */
     @Override
-    public File getCanonicalFile()
+    public VFSFile getCanonicalFile()
     {
         return getAbsoluteFile();
     }
@@ -178,7 +252,7 @@ public class VFSFile extends File
      * @see java.io.File#getFreeSpace()
      */
     @Override
-    public long getFreeSpace()
+    public long getFreeSpace() throws JoingServerVFSException
     {
         long          nFree = -1;
         Bridge2Server b2s   = Bridge2Server.getInstance();
@@ -213,8 +287,12 @@ public class VFSFile extends File
         if( exists() )
         {
             String sPath = fd.getAbsolutePath();
-            int    index = sPath.lastIndexOf( '/' );
-
+            
+            if( sPath.endsWith( "/" ) )     // Then, removes last '/'
+                sPath = sPath.substring( 0, sPath.length() - 2 );
+            
+            int index = sPath.lastIndexOf( '/' );
+            
             return ((index < 0) ? null : sPath.substring( 0, index ));
         }
         else
@@ -227,7 +305,7 @@ public class VFSFile extends File
      * @see java.io.File#getParentFile()
      */
     @Override
-    public File getParentFile()
+    public VFSFile getParentFile() throws JoingServerVFSException
     {
         return (exists() ? new VFSFile( getParent() ) : null);
     }
@@ -245,7 +323,7 @@ public class VFSFile extends File
      * @see java.io.File#getTotalSpace()
      */
     @Override
-    public long getTotalSpace()
+    public long getTotalSpace() throws JoingServerVFSException
     {
         if( nTotalDiskSpace == -1 )
         {
@@ -274,7 +352,25 @@ public class VFSFile extends File
     @Override
     public int hashCode()
     {
-        return 1;   // TODO hacerlo>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        return (exists() ? fd.getId() : -23);
+    }
+    
+    @Override
+    public boolean canExecute()
+    {
+        return (exists() ? fd.isExecutable() : false);
+    }
+    
+    @Override
+    public boolean canRead()
+    {
+        return (exists() ? ! fd.isSystem() : false);
+    }
+    
+    @Override
+    public boolean canWrite()
+    {
+        return (exists() ? fd.isModifiable() : false);
     }
     
     /**
@@ -283,7 +379,7 @@ public class VFSFile extends File
     @Override
     public boolean isAbsolute()
     {
-        return (exists() ? fd.getAbsolutePath().charAt( 0 ) == '/' : false);
+        return exists();  // VFSFile are always absolute (must start with '/')
     }
     
     /**
@@ -292,7 +388,7 @@ public class VFSFile extends File
     @Override
     public boolean isDirectory()
     {
-        return (exists() ? isDirectory() : false) ;
+        return (exists() ? isDirectory() : false);
     }
     
     /**
@@ -312,6 +408,107 @@ public class VFSFile extends File
     {
         return (exists() ? fd.isHidden() : false);
     }
+    
+    // Here starts VFS properties that java.io.File does not have
+    public boolean isPublic()
+    {
+        return fd.isPublic();
+    }
+    
+    public boolean setPublic( boolean b )
+    {
+        return fd.setPublic( b );
+    }
+    
+    public boolean isDeleteable()
+    {
+        return fd.isDeleteable();
+    }
+    
+    public boolean setDeleteable( boolean b )
+    {
+        return fd.setDeleteable( b );
+    }
+    
+    public boolean isDuplicable()
+    {
+        return fd.isDuplicable();
+    }
+    
+    public boolean setDuplicable( boolean b )
+    {
+        return fd.setDuplicable( b );
+    }
+    
+    /**
+     * 
+     * Obviously, there is not a <code>setSystem( boolean b )</code>.
+     */
+    public boolean isSystem()
+    {
+        return fd.isSystem();
+    }
+    
+    public boolean isAlterable()
+    {
+        return fd.isAlterable();
+    }
+    
+    public boolean setAlterable( boolean b )
+    {
+        return fd.setAlterable( b );
+    }
+    
+    public boolean isLocked()
+    {
+        return fd.isLocked();
+    }
+    
+    public boolean setLocked( boolean b )
+    {
+        return fd.setLocked( b );
+    }
+    
+    public boolean ownsLock()
+    {
+        return fd.ownsLock();
+    }
+    
+    public boolean isInTrashcan()
+    {
+        return fd.isInTrashcan();
+    }
+    
+    public boolean setInTrashcan( boolean b )
+    {
+        return fd.setInTrashcan( b );
+    }
+    
+    public String getNotes()
+    {
+        return fd.getNotes();
+    }
+    
+    public boolean setNotes( String notes )
+    {
+        return fd.setNotes( notes );
+    }
+    
+    public Date getCreated()
+    {
+        return fd.getCreated();
+    }
+    
+    public Date getAccessed()
+    {
+        return fd.getAccessed();
+    }
+    
+    public long getSize()
+    {
+        return fd.getSize();
+    }
+    //-----------------------------------------------------------
     
     /**
      * @see java.io.File#lastModified()
@@ -335,63 +532,95 @@ public class VFSFile extends File
      * @see java.io.File#list()
      */
     @Override
-    public String[] list()
+    // By contract, must return null if list is empty instead of an empty list
+    public String[] list() throws JoingServerVFSException
     {
-        File[]   af = listFiles();
+        String[] asName = null;
+
+        if( isDirectory() )
+        {
+            List<FileDescriptor> lstChilds = getChilds();
+
+            if( lstChilds.size() > 0 )   
+            {
+                asName = new String[ lstChilds.size() ];
+
+                for( int n = 0; n < asName.length; n++ )
+                    asName[n] = lstChilds.get( n ).getName();
+            }
+        }
+        
+        return asName;
+    }
+    
+    @Override
+    // By contract, must return null if list is empty instead of an empty list
+    public String[] list( FilenameFilter filter ) throws JoingServerVFSException
+    {
+        File[]   af = listFiles( filter );
         String[] as = null;
         
         if( af != null )
         {
             as = new String[ af.length ];
-
+            
             for( int n = 0; n < af.length; n++ )
                 as[n] = af[n].getName();
-
-            return as;
         }
         
         return as;
-    }
-    
-    @Override
-    public String[] list( FilenameFilter filter )
-    {
-        // TODO Hacerlo
-        throw new UnsupportedOperationException( "Not supported yet." );
     }
     
     /**
      * @see java.io.File#listFiles()
      */
     @Override
-    public File[] listFiles()
+    // By contract, must return null if list is empty instead of an empty list
+    public VFSFile[] listFiles() throws JoingServerVFSException
     {
-        VFSFile[] af = null;
+        VFSFile[] aFile = null;
         
-        // TODO Hacerlo
-        if( exists() && fd.isDirectory() )
+        if( isDirectory() )
         {
-            Bridge2Server b2s = Bridge2Server.getInstance();
-            List<FileDescriptor> list = b2s.getFileBridge().getChilds( fd.getId() );
-            
-            af = new VFSFile[ list.size() ];
-            
-            for( int n = 0; n < list.size(); n++ )
-                af[n] = new VFSFile( list.get( n ) );
+            List<FileDescriptor> list = getChilds();
+
+            if( list.size() > 0 )
+            {
+                aFile = new VFSFile[ list.size() ];
+
+                for( int n = 0; n < list.size(); n++ )
+                    aFile[n] = new VFSFile( list.get( n ) );
+            }
         }
         
-        return af;
+        return aFile;
     }
     
     @Override
-    public File[] listFiles( FileFilter filter )
+    // By contract, must return null if list is empty instead of an empty list
+    public VFSFile[] listFiles( FileFilter filter ) throws JoingServerVFSException
     {
-        // TODO Hacerlo
-        throw new UnsupportedOperationException( "Not supported yet." );
+        VFSFile[] aFile = listFiles();
+        
+        if( aFile != null )
+        {
+            ArrayList<VFSFile> lstFilteredFiles = new ArrayList<VFSFile>( aFile.length );
+            
+            for( int n = 0; n < aFile.length; n++ )
+            {
+                if( filter.accept( aFile[n] ) )
+                    lstFilteredFiles.add( aFile[n] );
+            }
+            
+            aFile = lstFilteredFiles.toArray( new VFSFile[0] );
+        }
+        
+        return aFile;
     }
     
     @Override
-    public File[] listFiles( FilenameFilter filter )
+    // By contract, must return null if list is empty instead of an empty list
+    public VFSFile[] listFiles( FilenameFilter filter ) throws JoingServerVFSException
     {
         // TODO Hacerlo
         throw new UnsupportedOperationException( "Not supported yet." );
@@ -400,27 +629,30 @@ public class VFSFile extends File
     /**
      * @see java.io.File#listRoots()
      */
-    public static File[] listRoots()
+    public static VFSFile[] listRoots() throws JoingServerVFSException
     {
-        // TODO Hacerlo
-        throw new UnsupportedOperationException( "Not supported yet." );
+        VFSFile[] af = new VFSFile[1];
+        af[0] = new VFSFile( "/Joing" );
+        return af; // By contract has to return null instead of empty array
     }
 
     /**
      * @see java.io.File#mkdir()
      */
     @Override
-    public boolean mkdir()
+    public boolean mkdir() throws JoingServerVFSException
     {
-        // TODO Hacerlo
-        throw new UnsupportedOperationException( "Not supported yet." );
+        if( fd == null && fdParent != null && sChild != null )
+            fd = Bridge2Server.getInstance().getFileBridge().createDirectory( fdParent.getId(), sChild );
+        
+        return fd != null;
     }
     
     /**
      * @see java.io.File#mkdirs()
      */
     @Override
-    public boolean mkdirs()
+    public boolean mkdirs() throws JoingServerVFSException
     {
         // TODO Hacerlo
         throw new UnsupportedOperationException( "Not supported yet." );
@@ -439,15 +671,7 @@ public class VFSFile extends File
     @Override
     public boolean setExecutable( boolean executable )
     {
-        if( exists() && fd.isAlterable() && (! fd.isDirectory()) )
-        {
-            fd.setExecutable( executable );
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return (exists() ? fd.setExecutable( executable ) : false);
     }
     
     /**
@@ -456,10 +680,13 @@ public class VFSFile extends File
     @Override
     public boolean setExecutable( boolean executable, boolean ownerOnly )
     {
-        return setExecutable( executable );
+        return setExecutable( executable );   // TODO: mirar si se puede tener en cuenta el ownerOnly
     }
     
     /**
+     * As this information is managed by the Server, this method always return 
+     * <code>false</code>.
+     * 
      * @see java.io.File#setLastModified( long time )
      */
     @Override
@@ -474,8 +701,7 @@ public class VFSFile extends File
     @Override
     public boolean setReadable( boolean readable )
     {
-        // TODO Hacerlo
-        throw new UnsupportedOperationException( "Not supported yet." );
+        return (exists() ? fd.setReadable( readable ) : false);
     }
     
     /**
@@ -484,7 +710,7 @@ public class VFSFile extends File
     @Override
     public boolean setReadable( boolean readable, boolean ownerOnly )
     {
-        return setReadable( readable );
+        return setReadable( readable );    // TODO: mirar si se puede tener en cuenta el ownerOnly
     }
     
     /**
@@ -500,7 +726,7 @@ public class VFSFile extends File
      * @see java.io.File#setWritable( boolean writable )
      */
     @Override
-    public boolean setWritable( boolean writable ) 
+    public boolean setWritable( boolean writable )
     {
         // TODO Hacerlo
         throw new UnsupportedOperationException( "Not supported yet." );
@@ -512,7 +738,20 @@ public class VFSFile extends File
     @Override
     public boolean setWritable( boolean writable, boolean ownerOnly )
     {
-        return setWritable( writable );
+        return setWritable( writable );   // TODO: mirar si se puede tener en cuenta el ownerOnly
+    }
+    
+    /**
+     * Updates (at Server side) all changed attributes in one operation.
+     * 
+     * This method should be used when one oer more atrributes (Executable,
+     * Readdable, etc.) are changed.
+     */
+    public boolean updateAttributes() throws JoingServerVFSException
+    {
+        FileDescriptor _fd = Bridge2Server.getInstance().getFileBridge().update( fd );
+        
+        return fd.equals( _fd );
     }
     
     /**
@@ -536,10 +775,13 @@ public class VFSFile extends File
     
     //------------------------------------------------------------------------//
     
-    private FileDescriptor createFileDescriptor( String sFullPath )
+    private List<FileDescriptor> getChilds() throws JoingServerVFSException
     {
-        Bridge2Server b2s = Bridge2Server.getInstance();
+        List<FileDescriptor> list = new ArrayList<FileDescriptor>();
         
-        return b2s.getFileBridge().getFile( sFullPath );
+        if( exists() && fd.isDirectory() )
+            list = Bridge2Server.getInstance().getFileBridge().getChilds( fd.getId() );
+        
+        return list;
     }
 }

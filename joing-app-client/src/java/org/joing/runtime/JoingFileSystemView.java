@@ -37,7 +37,7 @@ import javax.swing.filechooser.FileSystemView;
 public class JoingFileSystemView extends FileSystemView
 {
     private FileSystemView local;
-    private FileSystemView remote;
+    private VFSView        remote;
     
     private static final JoingFileSystemView instance = new JoingFileSystemView();
     

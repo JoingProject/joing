@@ -21,22 +21,43 @@
  */
 package org.joing.runtime;
 
+import java.io.FileFilter;
 import java.io.IOException;
 import javax.swing.filechooser.FileSystemView;
 
 /**
  * A FileSystemView that works with Join'g VFS.
+ * <p>
+ * This class handles (hide: do not report them) the JoingVFSExceptions.
  * 
  * @author Francisco Morero Peyrona
  */
 public class VFSView extends FileSystemView
 {
-    private static VFSFile[] afRoot = new VFSFile[0];
+    private static VFSView   instance = null;
+    private static VFSFile[] afRoot   = null;
     
     //------------------------------------------------------------------------//
     
-    public VFSView()
+    /**
+     * Singleton constructor.
+     * <p>
+     * This method is thread safe
+     * 
+     * @return The only instance of this class.
+     */
+    public static VFSView getFileSystemView()
     {
+        if( instance == null )
+        {
+            synchronized( VFSView.class )
+            {
+                if( instance == null )
+                    instance = new VFSView();
+            }
+        }
+        
+        return instance;
     }
     
     /**
@@ -44,25 +65,25 @@ public class VFSView extends FileSystemView
      *                                 java.io.File containingDir, String name )
      */
     @Override
-    public java.io.File createFileObject( java.io.File containingDir, String name ) 
+    public VFSFile createFileObject( java.io.File parentDir, String name ) 
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        return new VFSFile( parentDir.getAbsolutePath(), name );
     }
     
     /**
      * @see javax.swing.filechooser.FileSystemView#createFileObject(String path)
      */
     @Override
-    public java.io.File createFileObject( String path )
+    public VFSFile createFileObject( String path )
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        return new VFSFile( path );
     }
     
     /**
      * @see javax.swing.filechooser.FileSystemView#createNewFolder( 
      *                                              java.io.File containingDir )
      */
-    public java.io.File createNewFolder( java.io.File containingDir ) throws IOException
+    public VFSFile createNewFolder( java.io.File dir ) throws IOException
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
@@ -72,18 +93,42 @@ public class VFSView extends FileSystemView
      *                           java.io.File directory, boolean useFileHiding )
      */    
     @Override
-    public java.io.File[] getFiles( java.io.File directory, boolean useFileHiding )
+    public VFSFile[] getFiles( java.io.File directory, boolean useFileHiding )
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        VFSFile[] aFiles = new VFSFile[0];
+        
+        if( directory instanceof VFSFile )
+        {
+            VFSFile fVFS = (VFSFile) directory;
+            
+            if( useFileHiding )
+            {
+                FileFilter filter = new FileFilter()
+                    {
+                        public boolean accept( java.io.File f ) 
+                        {
+                            return ((VFSFile) f).isDirectory();
+                        }
+                    };
+                
+                aFiles = fVFS.listFiles( filter );
+            }
+            else
+            {
+                aFiles = fVFS.listFiles();
+            }
+        }
+        
+        return aFiles;
     }
     
     /**
      * @see javax.swing.filechooser.FileSystemView#getHomeDirectory()
      */
     @Override
-    public java.io.File getHomeDirectory()
+    public VFSFile getHomeDirectory()
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+	return getRoots()[0];
     }
     
     /**
@@ -91,7 +136,7 @@ public class VFSView extends FileSystemView
      *                                                  java.io.File directory )
      */
     @Override
-    public java.io.File getParentDirectory( java.io.File directory )
+    public VFSFile getParentDirectory( java.io.File directory )
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
@@ -100,15 +145,80 @@ public class VFSView extends FileSystemView
      * @see javax.swing.filechooser.FileSystemView#getRoots()
      */
     @Override
-    public java.io.File[] getRoots()
+    public VFSFile[] getRoots()
     {
-        if( afRoot == null )
-            afRoot = (VFSFile[]) VFSFile.listRoots();
+        VFSFile[] aRet = null;    // By contract has to return null instead of empty array
         
-        VFSFile[] aRet = new VFSFile[ afRoot.length ];
-        System.arraycopy( afRoot, 0, aRet, 0, afRoot.length );
+        if( afRoot == null )
+            afRoot = VFSFile.listRoots();
+        
+        if( afRoot != null )
+        {
+            // Defensive copy
+            aRet = new VFSFile[ afRoot.length ];
+            System.arraycopy( afRoot, 0, aRet, 0, afRoot.length );
+        }
         
         return aRet;
+    }
+    
+    /**
+     * @see javax.swing.filechooser.FileSystemView#getSystemDisplayName( java.io.File f )
+     */
+    @Override
+    public String getSystemDisplayName( java.io.File f )
+    {
+        String s = f.getName();
+        
+        if( isRoot( f ) )
+            s += " (Joing)";
+        
+        return s;
+    }
+    
+    /**
+     * @see javax.swing.filechooser.FileSystemView#isComputerNode( java.io.File dir )
+     */
+    @Override
+    public boolean isComputerNode( java.io.File dir )
+    {
+        return isRoot( dir );
+    }
+    
+    /**
+     * @see javax.swing.filechooser.FileSystemView#isDrive( java.io.File dir )
+     */
+    @Override
+    public boolean isDrive( java.io.File dir )
+    {
+        return isRoot( dir );
+    }
+    
+    /**
+     * @see javax.swing.filechooser.FileSystemView#isFileSystem( java.io.File f )
+     */
+    @Override
+    public boolean isFileSystem( java.io.File f )
+    {
+        return true;    // In VFS all files are "real"
+    }
+    
+    /**
+     * @see javax.swing.filechooser.FileSystemView#isFileSystemRoot( java.io.File dir )
+     */
+    @Override
+    public boolean isFileSystemRoot( java.io.File dir )
+    {
+        return isRoot( dir );
+    }
+    
+    /**
+     * @see javax.swing.filechooser.FileSystemView#isFloppyDrive( java.io.File dir )
+     */
+    @Override
+    public boolean isFloppyDrive( java.io.File dir )
+    {
+        return false;    // In VFS there is no "drive"
     }
     
     /**
@@ -121,14 +231,25 @@ public class VFSView extends FileSystemView
     }
     
     /**
+     * @see javax.swing.filechooser.FileSystemView#isParent( java.io.File folder, java.io.File file )
+     */
+    @Override
+    public boolean isParent( java.io.File folder, java.io.File file )
+    {
+        return false;  // Only in Windows _same_ file can be in more than one directory
+    }
+    
+    /**
      * @see javax.swing.filechooser.FileSystemView#isRoot( java.io.File file )
      */
     @Override
     public boolean isRoot( java.io.File file )
     {
         for( int n = 0; n < afRoot.length; n++ )
+        {
             if( afRoot[n] == file )       // Both are the same object (have same reference)
                 return true;
+        }
         
         return false;
     }
@@ -140,5 +261,11 @@ public class VFSView extends FileSystemView
     public Boolean isTraversable( java.io.File file )
     {
 	return Boolean.valueOf( file.isDirectory() );
+    }
+    
+    //------------------------------------------------------------------------//
+    
+    public VFSView()
+    {
     }
 }
