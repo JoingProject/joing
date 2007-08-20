@@ -52,7 +52,7 @@ public class AppDescriptor implements Serializable
     AppDescriptor( ApplicationEntity _app )
     {
         id         = _app.getIdApplication();
-        name       = _app.getApplicationEntityPK().getName();
+        name       = _app.getApplicationEntityPK().getApplication();
         version    = _app.getApplicationEntityPK().getVersion();
         executable = _app.getExecutable();
         iconPNG    = _app.getIconPng();

@@ -49,7 +49,7 @@ public class Local
     public Local( LocaleEntity _local )
     {
         this.idLocale  = _local.getIdLocale();
-        this.sLanguage = _local.getLanguage();
+        this.sLanguage = _local.getIdiom();
         this.sCountry  = _local.getCountry();
     }
     

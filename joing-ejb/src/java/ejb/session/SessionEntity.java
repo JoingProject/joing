@@ -1,7 +1,7 @@
 /*
  * SessionEntity.java
  * 
- * Created on 09-jul-2007, 21:27:53
+ * Created on 20-ago-2007, 10:54:07
  * 
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -32,7 +32,7 @@ public class SessionEntity implements Serializable {
     @Column(name = "ID_SESSION", nullable = false)
     private String idSession;
     
-    @Column(name = "ACCOUNT", nullable = false)
+    @Column(name = "ACCOUNT")
     private String account;
     
     @Column(name = "CREATED")
@@ -43,77 +43,80 @@ public class SessionEntity implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date accessed;
 
-    public SessionEntity() {
+    public SessionEntity( )
+    {
     }
 
-    public SessionEntity(String idSession) {
+    public SessionEntity( String idSession )
+    {
         this.idSession = idSession;
     }
 
-    public String getIdSession() {
+    public String getIdSession( )
+    {
         return idSession;
     }
 
-    protected void setIdSession(String idSession) {
+    protected void setIdSession( String idSession )
+    {
         this.idSession = idSession;
     }
 
-    /**
-     * Gets the account of this SessionEntity.
-     * @return the account
-     */
     public String getAccount()
     {
-        return this.account;
+        return account;
     }
 
-    /**
-     * Sets the account of this SessionEntity to the specified value.
-     * @param account the new account
-     */
-    public void setAccount(String account)
+    public void setAccount( String account )
     {
         this.account = account;
     }
-    
-    public Date getCreated() {
+
+    public Date getCreated( )
+    {
         return created;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated( Date created )
+    {
         this.created = created;
     }
 
-    public Date getAccessed() {
+    public Date getAccessed( )
+    {
         return accessed;
     }
 
-    public void setAccessed(Date accessed) {
+    public void setAccessed( Date accessed )
+    {
         this.accessed = accessed;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode( )
+    {
         int hash = 0;
-        hash += (idSession != null ? idSession.hashCode() : 0);
+        hash += (idSession != null ? idSession.hashCode(  ) : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals( Object object )
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
-if (!(object instanceof SessionEntity)) {
+        if( !(object instanceof SessionEntity) )
+        {
             return false;
         }
         SessionEntity other = (SessionEntity) object;
-        if (this.idSession != other.idSession && (this.idSession == null || !this.idSession.equals(other.idSession))) {
+        if( (this.idSession == null && other.idSession != null) || (this.idSession != null && !this.idSession.equals( other.idSession )) )
             return false;
-        }
         return true;
     }
 
     @Override
-    public String toString() {
+    public String toString( )
+    {
         return "ejb.session.SessionEntity[idSession=" + idSession + "]";
     }
 

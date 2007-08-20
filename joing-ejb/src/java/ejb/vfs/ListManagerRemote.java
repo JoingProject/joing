@@ -34,6 +34,20 @@ import javax.ejb.Remote;
 public interface ListManagerRemote
 {
     /**
+     * List all roots that user has.
+     * <p>
+     * The number of roots per community and user is always 1, but a user can 
+     * belong to more than one community.
+     * 
+     * @param sSessionId The client session ID
+     * @return All roots that user has
+     * @trhows if any prerequisite was not satisfied or 
+     *         a wrapped third-party exception if something went wrong.
+     */
+    List<FileDescriptor> getRoots( String sSessionId )
+            throws JoingServerVFSException;
+    
+    /**
      * Get all files in passed directory ID.
      * <p>
      * <code>nFileDirId</code> is assumed either to represent a directory or
@@ -45,12 +59,15 @@ public interface ListManagerRemote
      * Note: this method is preferred (it is much faster) over the other one.
      *
      * @param sSessionId The client session ID
-     * @param nFileId A <code>File.id</code> that belongs to directory entry 
+     * @param nDirId A <code>File.id</code> that belongs to directory entry 
      *        or <code>0</code> (zero).
      * @return All files in passed directory ID or <code>null</code> if
      *         sSessionId and/or nFileId are invalid.
+     * @trhows if any prerequisite was not satisfied or 
+     *         a wrapped third-party exception if something went wrong.
      */
-    List<FileDescriptor> getChilds( String sSessionId, int nFileId );
+    List<FileDescriptor> getChilds( String sSessionId, int nDirId )
+            throws JoingServerVFSException;
     
     /**
      * Get all files in passed directory.
@@ -70,8 +87,11 @@ public interface ListManagerRemote
      * @param sDirPath A path (from root) representing a directory entry
      * @return All files in passed directory or <code>null</code> if
      *         sSessionId and/or sDirPath are invalid.
+     * @trhows if any prerequisite was not satisfied or 
+     *         a wrapped third-party exception if something went wrong.
      */
-    List<FileDescriptor> getChilds( String sSessionId, String sDirPath );
+    List<FileDescriptor> getChilds( String sSessionId, String sDirPath )
+            throws JoingServerVFSException;
     
     /**
      * Searches files that contain passed string in the 'Notes' associated field.
@@ -83,8 +103,11 @@ public interface ListManagerRemote
      *
      * @param sSessionId The client session ID
      * @param sSubString Sub-string to be searched in 'Notes' field
+     * @trhows if any prerequisite was not satisfied or 
+     *         a wrapped third-party exception if something went wrong.
      */
-    List<FileDescriptor> getByNotes( String sSessionId, String sSubString );
+    List<FileDescriptor> getByNotes( String sSessionId, String sSubString )
+            throws JoingServerVFSException;
     
     /**
      * Return all files in trash can.
@@ -92,6 +115,9 @@ public interface ListManagerRemote
      * @param sSessionId The client session ID
      * @return All files in trash can or <code>null</code> if sSessionId is 
      *         invalid.
+     * @trhows if any prerequisite was not satisfied or 
+     *         a wrapped third-party exception if something went wrong.
      */
-    List<FileDescriptor> getTrashCan( String sSessionId );
+    List<FileDescriptor> getTrashCan( String sSessionId )
+            throws JoingServerVFSException;
 }

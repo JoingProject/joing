@@ -92,6 +92,17 @@ public class Constant
         return Logger.getLogger( "joing" );
     }
     
+    /**
+     * Reserved accounts that could be used in the future by the Server
+     */
+    public static String[] getReservedAccounts()
+    {
+        String[] asReserved = { "system", "Joing", "Join'g", "admin", "administrator",
+                               Constant.getSystemName() };
+        
+        return asReserved;
+    }
+    
     //------------------------------------------------------------------------//
     
     private static void init()

@@ -1,7 +1,7 @@
 /*
  * ApplicationEntityPK.java
  * 
- * Created on 09-jul-2007, 21:23:11
+ * Created on 20-ago-2007, 10:49:41
  * 
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -19,62 +19,69 @@ import javax.persistence.Embeddable;
  */
 @Embeddable
 public class ApplicationEntityPK implements Serializable {
-    @Column(name = "NAME", nullable = false)
-    private String name;
+    @Column(name = "APPLICATION", nullable = false)
+    private String application;
     @Column(name = "VERSION", nullable = false)
     private String version;
 
-    public ApplicationEntityPK() {
+    public ApplicationEntityPK( )
+    {
     }
 
-    public ApplicationEntityPK(String name, String version) {
-        this.name = name;
+    public ApplicationEntityPK( String application, String version )
+    {
+        this.application = application;
         this.version = version;
     }
 
-    public String getName() {
-        return name;
+    public String getApplication( )
+    {
+        return application;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setApplication( String application )
+    {
+        this.application = application;
     }
 
-    public String getVersion() {
+    public String getVersion( )
+    {
         return version;
     }
 
-    public void setVersion(String version) {
+    public void setVersion( String version )
+    {
         this.version = version;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode( )
+    {
         int hash = 0;
-        hash += (name != null ? name.hashCode() : 0);
-        hash += (version != null ? version.hashCode() : 0);
+        hash += (application != null ? application.hashCode(  ) : 0);
+        hash += (version != null ? version.hashCode(  ) : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals( Object object )
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
-if (!(object instanceof ApplicationEntityPK)) {
+        if( !(object instanceof ApplicationEntityPK) )
+        {
             return false;
         }
         ApplicationEntityPK other = (ApplicationEntityPK) object;
-        if (this.name != other.name && (this.name == null || !this.name.equals(other.name))) {
+        if( (this.application == null && other.application != null) || (this.application != null && !this.application.equals( other.application )) )
             return false;
-        }
-        if (this.version != other.version && (this.version == null || !this.version.equals(other.version))) {
+        if( (this.version == null && other.version != null) || (this.version != null && !this.version.equals( other.version )) )
             return false;
-        }
         return true;
     }
 
     @Override
-    public String toString() {
-        return "ejb.app.ApplicationEntityPK[name=" + name + ", version=" + version + "]";
+    public String toString( )
+    {
+        return "ejb.app.ApplicationEntityPK[application=" + application + ", version=" + version + "]";
     }
-
 }

@@ -38,9 +38,27 @@ public class ListManagerBean
     
     @EJB
     private SessionManagerLocal sessionManagerBean;
-    
+     
     //------------------------------------------------------------------------//
     // REMOTE INTERFACE
+    
+    public List<FileDescriptor> getRoots( String sSessionId )
+            throws JoingServerVFSException
+    {
+        String               sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        List<FileDescriptor> roots    = null;
+            
+        if( sAccount != null )
+        {
+            // TODO: mejorarlo buscando en otras comunidades donde esté el user
+            FileEntity _file = Tools.path2File( em, sAccount, "/" );
+            
+            roots = new ArrayList<FileDescriptor>();
+            roots.add( new FileDescriptor( _file ) );
+        }
+        
+        return roots;
+    }
     
     public List<FileDescriptor> getChilds( String sSessionId, int nFileDirId )
            throws JoingServerVFSException
@@ -50,25 +68,30 @@ public class ListManagerBean
             
         if( sAccount != null )
         {
-            if( nFileDirId == 0 )    // Invoking is asking for root ("/")
+            try
             {
-                // Makes nFileDirId to have the value of root
-                Query query = em.createQuery( "SELECT f FROM FileEntity f"+
-                                              " WHERE f.name = '/'"+
-                                              "   AND f.account = '"+ sAccount +"'" );
-                try
+                if( nFileDirId == 0 )    // Invoking is asking for root ("/")
                 {
-                   nFileDirId = ((FileEntity) query.getSingleResult()).getIdFile();
-                   
-                   if( nFileDirId > 0 )
+                    Query query = em.createQuery( "SELECT f FROM FileEntity f"+
+                                                  " WHERE f.name = '/'"+
+                                                  "   AND f.account = '"+ sAccount +"'" );
+
+                    nFileDirId = ((FileEntity) query.getSingleResult()).getIdFile();
+
+                    if( nFileDirId > 0 )
                         files = _getChilds( sAccount, nFileDirId );
                 }
-                catch( Exception exc )
+                else if( nFileDirId > 0 )    // Negative numbers are not accepted
                 {
-                    Constant.getLogger().throwing( getClass().getName(), "getChilds(String,int)", exc );
-                    throw new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
+                    files = _getChilds( sAccount, nFileDirId );
                 }
             }
+            catch( Exception exc )
+            {
+                Constant.getLogger().throwing( getClass().getName(), "getChilds(String,int)", exc );
+                throw new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
+            }
+            
         }
         
         return files;
@@ -85,7 +108,7 @@ public class ListManagerBean
             if( sDirPath == null || sDirPath.length() == 0 )
                 sDirPath = "/";
             
-            FileEntity _file = Tools.path2File( sAccount, sDirPath );
+            FileEntity _file = Tools.path2File( em, sAccount, sDirPath );
 
             if( _file != null )
                 files = getChilds( sSessionId, _file.getIdFile() );
@@ -160,7 +183,7 @@ public class ListManagerBean
         StringBuilder sbQuery = new StringBuilder( 1024 );
                           sbQuery.append( "SELECT f FROM FileEntity f" )
                                  .append( " WHERE f.fileEntityPK.idParent = " ).append( nFileDirId )
-                                 .append( "   AND f.account = '" ).append( sAccount ).append( '\'' )    // It is not necessary but enforces security
+                                 .append( "   AND f.account = '" ).append( sAccount ).append( '\'' )    // Enforces security
                                  .append( "   AND f.is_in_trashcan = 0" );
         try
         {

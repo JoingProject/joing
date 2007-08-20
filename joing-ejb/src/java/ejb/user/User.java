@@ -55,7 +55,7 @@ public class User implements Serializable
         this.secondName = _user.getSecondName();
         this.isMale     = _user.getIsMale() != 0;
         this.idLocale   = _locale.getIdLocale();
-        this.language   = _locale.getLanguage();
+        this.language   = _locale.getIdiom();
         this.country    = _locale.getCountry();
         this.totalSpace = (long) _user.getQuota();
     }
@@ -69,10 +69,10 @@ public class User implements Serializable
     {
         LocaleEntity _locale = new LocaleEntity();
                      _locale.setIdLocale( this.idLocale );
-                     _locale.setLanguage( this.language );
+                     _locale.setIdiom( this.language );
                      _locale.setCountry( this.country );
                      
-        _user.setAccount( getAccount() );   // Allows to indentify uniquely the user (PK)
+        _user.setAccount( getAccount() );
         _user.setEmail( getEmail() );
         _user.setFirstName( getFirstName() );
         _user.setSecondName( getSecondName() );

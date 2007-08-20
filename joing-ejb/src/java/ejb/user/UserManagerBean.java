@@ -25,13 +25,11 @@ package ejb.user;
 import ejb.Constant;
 import ejb.JoingServerException;
 import ejb.session.*;
-import ejb.vfs.FileEntity;
-import ejb.vfs.FileEntityPK;
+import ejb.vfs.FileManagerLocal;
 import ejb.vfs.FileSystemTools;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -63,6 +61,9 @@ public class UserManagerBean
     
     @EJB
     private SessionManagerLocal sessionManagerBean;
+ 
+    @EJB
+    private FileManagerLocal fileManagerBean;
     
     //------------------------------------------------------------------------//
     // REMOTE INTERFACE
@@ -138,7 +139,7 @@ public class UserManagerBean
 
                 List<LocaleEntity> _locales = (List<LocaleEntity>) query.getResultList();
 
-                locals = new ArrayList( _locales.size() );
+                locals = new ArrayList<Local>( _locales.size() );
                 
                 for( LocaleEntity _locale : _locales )
                     locals.add( new Local( _locale ) );
@@ -169,6 +170,8 @@ public class UserManagerBean
         if( ! isValidPassword( sPassword ) )
             new JoingServerUserException( JoingServerUserException.INVALID_PASSWORD );
         
+        sAccount = sAccount +"@"+ Constant.getSystemName();
+        
         // By checking here the availability, we ensure that all
         // operations will be made in same transaction.
         if( ! sessionManagerBean.isAccountAvailable( sAccount ) )
@@ -197,35 +200,11 @@ public class UserManagerBean
             em.persist( _user );
 
             // Creates root ("/") in FILES DB table
-            FileEntityPK _fepk = new FileEntityPK();
-                         //_fepk.setIdParent( null );  TODO: el parent es él mismo
-                         _fepk.setIsDir( (short) 1 );
-                         _fepk.setName( "/" );
-
-            FileEntity _file = new FileEntity();
-                       _file.setFileEntityPK( _fepk );
-                       _file.setAccount( _user.getAccount() );
-                       _file.setOwner( Constant.getSystemName() );   // Users can't have SystemName (see: sessionManagerBean.isAccountAvailable)
-                       _file.setFullPath( "/" );
-                       _file.setLockedBy( _user.getAccount() );
-                       _file.setIsAlterable(  (short) 0 );
-                       _file.setIsDeleteable( (short) 0 );
-                       _file.setIsDuplicable( (short) 0 );
-                       _file.setIsExecutable( (short) 0 );
-                       _file.setIsHidden(     (short) 0 );
-                       _file.setIsInTrashcan( (short) 0 );
-                       _file.setIsModifiable( (short) 0 );
-                       _file.setIsPublic(     (short) 0 );
-                       _file.setIsSystem(     (short) 1 );
-                       _file.setAccessed( new Date() );
-                       _file.setCreated(  _file.getAccessed() );
-                       _file.setModified( _file.getAccessed() );                       
-
-            em.persist( _file );
-
+            em.persist( fileManagerBean.createRootEntity( _user.getAccount() ) );
+            
             // Create home directory for user
             FileSystemTools.createAccount( _user.getAccount() );
-
+            
             user = new User( _user );
 
             // When code arrives to this point, everything was OK: now can commit

@@ -47,6 +47,9 @@ public class SessionManagerBean
         {
             try
             {
+                if( sAccount.indexOf( '@' ) == -1 )
+                    sAccount = sAccount +"@"+ Constant.getSystemName();
+                
                 UserEntity _user = em.find( UserEntity.class, sAccount );
 
                 // TODO: la password tiene que estar encriptada en la DB,
@@ -137,10 +140,21 @@ public class SessionManagerBean
     public boolean isAccountAvailable( String sAccount )
            throws JoingServerSessionException
     {
-        if( sAccount == null || sAccount.equals( Constant.getSystemName() ) )
-            return false;
-        else
-            return (em.find( UserEntity.class, sAccount ) == null);
+        boolean  bValid     = false;
+        String[] asReserved = Constant.getReservedAccounts();
+        
+        if( sAccount != null )
+        {
+            for( int n = 0; n < asReserved.length; n++ )
+            {
+                if( sAccount.equalsIgnoreCase( asReserved[n] ) )
+                    return false;
+            }
+            
+            bValid = (em.find( UserEntity.class, sAccount ) == null);
+        }
+        
+        return bValid;
     }
     
     //------------------------------------------------------------------------//
@@ -148,7 +162,7 @@ public class SessionManagerBean
     // Combinatoria de 75 elementos tomados de 32 en 32
     // = 1.560.606.121.612.270.000.000 (1.560 Billones)
 
-    // <,>,?,&,% are special chars: it is easier not use them
+    // <,>,?,&,% are special chars: it makes life easier not use them
     private final static String sVALID4ID = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
                                             "abcdefghijklmnopqrstuvwxyz" +
                                             "0123456789+-*=$_!()[]{}";
