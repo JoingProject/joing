@@ -2,13 +2,15 @@
 --     WebPC - SERVER - DATA
 -- ********************************************************************************************************************
 
-insert into locales (LANGUAGE, COUNTRY)    -- ID_LOCALE = 2
+insert into locales (IDIOM, COUNTRY)    -- ID_LOCALE = 2
      values ('es', 'ES');
 
 -- ------------------------------------------------------------------
+-- There is no problem about the same person being twice: peyrona has to profiles, one
+-- as admin and annother as simple user.
 
 insert into users (ACCOUNT, PASSWORD, EMAIL, FIRST_NAME, SECOND_NAME, ID_LOCALE, IS_MALE, QUOTA)
-     values('peyrona','admin','peyrona@gmail.com', 'Francisco','Morero Peyrona', 2, 1, 0);
+     values('peyrona@joing.peyrona.com','admin','peyrona@gmail.com', 'Francisco','Morero Peyrona', 2, 1, 0);
 
 -- ------------------------------------------------------------------
 
@@ -16,6 +18,27 @@ insert into app_groups ( ICON_PNG, ICON_SVG )   -- ID_APP_GROUP = 1
      values ( NULL, NULL );
 
 insert into app_groups ( ICON_PNG, ICON_SVG )   -- ID_APP_GROUP = 2
+     values ( NULL, NULL );
+
+insert into app_groups ( ICON_PNG, ICON_SVG )   -- ID_APP_GROUP = 3
+     values ( NULL, NULL );
+
+insert into app_groups ( ICON_PNG, ICON_SVG )   -- ID_APP_GROUP = 4
+     values ( NULL, NULL );
+
+insert into app_groups ( ICON_PNG, ICON_SVG )   -- ID_APP_GROUP = 5
+     values ( NULL, NULL );
+
+insert into app_groups ( ICON_PNG, ICON_SVG )   -- ID_APP_GROUP = 6
+     values ( NULL, NULL );
+
+insert into app_groups ( ICON_PNG, ICON_SVG )   -- ID_APP_GROUP = 7
+     values ( NULL, NULL );
+
+insert into app_groups ( ICON_PNG, ICON_SVG )   -- ID_APP_GROUP = 8
+     values ( NULL, NULL );
+
+insert into app_groups ( ICON_PNG, ICON_SVG )   -- ID_APP_GROUP = 9
      values ( NULL, NULL );
 
 -- ------------------------------------------------------------------
@@ -76,16 +99,16 @@ insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
 
 -- ------------------------------------------------------------------
 
-insert into applications (NAME, VERSION, EXTRA_PATH, EXECUTABLE, FILE_TYPES)
+insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, FILE_TYPES)
      values ('Notes', '0.1', 'accessories', 'notes.jar', 'txt;ini');
 
-insert into applications (NAME, VERSION, EXTRA_PATH, EXECUTABLE)
+insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE)
      values ('Calculator', '2.4', 'accessories', 'calculator.jar');
 
-insert into applications (NAME, VERSION, EXTRA_PATH, EXECUTABLE)
+insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE)
      values ('Images', '1.1', 'graphics', 'images.jar');
 
-insert into applications (NAME, VERSION, EXTRA_PATH, EXECUTABLE)
+insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE)
      values ('PhotoArt', '0.5', 'graphics', 'photoart.jar');
 
 -- ------------------------------------------------------------------
@@ -139,12 +162,35 @@ insert into APP_PREFERRED (ID_APPLICATION, FILE_EXTENSION)
 -- ------------------------------------------------------------------
 
 insert into users_with_apps (ACCOUNT, ID_APPLICATION, IS_INSTALLED, ALLOW_REMOTE)
-     values ('peyrona', 1, 1, 1);
+     values ('peyrona@joing.peyrona.com', 1, 1, 1);
  
 insert into users_with_apps (ACCOUNT, ID_APPLICATION, IS_INSTALLED, ALLOW_REMOTE)
-     values ('peyrona', 2, 1, 1);
+     values ('peyrona@joing.peyrona.com', 2, 1, 1);
 
 insert into users_with_apps (ACCOUNT, ID_APPLICATION, IS_INSTALLED, ALLOW_REMOTE)
-     values ('peyrona', 3, 1, 1);
+     values ('peyrona@joing.peyrona.com', 3, 1, 1);
+
+-- ------------------------------------------------------------------
+
+insert into files ( ID_ORIGINAL, ACCOUNT, OWNER, FILE_NAME, FILE_PATH, LOCKED_BY, 
+                    IS_DIR, IS_HIDDEN, IS_PUBLIC, IS_READABLE, IS_MODIFIABLE, IS_DELETEABLE, 
+                    IS_EXECUTABLE, IS_DUPLICABLE, IS_ALTERABLE, IS_IN_TRASHCAN, NOTES )
+           values ( NULL, 'peyrona@joing.peyrona.com', 'system@joing.peyrona.com', '/', '', NULL, 
+                    1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 
+                   'Root & Home Directory');
+
+insert into files ( ID_ORIGINAL, ACCOUNT, OWNER, FILE_NAME, FILE_PATH, LOCKED_BY, 
+                    IS_DIR, IS_HIDDEN, IS_PUBLIC, IS_READABLE, IS_MODIFIABLE, IS_DELETEABLE, 
+                    IS_EXECUTABLE, IS_DUPLICABLE, IS_ALTERABLE, IS_IN_TRASHCAN, NOTES )
+           values ( NULL, 'peyrona@joing.peyrona.com', 'system@joing.peyrona.com', 'Desktop', '/', NULL,
+                    1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 
+                   'The desktop');
+
+insert into files ( ID_ORIGINAL, ACCOUNT, OWNER, FILE_NAME, FILE_PATH, LOCKED_BY, 
+                    IS_DIR, IS_HIDDEN, IS_PUBLIC, IS_READABLE, IS_MODIFIABLE, IS_DELETEABLE, 
+                    IS_EXECUTABLE, IS_DUPLICABLE, IS_ALTERABLE, IS_IN_TRASHCAN, NOTES )
+           values ( NULL, 'peyrona@joing.peyrona.com', 'peyrona@joing.peyrona.com', 'The very 1st file', '/', NULL, 
+                    0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 
+                   'The very first file (not dir). Originaly stored in root dir');
 
 -- *****************************************   EOF  *******************************************************************

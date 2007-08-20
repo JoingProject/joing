@@ -22,6 +22,7 @@
 
 package ejb.vfs;
 
+import ejb.session.JoingServerSessionException;
 import javax.ejb.Remote;
 
 /**
@@ -35,14 +36,18 @@ public interface FileManagerRemote
      * or directory denoted by passed path.
      *
      * @param sSessionId The session ID assigned to client at login
-     * @param sFilePath Path starting at root ("/") and ending with the file 
-     *         name.
+     * @param sFilePath Path starting at root ("/") and ending with the file or
+     *        directory name.
      * @return An instance of class <code>File</code> that represents the file 
      *         or directory denoted by passed path or <code>null</code> if the 
      *         path does not corresponds with an existing file or passed Session 
      *         ID is invalid.
+     * @throws JoingServerVFSException if any prerequisite was not satisfied or 
+     *         a wrapped third-party exception if something went wrong.
+     * @throws JoingServerSessionException
      */
-    FileDescriptor getFile( String sSessionId, String sFilePath );
+    FileDescriptor getFile( String sSessionId, String sFilePath )
+            throws JoingServerVFSException, JoingServerSessionException;
     
     /**
      * Updates <code>File</code> information (file propeties) including file
@@ -71,9 +76,8 @@ public interface FileManagerRemote
      *    <li>Can not be duplicated (already existing)
      * </ul>
      *  
-     * 
      * @param sSessionId The session ID assigned to client at login
-     * @param nParentId File ID of the parent.
+     * @param sPath Dir path from root excluding dir name.
      * @param sDirName Name of the directory to be created.
      * @return An instance of class <code>File</code> or <code>null</code> if
      *         something goes wrong.
@@ -81,7 +85,7 @@ public interface FileManagerRemote
      *         a wrapped third-party exception if something went wrong.
 
      */
-    FileDescriptor createDirectory( String sSessionId, int nParentId, String sDirName ) 
+    FileDescriptor createDirectory( String sSessionId, String sPath, String sDirName ) 
             throws JoingServerVFSException;
     
     /**
@@ -97,15 +101,14 @@ public interface FileManagerRemote
      * </ul>
      *
      * @param sSessionId The session ID assigned to client at login
-     * @param nParentId ID of <code>File</code> instance who is the parent of
-     *        this file.
-     * @param sFileName Name of the file to be created
+     * @param sPath File path from root excluding file name.
+     * @param sFileName Name of the file to be created.
      * @return An instance of class <code>File</code> or <code>null</code> if
      *         something goes wrong.
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
-    FileDescriptor createFile( String sSessionId, int nParentId, String sFileName )
+    FileDescriptor createFile( String sSessionId, String sPath, String sFileName )
             throws JoingServerVFSException;
     
     /**

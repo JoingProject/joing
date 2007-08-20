@@ -29,6 +29,8 @@ import ejb.JoingServerException;
  */
 public class JoingServerVFSException extends JoingServerException
 {
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    
     final static String INVALID_OWNER         = "Operation can not be performed because\nthe account does not ownes the file.";
     final static String FILE_NOT_EXISTS       = "File does not exists.";
     final static String FILE_NAME_EXISTS      = "File name already exists.";

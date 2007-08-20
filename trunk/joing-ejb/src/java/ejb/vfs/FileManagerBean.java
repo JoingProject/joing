@@ -24,6 +24,7 @@ package ejb.vfs;
 
 import ejb.Constant;
 import ejb.JoingServerException;
+import ejb.session.JoingServerSessionException;
 import ejb.session.SessionManagerLocal;
 import ejb.user.User;
 import ejb.user.UserManagerLocal;
@@ -69,26 +70,29 @@ public class FileManagerBean
     
     //------------------------------------------------------------------------//
     
-    public FileDescriptor getFile( String sSessionId, String sPath )
+    public FileDescriptor getFile( String sSessionId, String sFullName )
+           throws JoingServerVFSException, JoingServerSessionException
     {
         FileDescriptor file     = null;
         String         sAccount = sessionManagerBean.getUserAccount( sSessionId );
         
         if( sAccount != null )
         {
-            FileEntity _file = Tools.path2File( sAccount, sPath );
+            FileEntity _file = Tools.path2File( em, sAccount, sFullName  );
             
             if( _file != null )
                 file = new FileDescriptor( _file );
+            else
+                throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS ); 
         }
         
         return file;
     }
     
     // This method does not need to implement the logic to handle (validate) file 
-    // attributes). The logic (validation) is done by class FileDescriptor.
-    // In this way, there is no need to send file attributes to the Server in 
-    // order to be validated.
+    // attributes): the logic (validation) is done by class FileDescriptor.
+    // In this way, there is no need to send file attributes from Client to the 
+    // Server in order to be validated.
     public FileDescriptor updateFile( String sSessionId, FileDescriptor fileIn )
            throws JoingServerVFSException
     {
@@ -101,11 +105,12 @@ public class FileManagerBean
             {
                 if( ! isFileInUserSpace( sAccount, fileIn.getId() ) )
                     throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
-
+                    
+                if( ! fileIn.getOwner().equals( sAccount ) )
+                    throw new JoingServerVFSException( JoingServerVFSException.INVALID_OWNER );
                 
                 // TODO: Revisar este metodo
-                
-                
+                                
                 // Get the original file: this is the only one attribute that has 
                 // to be checked: the rest of them are done in FileDescriptor class,
                 // but obviously the name can't be cheked at Client.
@@ -113,7 +118,7 @@ public class FileManagerBean
                 
                 // Attribute name is changed
                 String sNameNew = fileIn.getName();
-                String sNameOld = _file.getFileEntityPK().getName();
+                String sNameOld = _file.getFileEntityPK().getFileName();
                 
                 if( (! sNameOld.equals( sNameNew )) && (sNameNew != null) )
                 {
@@ -122,10 +127,10 @@ public class FileManagerBean
                     if( sNameErrors.length() > 0 )
                         throw new JoingServerVFSException( sNameErrors );
 
-                    if( existsName( _file.getFileEntityPK().getIdParent(), sNameNew, fileIn.isDirectory() ) )
+                    if( existsName( sAccount, _file.getFileEntityPK().getFilePath(), sNameNew ) )
                         throw new JoingServerVFSException( JoingServerVFSException.FILE_NAME_EXISTS );
                     
-                    _file.getFileEntityPK().setName( sNameNew );
+                    _file.getFileEntityPK().setFileName( sNameNew );
                 }
                 
                 _file.setAccessed( new Date() );  // Modified is only when modifiying contents
@@ -147,16 +152,16 @@ public class FileManagerBean
         return fileOut;
     }
     
-    public FileDescriptor createDirectory( String sSessionId, int nParentId, String sDirName )
+    public FileDescriptor createDirectory( String sSessionId, String sPath, String sDirName )
            throws JoingServerVFSException
     {
-        return createEntry( sSessionId, nParentId, sDirName, true );
+        return createEntry( sSessionId, sPath, sDirName, true );
     }
     
-    public FileDescriptor createFile( String sSessionId, int nParentId, String sFileName )
+    public FileDescriptor createFile( String sSessionId, String sPath, String sFileName )
            throws JoingServerVFSException
     {
-        return createEntry( sSessionId, nParentId, sFileName, false );
+        return createEntry( sSessionId, sPath, sFileName, false );
     }
 
     /* TODO: para read y write files
@@ -569,6 +574,36 @@ public class FileManagerBean
     }*/
     
     //------------------------------------------------------------------------//
+    // LOCAL INTERFACE
+    
+    public FileEntity createRootEntity( String sAccount )
+    {
+        FileEntityPK _fepk = new FileEntityPK();
+                         _fepk.setAccount( sAccount );
+                         _fepk.setFilePath( "" );         // Can't be null
+                         _fepk.setFileName( "/" );
+                         
+        FileEntity _file = new FileEntity();
+                   _file.setFileEntityPK( _fepk );    // This method is protected, and therefore it has to be accessed in the same package
+                   _file.setOwner( Constant.getSystemName() );   // It's guaranted that will never be Account.equals( SystemName ). (see: sessionManagerBean.isAccountAvailable)
+                   _file.setLockedBy( null );
+                   _file.setIsDir(        (short) 1 );
+                   _file.setIsAlterable(  (short) 0 );
+                   _file.setIsDeleteable( (short) 0 );
+                   _file.setIsDuplicable( (short) 0 );
+                   _file.setIsExecutable( (short) 0 );
+                   _file.setIsHidden(     (short) 0 );
+                   _file.setIsInTrashcan( (short) 0 );
+                   _file.setIsModifiable( (short) 0 );
+                   _file.setIsPublic(     (short) 0 );
+                   _file.setAccessed( new Date() );
+                   _file.setCreated(  _file.getAccessed() );
+                   _file.setModified( _file.getAccessed() );
+                   
+       return _file;
+    }
+    
+    //------------------------------------------------------------------------//
     // PRIVATE SCOPE
  
     // Recursively moves files and directories from and to the trashcan
@@ -585,10 +620,10 @@ public class FileManagerBean
             if( _file == null )
                 throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
             
-            if( ! _file.getAccount().equals( sAccount ) )   // File is not in user disk space
+            if( ! _file.getFileEntityPK().getAccount().equals( sAccount ) )   // File is not in user disk space
                 throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
 
-            if( _file.getFileEntityPK().getIsDir() != 0 )   // Is a directory
+            if( _file.getIsDir() != 0 )   // Is a directory
             {
                 // Get all childs (those which parent is _file)
                 Query query = em.createNamedQuery( "FileEntity.findByIdParent" );
@@ -641,13 +676,13 @@ public class FileManagerBean
             if( _file == null )
                 throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
             
-            if( ! _file.getAccount().equals( sAccount ) )   // File is not in user disk space
+            if( ! _file.getFileEntityPK().getAccount().equals( sAccount ) )   // File is not in user disk space
                 throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
 
             if( _file.getIsDeleteable() == 0 )   // Marked as not deleteable (to delete: change the attribute and try again)
                 throw new JoingServerVFSException( JoingServerVFSException.NOT_DELETEABLE );
 
-            if( _file.getFileEntityPK().getIsDir() != 0 )  // Is a directory
+            if( _file.getIsDir() != 0 )  // Is a directory
             {
                 // Gets all childs (those which parent is _file)
                 Query query = em.createNamedQuery( "FileEntity.findByIdParent" );
@@ -694,8 +729,8 @@ public class FileManagerBean
     }
     
     // Creates a new entry: either a directory or a file
-    // TODO: Tiene que heredar los atributos (properties) del padre
-    private FileDescriptor createEntry( String sSessionId, int nParentId, String sChild, boolean bIsDir )
+    // TODO: Tiene que heredar los atributos (properties) del padre (a menos que el padre sea root, que es muy especial)
+    private FileDescriptor createEntry( String sSessionId, String sPath, String sChild, boolean bIsDir )
             throws JoingServerVFSException
     {
         FileDescriptor file     = null;
@@ -703,38 +738,43 @@ public class FileManagerBean
         
         if( sAccount != null )
         {
-            if( ! isFileInUserSpace( sAccount, nParentId ) )
-                throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
-                
+            FileEntity _feParent = Tools.path2File( em, sAccount, sPath );
+
+            if( _feParent == null )
+                throw new JoingServerVFSException( JoingServerVFSException.PARENT_DIR_NOT_EXISTS );
+            
+            if( _feParent.getIsDir() == 0 )
+                throw new JoingServerVFSException( JoingServerVFSException.INVALID_PARENT );
+            
+            if( ! _feParent.getFileEntityPK().getAccount().equals( sAccount ) )   // Parent is not user disk-space
+                throw new JoingServerVFSException( JoingServerVFSException.PARENT_DIR_NOT_EXISTS );
+            
             String sNameErrors = validateName( sChild );
             
             if( sNameErrors.length() > 0 )
                 throw new JoingServerVFSException( sNameErrors );
-                
-            FileEntity _feParent = getParentEntity( nParentId );
             
-            if( _feParent == null )
-                throw new JoingServerVFSException( JoingServerVFSException.PARENT_DIR_NOT_EXISTS );
+            sChild = sChild.trim();
             
-            if( _feParent.getFileEntityPK().getIsDir() == 0 )
-                throw new JoingServerVFSException( JoingServerVFSException.INVALID_PARENT );
             
-            if( existsName( nParentId, sChild, bIsDir ) )
-                throw new JoingServerVFSException( (_feParent.getFileEntityPK().getIsDir() == 1 ? 
+            if( existsName( sAccount, sPath, sChild ) )
+                throw new JoingServerVFSException( (_feParent.getIsDir() == 1 ? 
                                                         JoingServerVFSException.DIR_ALREADY_EXISTS :
                                                         JoingServerVFSException.FILE_ALREADY_EXISTS) );
             try
             {
+                String sFullAccount = sAccount +'@'+ Constant.getSystemName();
+                        
                 em.getTransaction().begin();
 
                 FileEntityPK _fepk = new FileEntityPK();
-                             _fepk.setIdParent( _feParent.getIdFile() );
-                             _fepk.setIsDir( (short) (bIsDir ? 1 : 0) );
-                             _fepk.setName( sChild );
+                             _fepk.setAccount( sFullAccount );
+                             _fepk.setFilePath( sPath  );
+                             _fepk.setFileName( sChild );
 
                 FileEntity _file = new FileEntity();
-                           _file.setAccount( sAccount );
-                           _file.setOwner( sAccount +'@'+ Constant.getSystemName() );
+                           _file.setOwner( sFullAccount );
+                           _file.setIsDir( (short) (bIsDir ? 1 : 0) );
                            _file.setLockedBy( null );
                            _file.setFileEntityPK( _fepk );
                            _file.setIsAlterable(  (short) 1 );
@@ -745,18 +785,15 @@ public class FileManagerBean
                            _file.setIsInTrashcan( (short) 0 );
                            _file.setIsModifiable( (short) 1 );
                            _file.setIsPublic(     (short) 0 );
-                           _file.setIsSystem(     (short) 0 );
                            _file.setCreated(  new Date() );
                            _file.setAccessed( new Date() );
                            _file.setModified( new Date() );
-
+                           
                 em.persist( _file );
 
-                if( bIsDir )  // If file -> save full path from root
-                    _file.setFullPath( _feParent.getFullPath() + sChild + "/" );
-                else          // Files exist in FILES table and in host FS, dirs only in FILES
+                if( ! bIsDir )  // Files exist in FILES table and in host FS, dirs only in FILES
                     FileSystemTools.createFile( sAccount, _file.getIdFile() );
-
+                    
                 // If code arrives to this point, everything was OK: now can commit
                 em.getTransaction().commit();
 
@@ -807,16 +844,24 @@ public class FileManagerBean
     }
     
     // Checks if a file name already exists
-    private boolean existsName( int nParentId, String sName, boolean bIsDir )
+    private boolean existsName( String sAccount, String sPath, String sName )
             throws JoingServerVFSException
     {
-        boolean bExists = true;        
-        Query   query   = em.createQuery( "SELECT a FROM ApplicationEntity a"+
-                                          " WHERE a.id_parent = "+ nParentId +
-                                          "   AND a.name = '"+ sName +"'"+
-                                          "   AND a.is_dir ="+ (bIsDir ? 1 : 0) );
+        boolean bExists = true;
+        
         try
         {
+            Query query = em.createQuery( "SELECT a FROM ApplicationEntity a"+
+                                          " WHERE a.account  = :account"+
+                                          "   AND a.filePath = :path"+
+                                          "   AND a.fileName = :name" );
+            
+            if( sAccount.indexOf( '@' ) == -1 )
+                sAccount = sAccount +'@'+ Constant.getSystemName();
+            
+            query.setParameter( "account", sAccount );
+            query.setParameter( "path"   , sPath    );
+            query.setParameter( "name"   , sName    );
             query.getSingleResult();
         }
         catch( NoResultException exc )
@@ -838,44 +883,9 @@ public class FileManagerBean
     // (by sending random file Ids)
     private boolean isFileInUserSpace( String sAccount, int nIdFile )
     {
-        return sAccount != null &&
-               FileSystemTools.getFile( sAccount, nIdFile ).exists();
-    }
-    
-    // Checks that the user is the owner of the file
-    private boolean isOwnerOfFile( String sAccount, int nIdFile ) 
-            throws JoingServerVFSException
-    {
-        boolean bOwner = false;
+        FileEntity _file = em.find( FileEntity.class, nIdFile );
         
-        if( sAccount != null )
-        {
-            try
-            {
-                FileEntity _file = em.find( FileEntity.class, nIdFile );
-                
-                if( _file != null )
-                {
-                    StringBuilder sbFullAccount = new StringBuilder( 128 );
-                                  sbFullAccount.append( sAccount )
-                                               .append( '@' )
-                                               .append( Constant.getSystemName() );
-                
-                    bOwner = _file.getOwner().equals( sbFullAccount.toString() );
-                }
-            }
-            catch( NoResultException exc )    // Impossible to retun more than one result
-            {
-                // Nothing to do: bOwner is already false
-            }
-            catch( RuntimeException exc )
-            {
-                Constant.getLogger().throwing( getClass().getName(), "isOwnerOfFile(...)", exc );
-                throw new JoingServerVFSException( JoingServerException.ACCESS_DB, exc );    
-            }
-        }
-        
-        return bOwner;
+        return _file.getFileEntityPK().getAccount().equals( sAccount );
     }
     
     // Is this a valid name for a file or directory?

@@ -25,7 +25,6 @@ import ejb.Constant;
 import ejb.JoingServerException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 /**
@@ -37,8 +36,7 @@ import javax.persistence.Query;
  */
 class Tools
 {
-    @PersistenceContext
-    private static EntityManager em;
+    private static Query qryFindFile = null;
     
     /**
      * Obtains the FileEntity instance that represents the file or directory
@@ -53,23 +51,72 @@ class Tools
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
-    static FileEntity path2File( String sAccount, String sPath )
+    static FileEntity path2File( EntityManager em, String sAccount, String sFullName )
            throws JoingServerVFSException
     {
         FileEntity _file = null;
                            // Path must start from root
-        if( sPath != null && sPath.trim().charAt( 0 ) == '/' )
+        if( sFullName != null && sFullName.trim().charAt( 0 ) == '/' )
         {
-            sPath = sPath.trim();
+            sFullName = sFullName.trim();
 
             try
             {
-                Query query = em.createQuery( "SELECT f FROM FileEntity f"+
-                                              " WHERE f.account = :account"+
-                                              "   AND f.fullPath = :fullPath" );
-
-                // Assuming that it is a file (it is not a dir)
-                if( ! sPath.endsWith( "/" ) )
+                if( qryFindFile == null )
+                {
+                    qryFindFile = em.createQuery( "SELECT f FROM FileEntity f"   +
+                                                  " WHERE f.account  = :account" +
+                                                  "   AND f.fullPath = :fullPath"+
+                                                  "   AND f.fileName = :name" );
+                }
+                
+                String sPath = null;
+                String sName = null;
+                
+                if( sFullName.equals( "/" ) )
+                {
+                    sPath = "";
+                    sName = sFullName;
+                }
+                else
+                {
+                    int nIndex = sFullName.lastIndexOf( '/' );
+                     
+                    sName = sFullName.substring( nIndex + 1 );
+                    sPath = sPath.substring( 0, nIndex );
+                }
+                
+                qryFindFile.setParameter( "account" , sAccount );
+                qryFindFile.setParameter( "fullPath", sPath    );
+                qryFindFile.setParameter( "name"    , sName    );
+                
+                try
+                {
+                    _file = (FileEntity) qryFindFile.getSingleResult();
+                }
+                catch( NoResultException exc )
+                {
+                    // Nothing to do
+                }
+            }
+            catch( RuntimeException exc )
+            {
+                if( ! (exc instanceof JoingServerException) )
+                {
+                    Constant.getLogger().throwing( Tools.class.getName(), "path2File(...)", exc );
+                    exc = new JoingServerVFSException( JoingServerException.ACCESS_DB, exc );
+                }
+                
+                throw exc;
+            }
+        }
+        
+        return _file;
+    }
+ 
+    /*
+                     // Assuming that it is a file (it is not a dir)
+                if( (sPath.length() > 1) && (! sPath.endsWith( "/" )) )   // root is a dir and ends with '/' and length() == 1
                 {
                     int    nIndex   = sPath.lastIndexOf( '/' );
                     String sFile    = sPath.substring( nIndex + 1 );
@@ -100,12 +147,12 @@ class Tools
                 // Assuming that it is a dir (it is not a file)
                 if( _file == null )
                 {
-                    if( ! sPath.endsWith( "/" ) )
+                    if( (sPath.length() > 1) && (! sPath.endsWith( "/" )) )
                         sPath += "/";
-
+                    
                     query.setParameter( "account" , sAccount );
                     query.setParameter( "fullPath", sPath );
-
+                    
                     try
                     {
                         _file = (FileEntity) query.getSingleResult();
@@ -115,19 +162,10 @@ class Tools
                         // Nothing to do
                     }
                 }
-            }
-            catch( RuntimeException exc )
-            {
-                if( ! (exc instanceof JoingServerException) )
-                {
-                    Constant.getLogger().throwing( Tools.class.getName(), "path2File(...)", exc );
-                    exc = new JoingServerVFSException( JoingServerException.ACCESS_DB, exc );
-                }
-                
-                throw exc;
-            }
-        }
-        
-        return _file;
+    */
+    //------------------------------------------------------------------------//
+    
+    private Tools()
+    {
     }
 }

@@ -1,7 +1,7 @@
 /*
  * FileEntityPK.java
  * 
- * Created on 09-jul-2007, 21:37:10
+ * Created on 20-ago-2007, 10:57:56
  * 
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -19,77 +19,86 @@ import javax.persistence.Embeddable;
  */
 @Embeddable
 public class FileEntityPK implements Serializable {
-    @Column(name = "ID_PARENT", nullable = false)
-    private int idParent;
-    @Column(name = "NAME", nullable = false)
-    private String name;
-    @Column(name = "IS_DIR", nullable = false)
-    private short isDir;
+    @Column(name = "ACCOUNT", nullable = false)
+    private String account;
+    @Column(name = "FILE_PATH", nullable = false)
+    private String filePath;
+    @Column(name = "FILE_NAME", nullable = false)
+    private String fileName;
 
-    public FileEntityPK() {
+    public FileEntityPK( )
+    {
     }
 
-    public FileEntityPK(int idParent, String name, short isDir) {
-        this.idParent = idParent;
-        this.name = name;
-        this.isDir = isDir;
+    public FileEntityPK( String account, String filePath, String fileName )
+    {
+        this.account = account;
+        this.filePath = filePath;
+        this.fileName = fileName;
     }
 
-    public int getIdParent() {
-        return idParent;
+    public String getAccount( )
+    {
+        return account;
     }
 
-    public void setIdParent(int idParent) {
-        this.idParent = idParent;
+    public void setAccount( String account )
+    {
+        this.account = account;
     }
 
-    public String getName() {
-        return name;
+    public String getFilePath( )
+    {
+        return filePath;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFilePath( String filePath )
+    {
+        this.filePath = filePath;
     }
 
-    public short getIsDir() {
-        return isDir;
+    public String getFileName( )
+    {
+        return fileName;
     }
 
-    public void setIsDir(short isDir) {
-        this.isDir = isDir;
+    public void setFileName( String fileName )
+    {
+        this.fileName = fileName;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode( )
+    {
         int hash = 0;
-        hash += (int) idParent;
-        hash += (name != null ? name.hashCode() : 0);
-        hash += (int) isDir;
+        hash += (account != null ? account.hashCode(  ) : 0);
+        hash += (filePath != null ? filePath.hashCode(  ) : 0);
+        hash += (fileName != null ? fileName.hashCode(  ) : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals( Object object )
+    {
         // TODO: Warning - this method won't work in the case the id fields are not set
-if (!(object instanceof FileEntityPK)) {
+        if( !(object instanceof FileEntityPK) )
+        {
             return false;
         }
         FileEntityPK other = (FileEntityPK) object;
-        if (this.idParent != other.idParent) {
+        if( (this.account == null && other.account != null) || (this.account != null && !this.account.equals( other.account )) )
             return false;
-        }
-        if (this.name != other.name && (this.name == null || !this.name.equals(other.name))) {
+        if( (this.filePath == null && other.filePath != null) || (this.filePath != null && !this.filePath.equals( other.filePath )) )
             return false;
-        }
-        if (this.isDir != other.isDir) {
+        if( (this.fileName == null && other.fileName != null) || (this.fileName != null && !this.fileName.equals( other.fileName )) )
             return false;
-        }
         return true;
     }
 
     @Override
-    public String toString() {
-        return "ejb.vfs.FileEntityPK[idParent=" + idParent + ", name=" + name + ", isDir=" + isDir + "]";
+    public String toString( )
+    {
+        return "ejb.vfs.FileEntityPK[account=" + account + ", filePath=" + filePath + ", fileName=" + fileName + "]";
     }
 
 }

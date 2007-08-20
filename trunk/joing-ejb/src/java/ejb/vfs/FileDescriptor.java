@@ -39,14 +39,13 @@ public class FileDescriptor implements Serializable
     private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
     
     // PK --------------------
-    private int     idParent;          // read-only
+    private String  account;           // hidden
     private String  name;              // read-only
-    private boolean isDir;             // read-only
+    private String  path;              // read-only  (path from root except the file name)
     //------------------------
     private int     idFile;            // read-only
     private int     idOriginal;        // TODO: no creo que esto vaya así: tendría que estar aquí el original y sobrarían el resto de los campos
-    private String  absolutePath;      // read-only
-    private String  account;           // hidden
+    private boolean isDir;             // read-only
     private String  owner;             // read-only
     private String  lockedBy;
     
@@ -57,9 +56,9 @@ public class FileDescriptor implements Serializable
     private boolean isDeleteable;
     private boolean isExecutable;
     private boolean isDuplicable;
-    private boolean isSystem;          // read-only
     private boolean isAlterable;
     private boolean isInTrashcan;
+    
     private Date    created;           // read-only
     private Date    modified;          // read-only
     private Date    accessed;          // read-only
@@ -94,33 +93,31 @@ public class FileDescriptor implements Serializable
      */
     FileDescriptor( FileEntity _file )
     {
-        this.idParent      = _file.getFileEntityPK().getIdParent();
-        this.name          = _file.getFileEntityPK().getName();
-        this.isDir         = _file.getFileEntityPK().getIsDir() != 0;
+        this.account      = _file.getFileEntityPK().getAccount();
+        this.name         = _file.getFileEntityPK().getFileName();
+        this.path         = _file.getFileEntityPK().getFilePath();
         
-        this.idFile        = _file.getIdFile();
-        this.idOriginal    = _file.getIdOriginal();
-        this.absolutePath  = _file.getFullPath();
-        this.account       = _file.getAccount();
-        this.owner         = _file.getOwner();
-        this.lockedBy      = _file.getLockedBy();
+        this.idFile       = _file.getIdFile();
+        this.isDir        = _file.getIsDir() != 0;
+        this.idOriginal   = _file.getIdOriginal();
+        this.owner        = _file.getOwner();
+        this.lockedBy     = _file.getLockedBy();
         
-        this.isHidden      = _file.getIsHidden()     != 0;
-        this.isPublic      = _file.getIsPublic()     != 0;
-        this.isReadable    = _file.getIsReadable()   != 0;
-        this.isModifiable  = _file.getIsModifiable() != 0;
-        this.isDeleteable  = _file.getIsDeleteable() != 0;
-        this.isExecutable  = _file.getIsExecutable() != 0;
-        this.isDuplicable  = _file.getIsDuplicable() != 0;
-        this.isSystem      = _file.getIsSystem()     != 0;
-        this.isAlterable   = _file.getIsAlterable()  != 0;
-        this.isInTrashcan  = _file.getIsInTrashcan() != 0;
+        this.isHidden     = _file.getIsHidden()     != 0;
+        this.isPublic     = _file.getIsPublic()     != 0;
+        this.isReadable   = _file.getIsReadable()   != 0;
+        this.isModifiable = _file.getIsModifiable() != 0;
+        this.isDeleteable = _file.getIsDeleteable() != 0;
+        this.isExecutable = _file.getIsExecutable() != 0;
+        this.isDuplicable = _file.getIsDuplicable() != 0;
+        this.isAlterable  = _file.getIsAlterable()  != 0;
+        this.isInTrashcan = _file.getIsInTrashcan() != 0;
         
-        this.created       = _file.getCreated();
-        this.modified      = _file.getModified();
-        this.accessed      = _file.getAccessed();
-        this.notes         = _file.getNotes();
-        this.size          = (isDirectory() ? 0:
+        this.created      = _file.getCreated();
+        this.modified     = _file.getModified();
+        this.accessed     = _file.getAccessed();
+        this.notes        = _file.getNotes();
+        this.size         = (isDirectory() ? 0:
                                               FileSystemTools.getFileSize( this.account, this.idFile ));
     }
 
@@ -129,15 +126,14 @@ public class FileDescriptor implements Serializable
         // This field allows to indentify uniquely the File faster than using the PK
         _file.setIdFile( getId() );
         // The PK
-        _file.getFileEntityPK().setIdParent( getIdParent() );
-        _file.getFileEntityPK().setName( getName() );
-        _file.getFileEntityPK().setIsDir( (short)(isDirectory() ? 1 : 0) );
+        _file.getFileEntityPK().setAccount(  this.account );
+        _file.getFileEntityPK().setFilePath( this.path    );   // Can't call getAbsolutePath()
+        _file.getFileEntityPK().setFileName( getName()    );
         //--------------------------------------------------------
-        _file.setIdOriginal(  this.idOriginal   );
-        _file.setFullPath(    getAbsolutePath() );
-        _file.setAccount(     this.account      );
-        _file.setOwner(       getOwner()        );
-        _file.setLockedBy(    lockedBy          );
+        _file.setIdOriginal( this.idOriginal );
+        _file.setOwner(      getOwner()      );
+        _file.setLockedBy(   lockedBy        );
+        _file.setIsDir( (short)(isDirectory() ? 1 : 0) );
         
         _file.setIsHidden(     (short)(isHidden()     ? 1 : 0) );
         _file.setIsPublic(     (short)(isPublic()     ? 1 : 0) );
@@ -146,7 +142,6 @@ public class FileDescriptor implements Serializable
         _file.setIsDeleteable( (short)(isDeleteable() ? 1 : 0) );
         _file.setIsExecutable( (short)(isExecutable() ? 1 : 0) );
         _file.setIsDuplicable( (short)(isDuplicable() ? 1 : 0) );
-        _file.setIsSystem(     (short)(isSystem()     ? 1 : 0) );
         _file.setIsAlterable(  (short)(isAlterable()  ? 1 : 0) );
         _file.setIsInTrashcan( (short)(isInTrashcan() ? 1 : 0) );
         
@@ -160,12 +155,6 @@ public class FileDescriptor implements Serializable
     {
         return this.idFile;
     }
-    
-    public int getIdParent()
-    {
-        return this.idParent;
-    }
-    
     
     public String getName()
     {
@@ -191,7 +180,15 @@ public class FileDescriptor implements Serializable
     {
         // TODO: posiblemente aquí haya que tener en cuenta cosas como si está 
         //       en la Trashcan o si es un Link a otro fichero
-        return absolutePath;
+        StringBuilder sb = new StringBuilder( 256 );
+                      sb.append( path  );
+        
+        if( ! path.endsWith( "/" ) )
+            sb.append( '/' );
+        
+        sb.append( getName() );
+        
+        return sb.toString();
     }
 
     public boolean isHidden()
@@ -299,11 +296,6 @@ public class FileDescriptor implements Serializable
         return account.equals( lockedBy );
     }
     
-    public boolean isSystem()
-    {
-        return isSystem;
-    }
-    
     public Date getCreated()
     {
         return created;
@@ -352,7 +344,7 @@ public class FileDescriptor implements Serializable
     @Override
     public String toString()
     {
-        return getClass().getName() +"[isDir="+ isDirectory() +", name="+ getName() +", idParent="+ idParent +"]";
+        return getClass().getName() +"[isDir="+ isDirectory() +", name="+ getAbsolutePath() +"]";
     }
     
     public String getFailedToChangeAttributeReason()
