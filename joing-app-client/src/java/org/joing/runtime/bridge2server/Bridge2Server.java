@@ -22,8 +22,6 @@
 
 package org.joing.runtime.bridge2server;
 
-import javax.naming.Context;
-
 /**
  *
  *
@@ -31,18 +29,20 @@ import javax.naming.Context;
  */
 public class Bridge2Server
 {
-    private static Bridge2Server instance = null;
-
+    private static final int VIA_SERVLERTS = 1;
+    private static final int VIA_SOCKETS   = 2;
+    
+    private static Bridge2Server instance   = null;
+    
+    private int    nVia       = 0;
+    private String sSessionId = null;
+    
     // Note: SessionBridge.class is used only at begining and ending of session:
     //       it is not loaded permanently in memory to save resources (memory).
     //       Something similar happens with UserBridge.class (it's used rarely).
     
     private AppBridge  app  = null;  // Loaded permanently for speed
     private VFSBridge  vfs  = null;  // Loaded permanently for speed
-    
-    private Context context = null;
-    
-    private String  sSessionId = null;
     
     //------------------------------------------------------------------------//
     
@@ -58,34 +58,52 @@ public class Bridge2Server
     {
         SessionBridge sb = null;
         
-        if( this.context == null )
-            sb = new SessionBridgeServletImpl();
-        else
-            sb = new SessionBridgeDirectImpl( this.context );
-        
+        switch( nVia )
+        {
+            case VIA_SERVLERTS:
+                sb = new SessionBridgeServletImpl();
+                break;
+            
+            case VIA_SOCKETS:
+                sb = new SessionBridgeSocketImpl();
+                break;
+        }
+
         return sb;
     }
     
     public UserBridge getUserBridge()
     {
         UserBridge ub = null;
+        
+        switch( nVia )
+        {
+            case VIA_SERVLERTS:
+                ub = new UserBridgeServletImpl();
+                break;
             
-        if( this.context == null )
-            ub = new UserBridgeServletImpl();
-        else
-            ub = new UserBridgeDirectImpl( this.context );
+            case VIA_SOCKETS:
+                ub = new UserBridgeSocketImpl();    
+                break;
+        }
         
         return ub;
     }
     
     public AppBridge getAppBridge()
     {
-        if( this.app == null )
+        if( app == null )
         {
-            if( this.context == null )
-                this.app = new AppBridgeServletImpl();
-            else
-                this.app = new AppBridgeDirectImpl( this.context );
+            switch( nVia )
+            {
+                case VIA_SERVLERTS:
+                    app = new AppBridgeServletImpl();
+                    break;
+
+                case VIA_SOCKETS:
+                    app = new AppBridgeSocketImpl();
+                    break;
+            }
         }
         
         return this.app;
@@ -93,12 +111,18 @@ public class Bridge2Server
     
     public VFSBridge getFileBridge()
     {
-        if( this.vfs == null )
+        if( vfs == null )
         {
-            if( this.context == null )
-                this.vfs = new VFSBridgeServletImpl();
-            else
-                this.vfs = new VFSBridgeDirectImpl( this.context );
+            switch( nVia )
+            {
+                case VIA_SERVLERTS:
+                    vfs = new VFSBridgeServletImpl();
+                    break;
+
+                case VIA_SOCKETS:
+                    vfs = new VFSBridgeSocketImpl();
+                    break;
+            }
         }
         
         return this.vfs;
@@ -106,7 +130,7 @@ public class Bridge2Server
     
     public String getSessionId()
     {
-        return this.sSessionId;
+        return sSessionId;
     }
     
     //------------------------------------------------------------------------//
@@ -122,20 +146,8 @@ public class Bridge2Server
     
     private Bridge2Server()
     {
-        /* TODO: revisar esto: hay que mirar si se puede conectar directamente
-        Hashtable env = new Hashtable();
-                  //Creo que esto no hace falta --> env.put( Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory" );
-                  //env.put( Context.PROVIDER_URL, "iiop://localhost/" ); 
-                  env.put( Context.PROVIDER_URL, "jnp://localhost/" ); 
-        try
-        {
-            //this.context = new InitialContext( env );
-            this.context = new InitialContext();
-        }
-        catch( Exception exc )
-        {
-            // TODO: Reportarlo vía notificación de errores del desktop
-            exc.printStackTrace();
-        }*/
+        /* NEXT: Aquí se pone el código para decidir si va a utilizar la 
+                 implementación directa (sockets) o la de Servlets */
+        nVia = VIA_SERVLERTS;
     }
 }

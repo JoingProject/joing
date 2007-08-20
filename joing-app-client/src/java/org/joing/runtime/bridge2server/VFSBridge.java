@@ -25,9 +25,9 @@ public interface VFSBridge
     
     FileDescriptor getFile( String sFilePath );
     
-    FileDescriptor createDirectory( int nParentId, String sDirName );
+    FileDescriptor createDirectory( String sPath, String sDirName );
     
-    FileDescriptor createFile( int nParentId, String sFileName );
+    FileDescriptor createFile( String sPath, String sFileName );
     
     FileText readText( int nFileId, String sEncoding );
     
@@ -53,6 +53,8 @@ public interface VFSBridge
     
     //------------------------------------------------------------------------//
     // VfsListRemote
+    
+    List<FileDescriptor> getRoots();
     
     List<FileDescriptor> getChilds( Integer nFileId );
     

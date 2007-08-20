@@ -145,9 +145,10 @@ public class VFSView extends FileSystemView
      * @see javax.swing.filechooser.FileSystemView#getRoots()
      */
     @Override
+    // By contract has to return null instead of empty array
     public VFSFile[] getRoots()
     {
-        VFSFile[] aRet = null;    // By contract has to return null instead of empty array
+        VFSFile[] aRet = null;
         
         if( afRoot == null )
             afRoot = VFSFile.listRoots();
@@ -166,14 +167,17 @@ public class VFSView extends FileSystemView
      * @see javax.swing.filechooser.FileSystemView#getSystemDisplayName( java.io.File f )
      */
     @Override
-    public String getSystemDisplayName( java.io.File f )
+    public String getSystemDisplayName( java.io.File file )
     {
-        String s = f.getName();
+        VFSFile fVFS  = (VFSFile) file;
+        String  sName = fVFS.getName();
         
-        if( isRoot( f ) )
-            s += " (Joing)";
-        
-        return s;
+        if( isRoot( fVFS ) )
+            sName += " (Joing)";
+        else if( fVFS.isLink() )
+            sName += " ^";
+            
+        return sName;
     }
     
     /**

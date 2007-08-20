@@ -69,6 +69,7 @@ public class BridgeServletBaseImpl
     static final String VFS_MOVE              = "vfs/Move";
     static final String VFS_TRASHCAN          = "vfs/Trashcan";
     static final String VFS_DELETE            = "vfs/Delete";
+    static final String VFS_GET_ROOTS         = "vfs/GetRoots";
     static final String VFS_GET_CHILDS        = "vfs/GetChilds";
     static final String VFS_GET_BY_NOTES      = "vfs/GetByNotes";
     static final String VFS_GET_TRASHCAN      = "vfs/GetTrashcan";

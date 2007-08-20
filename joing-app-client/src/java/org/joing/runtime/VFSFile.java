@@ -31,7 +31,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 import org.joing.runtime.bridge2server.Bridge2Server;
 
 /**
@@ -41,6 +40,10 @@ import org.joing.runtime.bridge2server.Bridge2Server;
  */
 public class VFSFile extends File
 {
+    // TODO: Revisar la clase para que las búsquedas de ficheros en el Servidor
+    //       se hagan siempre que sea posible en base al ID_PARENT en lugar de
+    //       en base al Path.
+    
     private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
     
     private static long nTotalDiskSpace = -1;
@@ -86,7 +89,7 @@ public class VFSFile extends File
         // If fd == null, then file or dir not exists
         fd = Bridge2Server.getInstance().getFileBridge().getFile( sFullName );
         
-        if( fd == null )
+        if( fd == null )  // The file does not exists: it can be created (remember: root always exists)
         {
             if( sFullName.endsWith( "/" ) )   // Then, removes last '/'
                 sFullName = sFullName.substring( 0, sFullName.length() - 2 );
@@ -158,7 +161,7 @@ public class VFSFile extends File
     public boolean createNewFile() throws JoingServerVFSException
     {
         if( fd == null && fdParent != null && sChild != null )
-            fd = Bridge2Server.getInstance().getFileBridge().createFile( fdParent.getId(), sChild );
+            fd = Bridge2Server.getInstance().getFileBridge().createFile( fdParent.getAbsolutePath(), sChild );
         
         return fd != null;
     }
@@ -364,7 +367,7 @@ public class VFSFile extends File
     @Override
     public boolean canRead()
     {
-        return (exists() ? ! fd.isSystem() : false);
+        return (exists() ? fd.isReadable() : false);
     }
     
     @Override
@@ -388,7 +391,7 @@ public class VFSFile extends File
     @Override
     public boolean isDirectory()
     {
-        return (exists() ? isDirectory() : false);
+        return (exists() ? fd.isDirectory() : false);
     }
     
     /**
@@ -440,15 +443,6 @@ public class VFSFile extends File
         return fd.setDuplicable( b );
     }
     
-    /**
-     * 
-     * Obviously, there is not a <code>setSystem( boolean b )</code>.
-     */
-    public boolean isSystem()
-    {
-        return fd.isSystem();
-    }
-    
     public boolean isAlterable()
     {
         return fd.isAlterable();
@@ -457,6 +451,11 @@ public class VFSFile extends File
     public boolean setAlterable( boolean b )
     {
         return fd.setAlterable( b );
+    }
+    
+    public boolean isLink()
+    {
+        return false;    // TODO: implementarlo cuando haya aclarado cómo va lo de los links
     }
     
     public boolean isLocked()
@@ -629,11 +628,14 @@ public class VFSFile extends File
     /**
      * @see java.io.File#listRoots()
      */
+    // By contract has to return null instead of empty array
     public static VFSFile[] listRoots() throws JoingServerVFSException
     {
-        VFSFile[] af = new VFSFile[1];
-        af[0] = new VFSFile( "/Joing" );
-        return af; // By contract has to return null instead of empty array
+        // TODO: leer los roots del Servidor
+        VFSFile[] afRoot = new VFSFile[1];
+        afRoot[0] = new VFSFile( "/" );
+        System.out.println(afRoot[0].getAbsolutePath());
+        return afRoot;
     }
 
     /**
@@ -643,7 +645,7 @@ public class VFSFile extends File
     public boolean mkdir() throws JoingServerVFSException
     {
         if( fd == null && fdParent != null && sChild != null )
-            fd = Bridge2Server.getInstance().getFileBridge().createDirectory( fdParent.getId(), sChild );
+            fd = Bridge2Server.getInstance().getFileBridge().createDirectory( fdParent.getAbsolutePath(), sChild );
         
         return fd != null;
     }
