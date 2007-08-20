@@ -60,14 +60,14 @@ public class VFSBridgeServletImpl
         return file;
     }
     
-    public FileDescriptor createDirectory( int nParentId, String sDirName )
+    public FileDescriptor createDirectory( String sPath, String sDirName )
            throws JoingServerException
     {
         FileDescriptor file = null;
         
         Channel channel = new Channel( VFS_CREATE_DIR );
                 channel.write( Bridge2Server.getInstance().getSessionId() );
-                channel.write( nParentId );
+                channel.write( sPath );
                 channel.write( sDirName  );
         file = (FileDescriptor) channel.read();
                 channel.close();
@@ -75,14 +75,14 @@ public class VFSBridgeServletImpl
         return file;
     }
     
-    public FileDescriptor createFile( int nParentId, String sFileName )
+    public FileDescriptor createFile( String sPath, String sFileName )
            throws JoingServerException
     {
         FileDescriptor file = null;
         
         Channel channel = new Channel( VFS_CREATE_FILE );
                 channel.write( Bridge2Server.getInstance().getSessionId() );
-                channel.write( nParentId );
+                channel.write( sPath );
                 channel.write( sFileName );
         file = (FileDescriptor) channel.read();
                 channel.close();
@@ -249,6 +249,21 @@ public class VFSBridgeServletImpl
         return bSuccess;
     }
 
+    //------------------------------------------------------------------------//
+    
+    public List<FileDescriptor> getRoots() 
+           throws JoingServerException
+    {
+        List<FileDescriptor> roots = null;
+        
+        Channel channel = new Channel( VFS_GET_ROOTS );
+                channel.write( Bridge2Server.getInstance().getSessionId() );
+        roots = (List<FileDescriptor>) channel.read();
+                channel.close();
+        
+        return roots;
+    }
+    
     public List<FileDescriptor> getChilds( Integer nFileId )
            throws JoingServerException
     {

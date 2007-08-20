@@ -21,9 +21,7 @@
  */
 package org.joing.runtime;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import javax.swing.filechooser.FileSystemView;
 
 /**
@@ -39,33 +37,222 @@ public class JoingFileSystemView extends FileSystemView
     private FileSystemView local;
     private VFSView        remote;
     
-    private static final JoingFileSystemView instance = new JoingFileSystemView();
+    private static JoingFileSystemView instance = null;
     
     //------------------------------------------------------------------------//
     
-    public static FileSystemView getFileSystemView()
+    public static JoingFileSystemView getFileSystemView()
     {
+        if( instance == null )
+        {
+            synchronized( VFSView.class )
+            {
+                if( instance == null )
+                    instance = new JoingFileSystemView();
+            }
+        }
+
         return instance;
     }
     
+    /**
+     * @see javax.swing.filechooser.FileSystemView#getRoots()
+     */
     @Override
-    public File[] getRoots()
+    public java.io.File[] getRoots()
     {
-        File[]  afLocal  = local.getRoots();
-        File[]  afRemote = remote.getRoots();
-        File[]  afAll    = new File[ afLocal.length + afRemote.length ];
+        java.io.File[]  afLocal  = local.getRoots();
+        java.io.File[]  afRemote = remote.getRoots();
+        java.io.File[]  afAll    = new java.io.File[ afLocal.length + afRemote.length ];
         
         System.arraycopy( afRemote, 0, afAll,               0, afRemote.length );
         System.arraycopy( afLocal , 0, afAll, afRemote.length, afLocal.length );
         
         return afAll;
     }
+    /**
+     * @see javax.swing.filechooser.FileSystemView#createFileObject( 
+     *                                 java.io.File containingDir, String name )
+     */
+    @Override
+    public java.io.File createFileObject( java.io.File parentDir, String name ) 
+    {
+        if( parentDir instanceof VFSFile )
+            return remote.createFileObject( parentDir, name );
+        else
+            return local.createFileObject( parentDir, name );
+    }
     
-    public File createNewFolder( File containingDir ) throws IOException
+    /**
+     * @see javax.swing.filechooser.FileSystemView#createFileObject(String path)
+     */
+    @Override
+    public java.io.File createFileObject( String path )
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
     
+    /**
+     * @see javax.swing.filechooser.FileSystemView#createNewFolder( 
+     *                                              java.io.File containingDir )
+     */
+    public java.io.File createNewFolder( java.io.File dir ) throws IOException
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+    
+    /**
+     * @see javax.swing.filechooser.FileSystemView#getFiles( 
+     *                           java.io.File directory, boolean useFileHiding )
+     */    
+    @Override
+    public java.io.File[] getFiles( java.io.File directory, boolean useFileHiding )
+    {
+        if( directory instanceof VFSFile )
+            return remote.getFiles( directory, useFileHiding );
+        else
+            return local.getFiles( directory, useFileHiding );
+    }
+    
+    /**
+     * @see javax.swing.filechooser.FileSystemView#getHomeDirectory()
+     */
+    @Override
+    public java.io.File getHomeDirectory()
+    {
+	return remote.getRoots()[0];
+    }
+    
+    /**
+     * @see javax.swing.filechooser.FileSystemView#getParentDirectory( 
+     *                                                  java.io.File directory )
+     */
+    @Override
+    public VFSFile getParentDirectory( java.io.File directory )
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+    
+    /**
+     * @see javax.swing.filechooser.FileSystemView#getSystemDisplayName( java.io.File f )
+     */
+    @Override
+    public String getSystemDisplayName( java.io.File file )
+    {
+        if( file instanceof VFSFile )
+            return remote.getSystemDisplayName( file );
+        else
+            return local.getSystemDisplayName( file );
+    }
+    
+    /**
+     * @see javax.swing.filechooser.FileSystemView#isComputerNode( java.io.File dir )
+     */
+    @Override
+    public boolean isComputerNode( java.io.File dir )
+    {
+        if( dir instanceof VFSFile )
+            return remote.isComputerNode( dir );
+        else
+            return local.isComputerNode( dir );
+    }
+    
+    /**
+     * @see javax.swing.filechooser.FileSystemView#isDrive( java.io.File dir )
+     */
+    @Override
+    public boolean isDrive( java.io.File dir )
+    {
+        if( dir instanceof VFSFile )
+            return remote.isDrive( dir );
+        else
+            return local.isDrive( dir );
+    }
+    
+    /**
+     * @see javax.swing.filechooser.FileSystemView#isFileSystem( java.io.File f )
+     */
+    @Override
+    public boolean isFileSystem( java.io.File file )
+    {
+        if( file instanceof VFSFile )
+            return remote.isFileSystem( file );
+        else
+            return local.isFileSystem( file );
+    }
+    
+    /**
+     * @see javax.swing.filechooser.FileSystemView#isFileSystemRoot( java.io.File dir )
+     */
+    @Override
+    public boolean isFileSystemRoot( java.io.File dir )
+    {
+        if( dir instanceof VFSFile )
+            return remote.isFileSystemRoot( dir );
+        else
+            return local.isFileSystemRoot( dir );
+    }
+    
+    /**
+     * @see javax.swing.filechooser.FileSystemView#isFloppyDrive( java.io.File dir )
+     */
+    @Override
+    public boolean isFloppyDrive( java.io.File dir )
+    {
+        if( dir instanceof VFSFile )
+            return remote.isFloppyDrive( dir );
+        else
+            return local.isFloppyDrive( dir );
+    }
+    
+    /**
+     * @see javax.swing.filechooser.FileSystemView#isHiddenFile(java.io.File file)
+     */
+    @Override
+    public boolean isHiddenFile( java.io.File file )
+    {
+        if( file instanceof VFSFile )
+            return remote.isHiddenFile( file );
+        else
+            return local.isHiddenFile( file );
+    }
+    
+    /**
+     * @see javax.swing.filechooser.FileSystemView#isParent( java.io.File folder, java.io.File file )
+     */
+    @Override
+    public boolean isParent( java.io.File folder, java.io.File file )
+    {
+        if( folder instanceof VFSFile )
+            return remote.isParent( folder, file );
+        else
+            return local.isParent( folder, file );
+    }
+    
+    /**
+     * @see javax.swing.filechooser.FileSystemView#isRoot( java.io.File file )
+     */
+    @Override
+    public boolean isRoot( java.io.File file )
+    {
+        if( file instanceof VFSFile )
+            return remote.isRoot( file );
+        else
+            return local.isRoot( file );
+    }
+    
+    /**
+     * @see javax.swing.filechooser.FileSystemView#isTraversable( java.io.File file )
+     */
+    @Override
+    public Boolean isTraversable( java.io.File file )
+    {
+	if( file instanceof VFSFile )
+            return remote.isTraversable( file );
+        else
+            return local.isTraversable( file );
+    }
+       
     //------------------------------------------------------------------------//
     
     private JoingFileSystemView()
