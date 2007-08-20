@@ -1,40 +1,43 @@
 /*
- * CreateFile.java
- *
- * Created on 1 de julio de 2007, 19:57
+ * GetRoots.java
+ * 
+ * Created on 20-ago-2007, 12:07:50
+ * 
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
  */
 
 package servlets.vfs;
 
 import ejb.JoingServerException;
-import servlets.JoingServerServletException;
-import ejb.vfs.FileManagerLocal;
-import ejb.vfs.JoingServerVFSException;
+import ejb.vfs.ListManagerLocal;
 import java.io.*;
 import java.net.*;
+import java.util.List;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import servlets.JoingServerServletException;
 
 /**
  *
  * @author fmorero
- * @version
  */
-public class CreateFile extends HttpServlet
+public class GetRoots extends HttpServlet
 {
-    @EJB()
-    private FileManagerLocal fileManagerBean;
+    @EJB
+    private ListManagerLocal listManagerBean;
     
-    /** Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     */
+    /** 
+    * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+    * @param request servlet request
+    * @param response servlet response
+    */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-              throws ServletException, IOException
+    throws ServletException, IOException
     {
-        response.setContentType( "application/octet-stream" );
+    response.setContentType( "application/octet-stream" );
         
         ObjectInputStream  reader = new ObjectInputStream(  request.getInputStream()   );
         ObjectOutputStream writer = new ObjectOutputStream( response.getOutputStream() );
@@ -42,16 +45,14 @@ public class CreateFile extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String       sSessionId = (String) reader.readObject();
-            String       sPath      = (String) reader.readObject();
-            String       sFileName  = (String) reader.readObject();
-            ejb.vfs.FileDescriptor file = null;
+            String sSessionId = (String) reader.readObject();
+            List<ejb.vfs.FileDescriptor> roots = null;
             
             // Process request
-            file = fileManagerBean.createFile( sSessionId, sPath, sFileName );
+            roots = listManagerBean.getRoots( sSessionId );
             
             // Write to Client (desktop)
-            writer.writeObject( file );
+            writer.writeObject( roots );
             writer.flush();
         }
         catch( ClassNotFoundException exc )
@@ -72,33 +73,33 @@ public class CreateFile extends HttpServlet
             if( writer != null )
                 try{ writer.close(); } catch( IOException exc ) { }
         }
-    }
-    
+    } 
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     */
+    /** 
+    * Handles the HTTP <code>GET</code> method.
+    * @param request servlet request
+    * @param response servlet response
+    */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException
-    {
+    throws ServletException, IOException {
         processRequest(request, response);
-    }
-    
-    /** Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     */
+    } 
+
+    /** 
+    * Handles the HTTP <code>POST</code> method.
+    * @param request servlet request
+    * @param response servlet response
+    */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException
-    {
+    throws ServletException, IOException {
         processRequest(request, response);
     }
-    
-    /** Returns a short description of the servlet.
-     */
-    public String getServletInfo()
-    {
+
+    /** 
+    * Returns a short description of the servlet.
+    */
+    public String getServletInfo() {
         return "Short description";
     }
     // </editor-fold>

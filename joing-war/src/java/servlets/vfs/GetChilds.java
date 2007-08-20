@@ -8,7 +8,6 @@ package servlets.vfs;
 
 import ejb.JoingServerException;
 import servlets.JoingServerServletException;
-import ejb.vfs.JoingServerVFSException;
 import ejb.vfs.ListManagerLocal;
 import java.io.*;
 import java.net.*;

@@ -111,6 +111,10 @@
         <servlet-name>GetApplication</servlet-name>
         <servlet-class>servlets.app.GetApplication</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>GetRoots</servlet-name>
+        <servlet-class>servlets.vfs.GetRoots</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
         <url-pattern>/servlets/session/Login</url-pattern>
@@ -219,6 +223,10 @@
     <servlet-mapping>
         <servlet-name>GetApplication</servlet-name>
         <url-pattern>/servlets/app/GetApplication</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetRoots</servlet-name>
+        <url-pattern>/servlets/vfs/GetRoots</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
