@@ -42,13 +42,13 @@ public class CreateDirectory extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String       sSessionId = (String)  reader.readObject();
-            int          nParentId  = (Integer) reader.readObject();
-            String       sDirName   = (String)  reader.readObject();
+            String       sSessionId = (String) reader.readObject();
+            String       sPath      = (String) reader.readObject();
+            String       sDirName   = (String) reader.readObject();
             ejb.vfs.FileDescriptor file       = null;
             
             // Process request
-            file = fileManagerBean.createDirectory( sSessionId, nParentId, sDirName );
+            file = fileManagerBean.createDirectory( sSessionId, sPath, sDirName );
             
             // Write to Client (desktop)
             writer.writeObject( file );
