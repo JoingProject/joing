@@ -179,7 +179,8 @@ public class Bootstrap {
     public static void init() {
         setupSystemMonitor();
         System.setSecurityManager(new JoingSecurityManager());
-        Monitor.log("Join'g Successfully Bootstrapped...");
+        Monitor.log("Join'g Successfully Bootstrapped.");
+        Monitor.log("Main Thread Id is " + Platform.getMainId());
     }
 
     // do we really need this method?

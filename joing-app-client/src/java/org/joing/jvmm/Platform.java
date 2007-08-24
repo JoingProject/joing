@@ -40,6 +40,8 @@ public class Platform {
     
     private static final AppContext context = new AppContext();
     
+    private static final Thread mainThread = Thread.currentThread();
+    
     public Platform() {
     }
 
@@ -57,6 +59,14 @@ public class Platform {
         // Todavia hara falta obtener el session ID.
     }
     
+    
+    /**
+     * Regresa el id único del Thread padre. El Thread Padre
+     * es el que inició la ejecución de Platform.
+     */
+    public static long getMainId() {
+        return mainThread.getId();
+    }
     
     public static AppManager getAppManager() {
         return appManager;
@@ -85,6 +95,11 @@ public class Platform {
         return null;
     }
     
+    /**
+     * Regresa el Contexto de Joing.
+    public static AppContext getContext() {
+        return context;
+    }
     /**
      * <p>Ejecuta una Aplicacion que reside en el WebPcFileServlet con id idApp.
      * Si la aplicacion no requiere argumentos, especificar args como null.</p>
