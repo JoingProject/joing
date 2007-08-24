@@ -22,7 +22,6 @@
 
 package org.joing.AppLauncher;
 
-import org.joing.AppLauncher.AppEvent;
 import org.joing.jvmm.*;
 
 /**
