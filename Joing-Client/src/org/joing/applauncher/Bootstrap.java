@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package org.joing.AppLauncher;
+package org.joing.applauncher;
 
 import java.awt.AWTException;
 import java.awt.Dimension;
@@ -25,7 +25,7 @@ import java.net.URL;
 import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import org.joing.AppLauncher.gui.SystemMonitor;
+import org.joing.applauncher.gui.SystemMonitor;
 import org.joing.jvmm.JoingSecurityManager;
 import org.joing.jvmm.Platform;
 

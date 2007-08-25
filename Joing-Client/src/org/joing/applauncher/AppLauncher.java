@@ -20,13 +20,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.joing.AppLauncher;
+package org.joing.applauncher;
 
 import org.joing.jvmm.*;
-import org.joing.AppLauncher.AppLauncherListener;
-import org.joing.AppLauncher.AppStartedEvent;
-import org.joing.AppLauncher.AppStatusChangedEvent;
-import org.joing.AppLauncher.AppStoppedEvent;
+import org.joing.applauncher.AppLauncherListener;
+import org.joing.applauncher.AppStartedEvent;
+import org.joing.applauncher.AppStatusChangedEvent;
+import org.joing.applauncher.AppStoppedEvent;
 import javax.swing.event.EventListenerList;
 
 /**
@@ -34,80 +34,72 @@ import javax.swing.event.EventListenerList;
  *
  * @author Francisco Morero Peyrona
  */
-public class AppLauncher
-{
+public class AppLauncher {
+
     private EventListenerList listenerList;
-    
+
     //------------------------------------------------------------------------//
-    
-    public AppLauncher()
-    {
+    public AppLauncher() {
         this.listenerList = new EventListenerList();
     }
-    
-    public void addListener( AppLauncherListener l )
-    {
-        this.listenerList.add( AppLauncherListener.class, l );
+
+    public void addListener(AppLauncherListener l) {
+        this.listenerList.add(AppLauncherListener.class, l);
     }
-    
-    public void removeListener( AppLauncherListener l )
-    {
-        this.listenerList.remove( AppLauncherListener.class, l );
+
+    public void removeListener(AppLauncherListener l) {
+        this.listenerList.remove(AppLauncherListener.class, l);
     }
-    
-    protected void fireAppStarted()
-    {
+
+    protected void fireAppStarted() {
         // Guaranteed to return a non-null array
         Object[] listeners = listenerList.getListenerList();
-        
-        AppStartedEvent ase = new AppStartedEvent( this );
-        
+
+        AppStartedEvent ase = new AppStartedEvent(this);
+
         // Process the listenerList last to first, notifying
         // those that are interested in this event
-        for( int n = listeners.length - 2; n >= 0; n -= 2 )
-        {
-            if( listeners[n] == AppLauncherListener.class )
-                ((AppLauncherListener) listeners[n+1]).appStarted( ase );
+        for (int n = listeners.length - 2; n >= 0; n -= 2) {
+            if (listeners[n] == AppLauncherListener.class) {
+                ((AppLauncherListener) listeners[n+1]).appStarted(ase);
+            }
         }
     }
-    
-    protected void fireAppStopped()
-    {
+
+    protected void fireAppStopped() {
         // Guaranteed to return a non-null array
         Object[] listeners = listenerList.getListenerList();
-        
-        AppStoppedEvent ase = new AppStoppedEvent( this );
-        
+
+        AppStoppedEvent ase = new AppStoppedEvent(this);
+
         // Process the listenerList last to first, notifying
         // those that are interested in this event
-        for( int n = listeners.length - 2; n >= 0; n -= 2 )
-        {
-            if( listeners[n] == AppLauncherListener.class )
-                ((AppLauncherListener) listeners[n+1]).appStopped( ase );
+        for (int n = listeners.length - 2; n >= 0; n -= 2) {
+            if (listeners[n] == AppLauncherListener.class) {
+                ((AppLauncherListener) listeners[n+1]).appStopped(ase);
+            }
         }
     }
-    
+
     // No lo tengo muy claro, pero este método podría utilizarse para
     // inicar cambios en el consumo de RAM de la aplicación y cosas
     // por el estilo.
     // Se podría hacer un timer en esta clase que periódicamente
-    // invocase éste método para todas las aplicaciones, indicando su 
+    // invocase éste método para todas las aplicaciones, indicando su
     // consumo de memoria, the CPU, de Threads y ese tipo de cosas.
-    protected void fireAppStatusChanged()
-    {
+    protected void fireAppStatusChanged() {
         // Guaranteed to return a non-null array
         Object[] listeners = listenerList.getListenerList();
-        
-        AppStatusChangedEvent ase = new AppStatusChangedEvent( this );
-                              ase.setMemory( 150 );   // Los Kb de RAM que sean
-                              ase.setCPU( 3 );     // El procetanje que sea
-        
+
+        AppStatusChangedEvent ase = new AppStatusChangedEvent(this);
+        ase.setMemory(150); // Los Kb de RAM que sean
+        ase.setCPU(3); // El procetanje que sea
         // Process the listenerList last to first, notifying
         // those that are interested in this event
-        for( int n = listeners.length - 2; n >= 0; n -= 2 )
-        {
-            if( listeners[n] == AppLauncherListener.class )
-                ((AppLauncherListener) listeners[n+1]).appStatusChanged( ase );
+        for (int n = listeners.length - 2; n >= 0; n -= 2) {
+            if (listeners[n] == AppLauncherListener.class) {
+                ((AppLauncherListener) listeners[n+1]).appStatusChanged(ase);
+            }
         }
     }
 }

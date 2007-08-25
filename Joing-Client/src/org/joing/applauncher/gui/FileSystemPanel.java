@@ -4,7 +4,7 @@
  * Created on 24 de junio de 2007, 17:16
  */
 
-package org.joing.AppLauncher.gui;
+package org.joing.applauncher.gui;
 
 /**
  *

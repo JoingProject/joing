@@ -4,7 +4,7 @@
  * Created on 24 de junio de 2007, 19:11
  */
 
-package org.joing.AppLauncher.gui;
+package org.joing.applauncher.gui;
 
 import javax.swing.JPanel;
 

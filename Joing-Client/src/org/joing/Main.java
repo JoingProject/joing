@@ -21,7 +21,7 @@
  */
 package org.joing;
 
-import org.joing.AppLauncher.Bootstrap;
+import org.joing.applauncher.Bootstrap;
 import org.joing.jvmm.Platform;
 
 /**
