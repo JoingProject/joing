@@ -20,9 +20,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.joing.AppLauncher;
+package org.joing.applauncher;
 
-import org.joing.AppLauncher.AppEvent;
+import org.joing.applauncher.AppEvent;
 
 /**
  * RAM, CPU y Threads, los he puesto sólo como ejemplo: tú pon lo
@@ -30,40 +30,34 @@ import org.joing.AppLauncher.AppEvent;
  *
  * @author Francisco Morero Peyrona
  */
-public class AppStatusChangedEvent extends AppEvent
-{
+public class AppStatusChangedEvent extends AppEvent {
+
     private int nKb;
     private int nCPU;
-    
-    /** 
+
+    /**
      * Creates a new instance of AppStatusChangedEvent
-     * 
-     * @param source 
+     *
+     * @param source
      */
-    public AppStatusChangedEvent( Object source )
-    {
-        super( source );
+    public AppStatusChangedEvent(Object source) {
+        super(source);
     }
-    
-    public int getMemory()
-    {
+
+    public int getMemory() {
         return this.nKb;
     }
-    
-    public int getCPU()
-    {
+
+    public int getCPU() {
         return this.nCPU;
     }
-    
+
     //------------------------------------------------------------------------//
-    
-    void setMemory( int nKb )
-    {
+    void setMemory(int nKb) {
         this.nKb = nKb;
     }
-    
-    void setCPU( int nCPU )
-    {
-         this.nCPU = (nCPU > 100 ? 100 : (nCPU < 0 ? 0 : nCPU));
+
+    void setCPU(int nCPU) {
+        this.nCPU = (nCPU > 100 ? 100 : (nCPU < 0 ? 0 : nCPU));
     }
 }

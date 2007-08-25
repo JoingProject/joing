@@ -7,11 +7,11 @@
  * and open the template in the editor.
  */
 
-package org.joing.AppLauncher;
+package org.joing.applauncher;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.joing.AppLauncher.gui.SystemMonitor;
+import org.joing.applauncher.gui.SystemMonitor;
 
 /**
  *

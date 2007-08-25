@@ -4,7 +4,7 @@
  * Created on 24 de junio de 2007, 17:16
  */
 
-package org.joing.AppLauncher.gui;
+package org.joing.applauncher.gui;
 
 import java.awt.Rectangle;
 import java.util.Vector;
@@ -12,10 +12,10 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
-import org.joing.AppLauncher.AppLauncherListener;
-import org.joing.AppLauncher.AppStartedEvent;
-import org.joing.AppLauncher.AppStatusChangedEvent;
-import org.joing.AppLauncher.AppStoppedEvent;
+import org.joing.applauncher.AppLauncherListener;
+import org.joing.applauncher.AppStartedEvent;
+import org.joing.applauncher.AppStatusChangedEvent;
+import org.joing.applauncher.AppStoppedEvent;
 
 /**
  *

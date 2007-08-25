@@ -20,9 +20,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-package org.joing.AppLauncher;
+package org.joing.applauncher;
 
-import org.joing.AppLauncher.AppEvent;
+import org.joing.applauncher.AppEvent;
 
 /**
  *
