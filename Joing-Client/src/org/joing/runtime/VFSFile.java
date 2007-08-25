@@ -21,7 +21,6 @@
  */
 package org.joing.runtime;
 
-import ejb.user.User;
 import java.io.File;
 import ejb.vfs.FileDescriptor;
 import ejb.vfs.JoingServerVFSException;

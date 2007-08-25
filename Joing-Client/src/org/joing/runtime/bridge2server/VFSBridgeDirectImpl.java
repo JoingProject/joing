@@ -25,8 +25,6 @@ package org.joing.runtime.bridge2server;
 import ejb.vfs.FileBinary;
 import ejb.vfs.FileDescriptor;
 import ejb.vfs.FileText;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.util.List;
 import javax.naming.Context;
 
@@ -38,7 +36,7 @@ import javax.naming.Context;
 public class VFSBridgeDirectImpl 
        extends BridgeDirectBaseImpl
        implements VFSBridge
-{    
+{
     /**
      * Creates a new instance of VFSBridgeDirectImpl
      *
@@ -51,91 +49,99 @@ public class VFSBridgeDirectImpl
 
     public FileDescriptor getFile( String sFilePath )
     {
-        return null;
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+    
+    public FileDescriptor createDirectory( String sPath, String sDirName )
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
-    public FileDescriptor createDirectory( int nParentId, String sDirName )
+    public FileDescriptor createFile( String sPath, String sFileName )
     {
-        return null;
-    }
-
-    public FileDescriptor createFile( int nParentId, String sFileName )
-    {
-        return null;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
     public FileText readText(int nFileId, String sEncoding)
     {
-        return null;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
     public FileBinary readBinary(int nFileId)
     {
-        return null;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
     public FileDescriptor writeText(FileText fileText)
     {
-        return null;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
     public FileDescriptor writeBinary(FileBinary fileBinary)
     {
-        return null;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
     public FileDescriptor update(FileDescriptor file)
     {
-        return null;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
     public boolean copy(int nFileId, int toDir)
     {
-        return false;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
     public boolean move(int nFileId, int toDir)
     {
-        return false;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
     public boolean trashcan(int[] anFileId, boolean bInTrashCan)
     {
-        return false;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
     public boolean trashcan(int nFileID, boolean bInTrashCan)
     {
-        return false;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
     public boolean delete(int[] anFileId)
     {
-        return false;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
     public boolean delete(int nFileId)
     {
-        return false;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
+    //------------------------------------------------------------------------//
+    // VfsListRemote
+    
+    public List<FileDescriptor> getRoots()
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+    
     public List<FileDescriptor> getChilds(Integer nFileId)
     {
-        return null;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
     public List<FileDescriptor> getChilds(String sBaseDir)
     {
-        return null;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
     public List<FileDescriptor> getByNotes(String sSubString)
     {
-        return null;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
     public List<FileDescriptor> getTrashCan()
     {
-        return null;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 }
