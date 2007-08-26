@@ -5,9 +5,6 @@
     <ejb>joing-ejb.jar</ejb>
   </module>
   <module>
-    <java>joing-app-client.jar</java>
-  </module>
-  <module>
     <web>
       <web-uri>joing-war.war</web-uri>
       <context-root>/joing-war</context-root>
