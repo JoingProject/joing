@@ -43,7 +43,7 @@ public class Logout extends HttpServlet
          
             sessionManagerBean.logout( sSessionId );   
         }
-        catch( ClassNotFoundException exc )
+        catch( Exception exc )
         {
             // As logout(...) does not return this exception do not need to be reported (throw)
             log( "Error in Servlet: "+ getClass().getName(), exc );

@@ -53,16 +53,20 @@ public class GetPreferredForType extends HttpServlet
             writer.writeObject( application );
             writer.flush();
         }
-        catch( ClassNotFoundException exc )
-        {
-            log( "Error in Servlet: "+ getClass().getName(), exc );
-            throw new JoingServerServletException( getClass(), exc );
-        }
         catch( JoingServerException exc )
         {
             writer.writeObject( exc );
             writer.flush();
-        }        finally
+        }
+        catch( Exception exc )
+        {
+            log( "Error in Servlet: "+ getClass().getName(), exc );
+            // Makes the exception to be contained into a JoingServerServletException
+            JoingServerServletException jsse = new JoingServerServletException( getClass(), exc );
+            writer.writeObject( jsse );
+            writer.flush();
+        }
+        finally
         {
             if( reader != null )
                 try{ reader.close(); } catch( IOException exc ) { }
