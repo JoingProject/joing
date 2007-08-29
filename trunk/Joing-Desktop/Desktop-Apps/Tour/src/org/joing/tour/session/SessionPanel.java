@@ -4,7 +4,7 @@
  * Created on 2 de agosto de 2007, 17:20
  */
 
-package org.joing.session;
+package org.joing.tour.session;
 
 import ejb.JoingServerException;
 import ejb.session.LoginResult;
