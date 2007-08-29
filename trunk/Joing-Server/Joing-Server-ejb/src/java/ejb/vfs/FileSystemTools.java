@@ -75,10 +75,12 @@ public class FileSystemTools
     public static void createFile( String sAccount, int nFileId  ) 
            throws IOException
     {
-        java.io.File fNew = _getFile( sAccount, nFileId  );
+        java.io.File fNew = _getUserFile( sAccount, nFileId  );
         
         if( ! fNew.createNewFile() )
-            throw new IOException( "Error creating file for account = ["+ sAccount +"]" );   // It is ok in this way: don't add the file name
+            throw new IOException( "Error creating file\n"+
+                                   "   File name = '"+ fNew.getName() +"'\n"+
+                                   "   Account   = '"+ sAccount +"'" );
     }
     
     /**
@@ -89,7 +91,7 @@ public class FileSystemTools
      */
     public static java.io.File getFile( String sAccount, int nFileId  )
     {        
-        return _getFile( sAccount, nFileId  );
+        return _getUserFile( sAccount, nFileId  );
     }
     
     /**
@@ -110,7 +112,7 @@ public class FileSystemTools
      */
     public static boolean deleteFile( String sAccount, int nFileId )
     {
-        return _getFile( sAccount, nFileId ).delete();
+        return _getUserFile( sAccount, nFileId ).delete();
     }
     
     /**
@@ -125,7 +127,7 @@ public class FileSystemTools
      */
     public static long getFileSize( String sAccount, int nFileId )
     {
-        return _getFile( sAccount, nFileId ).length();
+        return _getUserFile( sAccount, nFileId ).length();
     }
     
     /**
@@ -147,16 +149,20 @@ public class FileSystemTools
     
     //------------------------------------------------------------------------//
     
-    public static java.io.File _getFile( String sAccount, int nFileId )
+    private static java.io.File _getUserFile( String sAccount, int nFileId )
     {
         return new java.io.File( getUserHome( sAccount ), Integer.toString( nFileId ) );
     }
     
-    // Retrieves the user home directory
+    // Retrieves the user home directory.
     private static java.io.File getUserHome( String sAccount )
     {
+        // sAccount is the form <user_name>@<provider_name>.<domain>
+        // and the user real (physical) root directory is the <user_name>
+        sAccount = sAccount.substring( 0, sAccount.indexOf( '@' ) );
+        
         return new java.io.File( Constant.getUserDir(), sAccount );
-    }    
+    }
     
     // Recursively deletes a directory an all its files
     private static boolean deleteDirectory( java.io.File path )
