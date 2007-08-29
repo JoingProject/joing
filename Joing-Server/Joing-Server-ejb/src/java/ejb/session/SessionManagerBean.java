@@ -91,7 +91,7 @@ public class SessionManagerBean
            throws JoingServerSessionException
     {
         if( sSessionId != null )
-        { // TODO: este método no funciona: arreglarlo
+        { // FIXME: este método no funciona: arreglarlo
             try
             {
                 SessionEntity _session = em.find( SessionEntity.class, sSessionId );
