@@ -4,7 +4,7 @@
  * Created on 2 de agosto de 2007, 18:21
  */
 
-package org.joing.vfs;
+package org.joing.tour.vfs;
 
 /**
  *

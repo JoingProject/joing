@@ -19,10 +19,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-package org.joing;
+package org.joing.tour;
 
-import org.joing.vfs.VFSPanel;
-import org.joing.session.SessionPanel;
+import org.joing.tour.vfs.VFSPanel;
+import org.joing.tour.session.SessionPanel;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
