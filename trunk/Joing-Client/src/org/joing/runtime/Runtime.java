@@ -61,7 +61,7 @@ public final class Runtime
     public String getServerBaseURL()
     {
         if( sServerBaseURL == null )
-            sServerBaseURL = "http://127.0.0.1:8080/joing-war/";  // TODO: averiguarlo apropiadamente
+            sServerBaseURL = "http://127.0.0.1:8080/Joing-Server-war/";  // TODO: averiguarlo apropiadamente
         
         return sServerBaseURL;
     }
