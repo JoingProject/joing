@@ -11,7 +11,6 @@ package org.joing.desktop.impl;
 
 import javax.swing.JInternalFrame;
 import org.joing.desktop.api.Application;
-import org.joing.desktop.enums.IconType;
 
 /**
  *
@@ -22,7 +21,7 @@ public abstract class DefaultApplication extends JInternalFrame implements Appli
         return "";
     }
 
-    public String iconResource(IconType iconType) {
+    public String iconResource() {
         return "";
     }
     
