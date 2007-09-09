@@ -10,21 +10,24 @@
 package org.joing.desktop.api;
 
 import java.util.List;
+import javax.swing.JApplet;
 import org.joing.taskbar.api.TaskBar;
 
 /**
  *
  * @author Mario Serrano
  */
-public interface Desktop {    
-  
+public interface Desktop
+{
+    // Work Areas
     public List<WorkArea> getWorkAreas();
-    public void addWorkArea(WorkArea workarea);
+    public void addWorkArea( WorkArea workarea );
+    public void removeWorkArea( WorkArea workarea );
+    public WorkArea getActiveWorkArea();
+    public void setActiveWorkArea( WorkArea workarea  );
     
+    // Task Bars
     public List<TaskBar> getTaskBars();
-    public void addTaskBar(TaskBar taskbar);  
-    
-    public WorkArea getCurrentWorkArea();
-    
-    //TODO: Faltan muchas cosas
+    public void addTaskBar( TaskBar taskbar );
+    public void removeTaskBar( TaskBar taskbar );
 }

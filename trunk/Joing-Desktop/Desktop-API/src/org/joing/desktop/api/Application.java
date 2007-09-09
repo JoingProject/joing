@@ -1,7 +1,7 @@
 /*
- * DeskApplication.java
+ * Application.java
  *
- * Created on 25 de abril de 2007, 11:55 AM
+ * Created on 9 de septiembre de 2007, 12:57
  *
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
@@ -9,17 +9,11 @@
 
 package org.joing.desktop.api;
 
-import org.joing.desktop.enums.IconType;
-
 /**
  *
- * @author mario
+ * @author Francisco Morero Peyrona
  */
-public interface Application {
-    
-    
-    public String getDisplayName();
-    public String iconResource(IconType iconType);
-    
-    
+public interface Application
+{
+    public String getName();
 }

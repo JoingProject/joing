@@ -7,20 +7,21 @@
  * and open the template in the editor.
  */
 
-package org.joing.desktop.api;
-
-import org.joing.desktop.enums.IconType;
- 
+package org.joing.desktop.api; 
 
 /**
  *
  * @author mario
  */
-public interface Launcher {    
-    
-    public void setCommand(String command);
-    public void setArgumments(String args);
-    public void setIconResource(String resource, IconType type);
-    public String getIconResource(IconType type);    
+public interface Launcher 
+{
+    public String  getName();
+    public void    setName(String name);
+    public String  getCommand();
+    public void    setCommand(String command);
+    public String  getArguments();
+    public void    setArguments(String args);
+    public String  getIconResource();    
+    public void    setIconResource(String resource);
     public boolean execute();
 }
