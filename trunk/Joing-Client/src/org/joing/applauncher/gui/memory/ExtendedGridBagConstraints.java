@@ -27,7 +27,7 @@ import java.awt.GridBagConstraints;
  * @author <a href="mailto:stephane@hillion.org">Stephane Hillion</a>
  * @version $Id: ExtendedGridBagConstraints.java,v 1.4 2004/08/18 07:15:53 vhardy Exp $
  */
-public class ExtendedGridBagConstraints extends GridBagConstraints {
+class ExtendedGridBagConstraints extends GridBagConstraints {
 
     /**
      * Modifies gridx, gridy, gridwidth, gridheight.
@@ -37,7 +37,7 @@ public class ExtendedGridBagConstraints extends GridBagConstraints {
      * @param width The value for gridwidth.
      * @param height The value for gridheight.
      */
-    public void setGridBounds(int x, int y, int width, int height) {
+    void setGridBounds(int x, int y, int width, int height) {
         gridx = x;
         gridy = y;
         gridwidth = width;
@@ -50,7 +50,7 @@ public class ExtendedGridBagConstraints extends GridBagConstraints {
      * @param weightx The value for weightx
      * @param weighty The value for weighty
      */
-    public void setWeight(double weightx, double weighty) {
+    void setWeight(double weightx, double weighty) {
         this.weightx = weightx;
         this.weighty = weighty;
     }
