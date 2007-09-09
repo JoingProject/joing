@@ -18,7 +18,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import org.joing.desktop.api.Launcher;
-import org.joing.desktop.enums.IconType;
 import org.joing.desktop.impl.util.ImageContrastFilter;
 
 /**
@@ -60,7 +59,7 @@ public class DefaultLauncher extends JLabel implements Launcher{
         this.command = command;
     }
     
-    public void setArgumments(String args) {
+    public void setArguments(String args) {
         this.arguments = args;
     }
     
@@ -123,9 +122,5 @@ public class DefaultLauncher extends JLabel implements Launcher{
             g.fillRoundRect(0,0,getWidth(),getHeight(),10,10);
         }
         super.paintComponent(g);
-    }
-    
-    
-    
-    
+    }    
 }
