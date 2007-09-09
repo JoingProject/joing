@@ -7,6 +7,7 @@
 package org.joing.applauncher.gui;
 
 import javax.swing.JPanel;
+import org.joing.applauncher.gui.memory.MemoryPanel;
 
 /**
  *
