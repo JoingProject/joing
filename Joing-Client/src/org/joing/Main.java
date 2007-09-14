@@ -22,6 +22,7 @@
 package org.joing;
 
 import org.joing.applauncher.Bootstrap;
+import org.joing.applauncher.Login;
 import org.joing.jvmm.Platform;
 
 /**
@@ -39,5 +40,7 @@ public class Main {
 
         Bootstrap.init();
         Bootstrap.go();
+        
+        (new Login()).setVisible( true );
     }
 }
