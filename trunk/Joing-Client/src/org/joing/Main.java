@@ -22,7 +22,7 @@
 package org.joing;
 
 import org.joing.applauncher.Bootstrap;
-import org.joing.applauncher.Login;
+import org.joing.applauncher.Monitor;
 import org.joing.jvmm.Platform;
 
 /**
@@ -36,11 +36,19 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        Platform.init();
+        
+        final Platform platform = Platform.getInstance();
+        platform.init();
 
+        /** Prueba!!! **/
+        try {
+        platform.start(1);
+        } catch (Exception e) {
+            Monitor.log("Error en start: " + e.getMessage());
+        }
+        
         Bootstrap.init();
         Bootstrap.go();
-        
-        (new Login()).setVisible( true );
+
     }
 }
