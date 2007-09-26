@@ -241,16 +241,16 @@ public class ApplicationManagerBean
             "       APPLICATIONS.ID_APPLICATION,"                                  ).append(
             "       APP_DESCRIPTIONS.DESCRIPTION APP_DESC"                         ).append(
             "  FROM USERS_WITH_APPS, APPLICATIONS, APP_DESCRIPTIONS,"              ).append(
-            "       APPS_WITH_GROUPS, APP_GROUPS, APP_GROUP_DESCRIPTIONS, LOCALE"  ).append(
-            " WHERE LOCALE.ID_LOCALE = "+ nLocaleId                                ).append(
+            "       APPS_WITH_GROUPS, APP_GROUPS, APP_GROUP_DESCRIPTIONS, LOCALES" ).append(
+            " WHERE LOCALES.ID_LOCALE = "+ nLocaleId                               ).append(
             "   AND USERS_WITH_APPS.ACCOUNT = '"+ sAccount +"'"                    ).append(
             "   AND APPLICATIONS.ID_APPLICATION = USERS_WITH_APPS.ID_APPLICATION"  ).append(
             "   AND APP_DESCRIPTIONS.ID_APPLICATION = APPLICATIONS.ID_APPLICATION" ).append(
-            "   AND APP_DESCRIPTIONS.ID_LOCALE = LOCALE.ID_LOCALE"                 ).append(
+            "   AND APP_DESCRIPTIONS.ID_LOCALE = LOCALES.ID_LOCALE"                ).append(
             "   AND APPS_WITH_GROUPS.ID_APPLICATION = APPLICATIONS.ID_APPLICATION" ).append(
             "   AND APP_GROUPS.ID_APP_GROUP = APPS_WITH_GROUPS.ID_APP_GROUP"       ).append(
             "   AND APP_GROUP_DESCRIPTIONS.ID_APP_GROUP = APP_GROUPS.ID_APP_GROUP" ).append(
-            "   AND APP_GROUP_DESCRIPTIONS.ID_LOCALE = LOCALE.ID_LOCALE" );
+            "   AND APP_GROUP_DESCRIPTIONS.ID_LOCALE = LOCALES.ID_LOCALE" );
         
         switch( nWhich )
         {

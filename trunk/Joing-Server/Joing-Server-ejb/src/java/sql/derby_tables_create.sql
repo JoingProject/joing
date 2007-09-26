@@ -37,8 +37,9 @@ CREATE TABLE APPLICATIONS(
    ID_APPLICATION INT UNIQUE GENERATED ALWAYS AS IDENTITY,
    APPLICATION    VARCHAR(64)    NOT NULL    ,  -- Application name (NAME is a reserved SQL word)
    VERSION        VARCHAR(16)    NOT NULL    ,  -- Version (to be used by the local cache)
-   EXTRA_PATH     VARCHAR(255)   NOT NULL    ,  -- From applications dir (defined in Constant.sAPP_DIR)
+   EXTRA_PATH     VARCHAR(255)               ,  -- From applications dir (defined in Constant.sAPP_DIR)
    EXECUTABLE     VARCHAR(255)   NOT NULL    ,  -- Normally a .jar or a .class
+   ARGUMENTS      VARCHAR(255)               ,  -- Arguments to be passed
    ICON_PNG       VARCHAR(4096)  FOR BIT DATA,  -- A PNG (24x24) image up to 4Kb
    ICON_SVG       VARCHAR(16384) FOR BIT DATA,  -- A SVGZ (compresed) image up to 16Kb
    FILE_TYPES     VARCHAR(255)              );  -- File extensions that can manage (v.g: "png;jpg;gif")

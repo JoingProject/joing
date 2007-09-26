@@ -22,6 +22,7 @@
 
 package ejb.app;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +31,7 @@ import java.util.List;
  *
  * @author Francisco Morero Peyrona
  */
-public class AppsByGroup
+public class AppsByGroup implements Serializable
 {
     private String description;
     private byte[] iconPNG;
@@ -72,7 +73,7 @@ public class AppsByGroup
         return iconSVG;
     }
     
-    public List getApplications()
+    public List<AppDescriptor> getApplications()
     {
         return apps;
     }
@@ -113,12 +114,12 @@ public class AppsByGroup
         }
     }
     
-    void addApplication( AppDescriptor app    )
+    void addApplication( AppDescriptor app )
     {
         apps.add( app );
     }
     
-    void addApplications( List<AppDescriptor> apps    )
+    void addApplications( List<AppDescriptor> apps )
     {
         if( apps != null )
             this.apps = apps;

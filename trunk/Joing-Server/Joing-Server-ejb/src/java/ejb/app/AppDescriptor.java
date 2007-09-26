@@ -33,6 +33,7 @@ public class AppDescriptor implements Serializable
     private String       version;     // These two fields form the PK
     
     private String       executable;
+    private String[]     arguments;
     private byte[]       iconPNG;
     private byte[]       iconSVG;
     private List<String> fileTypes;
@@ -55,6 +56,7 @@ public class AppDescriptor implements Serializable
         name       = _app.getApplicationEntityPK().getApplication();
         version    = _app.getApplicationEntityPK().getVersion();
         executable = _app.getExecutable();
+        arguments  = null;// FIXME: implementarlo --> _app.getArguments();
         iconPNG    = _app.getIconPng();
         iconSVG    = _app.getIconSvg();
         fileTypes  = new ArrayList<String>();  // Good practice: empty list instead of null
@@ -110,6 +112,16 @@ public class AppDescriptor implements Serializable
     }
     
     /**
+     * Return the arguments that will be passed to the appllication.
+     *
+     * @return The arguments.
+     */
+    public String[] getArguments()
+    {
+        return arguments;
+    }
+    
+    /**
      * Return the 24x24 pixels PNG icon for this application.
      * 
      * @return The PNG icon for this application.
@@ -133,7 +145,6 @@ public class AppDescriptor implements Serializable
             System.arraycopy( iconPNG, 0, ret, 0, iconPNG.length );
             return ret;
         }
-
     }
     
     /**
