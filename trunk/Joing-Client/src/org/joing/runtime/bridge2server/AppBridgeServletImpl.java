@@ -54,7 +54,7 @@ public class AppBridgeServletImpl
         List<AppsByGroup> apps = null;
         
         Channel channel = new Channel( APP_GET_AVAILABLES );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
         apps = (List<AppsByGroup>) channel.read();
                 channel.close();
         
@@ -67,7 +67,7 @@ public class AppBridgeServletImpl
         List<AppsByGroup> apps = null;
         
         Channel channel = new Channel( APP_GET_NOT_INSTALLED );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
         apps = (List<AppsByGroup>) channel.read();
                 channel.close();
                 
@@ -80,7 +80,7 @@ public class AppBridgeServletImpl
         List<AppsByGroup> apps = null;
         
         Channel channel = new Channel( APP_GET_INSTALLED );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
         apps = (List<AppsByGroup>) channel.read();
                 channel.close();
         
@@ -93,7 +93,7 @@ public class AppBridgeServletImpl
         boolean bSuccess = false;
         
         Channel channel = new Channel( APP_INSTALL );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( app );
         bSuccess = (Boolean) channel.read();
                 channel.close();
@@ -107,7 +107,7 @@ public class AppBridgeServletImpl
         boolean bSuccess = false;
        
         Channel channel = new Channel( APP_UNINSTALL );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( app );
         bSuccess = (Boolean) channel.read();
                 channel.close();
@@ -121,7 +121,7 @@ public class AppBridgeServletImpl
         AppDescriptor appDescriptor = null;
         
         Channel channel = new Channel( APP_GET_PREFERRED );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( sFileExtension );
         appDescriptor = (AppDescriptor) channel.read();
                 channel.close();
@@ -135,7 +135,7 @@ public class AppBridgeServletImpl
         Application application = null;
         
         Channel channel = new Channel( APP_GET_APPLICATION );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( nAppId );
         application = (Application) channel.read();
                 channel.close();

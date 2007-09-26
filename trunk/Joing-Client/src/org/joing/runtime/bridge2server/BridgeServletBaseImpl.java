@@ -29,7 +29,8 @@ import java.io.ObjectOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ResourceBundle;
+import java.rmi.RemoteException;
+import org.joing.jvmm.Platform;
 
 /**
  *
@@ -77,16 +78,20 @@ public class BridgeServletBaseImpl
     // CLASS VARIABLES
     private String sBaseURL;
     
+    protected Platform platform = Platform.getInstance();
+    
     //------------------------------------------------------------------------//
     
     /**
      * Creates a new instance of BridgeServletBaseImpl.
      *
-     * Package scope: only Runtime class can create instances of this class.
+     * Package scope: only Bridge2Server class can create instances of this class.
      */
     BridgeServletBaseImpl()
     {
-        sBaseURL = org.joing.runtime.Runtime.getRuntime().getServerBaseURL();
+        Platform platform = Platform.getInstance();
+        
+        sBaseURL = platform.getRuntime().getServerBaseURL();
         
         if( ! sBaseURL.endsWith( "/" ) )
             sBaseURL += "/";
@@ -167,8 +172,15 @@ public class BridgeServletBaseImpl
 
                 obj = reader.readObject();
 
+                // antoniovl: This is added to support RemoteException without
+                // change in the handle() method.
+                if (obj instanceof RemoteException) {
+                    obj = new JoingServerException(((RemoteException)obj).getMessage());
+                }
+                
                 if( obj instanceof JoingServerException )
                     handle( (JoingServerException) obj );
+                
             }
             catch( IOException exc )
             {
@@ -176,7 +188,7 @@ public class BridgeServletBaseImpl
             }
             catch( ClassNotFoundException exc )
             {
-                org.joing.runtime.Runtime.getRuntime().showException( 
+                Platform.getInstance().getRuntime().showException( 
                         "This exception should not happen", exc );
             }
             

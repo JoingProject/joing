@@ -19,8 +19,6 @@ import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.net.URL;
 import java.util.Map;
 import javax.swing.JFrame;
@@ -49,7 +47,7 @@ public class Bootstrap {
                 frame.getContentPane().add(sm);
                 frame.pack();
                 frame.setLocationRelativeTo(null);
-                frame.setVisible(true);
+                frame.setVisible(false);
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
                 try {
@@ -131,7 +129,7 @@ public class Bootstrap {
         gcItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                Map classLoaderCache = Platform.getClassLoaderCache();
+                Map classLoaderCache = Platform.getInstance().getClassLoaderCache();
                 synchronized (classLoaderCache) {
                     classLoaderCache.clear();
                 }
@@ -176,14 +174,44 @@ public class Bootstrap {
         }
     }
 
+    /**
+     * <code>init()</code> is the initialization procedure for the main
+     * subsystem. The general contract for init() is:
+     * <ui>
+     * <li>Initialize the low level structures.</li>
+     * <li>Initialize the security manager.</li>
+     * <li>Determine the Class responible of doing the Login process.</li>
+     * </ui>
+     * The Class responsible of the Login must call <code>Bootstrap.go()</code> in the event
+     * of fetching a session Id.
+     */
     public static void init() {
         setupSystemMonitor();
         System.setSecurityManager(new JoingSecurityManager());
         Monitor.log("Join'g Successfully Bootstrapped.");
-        Monitor.log("Main Thread Id is " + Platform.getMainId());
+        Monitor.log("Main Thread Id is " + Platform.getInstance().getMainId());
+        
+        // Necesitamos iniciar la sesion.
+        Login login = new Login();
+        login.setVisible(true);
+        
     }
 
-    // do we really need this method?
+    /**
+     * <code>go()</code> is the procedure where the rest of the initialization
+     * process takes place. The method it's invoked by the Login procedure. The method
+     * must get the Desktop application and launch it.
+     */
     public static void go() {
+        
+        /** Prueba!!! **/
+        /**
+         * En este punto necesitamos que ya exista una sesion.
+         */
+        try {
+            Platform.getInstance().start(1);
+        } catch (Exception e) {
+            Monitor.log("Error en start: " + e.getMessage());
+        }
     }
 }

@@ -1,0 +1,32 @@
+/*
+ * ApplicationExecutionException.java
+ * 
+ * Created on Sep 15, 2007, 10:56:07 PM
+ * 
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package org.joing.jvmm;
+
+/**
+ *
+ * @author antoniovl
+ */
+public class ApplicationExecutionException extends Exception {
+
+    /**
+     * Creates a new instance of <code>ApplicationExecutionException</code> without detail message.
+     */
+    public ApplicationExecutionException() {
+    }
+
+
+    /**
+     * Constructs an instance of <code>ApplicationExecutionException</code> with the specified detail message.
+     * @param msg the detail message.
+     */
+    public ApplicationExecutionException(String msg) {
+        super(msg);
+    }
+}

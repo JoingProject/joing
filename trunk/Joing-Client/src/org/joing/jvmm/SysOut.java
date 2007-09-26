@@ -33,7 +33,7 @@ public class SysOut {
         
         mOut = new OutputStream() {
             public void write(int b) throws IOException {
-                JThreadGroup tg = Platform.getJThreadGroup();  // getJThreadGroup debe pasarse a Platform
+                JThreadGroup tg = Platform.getInstance().getJThreadGroup();  // getJThreadGroup debe pasarse a Platform
                 if (tg != null) {
                     tg.getOut().write(b);
                 } else {
@@ -41,7 +41,7 @@ public class SysOut {
                 }
             }
             public void flush() throws IOException {
-                JThreadGroup tg = Platform.getJThreadGroup();
+                JThreadGroup tg = Platform.getInstance().getJThreadGroup();
                 if (tg != null) {
                     tg.getOut().flush();
                 } else {
@@ -52,7 +52,7 @@ public class SysOut {
         
         mErr = new OutputStream() {
             public void write(int b) throws IOException {
-                JThreadGroup tg = Platform.getJThreadGroup();
+                JThreadGroup tg = Platform.getInstance().getJThreadGroup();
                 if (tg != null) {
                     tg.getErr().write(b);
                 } else {
@@ -60,7 +60,7 @@ public class SysOut {
                 }
             }
             public void flush() throws IOException {
-                JThreadGroup tg = Platform.getJThreadGroup();
+                JThreadGroup tg = Platform.getInstance().getJThreadGroup();
                 if (tg != null) {
                     tg.getErr().flush();
                 } else {

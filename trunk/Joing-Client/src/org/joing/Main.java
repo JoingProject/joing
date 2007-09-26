@@ -21,8 +21,13 @@
  */
 package org.joing;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import org.joing.applauncher.Bootstrap;
-import org.joing.applauncher.Monitor;
 import org.joing.jvmm.Platform;
 
 /**
@@ -36,19 +41,44 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        
-        final Platform platform = Platform.getInstance();
-        platform.init();
 
-        /** Prueba!!! **/
-        try {
-        platform.start(1);
-        } catch (Exception e) {
-            Monitor.log("Error en start: " + e.getMessage());
+        Properties clientProps = new Properties();
+        // arg 1 can be the properties file.
+        if (args.length == 1) {
+            try {
+                File propFile = new File(args[0]);
+                if (propFile.exists() == false) {
+                    System.err.println("Could not find the specified properties file.");
+                    return;
+                }
+
+                FileInputStream fis = new FileInputStream(propFile);
+                clientProps.load(fis);
+            } catch (FileNotFoundException fnfe) {
+                System.err.println("FileNotFoundException caught: " + fnfe.getMessage());
+                return;
+            } catch (IOException ioe) {
+                System.err.println("IOException caught: " + ioe.getMessage());
+                return;
+            }
+        } else {
+
+            InputStream is = Main.class.getClassLoader().getResourceAsStream("client.properties");
+
+            if (is != null) {
+                try {
+                    clientProps.load(is);
+                } catch (IOException ioe) {
+                    System.err.println("IOException caught: " + ioe.getMessage());
+                    return;
+                }
+            }
+            // will try to continue with defaults (empty properties)
         }
-        
-        Bootstrap.init();
-        Bootstrap.go();
 
+        final Platform platform = Platform.getInstance();
+        platform.init(clientProps);
+
+        Bootstrap.init();
     }
 }

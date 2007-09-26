@@ -11,6 +11,7 @@ import ejb.session.LoginResult;
 import java.awt.Cursor;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import org.joing.jvmm.Platform;
 import org.joing.runtime.bridge2server.Bridge2Server;
 
 /**
@@ -163,7 +164,7 @@ public class Login extends javax.swing.JFrame
         
         try
         {
-            Bridge2Server b2s    = Bridge2Server.getInstance();
+            Bridge2Server b2s    = Platform.getInstance().getBridge();
             LoginResult   result = b2s.getSessionBridge().login( txtAccount.getText(), 
                                                                  String.valueOf( txtPassword.getPassword() ) );
 
@@ -172,6 +173,7 @@ public class Login extends javax.swing.JFrame
                 // TODO: quitar el rem cuando el combo esté correctamente inicializado --> int nDesktopClassID = (Integer) cmbDesktop.getClientProperty( cmbDesktop.getSelectedItem() );
                 
                 // TODO: Bootstrap.launch( nDesktopClassID );
+                Bootstrap.go();
                 
                 dispose();
                 // System.out.println( result.getSessionId() );

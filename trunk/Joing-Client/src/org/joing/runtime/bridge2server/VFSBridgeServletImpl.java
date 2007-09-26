@@ -27,6 +27,7 @@ import ejb.vfs.FileBinary;
 import ejb.vfs.FileDescriptor;
 import ejb.vfs.FileText;
 import java.util.List;
+import org.joing.jvmm.Platform;
 
 /**
  *
@@ -52,7 +53,7 @@ public class VFSBridgeServletImpl
         FileDescriptor file = null;
         
         Channel channel = new Channel( VFS_GET_FILE );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( sFilePath );
         file = (FileDescriptor) channel.read();
                 channel.close();
@@ -66,7 +67,7 @@ public class VFSBridgeServletImpl
         FileDescriptor file = null;
         
         Channel channel = new Channel( VFS_CREATE_DIR );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( sPath );
                 channel.write( sDirName  );
         file = (FileDescriptor) channel.read();
@@ -81,7 +82,7 @@ public class VFSBridgeServletImpl
         FileDescriptor file = null;
         
         Channel channel = new Channel( VFS_CREATE_FILE );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( sPath );
                 channel.write( sFileName );
         file = (FileDescriptor) channel.read();
@@ -96,7 +97,7 @@ public class VFSBridgeServletImpl
         FileText file = null;
         
         Channel channel = new Channel( VFS_READ_TEXT_FILE );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( nFileId );
                 channel.write( sEncoding );
         file = (FileText) channel.read();
@@ -111,7 +112,7 @@ public class VFSBridgeServletImpl
         FileBinary file = null;
         
         Channel channel = new Channel( VFS_READ_BINARY_FILE );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( nFileId );
         file = (FileBinary) channel.read();
                 channel.close();
@@ -125,7 +126,7 @@ public class VFSBridgeServletImpl
         FileDescriptor fRet = null;
         
         Channel channel = new Channel( VFS_WRITE_TEXT_FILE );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( file );
         fRet = (FileDescriptor) channel.read();
                 channel.close();
@@ -139,7 +140,7 @@ public class VFSBridgeServletImpl
         FileDescriptor fRet = null;
         
         Channel channel = new Channel( VFS_WRITE_BINARY_FILE );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( file );
         fRet = (FileDescriptor) channel.read();
                 channel.close();
@@ -153,7 +154,7 @@ public class VFSBridgeServletImpl
         FileDescriptor file2Ret = null;
         
         Channel channel = new Channel( VFS_UPDATE );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( file );
         file2Ret = (FileDescriptor) channel.read();
                 channel.close();
@@ -167,7 +168,7 @@ public class VFSBridgeServletImpl
         boolean bSuccess = false;
         
         Channel channel = new Channel( VFS_COPY );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( nFileId  );
                 channel.write( nToDirId );
         bSuccess = (Boolean) channel.read();
@@ -182,7 +183,7 @@ public class VFSBridgeServletImpl
         boolean bSuccess = false;
         
         Channel channel = new Channel( VFS_MOVE );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( nFileId  );
                 channel.write( nToDirId );
         bSuccess = (Boolean) channel.read();
@@ -197,7 +198,7 @@ public class VFSBridgeServletImpl
         boolean bSuccess = false;
         
         Channel channel = new Channel( VFS_TRASHCAN );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( anFileId    );
                 channel.write( bInTrashCan );
         bSuccess = (Boolean) channel.read();
@@ -212,7 +213,7 @@ public class VFSBridgeServletImpl
         boolean bSuccess = false;
         
         Channel channel = new Channel( VFS_TRASHCAN );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( nFileId );
                 channel.write( bInTrashCan );
         bSuccess = (Boolean) channel.read();
@@ -227,7 +228,7 @@ public class VFSBridgeServletImpl
         boolean bSuccess = false;
         
         Channel channel = new Channel( VFS_DELETE );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( anFileId );
         bSuccess = (Boolean) channel.read();
                 channel.close();
@@ -241,7 +242,7 @@ public class VFSBridgeServletImpl
         boolean bSuccess = false;
         
         Channel channel = new Channel( VFS_DELETE );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( nFileId );
         bSuccess = (Boolean) channel.read();
                 channel.close();
@@ -257,7 +258,7 @@ public class VFSBridgeServletImpl
         List<FileDescriptor> roots = null;
         
         Channel channel = new Channel( VFS_GET_ROOTS );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
         roots = (List<FileDescriptor>) channel.read();
                 channel.close();
         
@@ -270,7 +271,7 @@ public class VFSBridgeServletImpl
         List<FileDescriptor> files = null;
         
         Channel channel = new Channel( VFS_GET_CHILDS );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( nFileId );
         files = (List<FileDescriptor>) channel.read();
                 channel.close();
@@ -284,7 +285,7 @@ public class VFSBridgeServletImpl
         List<FileDescriptor> files = null;
         
         Channel channel = new Channel( VFS_GET_CHILDS );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( sBaseDir );
         files = (List<FileDescriptor>) channel.read();
                 channel.close();
@@ -298,7 +299,7 @@ public class VFSBridgeServletImpl
         List<FileDescriptor> files = null;
      
         Channel channel = new Channel( VFS_GET_BY_NOTES );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( sSubString );
         files = (List<FileDescriptor>) channel.read();
                 channel.close();
@@ -312,7 +313,7 @@ public class VFSBridgeServletImpl
         List<FileDescriptor> files = null;
         
         Channel channel = new Channel( VFS_GET_TRASHCAN );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
         files = (List<FileDescriptor>) channel.read();
                 channel.close();
 

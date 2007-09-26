@@ -52,7 +52,7 @@ public class UserBridgeServletImpl
         User user = null;
  
         Channel channel = new Channel( USER_GET_USER );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
         user = (User) channel.read();
                 channel.close();
 
@@ -65,7 +65,7 @@ public class UserBridgeServletImpl
         User user2Ret = null;
         
         Channel channel = new Channel( USER_UPDATE_USER );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.write( user );
         user2Ret = (User) channel.read();
                 channel.close();
@@ -79,7 +79,7 @@ public class UserBridgeServletImpl
         List<Local> list = null;
         
         Channel channel = new Channel( USER_LOCALS );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
         list = (List<Local>) channel.read();
                 channel.close();
         

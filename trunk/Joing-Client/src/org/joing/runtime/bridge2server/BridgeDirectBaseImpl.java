@@ -23,6 +23,7 @@
 package org.joing.runtime.bridge2server;
 
 import javax.naming.Context;
+import org.joing.jvmm.Platform;
 
 /**
  *
@@ -32,6 +33,8 @@ import javax.naming.Context;
 public class BridgeDirectBaseImpl
 {
     protected Context context = null;
+    
+    protected Platform platform = Platform.getInstance();
     
     /** 
      * Creates a new instance of BridgeDirectBaseImpl 

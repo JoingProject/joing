@@ -22,6 +22,8 @@
 
 package org.joing.runtime.bridge2server;
 
+import org.joing.jvmm.Platform;
+
 /**
  *
  *
@@ -29,10 +31,10 @@ package org.joing.runtime.bridge2server;
  */
 public class Bridge2Server
 {
-    private static final int VIA_SERVLERTS = 1;
+    private static final int VIA_SERVLETS = 1;
     private static final int VIA_SOCKETS   = 2;
     
-    private static Bridge2Server instance   = null;
+//    private static Bridge2Server instance   = null;
     
     private int    nVia       = 0;
     private String sSessionId = null;
@@ -46,13 +48,13 @@ public class Bridge2Server
     
     //------------------------------------------------------------------------//
     
-    public static Bridge2Server getInstance()
-    {
-        if( instance == null )
-            instance = new Bridge2Server();
-        
-        return instance;
-    }
+//    public static Bridge2Server getInstance()
+//    {
+//        if( instance == null )
+//            instance = new Bridge2Server();
+//        
+//        return instance;
+//    }
     
     public SessionBridge getSessionBridge()
     {
@@ -60,7 +62,7 @@ public class Bridge2Server
         
         switch( nVia )
         {
-            case VIA_SERVLERTS:
+            case VIA_SERVLETS:
                 sb = new SessionBridgeServletImpl();
                 break;
             
@@ -78,7 +80,7 @@ public class Bridge2Server
         
         switch( nVia )
         {
-            case VIA_SERVLERTS:
+                        case VIA_SERVLETS:
                 ub = new UserBridgeServletImpl();
                 break;
             
@@ -96,7 +98,7 @@ public class Bridge2Server
         {
             switch( nVia )
             {
-                case VIA_SERVLERTS:
+                                case VIA_SERVLETS:
                     app = new AppBridgeServletImpl();
                     break;
 
@@ -115,7 +117,7 @@ public class Bridge2Server
         {
             switch( nVia )
             {
-                case VIA_SERVLERTS:
+                                case VIA_SERVLETS:
                     vfs = new VFSBridgeServletImpl();
                     break;
 
@@ -142,12 +144,16 @@ public class Bridge2Server
     }
     
     //------------------------------------------------------------------------//
-    // PRIVATE SCOPE
+    //
     
-    private Bridge2Server()
+    public Bridge2Server()
     {
+//        if (Thread.currentThread().getId() != Platform.getInstance().getMainId()) {
+//            throw new RuntimeException("Only Platform's Main Thread is authorized to instantiate Bridge2Server.");
+//        }
+        
         /* NEXT: Aquí se pone el código para decidir si va a utilizar la 
                  implementación directa (sockets) o la de Servlets */
-        nVia = VIA_SERVLERTS;
+        nVia = VIA_SERVLETS;
     }
 }

@@ -22,6 +22,8 @@
 
 package org.joing.runtime.bridge2server;
 
+import org.joing.jvmm.Platform;
+
 /**
  *
  *
@@ -29,6 +31,8 @@ package org.joing.runtime.bridge2server;
  */
 public class BridgeSocketBaseImpl
 {   
+    protected Platform platform = Platform.getInstance();
+    
     /** 
      * Creates a new instance of BridgeDirectBaseImpl 
      *
