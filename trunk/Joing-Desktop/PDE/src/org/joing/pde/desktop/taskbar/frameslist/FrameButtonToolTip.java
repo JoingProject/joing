@@ -1,0 +1,57 @@
+/*
+ * FrameButtonToolTip.java
+ *
+ * Created on 16 de septiembre de 2007, 21:09
+ *
+ * To change this template, choose Tools | Template Manager
+ * and open the template in the editor.
+ */
+
+package org.joing.pde.desktop.taskbar.frameslist;
+
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import javax.swing.JToolTip;
+import javax.swing.SwingUtilities;
+import org.joing.pde.PDEClient;
+import org.joing.pde.desktop.PDEDesktop;
+
+class FrameButtonToolTip extends JToolTip
+{
+    private Component toShow;
+    
+    public FrameButtonToolTip( Component toShow )
+    {
+        this.toShow = toShow;
+    }
+    
+    public Dimension getPreferredSize()
+    {
+        Dimension dim = ((PDEDesktop) PDEClient.getInstance().getDesktop()).getSize();
+                  dim = new Dimension( dim.width / 8, dim.height / 8 );
+        return dim;
+    }
+    
+    public Dimension getMinimumSize()
+    {
+        return getPreferredSize();
+    }
+    
+    public Dimension getMaximumSize()
+    {
+        return getPreferredSize();
+    }
+    
+    public void paintComponent( Graphics g )
+    {
+        BufferedImage bi = new BufferedImage( toShow.getWidth(), toShow.getHeight(), 
+                                              BufferedImage.TYPE_INT_RGB );
+        toShow.paint( bi.createGraphics() );
+
+        g.drawImage( bi.getScaledInstance( getWidth(), getHeight(), Image.SCALE_SMOOTH ), 
+                     0, 0, this );
+    }
+}
