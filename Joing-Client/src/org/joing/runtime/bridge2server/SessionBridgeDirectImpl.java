@@ -66,13 +66,13 @@ public class SessionBridgeDirectImpl
     {
         LoginResult result = smb.login( sAccount, sPassword );
         
-        Bridge2Server.getInstance().setSessionId( result.getSessionId() );
+        platform.getBridge().setSessionId( result.getSessionId() );
         
         return result;
     }
     
     public void logout()
     {
-        this.smb.logout( Bridge2Server.getInstance().getSessionId() );
+        this.smb.logout( platform.getBridge().getSessionId() );
     }
 }

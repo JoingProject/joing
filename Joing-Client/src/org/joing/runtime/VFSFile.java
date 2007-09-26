@@ -31,6 +31,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.joing.jvmm.Platform;
 import org.joing.runtime.bridge2server.Bridge2Server;
 
 /**
@@ -53,6 +54,8 @@ public class VFSFile extends File
     private FileDescriptor fdParent = null;   // Used only to create files and dirs
     private String         sChild   = null;   // Used only to create files and dirs
     
+    
+    private Platform platform = Platform.getInstance();
     //------------------------------------------------------------------------//
     
     /**
@@ -87,7 +90,7 @@ public class VFSFile extends File
             throw new IllegalArgumentException( "Name must be absolute (starting with '/')" );
         
         // If fd == null, then file or dir not exists
-        fd = Bridge2Server.getInstance().getFileBridge().getFile( sFullName );
+        fd = platform.getBridge().getFileBridge().getFile( sFullName );
         
         if( fd == null )  // The file does not exists: it can be created (remember: root always exists)
         {
@@ -97,7 +100,7 @@ public class VFSFile extends File
             String sParent = sFullName.substring( 0, sFullName.lastIndexOf( '/' ) );
             String sHijo   = sFullName.substring( sParent.length() );
             
-            fdParent = Bridge2Server.getInstance().getFileBridge().getFile( sParent );
+            fdParent = platform.getBridge().getFileBridge().getFile( sParent );
             sChild   = sHijo;
         }
     }
@@ -116,7 +119,7 @@ public class VFSFile extends File
             throw new IllegalArgumentException( "parent must be a directory" );
         
         // If fd == null, then parent and or child not exists
-        fd = Bridge2Server.getInstance().getFileBridge().getFile( parent.getAbsolutePath() +"/"+ child.trim() );
+        fd = platform.getBridge().getFileBridge().getFile( parent.getAbsolutePath() +"/"+ child.trim() );
         
         if( fd == null )
         {
@@ -161,7 +164,7 @@ public class VFSFile extends File
     public boolean createNewFile() throws JoingServerVFSException
     {
         if( fd == null && fdParent != null && sChild != null )
-            fd = Bridge2Server.getInstance().getFileBridge().createFile( fdParent.getAbsolutePath(), sChild );
+            fd = platform.getBridge().getFileBridge().createFile( fdParent.getAbsolutePath(), sChild );
         
         return fd != null;
     }
@@ -173,7 +176,7 @@ public class VFSFile extends File
         
         if( exists() )
         {
-            Bridge2Server b2s = Bridge2Server.getInstance();
+            Bridge2Server b2s = platform.getBridge();
             bSuccess = b2s.getFileBridge().delete( fd.getId() );
         }
         
@@ -258,7 +261,7 @@ public class VFSFile extends File
     public long getFreeSpace() throws JoingServerVFSException
     {
         long          nFree = -1;
-        Bridge2Server b2s   = Bridge2Server.getInstance();
+        Bridge2Server b2s   = platform.getBridge();
         User          user  = b2s.getUserBridge().getUser();
 
         if( user != null )
@@ -330,7 +333,7 @@ public class VFSFile extends File
     {
         if( nTotalDiskSpace == -1 )
         {
-            Bridge2Server b2s  = Bridge2Server.getInstance();    
+            Bridge2Server b2s  = platform.getBridge();    
             User          user = b2s.getUserBridge().getUser();
         
             if( user != null )
@@ -645,7 +648,7 @@ public class VFSFile extends File
     public boolean mkdir() throws JoingServerVFSException
     {
         if( fd == null && fdParent != null && sChild != null )
-            fd = Bridge2Server.getInstance().getFileBridge().createDirectory( fdParent.getAbsolutePath(), sChild );
+            fd = platform.getBridge().getFileBridge().createDirectory( fdParent.getAbsolutePath(), sChild );
         
         return fd != null;
     }
@@ -751,7 +754,7 @@ public class VFSFile extends File
      */
     public boolean updateAttributes() throws JoingServerVFSException
     {
-        FileDescriptor _fd = Bridge2Server.getInstance().getFileBridge().update( fd );
+        FileDescriptor _fd = platform.getBridge().getFileBridge().update( fd );
         
         return fd.equals( _fd );
     }
@@ -782,7 +785,7 @@ public class VFSFile extends File
         List<FileDescriptor> list = new ArrayList<FileDescriptor>();
         
         if( exists() && fd.isDirectory() )
-            list = Bridge2Server.getInstance().getFileBridge().getChilds( fd.getId() );
+            list = platform.getBridge().getFileBridge().getChilds( fd.getId() );
         
         return list;
     }

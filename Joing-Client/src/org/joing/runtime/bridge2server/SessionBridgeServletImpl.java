@@ -58,7 +58,7 @@ public class SessionBridgeServletImpl
 
         if( result != null && result.isLoginValid() )
             // Store Session ID to be used in all invocations to Server
-            Bridge2Server.getInstance().setSessionId( result.getSessionId() );
+            platform.getBridge().setSessionId( result.getSessionId() );
         
         return result;
     }
@@ -67,7 +67,7 @@ public class SessionBridgeServletImpl
            throws JoingServerException
     {
         Channel channel = new Channel( SESSION_LOGOUT );
-                channel.write( Bridge2Server.getInstance().getSessionId() );
+                channel.write( platform.getBridge().getSessionId() );
                 channel.close();
     }
 }

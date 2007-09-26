@@ -15,6 +15,11 @@ package org.joing.jvmm;
  */
 public class AppContext implements java.io.Serializable {
 
+    /**
+     * do we really need this class???
+     */
+    
+    
     /** Session id otorgado por WebPcServer. */
     private String sessionId;
     /** URL del FileServer */
