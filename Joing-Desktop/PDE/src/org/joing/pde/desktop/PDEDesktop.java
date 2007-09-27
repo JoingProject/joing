@@ -38,7 +38,7 @@ import org.joing.api.desktop.Desktop;
 import org.joing.api.desktop.DesktopListener;
 import org.joing.api.desktop.enums.TaskBarOrientation;
 import org.joing.api.desktop.workarea.WorkArea;
-import org.joing.pde.PDEClient;
+import org.joing.pde.PDEManager;
 import org.joing.pde.desktop.taskbar.clock.AnAnimation;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.api.desktop.taskbar.TaskBar;

@@ -26,7 +26,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import org.joing.pde.PDEClient;
+import org.joing.jvmm.Platform;
+import org.joing.pde.PDEManager;
 import org.joing.pde.runtime.ColorSchema;
 import org.joing.pde.runtime.PDERuntime;
 import org.joing.pde.swing.JScrollablePopupMenu;
@@ -62,7 +63,7 @@ class StartMenu extends JScrollablePopupMenu
                   item.setBorder( new EmptyBorder( 4,4,4,4 ) );
                   item.setFont( item.getFont().deriveFont( Font.BOLD, item.getFont().getSize() + 4 ) );
 
-        User user = Bridge2Server.getInstance().getUserBridge().getUser();
+        User user = Platform.getInstance().getBridge().getUserBridge().getUser();
         
         if( user != null )
         {
@@ -95,7 +96,7 @@ class StartMenu extends JScrollablePopupMenu
                   {
                       public void actionPerformed( ActionEvent ae )
                       {
-                          PDEClient.getInstance().lock();
+                          PDERuntime.getRuntime().getDesktopManager().lock();
                       }
                   } );
         add( item1 );
@@ -103,23 +104,23 @@ class StartMenu extends JScrollablePopupMenu
     
     private void addExit()
     {
-        JMenuItem item2 = new JMenuItem( "End session" );
-                  item2.setIcon( PDERuntime.getRuntime().getIcon( this, "images/exit.png", 22, 22 ) );
-                  item2.addActionListener( new ActionListener()
+        JMenuItem item = new JMenuItem( "End session" );
+                  item.setIcon( PDERuntime.getRuntime().getIcon( this, "images/exit.png", 22, 22 ) );
+                  item.addActionListener( new ActionListener()
                   {
                       public void actionPerformed( ActionEvent ae )
                       {
-                          PDEClient.getInstance().close();
+                          PDERuntime.getRuntime().getDesktopManager().close();
                       }
                   } );
-        add( item2 );
+        add( item );
     }
     
     private void addApplications()
     {
         final String KEY = "JOING_APP_DESCRIPTOR";
         
-        List<AppsByGroup> abgList = Bridge2Server.getInstance().getAppBridge().getInstalledForUser();
+        List<AppsByGroup> abgList = Platform.getInstance().getBridge().getAppBridge().getInstalledForUser();
         
         for( AppsByGroup abg : abgList )
         {
