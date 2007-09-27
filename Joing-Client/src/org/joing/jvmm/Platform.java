@@ -30,6 +30,7 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 import javax.swing.SwingUtilities;
 import org.joing.Main;
+import org.joing.api.DesktopManager;
 import org.joing.applauncher.Monitor;
 import org.joing.runtime.bridge2server.AppBridge;
 import org.joing.runtime.bridge2server.Bridge2Server;
@@ -53,6 +54,8 @@ public class Platform {
     private final PlatformRuntime runtime = PlatformRuntime.getRuntime();
     
     private final Bridge2Server bridge = new Bridge2Server();
+    
+    private DesktopManager desktopManager = null;
 
     private Platform() {
     }
@@ -97,6 +100,16 @@ public class Platform {
     }
 
 
+    public DesktopManager getDesktopManager()
+    {
+        return desktopManager;
+    }
+    
+    public void setDesktopManager( DesktopManager dm )
+    {
+        desktopManager = dm;
+    }
+    
     /**
      * Obtiene el JThreadGroup. Itera hacia arriba en la jerarquia.
      */

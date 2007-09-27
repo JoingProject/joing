@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import org.joing.api.DesktopManager;
 import org.joing.applauncher.gui.SystemMonitor;
 import org.joing.jvmm.JoingSecurityManager;
 import org.joing.jvmm.Platform;
@@ -191,27 +192,39 @@ public class Bootstrap {
         Monitor.log("Join'g Successfully Bootstrapped.");
         Monitor.log("Main Thread Id is " + Platform.getInstance().getMainId());
         
-        // Necesitamos iniciar la sesion.
-        Login login = new Login();
-        login.setVisible(true);
-        
-    }
+        // Iniciamos la sesión.
+        try 
+        {
+            Login login = new Login();
+                  login.setVisible( true );
 
-    /**
-     * <code>go()</code> is the procedure where the rest of the initialization
-     * process takes place. The method it's invoked by the Login procedure. The method
-     * must get the Desktop application and launch it.
-     */
-    public static void go() {
-        
-        /** Prueba!!! **/
-        /**
-         * En este punto necesitamos que ya exista una sesion.
-         */
-        try {
-            Platform.getInstance().start(1);
-        } catch (Exception e) {
+            if( login.wasSuccessful() )
+            {
+                DesktopManager deskmgr = getDesktopManagerInstance();
+                Platform.getInstance().setDesktopManager( deskmgr );
+                
+                if( login.fullScreen() )
+                    deskmgr.showInFullScreen();
+                else
+                    deskmgr.showInFrame();
+            }
+            else
+            {
+                Platform.getInstance().halt();
+            }
+        }
+        catch (Exception e) 
+        {
             Monitor.log("Error en start: " + e.getMessage());
         }
+    }
+    
+    private static DesktopManager getDesktopManagerInstance()
+    {
+        // Platform.getInstance().start( login.getApplicationId() );
+        // TODO: habría que conseguir una referencia a la instancia de 
+        // PDEManager creada por la clase Platform
+        
+        return null;
     }
 }
