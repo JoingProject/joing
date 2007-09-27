@@ -24,9 +24,9 @@ package servlets.app;
 import ejb.JoingServerException;
 import ejb.app.Application;
 import ejb.app.ApplicationManagerLocal;
-import ejb.vfs.JoingServerVFSException;
 import java.io.*;
 import java.net.*;
+import java.rmi.RemoteException;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
@@ -77,7 +77,12 @@ public class GetApplication extends HttpServlet
             log( "Error in Servlet: "+ getClass().getName(), exc );
             // Makes the exception to be contained into a JoingServerServletException
             JoingServerServletException jsse = new JoingServerServletException( getClass(), exc );
-            writer.writeObject( jsse );
+            
+            // Wrap it in a RemoteException
+            RemoteException re = new RemoteException(jsse.getMessage());
+            writer.writeObject( re );
+            
+            //writer.writeObject( jsse );
             writer.flush();
         }
         finally
