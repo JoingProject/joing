@@ -1,5 +1,5 @@
 /*
- * Client.java
+ * DesktopManager.java
  *
  * Created on 9 de septiembre de 2007, 9:41
  *
@@ -15,7 +15,7 @@ import org.joing.api.desktop.Desktop;
  *
  * @author Francisco Morero Peyrona
  */
-public interface Client
+public interface DesktopManager
 {
     // Showing in different ways
     public void showInFrame();
