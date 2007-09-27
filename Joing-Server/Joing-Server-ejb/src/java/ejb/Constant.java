@@ -23,141 +23,117 @@ import java.util.logging.Logger;
  *
  * @author Francisco Morero Peyrona
  */
-public class Constant
-{
+public class Constant {
+
     private static String sVersion;
-    private static String sSysName;         // System name (decided by Join'g provider)
-    private static File   fBaseDir;         // Joing base directory
-    private static File   fAppDir;          // Dir for all apps for all users
-    private static File   fUserDir;         // Dir for all users home dirs
-    private static URL    emailServer;
-    private static long   nSessionTimeOut;
-    
+    private static String sSysName; // System name (decided by Join'g provider)
+    private static File fBaseDir; // Joing base directory
+    private static File fAppDir; // Dir for all apps for all users
+    private static File fUserDir; // Dir for all users home dirs
+    private static URL emailServer;
+    private static long nSessionTimeOut;
+
     //-----------------------------
-    private static final String sSYSTEM_NAME     = "system_name";  // The provider, vg. "joing.sun.com"
-    private static final String sBASE_DIR        = "base_dir";
-    private static final String sEMAIL_SRV       = "email_server";
+    private static final String sSYSTEM_NAME = "system_name"; // The provider, vg. "joing.sun.com"
+    private static final String sBASE_DIR = "base_dir";
+    private static final String sEMAIL_SRV = "email_server";
     private static final String sSESSION_TIMEOUT = "session_timeout";
-    
     //------------------------------------------------------------------------//
-    
-    static
-    {
+    static {
         init();
     }
-    
-    //------------------------------------------------------------------------//
 
-    public static String getVersion()
-    {
+    //------------------------------------------------------------------------//
+    public static String getVersion() {
         return sVersion;
     }
-    
-    public static String getSystemName()
-    {
+
+    public static String getSystemName() {
         return sSysName;
     }
-    
-    public static File getBaseDir()
-    {
+
+    public static File getBaseDir() {
         return fBaseDir;
     }
-    
-    public static File getUserDir()
-    {
+
+    public static File getUserDir() {
         return fUserDir;
     }
-    
-    public static File getAppDir()
-    {
+
+    public static File getAppDir() {
         return fAppDir;
     }
-    
-    public static URL getEmailServer()
-    {
+
+    public static URL getEmailServer() {
         return emailServer;
     }
-    
+
     /**
      * Maximum inactivity time for a session before delete it
      * @return Maximum inactivity time in milliseconds
      */
-    public static long getSessionTimeOut()
-    {
+    public static long getSessionTimeOut() {
         return nSessionTimeOut;
     }
-    
-    public static Logger getLogger()
-    {
-        return Logger.getLogger( "joing" );
+
+    public static Logger getLogger() {
+        return Logger.getLogger("joing");
     }
-    
+
     /**
      * Reserved accounts that could be used in the future by the Server
      */
-    public static String[] getReservedAccounts()
-    {
-        String[] asReserved = { "system", "Joing", "Join'g", "admin", "administrator",
-                               Constant.getSystemName() };
-        
+    public static String[] getReservedAccounts() {
+        String[] asReserved = {"system", "Joing", "Join'g", "admin", "administrator", Constant.getSystemName()};
+
         return asReserved;
     }
-    
+
     //------------------------------------------------------------------------//
-    
-    private static void init()
-    {
-        long nTimeOut = 12 * 60 * 60 * 1000;    // Default == 12 hrs
-        
+    private static void init() {
+        long nTimeOut = 12 * 60 * 60 * 1000; // Default == 12 hrs
         // Loading values from properties file
         Properties props = new Properties();
-        
-        try
-        {
-            FileInputStream in = new FileInputStream( "system.properties" );    
-            props.load( in );
+
+        try {
+            String cwd = System.getProperty("user.dir");
+            File fileProps = new File(cwd, "joing.properties");
+            FileInputStream in = new FileInputStream( fileProps );
+            props.load(in);
             in.close();
-        }
-        catch( Exception exc )
-        {
+        } catch (Exception exc) {
             // Initialise properties instance with default values
-            props.setProperty( sSYSTEM_NAME    , "joing.peyrona.com" );
-            props.setProperty( sBASE_DIR       , "/home/fmorero/proyectos/Joing/base_dir" );
-            props.setProperty( sEMAIL_SRV      , "localhost" );
-            props.setProperty( sSESSION_TIMEOUT, Long.toString( nTimeOut ) );
+            props.setProperty(sSYSTEM_NAME, "joing.peyrona.com");
+            props.setProperty(sBASE_DIR, "/home/fmorero/proyectos/Joing/base_dir");
+            props.setProperty(sEMAIL_SRV, "localhost");
+            props.setProperty(sSESSION_TIMEOUT, Long.toString(nTimeOut));
         }
-        
-        sVersion = "0.0";      // It's better to hardcode this property than to store it in a file
-        sSysName = props.getProperty( sSYSTEM_NAME );
-        fBaseDir = new File( props.getProperty( sBASE_DIR ) );
-        fUserDir = new File( fBaseDir, "users" );
-        fAppDir  = new File( fBaseDir, "apps"  );
-        
-        if( ! fBaseDir.exists() )
+
+        sVersion = "0.0"; // It's better to hardcode this property than to store it in a file
+        sSysName = props.getProperty(sSYSTEM_NAME);
+        fBaseDir = new File(props.getProperty(sBASE_DIR));
+        fUserDir = new File(fBaseDir, "users");
+        fAppDir = new File(fBaseDir, "apps");
+
+        if (!fBaseDir.exists()) {
             fBaseDir.mkdirs();
-        
-        if( ! fAppDir.exists() )
-            fAppDir.mkdirs();
-        
-        if( ! fUserDir.exists() )
-            fUserDir.mkdirs();
-        
-        try
-        { 
-            emailServer = new URL( props.getProperty( sEMAIL_SRV ) );
         }
-        catch( MalformedURLException exc ) 
-        {
+        if (!fAppDir.exists()) {
+            fAppDir.mkdirs();
+        }
+        if (!fUserDir.exists()) {
+            fUserDir.mkdirs();
+        }
+        try {
+            emailServer = new URL(props.getProperty(sEMAIL_SRV));
+        } catch (MalformedURLException exc) {
             emailServer = null;
         }
-        
-        try
-        {
-            nSessionTimeOut = Long.parseLong( props.getProperty( sSESSION_TIMEOUT ) ) * 1000;   // in milliseconds
-        }
-        catch( NumberFormatException exc ) 
-        {
+
+        try {
+            nSessionTimeOut = Long.parseLong(props.getProperty(sSESSION_TIMEOUT)) * 1000; // in milliseconds
+        } catch (NumberFormatException exc) {
             nSessionTimeOut = nTimeOut;
-        }   
+        }
     }
 }
