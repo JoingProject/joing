@@ -37,7 +37,7 @@ import org.joing.api.desktop.taskbar.TaskBar;
 import org.joing.api.desktop.workarea.Wallpaper;
 import org.joing.api.desktop.workarea.WorkArea;
 import org.joing.api.desktop.workarea.WorkAreaListener;
-import org.joing.pde.PDEClient;
+import org.joing.pde.PDEManager;
 import org.joing.pde.desktop.taskbar.TaskPanel;
 import org.joing.pde.desktop.workarea.container.PDEDialog;
 import org.joing.pde.desktop.workarea.container.PDEFrame;
@@ -75,7 +75,7 @@ public class FramesList extends TaskPanel
         setMaximumSize( new Dimension( 600,24 ) );
         setPreferredSize( getMaximumSize() );
         
-        PDEClient.getInstance().getDesktop().addDesktopListener( tdl );
+        PDERuntime.getRuntime().getDesktopManager().getDesktop().addDesktopListener( tdl );
     }
     
     //------------------------------------------------------------------------//

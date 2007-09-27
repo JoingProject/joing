@@ -29,6 +29,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import org.joing.jvmm.Platform;
 import org.joing.pde.desktop.PDEDesktop;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -42,7 +43,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import org.joing.api.Client;
+import org.joing.api.DesktopManager;
 import org.joing.api.desktop.Desktop;
 import org.joing.pde.runtime.PDERuntime;
 import org.joing.pde.desktop.workarea.container.PDEFrame;
@@ -50,27 +51,20 @@ import org.joing.pde.desktop.workarea.desklet.deskLauncher.PDEDeskLauncher;
 import org.joing.runtime.bridge2server.Bridge2Server;
 
 /**
- * Client interface implementation.<br>
+ * DesktopManager interface implementation.<br>
  * The application entry point (main equivalent).
- *
+ * 
  * @author Francisco Morero Peyrona
  */
-public class PDEClient extends JApplet implements Client
-{
-    public  JFrame     frame;
+public class PDEManager extends JApplet implements DesktopManager
+{    
+    private int        nRunMode;
+    private JFrame     frame;
     private PDEDesktop desktop;
     
-    private static PDEClient instance = new PDEClient();
-    
     //------------------------------------------------------------------------//
-        
-    // TODO: quitar esto y pedirselo a Antonio
-    public static Client getInstance()
-    {
-        return instance;
-    }
     
-    private PDEClient()
+    public PDEManager()
     {
         desktop = new PDEDesktop();
         getContentPane().add( desktop, BorderLayout.CENTER );
@@ -91,7 +85,7 @@ public class PDEClient extends JApplet implements Client
     }
     
     //------------------------------------------------------------------------//
-    // Methods defined in Client interface
+    // Methods defined in DesktopManager interface
     
     public void showInFrame()
     {
@@ -144,7 +138,7 @@ public class PDEClient extends JApplet implements Client
         else
             stop();
         
-        System.exit( 0 ); // TODO: Quitarlo y Llamar a lo de Antonio
+        Platform.getInstance().shutdown();
     }
     
     public void lock()
@@ -189,7 +183,7 @@ public class PDEClient extends JApplet implements Client
             {
                 public void windowActivated(WindowEvent we)   {}
                 public void windowClosed(WindowEvent we)      {}
-                public void windowClosing(WindowEvent we)     { PDEClient.this.close(); }
+                public void windowClosing(WindowEvent we)     { PDEManager.this.close(); }
                 public void windowDeactivated(WindowEvent we) {}
                 public void windowDeiconified(WindowEvent we) {}
                 public void windowIconified(WindowEvent we)   {}
@@ -198,33 +192,6 @@ public class PDEClient extends JApplet implements Client
         }
         
         return frame;
-    }
-    
-    //------------------------------------------------------------------------//
-    
-    public static void main( String[] args )
-    {
-        try
-        {
-            Bridge2Server b2s    = Bridge2Server.getInstance();
-            LoginResult   result = b2s.getSessionBridge().login( "peyrona", "admin" );
-
-            if( result.isLoginValid() )    // result is guaranted to be not null
-            {
-                SwingUtilities.invokeLater(new Runnable()
-                {
-                    public void run()
-                    {
-                        instance.showInFrame();
-                        //instance.showInFullScreen();
-                    }
-                } );
-            }
-        }
-        catch( Exception exc )
-        {
-            exc.printStackTrace();
-        }
     }
     
     //------------------------------------------------------------------------//
@@ -297,6 +264,6 @@ public class PDEClient extends JApplet implements Client
         public void mouseEntered(MouseEvent me )   {}
         public void mouseExited( MouseEvent me )   {}
         public void mouseReleased( MouseEvent me ) {}
-        public void mousePressed( MouseEvent me )  { PDEClient.this.unlock(); }
+        public void mousePressed( MouseEvent me )  { PDEManager.this.unlock(); }
     }
 }

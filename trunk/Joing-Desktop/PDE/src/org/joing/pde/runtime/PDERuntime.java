@@ -15,7 +15,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.joing.api.desktop.Desktop;
-import org.joing.pde.PDEClient;
+import org.joing.jvmm.Platform;
+import org.joing.pde.PDEManager;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.pde.desktop.workarea.container.PDEFrame;
 
@@ -77,7 +78,7 @@ public final class PDERuntime implements org.joing.api.Runtime
      */
     public void showMessage( String sMessage )
     {
-        PDEWorkArea workArea = (PDEWorkArea) getDesktop().getActiveWorkArea();
+        PDEWorkArea workArea = (PDEWorkArea) getDesktopManager().getDesktop().getActiveWorkArea();
         
         JOptionPane.showInternalMessageDialog( workArea, sMessage );
     }
@@ -90,7 +91,7 @@ public final class PDERuntime implements org.joing.api.Runtime
      */
     public void showMessage( String sTitle, String sMessage )
     {
-        PDEWorkArea workArea = (PDEWorkArea) getDesktop().getActiveWorkArea();
+        PDEWorkArea workArea = (PDEWorkArea) getDesktopManager().getDesktop().getActiveWorkArea();
         
         JOptionPane.showInternalMessageDialog( workArea, sMessage, sTitle,
                                                JOptionPane.INFORMATION_MESSAGE );
@@ -105,7 +106,7 @@ public final class PDERuntime implements org.joing.api.Runtime
      */
     public boolean confirmDialog( String sTitle, String sMessage )
     {
-        PDEWorkArea workArea = (PDEWorkArea) getDesktop().getActiveWorkArea();
+        PDEWorkArea workArea = (PDEWorkArea) getDesktopManager().getDesktop().getActiveWorkArea();
         
         return JOptionPane.showInternalConfirmDialog( 
                                      workArea, sMessage, sTitle,
@@ -121,7 +122,7 @@ public final class PDERuntime implements org.joing.api.Runtime
      */
     public boolean yesOrNoDialog( String sTitle, String sMessage )
     {
-        PDEWorkArea workArea = (PDEWorkArea) getDesktop().getActiveWorkArea();
+        PDEWorkArea workArea = (PDEWorkArea) getDesktopManager().getDesktop().getActiveWorkArea();
         
         return JOptionPane.showInternalConfirmDialog( 
                                      workArea, sMessage, sTitle,
@@ -198,7 +199,7 @@ public final class PDERuntime implements org.joing.api.Runtime
      */
     public void add( PDEFrame frame )
     {
-        getDesktop().getActiveWorkArea().add( frame );  // First, add to desktop
+        getDesktopManager().getDesktop().getActiveWorkArea().add( frame );  // First, add to desktop
         frame.pack();
         frame.center();
         frame.setVisible( true );
@@ -216,9 +217,8 @@ public final class PDERuntime implements org.joing.api.Runtime
     //------------------------------------------------------------------------//
     
     // Only to make the code more clear
-    private Desktop getDesktop()
+    public PDEManager getDesktopManager()
     {
-        // TODO: pedirlo a Anotnio
-        return PDEClient.getInstance().getDesktop();
+        return (PDEManager) Platform.getInstance().getDesktopManager();
     }
 }
