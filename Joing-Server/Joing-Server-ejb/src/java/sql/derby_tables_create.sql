@@ -36,7 +36,7 @@ CREATE TABLE APPLICATIONS(
    PRIMARY KEY (APPLICATION, VERSION),
    ID_APPLICATION INT UNIQUE GENERATED ALWAYS AS IDENTITY,
    APPLICATION    VARCHAR(64)    NOT NULL    ,  -- Application name (NAME is a reserved SQL word)
-   VERSION        VARCHAR(16)    NOT NULL    ,  -- Version (to be used by the local cache)
+   VERSION        VARCHAR(16)    NOT NULL    ,  -- Version
    EXTRA_PATH     VARCHAR(255)               ,  -- From applications dir (defined in Constant.sAPP_DIR)
    EXECUTABLE     VARCHAR(255)   NOT NULL    ,  -- Normally a .jar or a .class
    ARGUMENTS      VARCHAR(255)               ,  -- Arguments to be passed
