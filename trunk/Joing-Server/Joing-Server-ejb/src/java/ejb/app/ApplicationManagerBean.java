@@ -147,7 +147,10 @@ public class ApplicationManagerBean
             
             try
             {
-                ApplicationEntity _app = em.find( ApplicationEntity.class, nAppId );
+                //ApplicationEntity _app = em.find( ApplicationEntity.class, nAppId );
+                Query q = em.createNamedQuery("ApplicationEntity.findByIdApplication");
+                q.setParameter("idApplication", nAppId);
+                ApplicationEntity _app = (ApplicationEntity)q.getSingleResult();
                 
                 if( _app != null )
                     app = new Application( _app );
