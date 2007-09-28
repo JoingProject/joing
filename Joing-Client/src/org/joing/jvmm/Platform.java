@@ -11,7 +11,9 @@ package org.joing.jvmm;
 
 import ejb.app.Application;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.JarURLConnection;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.UUID;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
@@ -50,12 +53,14 @@ public class Platform {
     private final AppContext context = new AppContext();
 
     private final Thread mainThread = Thread.currentThread();
-    
+
     private final PlatformRuntime runtime = PlatformRuntime.getRuntime();
-    
+
     private final Bridge2Server bridge = new Bridge2Server();
-    
+
     private DesktopManager desktopManager = null;
+
+    private Properties clientProp = null;
 
     private Platform() {
     }
@@ -67,9 +72,14 @@ public class Platform {
     public PlatformRuntime getRuntime() {
         return this.runtime;
     }
-    
+
     public Bridge2Server getBridge() {
         return this.bridge;
+    }
+
+    // temporal
+    public Properties getClientProp() {
+        return clientProp;
     }
     
     /**
@@ -78,8 +88,9 @@ public class Platform {
      */
     public void init(Properties clientProp) {
 
+        this.clientProp = clientProp;
+
         runtime.init(clientProp);
-        
     }
 
 
@@ -100,16 +111,14 @@ public class Platform {
     }
 
 
-    public DesktopManager getDesktopManager()
-    {
+    public DesktopManager getDesktopManager() {
         return desktopManager;
     }
-    
-    public void setDesktopManager( DesktopManager dm )
-    {
+
+    public void setDesktopManager(DesktopManager dm) {
         desktopManager = dm;
     }
-    
+
     /**
      * Obtiene el JThreadGroup. Itera hacia arriba en la jerarquia.
      */
@@ -488,6 +497,7 @@ public class Platform {
                                 Class c = finalClassLoader.loadClass(finalClassName);
                                 Method main = c.getMethod("main", new Class[]{String[].class});
                                 //Method main = finalClassLoader.loadClass(finalClassName).getMethod("main", new Class[]{String[].class});
+                                main.setAccessible(true);
                                 main.invoke(null, new Object[]{finalArgs});
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -518,11 +528,7 @@ public class Platform {
         }
 
         try {
-//            int available = app.getContent().available();
-//            byte[] b = new byte[available];
-//            app.getContent().read(b, 0, b.length);
-//
-//            ByteArrayInputStream bais = new ByteArrayInputStream(b);
+            
             JarInputStream jis = new JarInputStream(app.getContent());
             String mainClass = getMainClassName(jis);
 
@@ -530,8 +536,45 @@ public class Platform {
                 Monitor.log("Main Class found in Manifest: " + mainClass);
             }
 
-            // Este byte array contiene el Jar.
-        } catch (java.io.IOException ioe) {
+            UUID uuid = UUID.randomUUID();
+            String tmpDir = clientProp.getProperty("LocalTempDir");
+            tmpDir = (tmpDir == null) ? "C:\\Temp\\Joing" : tmpDir;
+
+            if (tmpDir.endsWith("\\") == false) {
+                tmpDir += "\\";
+            }
+
+            String fileName = uuid.toString() + ".jar";
+            String jarName = tmpDir + fileName;
+            FileOutputStream fos = new FileOutputStream(jarName);
+
+            boolean done = false;
+            InputStream is = app.getContent();
+            while (!done) {
+                int av = is.available();
+                byte[] b = new byte[av];
+                int n = is.read(b);
+                if (n < 0) {
+                    done = true;
+                } else {
+                    fos.write(b);
+                }
+            }
+            fos.close();
+
+            List<String> argLst = new ArrayList<String>();
+            tmpDir = clientProp.getProperty("FileUrlPrefix");
+            tmpDir = (tmpDir == null) ? "file://" : tmpDir;
+            
+            argLst.add("-classpath");
+            argLst.add(tmpDir + fileName + "!/");
+            argLst.add(mainClass);
+            
+            String[] args = argLst.toArray(new String[] {});
+
+            start(args, System.out, System.err);
+            
+        } catch (Exception ioe) {
             throw new ApplicationExecutionException(ioe.getMessage());
         }
     }
@@ -539,19 +582,19 @@ public class Platform {
     /**
      * Gets the Main Class name from a jar's Manifest. This Method does not
      * takes the responsability of closing the InputSream.
-     * 
+     *
      * @param jarInput JarInputStream object.
      * @return String with the Main Class stated in Manifest, null otherwise.
      */
     protected String getMainClassName(JarInputStream jarInput) {
-        
+
         Manifest manifest = jarInput.getManifest();
         Attributes attributes = manifest.getMainAttributes();
         String mainClass = attributes.getValue("Main-Class");
-        
+
         return mainClass;
     }
-    
+
     /**
      * Halts the system - now
      */

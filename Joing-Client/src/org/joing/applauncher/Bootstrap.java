@@ -19,8 +19,13 @@ import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Map;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import org.joing.api.DesktopManager;
@@ -99,14 +104,13 @@ public class Bootstrap {
 //                System.out.println("Tray Icon - Mouse released!");
 //            }
 //        };
-
         ActionListener exitListener = new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 System.exit(0);
             }
         };
-        
+
         ActionListener frameAction = new ActionListener() {
             boolean firstTime = true;
 
@@ -191,40 +195,61 @@ public class Bootstrap {
         System.setSecurityManager(new JoingSecurityManager());
         Monitor.log("Join'g Successfully Bootstrapped.");
         Monitor.log("Main Thread Id is " + Platform.getInstance().getMainId());
-        
-        // Iniciamos la sesión.
-        try 
-        {
-            Login login = new Login();
-                  login.setVisible( true );
 
-            if( login.wasSuccessful() )
-            {
+        Platform platform = Platform.getInstance();
+
+        // Iniciamos la sesión.
+        try {
+
+            Login login = new Login();
+            login.setVisible(true);
+
+            if (login.wasSuccessful()) {
                 DesktopManager deskmgr = getDesktopManagerInstance();
-                Platform.getInstance().setDesktopManager( deskmgr );
-                
-                if( login.fullScreen() )
+                platform.setDesktopManager(deskmgr);
+
+                if (login.fullScreen()) {
                     deskmgr.showInFullScreen();
-                else
+                } else {
                     deskmgr.showInFrame();
-            }
-            else
-            {
+                }
+            } else {
                 Platform.getInstance().halt();
             }
-        }
-        catch (Exception e) 
-        {
+        } catch (Exception e) {
             Monitor.log("Error en start: " + e.getMessage());
         }
     }
-    
-    private static DesktopManager getDesktopManagerInstance()
-    {
+
+    private static DesktopManager getDesktopManagerInstance() {
         // Platform.getInstance().start( login.getApplicationId() );
-        // TODO: habría que conseguir una referencia a la instancia de 
+        // TODO: habría que conseguir una referencia a la instancia de
         // PDEManager creada por la clase Platform
-        
-        return null;
+        try {
+            Platform platform = Platform.getInstance();
+            
+            String desktop = platform.getClientProp().getProperty("DesktopApp");
+            String[] tmp = desktop.split("\\?");
+            desktop = tmp[0];
+            String mainClass = tmp[1];
+            String serverEjb = platform.getClientProp().getProperty("JoingServerEjb");
+            String desktopApi = platform.getClientProp().getProperty("DesktopApi");
+            String joingClient = platform.getClientProp().getProperty("JoingClient");
+            
+            URL[] url = new URL[] {
+                new URL(desktop),
+                new URL(serverEjb),
+                new URL(desktopApi),
+                new URL(joingClient)
+            };
+            URLClassLoader ucl = new URLClassLoader(url, platform.getClass().getClassLoader());
+            
+            Class cls = ucl.loadClass(mainClass);
+            
+            return (DesktopManager)cls.newInstance();
+            
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }
