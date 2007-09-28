@@ -16,7 +16,10 @@ package org.joing.jvmm;
  */
 public enum RuntimeEnum {
     
-    JOING_SERVER_URL("JoingServerURL");
+    JOING_SERVER_URL("JoingServerURL"),
+    LOCAL_TEMP_DIR("LocalTempDir"),
+    FILE_URL_PREFIX("FileUrlPrefix"),
+    DESKTOP_ID("DesktopId");
     
     private final String key;
     
