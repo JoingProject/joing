@@ -119,9 +119,10 @@ public class PDEDesktop extends JPanel implements Desktop
         add( pnlWorkAreas, BorderLayout.CENTER );
     }
     
-    private WorkArea createTestWorkArea()  // TODO: quitar este metodo
+    private void createTestWorkArea()  // TODO: quitar este metodo
     {
-        WorkArea wa = getActiveWorkArea();
+        WorkArea wa = new PDEWorkArea();
+        addWorkArea( wa );
         
         PDEDeskLauncher pl1 = new PDEDeskLauncher( "Test" );
         PDEDeskLauncher pl2 = new PDEDeskLauncher( "Notes" );
@@ -167,8 +168,6 @@ public class PDEDesktop extends JPanel implements Desktop
                    frm.setVisible( true );
                    wa.add( frm );
                    frm.setSelected( true );
-                   
-        return wa;
     }
     
     //------------------------------------------------------------------------//
@@ -186,11 +185,16 @@ public class PDEDesktop extends JPanel implements Desktop
     
     public void addWorkArea( WorkArea wa )
     {
-        vWorkAreas.add( wa );
-        pnlWorkAreas.add( (Component) wa, 
-                          (wa.getName() == null ? "WorkArea"+ vWorkAreas.size() : wa.getName()) );
-        setActiveWorkArea( wa );
-        fireWorkAreaAdded( wa );
+        if( ! vWorkAreas.contains( wa ) )
+        {
+            if( wa.getName() == null )
+                wa.setName( "WorkArea "+ vWorkAreas.size() );
+            
+            vWorkAreas.add( wa );
+            pnlWorkAreas.add( (Component) wa, wa.getName() );
+            setActiveWorkArea( wa );
+            fireWorkAreaAdded( wa );
+        }
     }
     
     public void removeWorkArea( WorkArea wa )
@@ -200,7 +204,8 @@ public class PDEDesktop extends JPanel implements Desktop
         {
             remove( (Component) wa );
             vWorkAreas.remove( wa );
-            fireWorkAreaRemoved( wa );
+            fireWorkAreaRemoved( wa );                 // First Removed event is launched
+            setActiveWorkArea( vWorkAreas.get( 0 ) );  // Now Selected event is launched
         }
     }
     
@@ -221,9 +226,12 @@ public class PDEDesktop extends JPanel implements Desktop
     {
         if( vWorkAreas.contains( wa ) )
         {
+            WorkArea waOld = waActive;
+            
             waActive = wa;
             CardLayout cl = (CardLayout) pnlWorkAreas.getLayout();
-            cl.show( pnlWorkAreas, wa.getName() );
+                       cl.show( pnlWorkAreas, wa.getName() );
+            fireWorkAreaSelected( waOld, wa );
         }
     }
     
@@ -310,6 +318,18 @@ public class PDEDesktop extends JPanel implements Desktop
         {
             if( listeners[n] == DesktopListener.class )
                 ((DesktopListener) listeners[n+1]).workAreaRemoved( wa );
+        }
+    }
+    
+    protected void fireWorkAreaSelected( WorkArea waPrevious, WorkArea waCurrent )
+    {
+        Object[] listeners = listenerList.getListenerList();
+        
+        // Process the listeners last to first, notifying
+        for( int n = listeners.length - 2; n >= 0; n -= 2 )
+        {
+            if( listeners[n] == DesktopListener.class )
+                ((DesktopListener) listeners[n+1]).workAreaSelected( waPrevious, waCurrent );
         }
     }
     

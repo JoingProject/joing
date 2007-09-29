@@ -185,13 +185,18 @@ public class FramesList extends TaskPanel
 
     private void updateSeleced()
     {
+        WorkArea waActive = PDERuntime.getRuntime().getDesktopManager().getDesktop().getActiveWorkArea();
+        
         for( FrameButton btn : vButtons.values() )
         {
             Container c = btn.getFrame();
             boolean   b = (c instanceof Frame) ? ((Frame) c).isActive()
                                                : ((JInternalFrame) c).isSelected();
             btn.setSelected( b );
+            btn.setVisible( c.getParent() == waActive );
         }
+        
+        validate();
     }
     
     //------------------------------------------------------------------------//
@@ -206,13 +211,17 @@ public class FramesList extends TaskPanel
         public void taskBarRemoved( TaskBar tb )
         {
         }
-        public void workAreaAdded (WorkArea wa )
+        public void workAreaAdded( WorkArea wa )
         {
             wa.addWorkAreaListener( FramesList.this.twal );
         }
         public void workAreaRemoved( WorkArea wa )
         {
             // Not needed to remove the listener -> G.C. takes care of it
+        }
+        public void workAreaSelected( WorkArea waPrevious, WorkArea waCurrent )
+        {
+            updateSeleced();
         }
     }
     
@@ -230,7 +239,7 @@ public class FramesList extends TaskPanel
             if( comp instanceof JInternalFrame )
                 add( (JInternalFrame) comp );
                 
-            if( comp instanceof Frame )           // Can be Frame or JFrame
+            if( comp instanceof Frame )           // Used for Frame and JFrame
                 add( (Frame) comp );
         }
 

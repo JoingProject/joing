@@ -57,8 +57,7 @@ import org.joing.runtime.bridge2server.Bridge2Server;
  * @author Francisco Morero Peyrona
  */
 public class PDEManager extends JApplet implements DesktopManager
-{    
-    private int        nRunMode;
+{
     private JFrame     frame;
     private PDEDesktop desktop;
     
@@ -138,7 +137,7 @@ public class PDEManager extends JApplet implements DesktopManager
         else
             stop();
         
-        Platform.getInstance().shutdown();
+        PDERuntime.getRuntime().shutdown();
     }
     
     public void lock()
@@ -192,6 +191,25 @@ public class PDEManager extends JApplet implements DesktopManager
         }
         
         return frame;
+    }
+    
+    public static void main( String[] args )
+    {
+        System.setProperty( PDERuntime.PDE_AUTONOMO, "ACTIVADO" );
+        
+        Bridge2Server b2s    = Bridge2Server.getInstance();
+        LoginResult   result = b2s.getSessionBridge().login( "peyrona", "admin" );
+        
+        final PDEManager mgr = new PDEManager();
+        PDERuntime.getRuntime().setDesktopManager( mgr );
+        
+        SwingUtilities.invokeLater( new Runnable()
+        {
+            public void run()
+            {
+                mgr.showInFrame();
+            }
+        } );
     }
     
     //------------------------------------------------------------------------//
