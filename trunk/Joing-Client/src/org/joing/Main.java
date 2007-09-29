@@ -42,6 +42,8 @@ public class Main {
 
     public static void main(String[] args) {
 
+        args = new String[0];  // TODO: quitarlo
+        
         Properties clientProps = new Properties();
         // arg 1 can be the properties file.
         if (args.length == 1) {
