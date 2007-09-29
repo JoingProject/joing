@@ -55,7 +55,7 @@ public final class StartButton extends JLabel
         {
             public void mousePressed( MouseEvent me )
             {
-                //System.out.println(popup.isVisible()+" -> "+popup.isShowing());
+                ///System.out.println(popup.isVisible()+" -> "+popup.isShowing());
                 if( popup.isVisible() )
                 {
                     popup.setVisible( false );
@@ -64,6 +64,7 @@ public final class StartButton extends JLabel
                 else
                 {
                     int nHeight = popup.getPreferredSize().height;
+                    // TODO: hay q mirar dónde mostarlo (la barra puede estar: arriba, abajo, izq o dcha)
                     popup.show( StartButton.this, 0, -nHeight );
                     ///popup.setVisible( true );
                 }

@@ -63,7 +63,7 @@ class StartMenu extends JScrollablePopupMenu
                   item.setBorder( new EmptyBorder( 4,4,4,4 ) );
                   item.setFont( item.getFont().deriveFont( Font.BOLD, item.getFont().getSize() + 4 ) );
 
-        User user = Platform.getInstance().getBridge().getUserBridge().getUser();
+        User user = PDERuntime.getRuntime().getBridge().getUserBridge().getUser();
         
         if( user != null )
         {
@@ -120,7 +120,7 @@ class StartMenu extends JScrollablePopupMenu
     {
         final String KEY = "JOING_APP_DESCRIPTOR";
         
-        List<AppsByGroup> abgList = Platform.getInstance().getBridge().getAppBridge().getInstalledForUser();
+        List<AppsByGroup> abgList = PDERuntime.getRuntime().getBridge().getAppBridge().getInstalledForUser();
         
         for( AppsByGroup abg : abgList )
         {

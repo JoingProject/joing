@@ -13,25 +13,15 @@ package org.joing.pde.desktop.workarea;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
-import java.io.BufferedOutputStream;
-import java.io.Externalizable;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JDesktopPane;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.MenuElement;
 import javax.swing.event.MouseInputAdapter;
 import org.joing.api.desktop.workarea.Wallpaper;
 import org.joing.api.desktop.workarea.WorkArea;
@@ -43,7 +33,6 @@ import org.joing.pde.desktop.workarea.container.PDEFrame;
 import org.joing.pde.desktop.workarea.desklet.deskApplet.PDEDeskApplet;
 import org.joing.pde.desktop.workarea.desklet.deskLauncher.PDEDeskLauncher;
 import org.joing.pde.runtime.ColorSchema;
-import org.joing.pde.runtime.PDERuntime;
 
 /**
  * This class contains internal operativity for the Desk.
@@ -64,9 +53,8 @@ public class PDEWorkArea
     
     private Wallpaper wallpaper;
     
-    private Dimension  gridDimension = new Dimension( 16,16 );  // Tamaño de la cuadrícula del grid
-    private boolean    bSnapToGrid   = true;
-    private JPopupMenu popup         = null;
+    private Dimension gridDimension = new Dimension( 16,16 );  // Tamaño de la cuadrícula del grid
+    private boolean   bSnapToGrid   = true;
     
     //-------------------------------------------------------------------------//
     
@@ -167,8 +155,9 @@ public class PDEWorkArea
      */
     protected void showPopupMenu( Point p )
     {
-        if( popup != null && ! popup.isVisible() )
-            popup.show( this, p.x, p.y );
+        // Has to be created every time because some items can change from ivocation to invocation
+        PopupMenu popup = new PopupMenu( this );
+                  popup.show( this, p.x, p.y );
     }
     
     //-------------------------------------------------------------------------//
@@ -322,9 +311,7 @@ public class PDEWorkArea
     //------------------------------------------------------------------------//
     
     private void initGUI()
-    {
-        popup = new PopupMenu();
-        
+    {        
         setOpaque( true );
         setBackground( ColorSchema.getInstance().getDesktopBackground() );
         
@@ -339,12 +326,6 @@ public class PDEWorkArea
                 if( ! PDEWorkArea.this.isFocusOwner() )
                     PDEWorkArea.this.requestFocusInWindow();
                 
-                if( me.isPopupTrigger() )
-                    showPopupMenu( me.getPoint() );
-            }
-
-            public void mouseReleased( MouseEvent me )
-            {
                 if( me.isPopupTrigger() )
                     showPopupMenu( me.getPoint() );
                 else
@@ -495,47 +476,6 @@ public class PDEWorkArea
         {
             if( listeners[n] == WorkAreaListener.class )
                 ((WorkAreaListener) listeners[n+1]).wallpaperChanged( wpNew );
-        }
-    }
-
-    //------------------------------------------------------------------------//
-    // INNER CLASSES
-    //------------------------------------------------------------------------//
-    
-    // El popup del DesktopLauncher
-    private class PopupMenu extends JPopupMenu implements ActionListener
-    {
-        private PopupMenu()
-        {
-            add( createMenuItem( "Create folder"  , "folder"      , "NEW_FOLDER"   ) );
-            add( createMenuItem( "Create launcher", "launcher"    , "NEW_LACUNHER" ) );
-            addSeparator();
-            add( createMenuItem( "Align to grid"  , "grid"        , "TOGGLE_ALIGN" ) );
-            addSeparator();
-            add( createMenuItem( "Properties"     , "properties"  , "PROPERTIES"   ) );
-        }
-        
-        private JMenuItem createMenuItem( String sText, String sIconName, String sCommand )
-        {
-            JMenuItem item = new JMenuItem( sText );
-                      item.setActionCommand( sCommand );
-                      item.addActionListener( this );
-                      
-            if( sIconName != null )
-                item.setIcon( PDERuntime.getRuntime().getIcon( this, "images/"+ sIconName +".png", 16, 16 )  );
-            
-            return item;
-        }
-        
-        public void actionPerformed( ActionEvent ae )
-        {
-            String sCommand = ((JMenuItem) ae.getSource()).getActionCommand();
-            
-            /* TODO: implementarlo
-            if(      sCommand.equals( "NEW_FOLDER"   ) )  PDEDeskLauncher.this.createFolder();
-            else if( sCommand.equals( "NEW_LACUNHER" ) )  PDEDeskLauncher.this.createLauncher();
-            else if( sCommand.equals( "TOGGLE_ALIGN" ) )  PDEDeskLauncher.this.toggleAlign();
-            else if( sCommand.equals( "PROPERTIES"   ) )  PDEDeskLauncher.this.editProperties();*/
         }
     }
 }

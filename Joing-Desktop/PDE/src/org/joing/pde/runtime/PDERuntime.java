@@ -19,6 +19,7 @@ import org.joing.jvmm.Platform;
 import org.joing.pde.PDEManager;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.pde.desktop.workarea.container.PDEFrame;
+import org.joing.runtime.bridge2server.Bridge2Server;
 
 /**
  * The Runtime class.
@@ -215,10 +216,40 @@ public final class PDERuntime implements org.joing.api.Runtime
     }
     
     //------------------------------------------------------------------------//
+    // Esto lo necesito para ejecutar PDE de modo autónomo (sin que lo lance
+    // Joing-Client)
+    //------------------------------------------------------------------------//
     
-    // Only to make the code more clear
+    public final static String PDE_AUTONOMO = "PDE_AUTONOMO";
+    private PDEManager  pdeManager = null;
+    
+    public void setDesktopManager( PDEManager mgr )
+    {
+        if( this.pdeManager == null )   // Previene de asignarlo varias veces
+            this.pdeManager = mgr;
+    }
+    
     public PDEManager getDesktopManager()
     {
-        return (PDEManager) Platform.getInstance().getDesktopManager();
+        if( System.getProperty( PDE_AUTONOMO ) != null )
+            return pdeManager;
+        else
+            return (PDEManager) Platform.getInstance().getDesktopManager();
+    }
+    
+    public Bridge2Server getBridge()
+    {
+        if( System.getProperty( PDE_AUTONOMO ) != null )
+            return Bridge2Server.getInstance();
+        else
+            return Platform.getInstance().getBridge();
+    }
+    
+    public void shutdown()
+    {
+        if( System.getProperty( PDE_AUTONOMO ) != null )
+            System.exit( 0 );
+        else
+            Platform.getInstance().shutdown();
     }
 }

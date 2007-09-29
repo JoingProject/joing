@@ -106,12 +106,12 @@ class FrameButton extends JToggleButton
             return null;
     }
     
-    /*  // TODO: hay q mirar dónde mostarlo (la barra puede estar: arriba, abajo, izq o dcha)
-    public Point getToolTipLocation( MouseEvent me )
+    // TODO: hay q mirar dónde mostarlo (la barra puede estar: arriba, abajo, izq o dcha)
+    /*public Point getToolTipLocation( MouseEvent me )
     {
         FrameButtonToolTip fbtt = new FrameButtonToolTip( null );
         
-        return new Point( me.getPoint().x, -fbtt.getPreferredSize().height );
+        return new Point( 0, -fbtt.getPreferredSize().height );
     }*/
     
     //------------------------------------------------------------------------//
