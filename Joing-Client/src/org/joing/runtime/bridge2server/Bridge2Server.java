@@ -34,7 +34,7 @@ public class Bridge2Server
     private static final int VIA_SERVLETS = 1;
     private static final int VIA_SOCKETS   = 2;
     
-//    private static Bridge2Server instance   = null;
+    private static Bridge2Server instance   = null;
     
     private int    nVia       = 0;
     private String sSessionId = null;
@@ -48,13 +48,13 @@ public class Bridge2Server
     
     //------------------------------------------------------------------------//
     
-//    public static Bridge2Server getInstance()
-//    {
-//        if( instance == null )
-//            instance = new Bridge2Server();
-//        
-//        return instance;
-//    }
+    public static Bridge2Server getInstance()
+    {
+        if( instance == null )
+            instance = new Bridge2Server();
+        
+        return instance;
+    }
     
     public SessionBridge getSessionBridge()
     {
@@ -80,7 +80,7 @@ public class Bridge2Server
         
         switch( nVia )
         {
-                        case VIA_SERVLETS:
+            case VIA_SERVLETS:
                 ub = new UserBridgeServletImpl();
                 break;
             
@@ -98,7 +98,7 @@ public class Bridge2Server
         {
             switch( nVia )
             {
-                                case VIA_SERVLETS:
+                case VIA_SERVLETS:
                     app = new AppBridgeServletImpl();
                     break;
 
@@ -117,7 +117,7 @@ public class Bridge2Server
         {
             switch( nVia )
             {
-                                case VIA_SERVLETS:
+                case VIA_SERVLETS:
                     vfs = new VFSBridgeServletImpl();
                     break;
 
