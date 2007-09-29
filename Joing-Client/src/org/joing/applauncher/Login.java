@@ -37,6 +37,9 @@ public class Login extends JDialog
         getRootPane().setDefaultButton( btnOk );
         setLocationRelativeTo( null );
         setDefaultCloseOperation( JDialog.DISPOSE_ON_CLOSE );
+        
+        txtAccount.setText( "peyrona" );
+        txtPassword.setText( "admin" );
     }
     
     public boolean wasSuccessful()

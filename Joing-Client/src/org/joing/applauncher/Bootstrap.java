@@ -19,13 +19,17 @@ import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.JarURLConnection;
+import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import org.joing.api.DesktopManager;
@@ -196,8 +200,6 @@ public class Bootstrap {
         Monitor.log("Join'g Successfully Bootstrapped.");
         Monitor.log("Main Thread Id is " + Platform.getInstance().getMainId());
 
-        Platform platform = Platform.getInstance();
-
         // Iniciamos la sesión.
         try {
 
@@ -206,7 +208,7 @@ public class Bootstrap {
 
             if (login.wasSuccessful()) {
                 DesktopManager deskmgr = getDesktopManagerInstance();
-                platform.setDesktopManager(deskmgr);
+                Platform.getInstance().setDesktopManager(deskmgr);
 
                 if (login.fullScreen()) {
                     deskmgr.showInFullScreen();
@@ -232,23 +234,23 @@ public class Bootstrap {
             String[] tmp = desktop.split("\\?");
             desktop = tmp[0];
             String mainClass = tmp[1];
-            String serverEjb = platform.getClientProp().getProperty("JoingServerEjb");
-            String desktopApi = platform.getClientProp().getProperty("DesktopApi");
-            String joingClient = platform.getClientProp().getProperty("JoingClient");
+            //String serverEjb = platform.getClientProp().getProperty("JoingServerEjb");
+            //String desktopApi = platform.getClientProp().getProperty("DesktopApi");
+            //String joingClient = platform.getClientProp().getProperty("JoingClient");
             
             URL[] url = new URL[] {
                 new URL(desktop),
-                new URL(serverEjb),
-                new URL(desktopApi),
-                new URL(joingClient)
+                //new URL(serverEjb),
+                //new URL(desktopApi),
+                //new URL(joingClient)
             };
             URLClassLoader ucl = new URLClassLoader(url, platform.getClass().getClassLoader());
+            Class clazz = ucl.loadClass(mainClass);
             
-            Class cls = ucl.loadClass(mainClass);
-            
-            return (DesktopManager)cls.newInstance();
+            return (DesktopManager) clazz.newInstance();
             
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         }
     }
