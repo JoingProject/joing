@@ -26,8 +26,13 @@ public interface DesktopListener extends EventListener
     
     /**
      * Invoked when a WorkArea has been removed from the Desktop.
-     */    
+     */
     public void workAreaRemoved( WorkArea wa );
+    
+    /**
+     * Invoked when selecetd (active) WorkArea changes.
+     */  
+    public void workAreaSelected( WorkArea waPrevious, WorkArea waCurrent );
 
     /**
      * Invoked when a TaskBar has been added to the Desktop.
