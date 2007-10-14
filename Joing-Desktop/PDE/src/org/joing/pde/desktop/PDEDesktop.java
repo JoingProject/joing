@@ -11,45 +11,32 @@ package org.joing.pde.desktop;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.RootPaneContainer;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.joing.api.desktop.DeskCanvas;
+import org.joing.api.desktop.DeskDialog;
+import org.joing.api.desktop.DeskFrame;
 import org.joing.api.desktop.Desktop;
 import org.joing.api.desktop.DesktopListener;
 import org.joing.api.desktop.enums.TaskBarOrientation;
 import org.joing.api.desktop.workarea.WorkArea;
-import org.joing.pde.PDEManager;
 import org.joing.pde.desktop.taskbar.clock.AnAnimation;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.api.desktop.taskbar.TaskBar;
-import org.joing.impl.desktop.DefaultDesktop;
 import org.joing.pde.desktop.taskbar.PDETaskBar;
-import org.joing.pde.desktop.taskbar.start.StartButton;
-import org.joing.pde.desktop.workarea.container.PDECanvas;
-import org.joing.pde.desktop.workarea.container.PDEFrame;
-import org.joing.pde.desktop.workarea.desklet.deskApplet.PDEDeskApplet;
+import org.joing.pde.desktop.container.PDECanvas;
+import org.joing.pde.desktop.container.PDEDialog;
+import org.joing.pde.desktop.container.PDEFrame;
+import org.joing.pde.desktop.workarea.desklet.PDEDesklet;
 import org.joing.pde.desktop.workarea.desklet.deskLauncher.PDEDeskLauncher;
-import org.joing.pde.runtime.PDERuntime;
 
 /**
  *
@@ -84,6 +71,7 @@ public class PDEDesktop extends JPanel implements Desktop
         {
             PDETaskBar tb = new PDETaskBar();
                        tb.createDefaultComponents();
+                       /// TODO: probar esto --> tb.setOrientation( TaskBarOrientation.TOP );
                        
             addTaskBar( tb );
             addWorkArea( new PDEWorkArea() );
@@ -130,22 +118,24 @@ public class PDEDesktop extends JPanel implements Desktop
 
         wa.add( pl1 );
         wa.add( pl2 );
-
+        
         AnAnimation animation = new AnAnimation();
                     animation.start();
-        PDEDeskApplet applet = new PDEDeskApplet();
-                      applet.add( animation );
-                      applet.setBounds( 100, 150, 190,170 );  
-        wa.add( applet );
-
+        JLabel      lblDesklet = new JLabel( "Desklet demo" );
+                    lblDesklet.setHorizontalAlignment( JLabel.CENTER );
+        PDEDesklet desklet = new PDEDesklet();
+                   desklet.add( animation , BorderLayout.CENTER );
+                   desklet.add( lblDesklet, BorderLayout.SOUTH  );
+                   desklet.setBounds( 100, 150, 160,160 );
+        wa.add( desklet );
+        
         JLabel lblCanvas = new JLabel( "<html><h2>Soy un canvas.</h2>Y esto es <u>texto <font color=\"#0066CC\">HTML</font></u>.</h3></html>" );
-        PDECanvas canvas = new PDECanvas();
-                    canvas.setOpaque( false );
-                    canvas.add( lblCanvas, BorderLayout.CENTER );
-                    canvas.setBounds( 330, 130, 240, 80 );
-                    wa.add( canvas );
+        PDECanvas canvas = (PDECanvas) createCanvas();
+                  canvas.add( lblCanvas, BorderLayout.CENTER );
+                  canvas.setBounds( 330, 130, 240, 80 );
+        wa.add( canvas );
 
-        JSlider slrTranslucency = new JSlider( JSlider.HORIZONTAL, 0, 100, 25 );
+        JSlider slrTranslucency = new JSlider( JSlider.HORIZONTAL, 0, 100, 0 );
                 slrTranslucency.setMajorTickSpacing( 10 );
                 slrTranslucency.setPaintLabels( true );
                 slrTranslucency.setPaintTicks( true );
@@ -155,19 +145,18 @@ public class PDEDesktop extends JPanel implements Desktop
                     {
                         JSlider slr = (JSlider) ce.getSource();
 
-                        PDEFrame frm = (PDEFrame) SwingUtilities.getAncestorOfClass( PDEFrame.class,slr );
-                        frm.setTranslucency( slr.getValue() );
+                        PDEFrame frm = (PDEFrame) SwingUtilities.getAncestorOfClass( PDEFrame.class, slr );
+                                 frm.setTranslucency( slr.getValue() );
                     }
                 } );
                     
         PDEFrame frm = new PDEFrame( "Example Join'g Frame" );
-                   frm.getContentPane().add( new JLabel( "Translucency" ), BorderLayout.NORTH );
-                   frm.getContentPane().add( slrTranslucency, BorderLayout.SOUTH );
-                   frm.setBounds( 150, 50, 300, 200 );
-                   frm.setTranslucency( 20 );
-                   frm.setVisible( true );
-                   wa.add( frm );
-                   frm.setSelected( true );
+                 frm.getContentPane().add( new JLabel( "Translucency" ), BorderLayout.NORTH );
+                 frm.getContentPane().add( slrTranslucency, BorderLayout.SOUTH );
+                 frm.setBounds( 150, 50, 300, 200 );
+                 frm.setVisible( true );
+                 wa.add( frm );
+                 frm.setSelected( true );
     }
     
     //------------------------------------------------------------------------//
@@ -284,6 +273,24 @@ public class PDEDesktop extends JPanel implements Desktop
         }
     }
 
+    //------------------------------------------------------------------------//
+    // Windows (containers in general)
+    
+    public DeskFrame createFrame()
+    {
+        return new PDEFrame();
+    }
+
+    public DeskDialog createDialog()
+    {
+        return new PDEDialog();
+    }
+    
+    public DeskCanvas createCanvas()
+    {
+        return new PDECanvas();
+    }
+    
     //------------------------------------------------------------------------//
     // EVENTS
     

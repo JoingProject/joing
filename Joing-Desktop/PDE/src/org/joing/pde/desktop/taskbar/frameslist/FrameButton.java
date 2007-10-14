@@ -25,7 +25,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 import javax.swing.JToolTip;
-import org.joing.pde.desktop.workarea.container.PDEFrame;
+import javax.swing.SwingUtilities;
+import org.joing.pde.desktop.container.PDEFrame;
 
 /**
  * Every button in the Frames List: each one represents a Frame, JFrame or 
@@ -35,6 +36,9 @@ import org.joing.pde.desktop.workarea.container.PDEFrame;
  */
 class FrameButton extends JToggleButton
 {
+    // Wihout a tooltip text "createToolTip()" method is not invoked
+    private final static String sTOOLTIP = "A";  // To save memory all instances share same String
+    
     private Frame    frame  = null;
     private PDEFrame iframe = null;
     
@@ -110,8 +114,9 @@ class FrameButton extends JToggleButton
     /*public Point getToolTipLocation( MouseEvent me )
     {
         FrameButtonToolTip fbtt = new FrameButtonToolTip( null );
+        Point              nPos = new Point( -1, -fbtt.getPreferredSize().height );        
         
-        return new Point( 0, -fbtt.getPreferredSize().height );
+        return nPos;
     }*/
     
     //------------------------------------------------------------------------//
@@ -120,7 +125,7 @@ class FrameButton extends JToggleButton
     {
         setText( sTitle );
         setIcon( icon );
-        setToolTipText( "123" ); // Wihout a tooltip text "createToolTip()" method is not invoked
+        setToolTipText( sTOOLTIP );
         setFont( getFont().deriveFont( Font.PLAIN, 11f ) );
         setFocusPainted( false );
         setMargin( new Insets( 2,3,2,3 ) );

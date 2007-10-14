@@ -23,16 +23,16 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JDesktopPane;
 import javax.swing.event.MouseInputAdapter;
+import org.joing.api.desktop.Selectable;
 import org.joing.api.desktop.workarea.Wallpaper;
 import org.joing.api.desktop.workarea.WorkArea;
 import org.joing.api.desktop.workarea.WorkAreaListener;
-import org.joing.impl.desktop.Selectable;
-import org.joing.pde.desktop.workarea.container.PDECanvas;
-import org.joing.pde.desktop.workarea.container.PDEDialog;
-import org.joing.pde.desktop.workarea.container.PDEFrame;
-import org.joing.pde.desktop.workarea.desklet.deskApplet.PDEDeskApplet;
+import org.joing.pde.desktop.container.PDECanvas;
+import org.joing.pde.desktop.container.PDEDialog;
+import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.workarea.desklet.deskLauncher.PDEDeskLauncher;
 import org.joing.pde.runtime.ColorSchema;
+import org.joing.pde.runtime.PDERuntime;
 
 /**
  * This class contains internal operativity for the Desk.
@@ -44,12 +44,11 @@ public class PDEWorkArea
        extends JDesktopPane 
        implements WorkArea
 {
-    public static final Integer LAYER_WALLPAPER     = new Integer(-10 );
-    public static final Integer LAYER_CANVAS        = new Integer(  0 );
-    public static final Integer LAYER_DESK_LAUNCHER = new Integer( 10 );
-    public static final Integer LAYER_DESK_APPLET   = new Integer( 20 );
-    public static final Integer LAYER_APPLICATION   = new Integer( 30 );
-    public static final Integer LAYER_DIALOG        = new Integer( 40 );
+    private static final Integer LAYER_WALLPAPER     = new Integer(-10 );
+    private static final Integer LAYER_CANVAS        = new Integer(  0 );
+    private static final Integer LAYER_DESK_LAUNCHER = new Integer( 10 );
+    private static final Integer LAYER_APPLICATION   = new Integer( 20 );
+    private static final Integer LAYER_DIALOG        = new Integer( 30 );
     
     private Wallpaper wallpaper;
     
@@ -172,7 +171,7 @@ public class PDEWorkArea
      * @param clazz Desired class
      */
     public void cutSelectedComponents( Class clazz )
-    {// TODO: terminarlo
+    {// TODO: hacerlo
         /*List vSelected = getSelected( clazz );
         
         if( vSelected.size() > 0 )
@@ -182,6 +181,7 @@ public class PDEWorkArea
             
             removeSelectedComponents( clazz );
         }*/
+        PDERuntime.getRuntime().showMessage( "Option not yet implemented" );
     }
     
     /**
@@ -201,6 +201,7 @@ public class PDEWorkArea
             Client.getClient().getClipBoard().clear();
             Client.getClient().getClipBoard().add( vSelected );
         }*/
+        PDERuntime.getRuntime().showMessage( "Option not yet implemented" );
     }
 
     /**
@@ -234,6 +235,7 @@ public class PDEWorkArea
             
             root.setCursor( Cursor.getPredefinedCursor( Cursor.DEFAULT_CURSOR) );
         }*/
+        PDERuntime.getRuntime().showMessage( "Option not yet implemented" );
     }
 
     /**
@@ -254,6 +256,7 @@ public class PDEWorkArea
             
             repaint();  // Sin repaint() no funciona: NO tocar
         }*/
+        PDERuntime.getRuntime().showMessage( "Option not yet implemented" );
     }   
     
     //------------------------------------------------------------------------//
@@ -345,7 +348,6 @@ public class PDEWorkArea
         adjustComponentSize( component );
         
         if(      component instanceof PDEDeskLauncher )  super.add( component, LAYER_DESK_LAUNCHER );
-        else if( component instanceof PDEDeskApplet   )  super.add( component, LAYER_DESK_APPLET );
         else if( component instanceof PDECanvas       )  super.add( component, LAYER_CANVAS );
         else if( component instanceof PDEDialog       )  super.add( component, LAYER_DIALOG );
         else if( component instanceof PDEFrame        )  super.add( component, LAYER_APPLICATION );

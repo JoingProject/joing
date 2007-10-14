@@ -3,7 +3,7 @@
  * Creado el 31-jul-2005 a las 18:10:41
  */
 
-package org.joing.pde.desktop.workarea.container;
+package org.joing.pde.desktop.container;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -11,10 +11,12 @@ import java.beans.PropertyVetoException;
 import javax.swing.JInternalFrame;
 import javax.swing.event.InternalFrameEvent;
 import java.awt.Component;
+import org.joing.api.desktop.DeskFrame;
+import org.joing.api.desktop.Selectable;
 
-import org.joing.impl.desktop.Selectable;
-
-public class PDEFrame extends JInternalFrame implements Selectable
+public class PDEFrame 
+       extends JInternalFrame 
+        implements Selectable, DeskFrame
 {
     public PDEFrame()
     {
@@ -60,7 +62,7 @@ public class PDEFrame extends JInternalFrame implements Selectable
        }
        catch( PropertyVetoException exc )
        {
-          // Nada q hacer
+          // Nothing to do
        }
     }
     
@@ -72,7 +74,7 @@ public class PDEFrame extends JInternalFrame implements Selectable
         }
         catch( PropertyVetoException exc )
         {
-           // Nada q hacer
+           // Nothing to do
         }
     }
     

@@ -138,7 +138,7 @@ public class PDEDesklet extends JPanel implements Desklet
             if( me.getButton() == MouseEvent.BUTTON1 )
                 ptMousePosition = me.getPoint();
                         
-            // I prefer to handle events personaly in order to show the popup. 
+            // I prefer to handle events personally in order to show the popup. 
             // See: http://www.jguru.com/forums/view.jsp?EID=1239349
             if( me.isPopupTrigger() )
                 PDEDesklet.this.showPopup( me.getPoint() );

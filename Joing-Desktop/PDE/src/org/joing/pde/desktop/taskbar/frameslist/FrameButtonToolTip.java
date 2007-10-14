@@ -31,9 +31,9 @@ class FrameButtonToolTip extends JToolTip
     
     public Dimension getPreferredSize()
     {
-        PDEManager pm = PDERuntime.getRuntime().getDesktopManager();
-        Dimension dim = ((PDEDesktop) pm.getDesktop()).getSize();
-                  dim = new Dimension( dim.width / 8, dim.height / 8 );
+        PDEManager pm  = PDERuntime.getRuntime().getDesktopManager();
+        Dimension  dim = ((PDEDesktop) pm.getDesktop()).getSize();
+                   dim = new Dimension( dim.width / 8, dim.height / 8 );
         return dim;
     }
     

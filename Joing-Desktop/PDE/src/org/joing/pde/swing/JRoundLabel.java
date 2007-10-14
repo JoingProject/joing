@@ -17,8 +17,6 @@ import javax.swing.JLabel;
 
 public class JRoundLabel extends JLabel
 {
-    private boolean bOpaco;   // Uso esta var en lugar de la de JLabel para q JLabel nunca pinte el fondo 
-    
     public JRoundLabel()
     {
         this( null );
@@ -36,31 +34,19 @@ public class JRoundLabel extends JLabel
 
     //------------------------------------------------------------------------//
     
-    // Necesito q super.paintComponent(...) no pinte nunca el fondo
-    public boolean isOpaque()
-    {
-        return false;
-    }
-    
-    public void setOpaque( boolean bOpaque )
-    {
-        super.setOpaque( false );   // Siempre falso
-        this.bOpaco = bOpaque;
-    }
-    
     protected void paintComponent( Graphics g )
     {
-        if( this.bOpaco )
+        if( isOpaque() )
         {
-            int width  = getWidth();
-            int height = getHeight();
-         
             ((Graphics2D) g).setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
             g.setColor( getBackground() );
-            g.fillRoundRect( 0, 0, width, height, 10, 10 );
+            g.fillRoundRect( 0, 0, getWidth(), getHeight(), 10, 10 );
         }
         
-        // Llamo a super para q pinte el texto (el fondo no lo pinta pq isOpaque() == false
+        // If not opaque, super paints again backgroud (makes it square)
+        boolean bOpaque = isOpaque();
+        setOpaque( false );
         super.paintComponent( g );
+        setOpaque( bOpaque );
     }
 }

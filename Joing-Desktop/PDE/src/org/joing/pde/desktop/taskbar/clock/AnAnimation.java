@@ -24,6 +24,7 @@ import java.awt.event.WindowListener;
 import java.awt.event.WindowAdapter;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
+import org.joing.api.desktop.DeskCanvas;
 import org.joing.pde.runtime.ColorSchema;
 import org.joing.pde.runtime.PDERuntime;
 
@@ -33,7 +34,6 @@ import org.joing.pde.runtime.PDERuntime;
  */
 public class AnAnimation extends JPanel
 {
-    
     private static int caps[] = { BasicStroke.CAP_BUTT,  BasicStroke.CAP_SQUARE, BasicStroke.CAP_ROUND};
     private static int joins[] = { BasicStroke.JOIN_MITER, BasicStroke.JOIN_BEVEL, BasicStroke.JOIN_ROUND};
     private static Color colors[] = {Color.red, Color.blue, Color.green};

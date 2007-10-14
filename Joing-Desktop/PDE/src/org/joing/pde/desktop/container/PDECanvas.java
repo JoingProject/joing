@@ -5,13 +5,14 @@
  * Creado el 22-ago-2005 a las 16:34:44
  */
 
-package org.joing.pde.desktop.workarea.container;
+package org.joing.pde.desktop.container;
 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import org.joing.api.desktop.DeskCanvas;
 
 /**
  * A JPanel placed over the background image (if any) and below all other
@@ -21,10 +22,11 @@ import javax.swing.SwingUtilities;
  * 
  * @author Francisco Morero Peyrona
  */
-public class PDECanvas extends JPanel
+public class PDECanvas extends JPanel implements DeskCanvas
 {
     public PDECanvas()
-    {                
+    {
+        setOpaque( false );
     }
     
     /**

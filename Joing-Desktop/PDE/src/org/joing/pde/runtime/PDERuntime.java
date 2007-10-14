@@ -13,12 +13,14 @@ import java.awt.Image;
 import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.joing.api.desktop.Desktop;
+import org.joing.applauncher.gui.SystemMonitor;
 import org.joing.jvmm.Platform;
 import org.joing.pde.PDEManager;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
-import org.joing.pde.desktop.workarea.container.PDEFrame;
+import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.runtime.bridge2server.Bridge2Server;
 
 /**
@@ -251,5 +253,28 @@ public final class PDERuntime implements org.joing.api.Runtime
             System.exit( 0 );
         else
             Platform.getInstance().shutdown();
+    }
+    
+    public void halt()
+    {
+        if( System.getProperty( PDE_AUTONOMO ) != null )
+            System.exit( 0 );
+        else
+            Platform.getInstance().halt();
+    }
+    
+    public void showSystemMonitor()
+    {
+        JPanel pnlMonitor = null;
+                
+        if( System.getProperty( PDE_AUTONOMO ) != null )
+            pnlMonitor = new SystemMonitor();
+        //else
+        // TODO: pedirle a Antonio que me hage esto --> Platform.getInstance().getMonitor();
+        
+        PDEFrame frame = new PDEFrame( "System Monitor" );
+                 frame.getContentPane().add( pnlMonitor );
+                 
+        add( frame );
     }
 }
