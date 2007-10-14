@@ -9,6 +9,11 @@
 
 package org.joing.api.desktop;
 
+import java.awt.Container;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
+import java.awt.event.WindowListener;
+import java.awt.event.WindowStateListener;
 import org.joing.api.desktop.workarea.WorkArea;
 import java.util.List;
 import org.joing.api.desktop.taskbar.TaskBar;
@@ -32,6 +37,11 @@ public interface Desktop
     public List<TaskBar> getTaskBars();
     public void addTaskBar( TaskBar taskbar );
     public void removeTaskBar( TaskBar taskbar );
+    
+    // Windows (Frames)
+    public DeskFrame  createFrame();
+    public DeskDialog createDialog();
+    public DeskCanvas createCanvas();
     
     // Events
     public void addDesktopListener( DesktopListener dl );
