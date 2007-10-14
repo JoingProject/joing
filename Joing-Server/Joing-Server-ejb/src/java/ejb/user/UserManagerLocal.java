@@ -1,6 +1,7 @@
 
 package ejb.user;
 
+import ejb.user.User;
 import java.util.Locale;
 import javax.ejb.Local;
 

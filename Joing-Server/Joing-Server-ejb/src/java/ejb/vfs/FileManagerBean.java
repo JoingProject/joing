@@ -81,7 +81,7 @@ public class FileManagerBean
             FileEntity _file = Tools.path2File( em, sAccount, sFullName  );
             
             if( _file != null )
-                file = new FileDescriptor( _file );
+                file = FileDTOs.createFileDescriptor( _file );
             else
                 throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS ); 
         }
@@ -135,7 +135,7 @@ public class FileManagerBean
                 
                 _file.setAccessed( new Date() );  // Modified is only when modifiying contents
                 em.persist( _file );
-                fileOut = new FileDescriptor( _file );
+                fileOut = FileDTOs.createFileDescriptor( _file );
             }
             catch( RuntimeException exc )
             {
@@ -191,19 +191,9 @@ public class FileManagerBean
                 
                 if( _file != null )
                 {
-                    java.io.File      fNative = FileSystemTools.getFile( sAccount, nFileId );
-                    FileInputStream   fis     = new FileInputStream( fNative );
-                    InputStreamReader isw     = new InputStreamReader( fis, sEncoding );
-                    BufferedReader    br      = new BufferedReader( isw );
-                               
                     _file.setAccessed( new Date() );
                     em.persist( _file );
-                    
-                    fileText = new FileText( _file );
-                    fileText.setMimetype( null );   // TODO: averiguarlo
-                    fileText.setContents( br );
-                    
-                    br.close();
+                    fileText = FileDTOs.createFileText( _file );
                 }
             }
             catch( RuntimeException exc )
@@ -246,16 +236,10 @@ public class FileManagerBean
                 
                 if( _file != null )
                 {
-                    java.io.File    fNative = FileSystemTools.getFile( sAccount, nFileId );
-                    FileInputStream fis     = new FileInputStream( fNative );
-                    
                     _file.setAccessed( new Date() );
                     em.persist( _file );
 
-                    fileBinary = new FileBinary( _file );
-                    fileBinary.setContents( fis );
-
-                    fis.close();
+                    fileBinary = FileDTOs.createFileBinary( _file );
                 }
             }
             catch( RuntimeException exc )
@@ -327,7 +311,7 @@ public class FileManagerBean
                            _file.setAccessed( new Date() );
                            _file.setModified( new Date() );
                 em.persist( _file );
-                fileDesc = new FileDescriptor( _file );
+                fileDesc = FileDTOs.createFileDescriptor( _file );
                 fileDesc.setSize( FileSystemTools.getFileSize( sAccount, fileText.getId() ) );
             }
             catch( RuntimeException exc )
@@ -394,7 +378,7 @@ public class FileManagerBean
                            _file.setAccessed( new Date() );
                            _file.setModified( new Date() );
                 em.persist( _file );
-                fileDesc = new FileDescriptor( _file );
+                fileDesc = FileDTOs.createFileDescriptor( _file );
                 fileDesc.setSize( FileSystemTools.getFileSize( sAccount, fileBinary.getId() ) );
             }
             catch( RuntimeException exc )
@@ -797,7 +781,7 @@ public class FileManagerBean
                 // If code arrives to this point, everything was OK: now can commit
                 em.getTransaction().commit();
 
-                file = new FileDescriptor( _file );
+                file = FileDTOs.createFileDescriptor( _file );
             }
             catch( RuntimeException exc )
             {

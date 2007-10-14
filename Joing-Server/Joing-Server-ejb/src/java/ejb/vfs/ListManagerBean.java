@@ -54,7 +54,7 @@ public class ListManagerBean
             FileEntity _file = Tools.path2File( em, sAccount, "/" );
             
             roots = new ArrayList<FileDescriptor>();
-            roots.add( new FileDescriptor( _file ) );
+            roots.add( FileDTOs.createFileDescriptor( _file ) );
         }
         
         return roots;
@@ -203,7 +203,7 @@ public class ListManagerBean
         List<FileDescriptor> files = new ArrayList<FileDescriptor>( fes.size() );
         
         for( FileEntity fe : fes )
-            files.add( new FileDescriptor( fe )  );
+            files.add( FileDTOs.createFileDescriptor( fe )  );
         
         return files;
     }

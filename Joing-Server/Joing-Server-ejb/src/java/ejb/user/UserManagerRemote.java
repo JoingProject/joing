@@ -1,6 +1,8 @@
 
 package ejb.user;
 
+import ejb.user.Local;
+import ejb.user.User;
 import java.util.List;
 import javax.ejb.Remote;
 

@@ -91,69 +91,18 @@ public class FileDescriptor implements Serializable
      * empty instance of this class, then a method can be added to the Manager
      * EJB (this method can return an empty instance).
      */
-    FileDescriptor( FileEntity _file )
+    FileDescriptor()
     {
-        this.account      = _file.getFileEntityPK().getAccount();
-        this.name         = _file.getFileEntityPK().getFileName();
-        this.path         = _file.getFileEntityPK().getFilePath();
-        
-        this.idFile       = _file.getIdFile();
-        this.isDir        = _file.getIsDir() != 0;
-        this.idOriginal   = _file.getIdOriginal();
-        this.owner        = _file.getOwner();
-        this.lockedBy     = _file.getLockedBy();
-        
-        this.isHidden     = _file.getIsHidden()     != 0;
-        this.isPublic     = _file.getIsPublic()     != 0;
-        this.isReadable   = _file.getIsReadable()   != 0;
-        this.isModifiable = _file.getIsModifiable() != 0;
-        this.isDeleteable = _file.getIsDeleteable() != 0;
-        this.isExecutable = _file.getIsExecutable() != 0;
-        this.isDuplicable = _file.getIsDuplicable() != 0;
-        this.isAlterable  = _file.getIsAlterable()  != 0;
-        this.isInTrashcan = _file.getIsInTrashcan() != 0;
-        
-        this.created      = _file.getCreated();
-        this.modified     = _file.getModified();
-        this.accessed     = _file.getAccessed();
-        this.notes        = _file.getNotes();
-        this.size         = (isDirectory() ? 0:
-                                              FileSystemTools.getFileSize( this.account, this.idFile ));
-    }
-
-    void update( FileEntity _file )
-    {
-        // This field allows to indentify uniquely the File faster than using the PK
-        _file.setIdFile( getId() );
-        // The PK
-        _file.getFileEntityPK().setAccount(  this.account );
-        _file.getFileEntityPK().setFilePath( this.path    );   // Can't call getAbsolutePath()
-        _file.getFileEntityPK().setFileName( getName()    );
-        //--------------------------------------------------------
-        _file.setIdOriginal( this.idOriginal );
-        _file.setOwner(      getOwner()      );
-        _file.setLockedBy(   lockedBy        );
-        _file.setIsDir( (short)(isDirectory() ? 1 : 0) );
-        
-        _file.setIsHidden(     (short)(isHidden()     ? 1 : 0) );
-        _file.setIsPublic(     (short)(isPublic()     ? 1 : 0) );
-        _file.setIsReadable(   (short)(isReadable()   ? 1 : 0) );
-        _file.setIsModifiable( (short)(isModifiable() ? 1 : 0) );
-        _file.setIsDeleteable( (short)(isDeleteable() ? 1 : 0) );
-        _file.setIsExecutable( (short)(isExecutable() ? 1 : 0) );
-        _file.setIsDuplicable( (short)(isDuplicable() ? 1 : 0) );
-        _file.setIsAlterable(  (short)(isAlterable()  ? 1 : 0) );
-        _file.setIsInTrashcan( (short)(isInTrashcan() ? 1 : 0) );
-        
-        _file.setCreated(  getCreated()  );
-        _file.setModified( getModified() );
-        _file.setAccessed( new Date()    );
-        _file.setNotes(    getNotes()    );
     }
     
     public int getId()
     {
         return this.idFile;
+    }
+    
+    public int getIdOriginal()
+    {
+        return this.idOriginal;
     }
     
     public String getName()
@@ -286,11 +235,19 @@ public class FileDescriptor implements Serializable
         return lockedBy != null;
     }
     
+    public String getLockedBy()
+    {
+        return lockedBy;
+    }
+    
     public boolean setLocked(boolean lock)
     {
         return changeBooleanAttribute( LOCKED, lock );
     }
     
+    /**
+     * Just a short-cut
+     */
     public boolean ownsLock()
     {
         return account.equals( lockedBy );
@@ -353,7 +310,53 @@ public class FileDescriptor implements Serializable
     }
     
     //------------------------------------------------------------------------//
-        
+    // Package scope methods
+    
+    void setIdFile( int nIdFile )
+    {
+        this.idFile = nIdFile;
+    }
+    
+    void setIdOriginal( int nIdOriginal )
+    {
+        this.idOriginal = nIdOriginal;
+    }
+    
+    void setDirectory( boolean bIsDir )
+    {
+        this.isDir = bIsDir;
+    }
+    
+    void setPath( String sPath )
+    {
+        this.path = sPath;
+    }
+    
+    void setOwner( String sOwner )
+    {
+        this.owner = sOwner;
+    }
+    
+    void setLockedBy( String sSetLockedBy )
+    {
+        this.lockedBy = sSetLockedBy;
+    }
+    
+    void setCreated( Date date )
+    {
+        this.created = date;
+    }
+    
+    void setModified( Date date )
+    {
+        this.modified = date;
+    }
+    
+    void setAccessed( Date date )
+    {
+        this.accessed = date;
+    }
+    
     /**
      * Chages file size.
      * If file is a directory, the new size is ignored.

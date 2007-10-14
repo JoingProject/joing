@@ -10,6 +10,8 @@
 package ejb.app;
 
 import ejb.Constant;
+import ejb.app.AppDescriptor;
+import ejb.app.Application;
 import ejb.JoingServerException;
 import ejb.session.SessionManagerLocal;
 import ejb.user.UserEntity;
@@ -117,8 +119,8 @@ public class ApplicationManagerBean
                 
                 ApplicationEntity _app = (ApplicationEntity) query.getSingleResult();
                 
-                // Creates the Application instance based on the ApplicationEntity
-                appDescriptor = new AppDescriptor( _app );
+                // Creates the Application Descriptor instance based on the ApplicationEntity
+                appDescriptor = AppDTOs.createAppDescriptor( _app );
             }
             catch( NoResultException exc )
             {
@@ -147,13 +149,12 @@ public class ApplicationManagerBean
             
             try
             {
-                //ApplicationEntity _app = em.find( ApplicationEntity.class, nAppId );
                 Query q = em.createNamedQuery("ApplicationEntity.findByIdApplication");
-                q.setParameter("idApplication", nAppId);
-                ApplicationEntity _app = (ApplicationEntity)q.getSingleResult();
+                      q.setParameter("idApplication", nAppId);
+                ApplicationEntity _app = (ApplicationEntity) q.getSingleResult();
                 
                 if( _app != null )
-                    app = new Application( _app );
+                    app = AppDTOs.createApplication( _app );
                 else
                     throw new JoingServerAppException( JoingServerAppException.APP_NOT_EXISTS );
             }
@@ -208,9 +209,9 @@ public class ApplicationManagerBean
                     Query query = em.createNamedQuery( "ApplicationEntity.findByIdApplication" );
                           query.setParameter( "idApplication", rs.getInt( "ID_APPLICATION" ) );
                           
-                    AppDescriptor app = new AppDescriptor( (ApplicationEntity) query.getSingleResult() );
+                    AppDescriptor app = AppDTOs.createAppDescriptor( (ApplicationEntity) query.getSingleResult() );
                                   app.setDescription( rs.getString( "APP_DESC" ) );
-                        
+                    
                     apps.get( apps.size() - 1 ).addApplication( app );
                 }
             }

@@ -33,8 +33,8 @@ CREATE TABLE USERS_WITH_APPS(               -- Many-To-Many: which apps are avai
 -- ********************************************************************************************************************
 
 CREATE TABLE APPLICATIONS(
-   PRIMARY KEY (APPLICATION, VERSION),
-   ID_APPLICATION INT UNIQUE GENERATED ALWAYS AS IDENTITY,
+   PRIMARY KEY (ID_APPLICATION),
+   ID_APPLICATION INT GENERATED ALWAYS AS IDENTITY,
    APPLICATION    VARCHAR(64)    NOT NULL    ,  -- Application name (NAME is a reserved SQL word)
    VERSION        VARCHAR(16)    NOT NULL    ,  -- Version
    EXTRA_PATH     VARCHAR(255)               ,  -- From applications dir (defined in Constant.sAPP_DIR)
