@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package org.joing.impl.desktop;
+package org.joing.api.desktop;
 
 /**
  * Defines a component as selectable: can be selected or unselected.
@@ -17,6 +17,5 @@ package org.joing.impl.desktop;
 public interface Selectable
 {
     public boolean isSelected();
-    
     public void setSelected( boolean b );
 }
