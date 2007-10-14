@@ -45,9 +45,8 @@ public class FileBinary extends FileDescriptor
      * empty instance of this class, then a method can be added to the Manager
      * EJB (this method can return an empty instance).
      */
-    FileBinary( FileEntity _file ) 
+    FileBinary()
     {
-        super( _file );
     }
 
     public InputStream getContent()
@@ -63,20 +62,12 @@ public class FileBinary extends FileDescriptor
     //------------------------------------------------------------------------//
     // PACKAGE SCOPE
     
-    void setContents( InputStream is )
+    void setContents( byte[] btContent )
     {
-        btContent = new byte[ (int) getSize() ];
-        
-        try
-        {
-            is.read( btContent, 0, btContent.length );
-        }
-        catch( Exception exc )
-        {
-            Constant.getLogger().throwing( getClass().getName(), "setContents(...)", exc );
-        }
+        this.btContent = btContent;    // TODO: hacer copia defensiva
     }
     
+    // TODO: este metodo no se usa: mirar dónde usarlo
     void setMimetipe( String sMimeType )
     {
         this.sMimeType = sMimeType;

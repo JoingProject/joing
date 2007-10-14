@@ -1,6 +1,8 @@
 
 package ejb.app;
 
+import ejb.app.AppDescriptor;
+import ejb.app.Application;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.Remote;

@@ -2,10 +2,10 @@
 --     WebPC - SERVER - DATA
 -- ********************************************************************************************************************
 
-insert into locales (LANGUAGE, COUNTRY)    -- ID_LOCALE = 1
+insert into locales (IDIOM, COUNTRY)    -- ID_LOCALE = 1
      values ('en', 'US');
 
-insert into locales (LANGUAGE, COUNTRY)    -- ID_LOCALE = 2
+insert into locales (IDIOM, COUNTRY)    -- ID_LOCALE = 2
      values ('es', 'ES');
 
 -- ------------------------------------------------------------------
@@ -69,26 +69,26 @@ insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
      values (8, 1, 'Programming & Software Development');
 
 insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
-     values (8, 2, 'Programación y Desarrollo de software');
+     values (8, 2, 'Programación y Desarrollo de Software');
 
 insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
      values (9, 1, 'System Utilities');
 
 insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
-     values (9, 2, 'Utilidades del sistema');
+     values (9, 2, 'Utilidades del Sistema');
 
 -- ------------------------------------------------------------------
 
-insert into applications (NAME, VERSION, EXTRA_PATH, EXECUTABLE, FILE_TYPES)
+insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, FILE_TYPES)
      values ('Notes', '0.1', 'accessories', 'notes.jar', 'txt;ini');
 
-insert into applications (NAME, VERSION, EXTRA_PATH, EXECUTABLE)
+insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE)
      values ('Calculator', '2.4', 'accessories', 'calculator.jar');
 
-insert into applications (NAME, VERSION, EXTRA_PATH, EXECUTABLE)
+insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE)
      values ('Images', '1.1', 'graphics', 'images.jar');
 
-insert into applications (NAME, VERSION, EXTRA_PATH, EXECUTABLE)
+insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE)
      values ('PhotoArt', '0.5', 'graphics', 'photoart.jar');
 
 -- ------------------------------------------------------------------

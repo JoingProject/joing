@@ -23,6 +23,8 @@
 package ejb.user;
 
 import ejb.Constant;
+import ejb.user.Local;
+import ejb.user.User;
 import ejb.JoingServerException;
 import ejb.session.*;
 import ejb.vfs.FileManagerLocal;
@@ -79,8 +81,8 @@ public class UserManagerBean
             try
             {
                 UserEntity _user = em.find( UserEntity.class, sAccount );
-            
-                user = new User( _user );
+                
+                user = UserDTOs.createUser( _user );
                 // Injected (for more info, refer to these methods in User class)
                 user.setUsedSpace( FileSystemTools.getUsedSpace( sAccount ) );
             }
@@ -112,7 +114,7 @@ public class UserManagerBean
                 // (password field does not exists in User class)
                 UserEntity _user = em.find( UserEntity.class, user.getAccount() );
                 
-                user.update( _user );
+                UserDTOs.transfer( user, _user );
                 em.persist( _user );
             }
             catch( RuntimeException exc )
@@ -142,7 +144,7 @@ public class UserManagerBean
                 locals = new ArrayList<Local>( _locales.size() );
                 
                 for( LocaleEntity _locale : _locales )
-                    locals.add( new Local( _locale ) );
+                    locals.add( UserDTOs.createLocal( _locale ) );
             }
             catch( RuntimeException exc )
             {
@@ -205,7 +207,7 @@ public class UserManagerBean
             // Create home directory for user
             FileSystemTools.createAccount( _user.getAccount() );
             
-            user = new User( _user );
+            user = UserDTOs.createUser( _user );
 
             // When code arrives to this point, everything was OK: now can commit
             em.getTransaction().commit();
@@ -239,10 +241,7 @@ public class UserManagerBean
             em.getTransaction().begin();
      
             // Removes user from USERS table
-            UserEntity _user = new UserEntity();
-                        
-            user.update( _user );
-
+            UserEntity _user = UserDTOs.createUserEntity( user );
             em.remove( _user );
 
             // Removes all files from FILES table

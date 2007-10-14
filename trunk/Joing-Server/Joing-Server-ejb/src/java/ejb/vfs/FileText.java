@@ -21,7 +21,6 @@
  */
 package ejb.vfs;
 
-import ejb.Constant;
 import java.io.BufferedReader;
 import java.io.CharArrayReader;
 import java.io.IOException;
@@ -47,9 +46,8 @@ public class FileText extends FileDescriptor
      * empty instance of this class, then a method can be added to the Manager
      * EJB (this method can return an empty instance).
      */
-    FileText( FileEntity _file ) 
+    FileText() 
     {
-        super( _file );
     }
 
     public BufferedReader getContent()
@@ -73,30 +71,18 @@ public class FileText extends FileDescriptor
     //------------------------------------------------------------------------//
     // PACKAGE SCOPE
     
-    /**
-     * 
-     * 
-     * @param BufferedReader
-     */
-    void setContents( BufferedReader br )
+    void setContents( char[] chContent )
     {
-        chContent = new char[ (int) getSize() ];
-        
-        try
-        {
-            br.read( chContent, 0, chContent.length );
-        }
-        catch( IOException exc )
-        {
-            Constant.getLogger().throwing( getClass().getName(), "setContents(...)", exc );
-        }
+        this.chContent = chContent;    // TODO: hacer copia defensiva
     }
     
+    // TODO: este metodo no es usado: mirar dónde usarlo
     void setEnconding( String sEncoding )
     {
         this.sEncoding = sEncoding;
     }
     
+    // TODO: este metodo no es usado: mirar dónde usarlo
     void setMimetype( String sMimeType )
     {
         this.sMimeType = sMimeType;

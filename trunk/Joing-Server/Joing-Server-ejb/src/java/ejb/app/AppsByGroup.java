@@ -22,6 +22,7 @@
 
 package ejb.app;
 
+import ejb.app.AppDescriptor;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
