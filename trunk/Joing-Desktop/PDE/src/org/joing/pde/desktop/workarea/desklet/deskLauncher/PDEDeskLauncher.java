@@ -14,23 +14,14 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.Insets;
-import java.awt.LayoutManager;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.FilteredImageSource;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JRootPane;
-import javax.swing.JTextField;
 import javax.swing.MenuElement;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
@@ -38,14 +29,13 @@ import javax.swing.event.MouseInputAdapter;
 import org.joing.api.desktop.workarea.desklet.deskLauncher.Launcher;
 import org.joing.api.desktop.workarea.desklet.deskLauncher.LauncherEvent;
 import org.joing.api.desktop.workarea.desklet.deskLauncher.LauncherEventListener;
-import org.joing.impl.desktop.workarea.DefaultLauncher;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
-import org.joing.pde.desktop.workarea.desklet.PDEDesklet;
 import org.joing.pde.desktop.workarea.desklet.PDEDesklet;
 import org.joing.pde.runtime.ColorSchema;
 import org.joing.pde.runtime.PDERuntime;
 import org.joing.pde.swing.ImageHighlightFilter;
-import org.joing.pde.swing.JRoundLabel;
+import org.joing.pde.swing.JMultiLineEditableLabel;
+import org.joing.pde.swing.JRoundPanel;
 
 /**
  *
@@ -58,8 +48,9 @@ public class PDEDeskLauncher extends PDEDesklet implements Launcher
     private boolean bSelected;
     
     // Swing variables
-    private   JLabel      lblIcon;
-    private   JRoundLabel lblCaption;
+    private JRoundPanel             pnlAll;
+    private IconComponent           icon;
+    private JMultiLineEditableLabel text;
     
     //------------------------------------------------------------------------//
     
@@ -97,7 +88,7 @@ public class PDEDeskLauncher extends PDEDesklet implements Launcher
     public void setName( String sName )
     {
         super.setName( sName );
-        lblCaption.setText( sName );
+        text.setText( sName );
     }
     
     public Image getImage()
@@ -108,7 +99,7 @@ public class PDEDeskLauncher extends PDEDesklet implements Launcher
     public void setImage( Image image )
     {
         this.image = image;
-        lblIcon.setIcon( new ImageIcon( image ) );
+        icon.setIcon( new ImageIcon( image ) );
     }
     
     public boolean isSelected()
@@ -126,14 +117,8 @@ public class PDEDeskLauncher extends PDEDesklet implements Launcher
     {
         if( bNewStatus != isSelected() )
         {
-            lblCaption.setOpaque( bNewStatus );
-            // Not needed to change background (can be visible or not, but it is always the same color)
-            lblCaption.setForeground( bNewStatus ? ColorSchema.getInstance().getDesktopLauncherForegroundSelected() :
-                                                   ColorSchema.getInstance().getDesktopLauncherForegroundUnSelected() );                    
-            lblCaption.repaint();
-            
+            text.setSelected( bNewStatus );
             bSelected = bNewStatus;
-            
             fireSelectedEvent( new LauncherEvent( this, bNewStatus ) );
         }
     }
@@ -195,11 +180,11 @@ public class PDEDeskLauncher extends PDEDesklet implements Launcher
     //------------------------------------------------------------------------//
     
     public Launcher clone()
-    {
-        Launcher clone = new DefaultLauncher();
-                 clone.setName( "Copy of "+ getName() );
-                 clone.setDescription( getDescription() );
-                 clone.setImage( getImage() );
+    { // TODO: hay que revisar todos los clone para poder hacer los cut, copy & paste
+        PDEDeskLauncher clone = new PDEDeskLauncher();
+                        clone.setName( "Copy of "+ getName() );
+                        clone.setDescription( getDescription() );
+                        clone.setImage( getImage() );
                  
         return clone;
     }
@@ -208,11 +193,15 @@ public class PDEDeskLauncher extends PDEDesklet implements Launcher
      * When selection is incremental, 2 events are fire: the 1st one
      * indicating that the Launcher was selected and the 2nd one
      * indicating that it is an incremental selection
-     */ 
+     */
+    // This method is called from this.GlassPaneMouseListner::mousePressed(...)
     protected void setSelected( final boolean bNewStatus, final boolean bIncremental )
     {
         if( bNewStatus != isSelected() )
         {
+            // FIXME: creo que en lugar de buscar el padre e invocar sus métodos,
+            //       sería más elegante (y más acorde con Java) lanzar simplemente
+            //       el evento y que el padre lo escuche y reaccione
             if( PDEDeskLauncher.this.getParent() != null && 
                 PDEDeskLauncher.this.getParent() instanceof PDEWorkArea )
             {
@@ -226,7 +215,7 @@ public class PDEDeskLauncher extends PDEDesklet implements Launcher
 
             setSelected( bNewStatus );
             
-            // When selection is incremental, 2 events are fire: the 1st one
+            // When selection is incremental, 2 events are fired: the 1st one
             // indicating that the Launcher was selected and the 2nd one 
             // indicating that it is an incremental selection
             if( bIncremental )
@@ -236,7 +225,9 @@ public class PDEDeskLauncher extends PDEDesklet implements Launcher
     
     //------------------------------------------------------------------------//
     // ACTIONS
-    
+    // TODO: Creo que estas actions no pertencen al DeskLauncher, 
+    //       sino a la WorkArea: hay que pensar en ello.
+    //       Estas son lanzadas desde el popup y sólo deberían llamar al container (WorkArea)
     public void delete()
     {
         if( PDERuntime.getRuntime().confirmDialog( "Delete launcher", 
@@ -262,17 +253,19 @@ public class PDEDeskLauncher extends PDEDesklet implements Launcher
                         
             // TODO: mandarlo a la papelera e implementar el fire
             // fireLauncherToTrashcan( this );
+            PDERuntime.getRuntime().showMessage( "Option not yet implemented" );
         }
     }
     
     public void rename()
     {
-        PopupToRename p4t = new PopupToRename( lblCaption );
-        Rectangle  rec = lblCaption.getBounds();
+        text.edit( true );
+        /*PopupToRename p4t = new PopupToRename( text );
+        Rectangle     rec = text.getBounds();
         
         p4t.setPreferredSize( new Dimension( rec.width, rec.height ) );
-        p4t.show( lblCaption, rec.x, rec.y-35 );
-        // TODO:  fireLauncherRenamed( this );
+        p4t.show( text, rec.x, rec.y-35 );
+        // TODO:  fireLauncherRenamed( this );*/
     }
     
     public void editProperties()
@@ -281,83 +274,91 @@ public class PDEDeskLauncher extends PDEDesklet implements Launcher
     }
     
     /**
-     * Used to highlight the component.
+     * Used to highlight and de-highlight the component.
      * 
-     * @param me
+     * @param b New status
      */
-    protected void highlight()
+    protected void setHighlighted( boolean b )
     {
-        if( getImage() != null )
-        {
-           ImageHighlightFilter ihf = new ImageHighlightFilter( true, 32 );
-           Image imgHigh = createImage( new FilteredImageSource( getImage().getSource(), ihf ) );
-        
-            lblIcon.setIcon( new ImageIcon( imgHigh ) );
-            lblIcon.repaint();   // Needed
-        }
-    }
-    
-    /**
-     * Used to de-highlight the component.
-     * 
-     * @param me
-     */
-    protected void lowlight()
-    {
-        if( getImage() != null )
-        {
-            lblIcon.setIcon( new ImageIcon( getImage() ) );
-            lblIcon.repaint();  // Needed
-        }
+        pnlAll.setOpaque( b );
+        icon.setHighlighted( b );
+        repaint();
     }
     
     //------------------------------------------------------------------------//
     
     private void initGUI()
     {
-        Dimension sizePreferred = new Dimension( 65, 55 );
-        Dimension sizeMinimum  = new Dimension( 56, 56 );
-        Dimension sizeMaximum  = new Dimension( 85,175 );
-        
+        // Sizes must be initialized prior to components (they used these)
+        setMinimumSize(   new Dimension( 62, 65 ) );
+        setMaximumSize(   new Dimension( 92,182 ) );
+        setPreferredSize( new Dimension( 72, 65 ) );
+
         // Inicializo los componentes
-        lblIcon = new JLabel();
-        lblIcon.setHorizontalAlignment( JLabel.CENTER );
-        lblIcon.setBorder( new EmptyBorder( 0, (sizePreferred.width - 48) / 2,
-                                            0, (sizePreferred.width - 48) / 2  )  );  // Border para centrar el icon
+        icon = new IconComponent();
         
-        lblCaption = new JRoundLabel();
-        lblCaption.setOpaque( false );
-        lblCaption.setHorizontalAlignment( JLabel.CENTER );
-        lblCaption.setVerticalAlignment( JLabel.TOP );
-        lblCaption.setFont( lblCaption.getFont().deriveFont( Font.PLAIN, 11f ) );
-        lblCaption.setBackground( ColorSchema.getInstance().getDesktopLauncherBackground()  );  // Is not opaque
-        lblCaption.setForeground( ColorSchema.getInstance().getDesktopLauncherForegroundUnSelected() );
-        lblCaption.setBorder( new EmptyBorder( 3,4,3,4 ) );
+        text = new JMultiLineEditableLabel();
+        text.setFont( text.getFont().deriveFont( Font.BOLD, 11f ) );
+        int nPixelsWidth = SwingUtilities.computeStringWidth( text.getFontMetrics( text.getFont() ), "ABC" ) / 3;   // This line must be after setFont(...)
+        text.setColumns( PDEDeskLauncher.this.getPreferredSize().width / nPixelsWidth );
         
-        // Los componentes se añanden al root pane
-        setLayout( new BorderLayout( 0, 3 ) );
-        add( lblIcon   , BorderLayout.CENTER );
-        add( lblCaption, BorderLayout.SOUTH  );
+        pnlAll = new JRoundPanel();
+        pnlAll.setOpaque( false );
+        pnlAll.setBackground( ColorSchema.getInstance().getDesktopLauncherBackground() );
+        pnlAll.setTransparency( 85 );
+        pnlAll.setLayout( new BorderLayout( 0,0 ) );
+        pnlAll.setBorder( new EmptyBorder( 3,3,3,3 ) );
+        pnlAll.add( icon, BorderLayout.CENTER );
+        pnlAll.add( text, BorderLayout.SOUTH  );
         
-        // Varios
-        setOpaque( false );
-        setMinimumSize( sizeMinimum  );
-        setMaximumSize( sizeMaximum  );
-        setPreferredSize( sizePreferred  );
-        setBounds( 0, 
+        // Initializes this
+        setComponentPopupMenu( new ThisPopupMenu() );
+        setBounds( 0,
                    0,
                    (int) getPreferredSize().getWidth(), 
                    (int) getPreferredSize().getHeight() );
-        setComponentPopupMenu( new ThisPopupMenu() );
+        add( pnlAll, BorderLayout.CENTER );
         getGlassPane().addMouseListener( new GlassPaneMouseListener() );
     }
 
     //------------------------------------------------------------------------//
     // INNER CLASSES
     //------------------------------------------------------------------------//
-    // TODO: Esto tiene que ir en el Launcher
+    
+    private final class IconComponent extends JLabel
+    {
+        private IconComponent()
+        {
+            setHorizontalAlignment( JLabel.CENTER );
+            setBorder( new EmptyBorder( 0, (getPreferredSize().width - 48) / 2,
+                                        0, (getPreferredSize().width - 48) / 2  )  );  // Border to center the icon
+        }
+
+        private void setHighlighted( boolean b )
+        {
+            Image image = PDEDeskLauncher.this.getImage();
+            
+            if( image != null )
+            {
+                if( b )
+                {
+                    ImageHighlightFilter ihf = new ImageHighlightFilter( true, 32 );
+                    Image imgHigh = createImage( new FilteredImageSource( image.getSource(), ihf ) );
+
+                    setIcon( new ImageIcon( imgHigh ) );
+                }
+                else
+                {
+                    setIcon( new ImageIcon( image ) );
+                }
+            }
+        }
+    }
+    
+    //------------------------------------------------------------------------//
+    // FIXME: Esta clase: ¿tiene que heredar de la misma que tiene el padre (=> hacer la del padre protected)?
     private final class GlassPaneMouseListener extends MouseInputAdapter
-    {            
+    {
         public void mouseClicked( MouseEvent me )
         {
             if( me.getClickCount() == 2 )
@@ -367,13 +368,13 @@ public class PDEDeskLauncher extends PDEDesklet implements Launcher
         // Pone el icono en highlighted
         public void mouseEntered( MouseEvent me )
         {
-            PDEDeskLauncher.this.highlight();
+            PDEDeskLauncher.this.setHighlighted( true );
         }
         
         // Quita el icono de highlighted
         public void mouseExited( MouseEvent me )
         {
-            PDEDeskLauncher.this.lowlight();
+            PDEDeskLauncher.this.setHighlighted( false );
         }
         
         public void mousePressed( MouseEvent me )
@@ -433,42 +434,4 @@ public class PDEDeskLauncher extends PDEDesklet implements Launcher
             else if( sCommand.equals( "PROPERTIES" ) )  PDEDeskLauncher.this.editProperties();
         }
     }
-
-    //------------------------------------------------------------------------//
-    // INNER CLASS: JPopupMenu --> para mostrar un JTextField y renombrar
-    private final class PopupToRename extends JPopupMenu
-    {
-        private JTextField txt;
-        
-        private PopupToRename( JLabel lbl )
-        {
-            txt = new JTextField( lbl.getText() );
-            txt.setMargin( new Insets( 0,0,0,0 ) );
-            txt.setBorder( null );
-            txt.setFont( lbl.getFont() );
-            txt.setHorizontalAlignment( JTextField.CENTER );
-            txt.addKeyListener( new KeyAdapter()
-                {
-                   public void keyPressed( KeyEvent ke )
-                   {
-                       if( ke.getKeyCode() == KeyEvent.VK_ENTER )
-                       {
-                           PDEDeskLauncher.this.setName( txt.getText() );
-                           setVisible( false );
-                       }
-                   }
-                } );
-            
-            add( txt );
-            setBorder( null );
-        }
-        
-        public void show( Component invoker, int x, int y )
-        {
-            super.show( invoker, x, y );
-            
-            txt.grabFocus();
-            txt.selectAll();
-        }
-    }   
 }

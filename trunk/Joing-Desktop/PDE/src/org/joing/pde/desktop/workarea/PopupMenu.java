@@ -91,21 +91,25 @@ class PopupMenu extends JPopupMenu implements ActionListener
     
     private void createFolder()
     {
-        
+        // TODO: hacerlo
+        PDERuntime.getRuntime().showMessage( "Option not yet implemented" );
     }
     
     private void createLauncher()
     {
-        
+        // TODO: hacerlo
+        PDERuntime.getRuntime().showMessage( "Option not yet implemented" );
     }
     
     private void toggleAlign()
     {
-        
+        // TODO: hacerlo
+        PDERuntime.getRuntime().showMessage( "Option not yet implemented" );
     }
     
     private void editProperties()
     {
-        
+        // TODO: hacerlo
+        PDERuntime.getRuntime().showMessage( "Option not yet implemented" );
     }
 }

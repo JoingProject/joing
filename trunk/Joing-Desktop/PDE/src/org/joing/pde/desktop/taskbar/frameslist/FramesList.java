@@ -39,8 +39,8 @@ import org.joing.api.desktop.workarea.WorkArea;
 import org.joing.api.desktop.workarea.WorkAreaListener;
 import org.joing.pde.PDEManager;
 import org.joing.pde.desktop.taskbar.TaskPanel;
-import org.joing.pde.desktop.workarea.container.PDEDialog;
-import org.joing.pde.desktop.workarea.container.PDEFrame;
+import org.joing.pde.desktop.container.PDEDialog;
+import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.runtime.PDERuntime;
 
 /**
@@ -48,7 +48,7 @@ import org.joing.pde.runtime.PDERuntime;
  * 
  * @author Francisco Morero Peyrona
  */
-public class FramesList extends TaskPanel
+public class FramesList extends JPanel
 {
     private Hashtable<Container, FrameButton> vButtons;   // For speed
     
@@ -58,7 +58,7 @@ public class FramesList extends TaskPanel
     private TheIntenalFrameListener tifl;
     
     private GridLayout grid;
-            
+    
     //------------------------------------------------------------------------//
     
     public FramesList()
@@ -72,8 +72,9 @@ public class FramesList extends TaskPanel
         tifl = new TheIntenalFrameListener();
         
         setLayout( grid );
-        setMaximumSize( new Dimension( 600,24 ) );
-        setPreferredSize( getMaximumSize() );
+        setMinimumSize( new Dimension( 80, 20 ) );
+        setMaximumSize( new Dimension( Integer.MAX_VALUE, Integer.MAX_VALUE ) );
+        setPreferredSize( new Dimension( 810,24 ) );
         
         PDERuntime.getRuntime().getDesktopManager().getDesktop().addDesktopListener( tdl );
     }
@@ -82,9 +83,6 @@ public class FramesList extends TaskPanel
     
     public void add( JInternalFrame iframe )
     {
-        if( iframe instanceof PDEDialog )
-            return;   // Dialogs are not shown in Taskbar
-        
         iframe.addInternalFrameListener( tifl );
         
         FrameButton fb = new FrameButton( iframe );
@@ -178,7 +176,6 @@ public class FramesList extends TaskPanel
             {
                 frame.setVisible( false );
                 frame.setVisible( true );
-                // Creo que esto no hace falta --> frm.toFront();
             }
         }
     }
@@ -187,16 +184,24 @@ public class FramesList extends TaskPanel
     {
         WorkArea waActive = PDERuntime.getRuntime().getDesktopManager().getDesktop().getActiveWorkArea();
         
+        removeAll();
+        
         for( FrameButton btn : vButtons.values() )
         {
-            Container c = btn.getFrame();
-            boolean   b = (c instanceof Frame) ? ((Frame) c).isActive()
-                                               : ((JInternalFrame) c).isSelected();
-            btn.setSelected( b );
-            btn.setVisible( c.getParent() == waActive );
+            Container frame = btn.getFrame();
+            
+            if( frame.getParent() == waActive )
+            {
+                boolean b = (frame instanceof Frame) ? ((Frame) frame).isActive()
+                                                     : ((JInternalFrame) frame).isSelected();
+                btn.setSelected( b );
+                add( btn );                
+            }
         }
         
-        validate();
+        grid.setColumns( getComponentCount() );
+        grid.layoutContainer( this );
+        repaint();
     }
     
     //------------------------------------------------------------------------//
@@ -217,7 +222,7 @@ public class FramesList extends TaskPanel
         }
         public void workAreaRemoved( WorkArea wa )
         {
-            // Not needed to remove the listener -> G.C. takes care of it
+            // Not need to remove the listener -> G.C. takes care of it
         }
         public void workAreaSelected( WorkArea waPrevious, WorkArea waCurrent )
         {

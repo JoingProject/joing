@@ -27,8 +27,11 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import org.joing.jvmm.Platform;
 import org.joing.pde.desktop.PDEDesktop;
 import java.awt.BorderLayout;
@@ -46,7 +49,7 @@ import javax.swing.SwingUtilities;
 import org.joing.api.DesktopManager;
 import org.joing.api.desktop.Desktop;
 import org.joing.pde.runtime.PDERuntime;
-import org.joing.pde.desktop.workarea.container.PDEFrame;
+import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.workarea.desklet.deskLauncher.PDEDeskLauncher;
 import org.joing.runtime.bridge2server.Bridge2Server;
 
@@ -195,6 +198,18 @@ public class PDEManager extends JApplet implements DesktopManager
     
     public static void main( String[] args )
     {
+        try
+        {
+            // continuous layout on frame resize
+            Toolkit.getDefaultToolkit().setDynamicLayout(true);
+            // no flickering on resize
+            System.setProperty("sun.awt.noerasebackground", "true"); 
+        } 
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        
         System.setProperty( PDERuntime.PDE_AUTONOMO, "ACTIVADO" );
         
         Bridge2Server b2s    = Bridge2Server.getInstance();
@@ -214,6 +229,7 @@ public class PDEManager extends JApplet implements DesktopManager
     
     //------------------------------------------------------------------------//
     // INNER CLASS: MyGlassPane
+    // Used to lock the screen.
     //------------------------------------------------------------------------//
     
     private final class MyGlassPane 
@@ -257,7 +273,7 @@ public class PDEManager extends JApplet implements DesktopManager
         }
         
         protected void paintComponent( Graphics g )
-        {       
+        {
             if( nTranslucent <= .4f )  // At .4 it is totally opaque
             {
                 Graphics2D g2 = (Graphics2D) g;

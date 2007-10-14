@@ -18,12 +18,14 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 import org.joing.api.desktop.enums.TaskBarOrientation;
 import org.joing.api.desktop.taskbar.TaskBarListener;
-import org.joing.pde.desktop.taskbar.clock.Clock;
+import org.joing.pde.desktop.taskbar.clock.ClockDigital;
 import org.joing.pde.desktop.taskbar.frameslist.FramesList;
 import org.joing.pde.desktop.taskbar.start.StartButton;
+import org.joing.pde.desktop.taskbar.systray.SysTray;
 import org.joing.pde.runtime.ColorSchema;
 import org.joing.api.desktop.taskbar.TaskBar;
 
@@ -54,10 +56,50 @@ public class PDETaskBar extends JPanel implements TaskBar
     
     public void createDefaultComponents()
     {
+        TaskPanel tpFrameList = new TaskPanel();
+                  tpFrameList.add( new FramesList() );
+                
         add( new StartButton() );
-        add( new FramesList() );
+        add( tpFrameList );
+        addSysTray();
+        getSysTray().add( new ClockDigital() );
+    }
+    
+    /**
+     * Returns the SysTray in this Taskbar.
+     * <p>
+     * If there is more than one SysTray (it shoud not but could happen), the
+     * first one is returned.
+     */
+    public SysTray getSysTray()
+    {
+        // TODO: hacer la búsqueda recursiva por si está dentro de otro comp.
+        Component[] aComp = getComponents();
+        
+        for( int n = 0; n < aComp.length; n++ )
+        {
+            if( aComp[n] instanceof SysTray )
+                return (SysTray) aComp[n];
+            /*else
+                return getSysTray( aComp[n] );*/
+        }
+        
+        return null;  
+    }
+    
+    /**
+     * Creates a new instance of SysTray and adds it and the end (trailing) of 
+     * the TaskBar.
+     */
+    public void addSysTray()
+    {
         add( Box.createHorizontalGlue() );
-        add( new Clock() );
+        add( new SysTray() );
+    }
+    
+    public void addSysTray( Point ptWhere )
+    {
+        // TODO: hacerlo
     }
     
     //------------------------------------------------------------------------//

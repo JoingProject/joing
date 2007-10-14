@@ -1,5 +1,5 @@
 /*
- * Clock.java
+ * ClockDigital.java
  *
  * Created on 15 de septiembre de 2007, 21:53
  *
@@ -28,6 +28,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import org.joing.pde.desktop.taskbar.TaskPanel;
@@ -36,33 +37,56 @@ import org.joing.pde.desktop.taskbar.TaskPanel;
  *
  * @author Francisco Morero Peyrona
  */
-public class Clock extends TaskPanel 
+public class ClockDigital extends JPanel
 {
-    private JLabel           lblClock;
-    private SimpleDateFormat sdf;
-    private boolean          bShowDate;
-    private boolean          bShowSecs;
-    private boolean          b24Format;
-    private Timer            timer;
+    private final static float nFONT_SIZE = 10f;
+    
+    private SimpleDateFormat sdfTime;
+    private SimpleDateFormat sdfDate;
+    private JLabel  lblTime;
+    private JLabel  lblDate;
+    private boolean bShowDate;
+    private boolean bShowSecs;
+    private boolean b24Format;
+    private Timer   timer;
     
     //------------------------------------------------------------------------//
     
-    public Clock()
+    public ClockDigital()
     {
-        lblClock = new JLabel();
-        lblClock.setFont( getFont().deriveFont( Font.PLAIN, 11f ) );
-        lblClock.setBorder( new EmptyBorder( 0, 3, 0, 3 ) );
-        lblClock.setInheritsPopupMenu( true );
+        lblTime = new JLabel();
+        lblTime.setHorizontalAlignment( JLabel.CENTER );
+        lblTime.setFont( getFont().deriveFont( Font.PLAIN, nFONT_SIZE ) );
+        lblTime.setInheritsPopupMenu( true );
         
-        changeFormat( false, true, true );
+        lblDate = new JLabel();
+        lblDate.setHorizontalAlignment( JLabel.CENTER );
+        lblDate.setFont( getFont().deriveFont( Font.PLAIN, nFONT_SIZE ) );
+        lblDate.setInheritsPopupMenu( true );
+        
+        setLayout( new BorderLayout() );
+        add( lblTime, BorderLayout.CENTER );
+        add( lblDate, BorderLayout.SOUTH  );
+      
+        setOpaque( false );
+        changeFormat( true, true, true );
         createPopup();
-        add( lblClock );
         
         timer = new Timer( 1000, new ActionListener()
         {
             public void actionPerformed( ActionEvent ae )
             {
-                Clock.this.lblClock.setText( Clock.this.sdf.format( new Date() ) );
+                Date date = new Date();
+                
+                ClockDigital.this.lblTime.setText( ClockDigital.this.sdfTime.format( date ) );
+                
+                if( ClockDigital.this.bShowDate )
+                {
+                    String sDate = ClockDigital.this.sdfDate.format( date );
+                    
+                    if( ! ClockDigital.this.lblDate.getText().equals( sDate ) )
+                        ClockDigital.this.lblDate.setText( sDate );
+                }
             }
         } );
         
@@ -70,14 +94,14 @@ public class Clock extends TaskPanel
         {
             public void ancestorAdded(AncestorEvent event)
             {
-                Clock.this.timer.start();
+                ClockDigital.this.timer.start();
             }
             public void ancestorMoved(AncestorEvent event)
             {
             }
             public void ancestorRemoved(AncestorEvent event)
             {
-                Clock.this.timer.stop();
+                ClockDigital.this.timer.stop();
             }
         } );
     }
@@ -89,14 +113,17 @@ public class Clock extends TaskPanel
         this.bShowDate = bShowDate;
         this.bShowSecs = bShowSecs;
         this.b24Format = b24Format;
-                                                  // TODO: la fecha tiene que estar en formato Local
-        sdf = new SimpleDateFormat( (bShowDate ? "dd/MM/yyyy" : ""   ) +
-                                    (bShowSecs ? "HH:mm:ss" : "HH:mm") +
-                                    (b24Format ? "" : " a" ) );
         
-        validate();
-        setPreferredSize( new Dimension( 80,22 ) );// TODO: lblClock.getPreferredSize() );
+        sdfTime = new SimpleDateFormat( (bShowSecs ? "HH:mm:ss" : "HH:mm") + (b24Format ? "" : " a" ) );
+        sdfDate = new SimpleDateFormat( "dd/MM/yyyy" ); // TODO: la fecha tiene que estar en formato Local
+
+        float nFontSize = (float) (bShowDate ? nFONT_SIZE : nFONT_SIZE * 1.2);
+        
+        lblTime.setFont( getFont().deriveFont( Font.PLAIN, nFontSize ) );
+        lblDate.setVisible( bShowDate );
+        
         setMaximumSize( getPreferredSize() );
+        validate();
     }
     
     private void createPopup()
@@ -112,7 +139,7 @@ public class Clock extends TaskPanel
             public void actionPerformed( ActionEvent ae )
             {
                 boolean bShowDate = ((JCheckBoxMenuItem) ae.getSource()).getState();
-                Clock.this.changeFormat( bShowDate, Clock.this.bShowSecs, Clock.this.b24Format );
+                ClockDigital.this.changeFormat( bShowDate, ClockDigital.this.bShowSecs, ClockDigital.this.b24Format );
             }
         } );
 
@@ -122,7 +149,7 @@ public class Clock extends TaskPanel
             public void actionPerformed( ActionEvent ae )
             {
                 boolean bShowSecs = ((JCheckBoxMenuItem) ae.getSource()).getState();
-                Clock.this.changeFormat( Clock.this.bShowDate, bShowSecs, Clock.this.b24Format );
+                ClockDigital.this.changeFormat( ClockDigital.this.bShowDate, bShowSecs, ClockDigital.this.b24Format );
             }
         } );
         
@@ -132,7 +159,7 @@ public class Clock extends TaskPanel
             public void actionPerformed( ActionEvent ae )
             {
                 boolean b24Format = ((JCheckBoxMenuItem) ae.getSource()).getState();
-                Clock.this.changeFormat( Clock.this.bShowDate, Clock.this.bShowSecs, b24Format );
+                ClockDigital.this.changeFormat( ClockDigital.this.bShowDate, ClockDigital.this.bShowSecs, b24Format );
             }
         } );
         

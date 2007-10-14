@@ -22,17 +22,13 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import org.joing.jvmm.Platform;
-import org.joing.pde.PDEManager;
 import org.joing.pde.runtime.ColorSchema;
 import org.joing.pde.runtime.PDERuntime;
 import org.joing.pde.swing.JScrollablePopupMenu;
 import org.joing.pde.utils.EditUser;
-import org.joing.runtime.bridge2server.Bridge2Server;
 
 /**
  *
@@ -40,21 +36,23 @@ import org.joing.runtime.bridge2server.Bridge2Server;
  */
 class StartMenu extends JScrollablePopupMenu
 {
+    private final static int ICON_SIZE = 22;
+    
     StartMenu()
     {
         setBorderPainted( true );
-        setBorder( new CompoundBorder( new LineBorder( Color.black, 1 ), 
+        setBorder( new CompoundBorder( new LineBorder( Color.black, 1 ),
                                        new EmptyBorder( 3,3,3,3 ) ) );
         addUser();
         addSeparator();
-        addApplications();
+        addApplications();   
         addSeparator();
         addLock();
         addExit();
     }
-
+    
     //------------------------------------------------------------------------//
-
+    
     private void addUser()
     {
         JMenuItem item = new JMenuItem();
@@ -69,8 +67,8 @@ class StartMenu extends JScrollablePopupMenu
         {
             String sIcon = "images/user_"+ (user.isMale() ? "" : "fe") +"male.png";
             
-            item.setIcon( PDERuntime.getRuntime().getIcon( this, sIcon, 22, 22 ) );
-            item.setText(user.getFirstName() +" "+ user.getSecondName() );
+            item.setIcon( PDERuntime.getRuntime().getIcon( this, sIcon, ICON_SIZE+5, ICON_SIZE+5 ) );
+            item.setText( user.getFirstName() +" "+ user.getSecondName() );
 
             item.addActionListener( new ActionListener()
             {
@@ -90,30 +88,30 @@ class StartMenu extends JScrollablePopupMenu
     
     private void addLock()
     {
-        JMenuItem item1 = new JMenuItem( "Lock session" );
-                  item1.setIcon( PDERuntime.getRuntime().getIcon( this, "images/lock.png", 22, 22 ) );
-                  item1.addActionListener( new ActionListener()
+        JMenuItem itmLock = new JMenuItem( "Lock session" );
+                  itmLock.setIcon( PDERuntime.getRuntime().getIcon( this, "images/lock.png", ICON_SIZE, ICON_SIZE ) );
+                  itmLock.addActionListener( new ActionListener()
                   {
                       public void actionPerformed( ActionEvent ae )
                       {
                           PDERuntime.getRuntime().getDesktopManager().lock();
                       }
                   } );
-        add( item1 );
+        add( itmLock );
     }
     
     private void addExit()
     {
-        JMenuItem item = new JMenuItem( "End session" );
-                  item.setIcon( PDERuntime.getRuntime().getIcon( this, "images/exit.png", 22, 22 ) );
-                  item.addActionListener( new ActionListener()
+        JMenuItem itmExit = new JMenuItem( "End session" );
+                  itmExit.setIcon( PDERuntime.getRuntime().getIcon( this, "images/exit.png", ICON_SIZE, ICON_SIZE ) );
+                  itmExit.addActionListener( new ActionListener()
                   {
                       public void actionPerformed( ActionEvent ae )
                       {
                           PDERuntime.getRuntime().getDesktopManager().close();
                       }
                   } );
-        add( item );
+        add( itmExit );
     }
     
     private void addApplications()
@@ -150,9 +148,28 @@ class StartMenu extends JScrollablePopupMenu
                           
                 menu.add( itemApp );
             }
+            
+            // TODO: hacerlo bien: con IDs para las categorías
+            if( menu.getText().equals( "Accesorios" ) )
+                addSystemMonitor( menu );
         }
     }
+    
+    private void addSystemMonitor( JMenu menu )
+    {
+        JMenuItem itmSysMon = new JMenuItem( "System monitor" );
+                  itmSysMon.setIcon( PDERuntime.getRuntime().getIcon( this, "images/system_monitor.png", ICON_SIZE, ICON_SIZE ) );
+                  itmSysMon.addActionListener( new ActionListener()
+                  {
+                      public void actionPerformed( ActionEvent ae )
+                      {
+                          PDERuntime.getRuntime().showSystemMonitor();
+                      }
+                  } );
         
+        menu.add( itmSysMon );
+    }
+    
     private ImageIcon createItemIcon( byte[] abImage )
     {
         ImageIcon icon = null;
@@ -161,8 +178,8 @@ class StartMenu extends JScrollablePopupMenu
         {
             icon = new ImageIcon( abImage );
             
-            if( icon.getIconWidth() != 22 || icon.getIconHeight() != 22 )
-                icon.setImage( icon.getImage().getScaledInstance( 22, 22, Image.SCALE_SMOOTH ) );
+            if( icon.getIconWidth() != ICON_SIZE || icon.getIconHeight() != ICON_SIZE )
+                icon.setImage( icon.getImage().getScaledInstance( ICON_SIZE, ICON_SIZE, Image.SCALE_SMOOTH ) );
         }
         
         return icon;

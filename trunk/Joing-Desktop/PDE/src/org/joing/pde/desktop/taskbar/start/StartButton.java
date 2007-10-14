@@ -10,7 +10,9 @@
 
 package org.joing.pde.desktop.taskbar.start;
 
+import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.FilteredImageSource;
@@ -42,7 +44,34 @@ public final class StartButton extends JLabel
         initGUI();        
     }
     
+    // Redefined from JComponent
+    public Point getPopupLocation()
+    {
+        Dimension size = popup.getPreferredSize();
+        int       x    = 0;
+        int       y    = -size.height;
+        
+        // TODO: hay q mirar dónde mostarlo (la barra puede estar: arriba, abajo, izq o dcha)
+        
+        return new Point( x, y );
+    }
+    
     //------------------------------------------------------------------------//
+    
+    private void togglePopup()
+    {
+        ///System.out.println(popup.isVisible()+" -> "+popup.isShowing());
+        if( popup.isVisible() )
+        {
+            popup.setVisible( false );
+            MenuSelectionManager.defaultManager().clearSelectedPath();
+        }
+        else
+        {
+            Point position = getPopupLocation();
+            popup.show( StartButton.this, position.x, position.y );
+        }
+    }
     
     private void initGUI()
     {
@@ -55,19 +84,7 @@ public final class StartButton extends JLabel
         {
             public void mousePressed( MouseEvent me )
             {
-                ///System.out.println(popup.isVisible()+" -> "+popup.isShowing());
-                if( popup.isVisible() )
-                {
-                    popup.setVisible( false );
-                    MenuSelectionManager.defaultManager().clearSelectedPath();
-                }
-                else
-                {
-                    int nHeight = popup.getPreferredSize().height;
-                    // TODO: hay q mirar dónde mostarlo (la barra puede estar: arriba, abajo, izq o dcha)
-                    popup.show( StartButton.this, 0, -nHeight );
-                    ///popup.setVisible( true );
-                }
+                StartButton.this.togglePopup();
             }
     
             public void mouseEntered( MouseEvent me )
