@@ -6,23 +6,17 @@
 
 package servlets.session;
 
-import ejb.JoingServerException;
-import ejb.session.LoginResult;
 import ejb.session.SessionManagerLocal;
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.joing.common.dto.session.LoginResult;
+import org.joing.common.exception.JoingServerException;
 import servlets.JoingServerServletException;
 
 /**

@@ -6,15 +6,16 @@
 
 package servlets.user;
 
-import ejb.JoingServerException;
-import ejb.user.Local;
 import ejb.user.UserManagerLocal;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import org.joing.common.dto.user.Local;
+import org.joing.common.exception.JoingServerException;
 import servlets.JoingServerServletException;
 
 /**
@@ -49,8 +50,14 @@ public class GetAvailableLocales extends HttpServlet
             // Process request
             List<Local> locals = userManagerBean.getAvailableLocales( sSessionId );
             
+            // Convert into interface type
+            List<org.joing.common.dto.user.Local> listToSend = new ArrayList<org.joing.common.dto.user.Local>();
+            
+            for( Local l : locals )
+                listToSend.add( (org.joing.common.dto.user.Local) l );
+            
             // Write to Client (desktop)
-            writer.writeObject( locals );
+            writer.writeObject( listToSend );
             writer.flush();
         }
         catch( JoingServerException exc )

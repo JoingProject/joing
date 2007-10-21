@@ -6,12 +6,10 @@
 
 package servlets.app;
 
-import ejb.JoingServerException;
-import ejb.app.AppDescriptor;
+import org.joing.common.dto.app.AppDescriptor;
 import ejb.app.ApplicationManagerLocal;
-import ejb.vfs.JoingServerVFSException;
+import org.joing.common.exception.JoingServerException;
 import java.io.*;
-import java.net.*;
 import javax.ejb.EJB;
 
 import javax.servlet.*;

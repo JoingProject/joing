@@ -6,17 +6,18 @@
 
 package servlets.vfs;
 
-import ejb.JoingServerException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import org.joing.common.dto.vfs.FileDescriptor;
 import servlets.JoingServerServletException;
-import ejb.vfs.JoingServerVFSException;
 import ejb.vfs.ListManagerLocal;
-import java.io.*;
-import java.net.*;
 import java.util.List;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import org.joing.common.exception.JoingServerException;
 
 /**
  *
@@ -43,8 +44,8 @@ public class GetTrashcan extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String             sSessionId = (String) reader.readObject();
-            List<ejb.vfs.FileDescriptor> files      = null;
+            String               sSessionId = (String) reader.readObject();
+            List<FileDescriptor> files      = null;
             
             // Process request
             files = fileManagerBean.getTrashCan( sSessionId );

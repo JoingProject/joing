@@ -6,16 +6,15 @@
 
 package servlets.vfs;
 
-import ejb.JoingServerException;
 import servlets.JoingServerServletException;
 import ejb.vfs.FileManagerLocal;
-import ejb.vfs.JoingServerVFSException;
 import java.io.*;
-import java.net.*;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.exception.JoingServerException;
 
 /**
  *
@@ -42,8 +41,8 @@ public class UpdateFile extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String       sSessionId = (String)       reader.readObject();
-            ejb.vfs.FileDescriptor file       = (ejb.vfs.FileDescriptor) reader.readObject();
+            String         sSessionId = (String)         reader.readObject();
+            FileDescriptor file       = (FileDescriptor) reader.readObject();
             
             // Process request
             file = fileManagerBean.updateFile( sSessionId, file );

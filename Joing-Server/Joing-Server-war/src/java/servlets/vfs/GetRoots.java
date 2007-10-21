@@ -9,15 +9,17 @@
 
 package servlets.vfs;
 
-import ejb.JoingServerException;
 import ejb.vfs.ListManagerLocal;
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.exception.JoingServerException;
 import servlets.JoingServerServletException;
 
 /**
@@ -46,7 +48,7 @@ public class GetRoots extends HttpServlet
         {
             // Read from client (desktop)
             String sSessionId = (String) reader.readObject();
-            List<ejb.vfs.FileDescriptor> roots = null;
+            List<FileDescriptor> roots = null;
             
             // Process request
             roots = listManagerBean.getRoots( sSessionId );

@@ -115,7 +115,12 @@
         <servlet-name>GetRoots</servlet-name>
         <servlet-class>servlets.vfs.GetRoots</servlet-class>
     </servlet>
-    <servlet-mapping>
+    <servlet><servlet-name>GetDesktops</servlet-name><servlet-class>servlets.app.GetDesktops</servlet-class></servlet>
+    <servlet>
+        <servlet-name>GetAvailableDesktops</servlet-name>
+        <servlet-class>servlets.app.GetAvailableDesktops</servlet-class>
+    </servlet>
+    <servlet><servlet-name>GetDesktop</servlet-name><servlet-class>servlets.app.GetDesktop</servlet-class></servlet><servlet-mapping>
         <servlet-name>Login</servlet-name>
         <url-pattern>/servlets/session/Login</url-pattern>
     </servlet-mapping>
@@ -227,6 +232,18 @@
     <servlet-mapping>
         <servlet-name>GetRoots</servlet-name>
         <url-pattern>/servlets/vfs/GetRoots</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetDesktops</servlet-name>
+        <url-pattern>/GetDesktops</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetAvailableDesktops</servlet-name>
+        <url-pattern>/GetAvailableDesktops</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetDesktop</servlet-name>
+        <url-pattern>/GetDesktop</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

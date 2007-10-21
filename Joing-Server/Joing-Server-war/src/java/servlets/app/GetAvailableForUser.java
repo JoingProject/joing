@@ -6,9 +6,7 @@
 
 package servlets.app;
 
-import ejb.JoingServerException;
 import ejb.app.ApplicationManagerLocal;
-import ejb.app.AppsByGroup;
 import java.io.*;
 import java.net.*;
 import java.util.List;
@@ -16,6 +14,8 @@ import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import org.joing.common.dto.app.AppsByGroup;
+import org.joing.common.exception.JoingServerException;
 import servlets.JoingServerServletException;
 
 /**

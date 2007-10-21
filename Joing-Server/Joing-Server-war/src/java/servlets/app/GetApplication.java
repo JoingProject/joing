@@ -21,16 +21,15 @@
  */
 package servlets.app;
 
-import ejb.JoingServerException;
-import ejb.app.Application;
 import ejb.app.ApplicationManagerLocal;
 import java.io.*;
 import java.net.*;
 import java.rmi.RemoteException;
 import javax.ejb.EJB;
-
 import javax.servlet.*;
 import javax.servlet.http.*;
+import org.joing.common.dto.app.Application;
+import org.joing.common.exception.JoingServerException;
 import servlets.JoingServerServletException;
 
 /**
@@ -64,7 +63,7 @@ public class GetApplication extends HttpServlet
             Application app = applicationManagerBean.getApplication( sSessionId, nAppId );
             
             // Write to Client (desktop)
-            writer.writeObject( app );
+            writer.writeObject( (org.joing.common.dto.app.Application) app );
             writer.flush();
         }
         catch( JoingServerException exc )
