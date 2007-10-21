@@ -22,10 +22,10 @@
 
 package org.joing.runtime.bridge2server;
 
-import ejb.app.AppDescriptor;
-import ejb.app.Application;
-import ejb.app.AppsByGroup;
 import java.util.List;
+import org.joing.common.dto.app.AppDescriptor;
+import org.joing.common.dto.app.Application;
+import org.joing.common.dto.app.AppsByGroup;
 
 /**
  *
@@ -35,6 +35,9 @@ import java.util.List;
 public class AppBridgeSocketImpl
        extends BridgeSocketBaseImpl
        implements AppBridge
+        
+// NEXT: Implementar esta clase
+        
 {    
     /** 
      * Creates a new instance of AppBridgeDirectImpl 
@@ -61,12 +64,12 @@ public class AppBridgeSocketImpl
         return null;
     }
 
-    public boolean install( AppDescriptor app    )
+    public boolean install( AppDescriptor app )
     {
         return false;
     }
 
-    public boolean uninstall( AppDescriptor app    )
+    public boolean uninstall( AppDescriptor app )
     {
         return false;
     }

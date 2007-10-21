@@ -22,13 +22,13 @@
 
 package org.joing.runtime.bridge2server;
 
-import ejb.JoingServerException;
-import ejb.app.Application;
-import ejb.app.AppDescriptor;
-import ejb.app.AppsByGroup;
 import java.io.IOException;
 import java.util.List;
 import java.util.ResourceBundle;
+import org.joing.common.dto.app.AppDescriptor;
+import org.joing.common.dto.app.Application;
+import org.joing.common.dto.app.AppsByGroup;
+import org.joing.common.exception.JoingServerException;
 
 /**
  *

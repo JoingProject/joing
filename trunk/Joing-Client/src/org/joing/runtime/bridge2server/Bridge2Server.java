@@ -32,7 +32,7 @@ import org.joing.jvmm.Platform;
 public class Bridge2Server
 {
     private static final int VIA_SERVLETS = 1;
-    private static final int VIA_SOCKETS   = 2;
+    private static final int VIA_SOCKETS  = 2;
     
     private static Bridge2Server instance   = null;
     
@@ -65,7 +65,7 @@ public class Bridge2Server
             case VIA_SERVLETS:
                 sb = new SessionBridgeServletImpl();
                 break;
-            
+                
             case VIA_SOCKETS:
                 sb = new SessionBridgeSocketImpl();
                 break;
@@ -83,9 +83,9 @@ public class Bridge2Server
             case VIA_SERVLETS:
                 ub = new UserBridgeServletImpl();
                 break;
-            
-            case VIA_SOCKETS:
-                ub = new UserBridgeSocketImpl();    
+                
+           case VIA_SOCKETS:
+                ub = new UserBridgeSocketImpl();
                 break;
         }
         
@@ -101,7 +101,7 @@ public class Bridge2Server
                 case VIA_SERVLETS:
                     app = new AppBridgeServletImpl();
                     break;
-
+                    
                 case VIA_SOCKETS:
                     app = new AppBridgeSocketImpl();
                     break;
@@ -120,7 +120,7 @@ public class Bridge2Server
                 case VIA_SERVLETS:
                     vfs = new VFSBridgeServletImpl();
                     break;
-
+                    
                 case VIA_SOCKETS:
                     vfs = new VFSBridgeSocketImpl();
                     break;
@@ -153,7 +153,7 @@ public class Bridge2Server
 //        }
         
         /* NEXT: Aquí se pone el código para decidir si va a utilizar la 
-                 implementación directa (sockets) o la de Servlets */
+                 implementación directa (sockets) o la de Servlets o cualquier otra */
         nVia = VIA_SERVLETS;
     }
 }

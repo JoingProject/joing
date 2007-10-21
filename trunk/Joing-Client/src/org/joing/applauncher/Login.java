@@ -6,12 +6,12 @@
 
 package org.joing.applauncher;
 
-import ejb.JoingServerException;
-import ejb.session.LoginResult;
 import java.awt.Cursor;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import org.joing.common.dto.session.LoginResult;
+import org.joing.common.exception.JoingServerException;
 import org.joing.jvmm.Platform;
 import org.joing.runtime.bridge2server.Bridge2Server;
 

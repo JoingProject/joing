@@ -9,10 +9,10 @@
 
 package org.joing.runtime.bridge2server;
 
-import ejb.app.AppDescriptor;
-import ejb.app.Application;
-import ejb.app.AppsByGroup;
 import java.util.List;
+import org.joing.common.dto.app.AppDescriptor;
+import org.joing.common.dto.app.Application;
+import org.joing.common.dto.app.AppsByGroup;
 
 /**
  *

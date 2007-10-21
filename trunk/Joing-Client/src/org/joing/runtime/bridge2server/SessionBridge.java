@@ -9,7 +9,7 @@
 
 package org.joing.runtime.bridge2server;
 
-import ejb.session.LoginResult;
+import org.joing.common.dto.session.LoginResult;
 
 /**
  *
