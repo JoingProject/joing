@@ -9,7 +9,6 @@
 
 package org.joing.jvmm;
 
-import ejb.app.Application;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,6 +34,7 @@ import javax.swing.SwingUtilities;
 import org.joing.Main;
 import org.joing.api.DesktopManager;
 import org.joing.applauncher.Monitor;
+import org.joing.common.dto.app.Application;
 import org.joing.runtime.bridge2server.AppBridge;
 import org.joing.runtime.bridge2server.Bridge2Server;
 

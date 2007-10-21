@@ -24,6 +24,8 @@ package org.joing.runtime.bridge2server;
 
 import org.joing.jvmm.Platform;
 
+// NEXT: Implementar esta clase
+
 /**
  *
  *

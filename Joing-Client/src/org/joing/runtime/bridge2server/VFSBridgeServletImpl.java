@@ -22,11 +22,11 @@
 
 package org.joing.runtime.bridge2server;
 
-import ejb.JoingServerException;
-import ejb.vfs.FileBinary;
-import ejb.vfs.FileDescriptor;
-import ejb.vfs.FileText;
 import java.util.List;
+import org.joing.common.dto.vfs.FileBinary;
+import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.dto.vfs.FileText;
+import org.joing.common.exception.JoingServerException;
 import org.joing.jvmm.Platform;
 
 /**

@@ -9,9 +9,9 @@
 
 package org.joing.runtime.bridge2server;
 
-import ejb.user.Local;
-import ejb.user.User;
 import java.util.List;
+import org.joing.common.dto.user.Local;
+import org.joing.common.dto.user.User;
 
 /**
  *

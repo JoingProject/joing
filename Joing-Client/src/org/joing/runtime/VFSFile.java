@@ -21,16 +21,16 @@
  */
 package org.joing.runtime;
 
-import ejb.user.User;
 import java.io.File;
-import ejb.vfs.FileDescriptor;
-import ejb.vfs.JoingServerVFSException;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.joing.common.dto.user.User;
+import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.exception.JoingServerVFSException;
 import org.joing.jvmm.Platform;
 import org.joing.runtime.bridge2server.Bridge2Server;
 

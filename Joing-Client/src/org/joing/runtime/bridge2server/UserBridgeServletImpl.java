@@ -22,10 +22,10 @@
 
 package org.joing.runtime.bridge2server;
 
-import ejb.JoingServerException;
-import ejb.user.Local;
-import ejb.user.User;
 import java.util.List;
+import org.joing.common.dto.user.Local;
+import org.joing.common.dto.user.User;
+import org.joing.common.exception.JoingServerException;
 
 /**
  *

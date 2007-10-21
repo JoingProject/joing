@@ -22,8 +22,9 @@
 
 package org.joing.runtime.bridge2server;
 
-import ejb.session.LoginResult;
-import ejb.session.SessionManagerBean;
+import org.joing.common.dto.session.LoginResult;
+
+// NEXT: Implementar esta clase
 
 /**
  * Access directrly to EJBs.
@@ -36,9 +37,7 @@ import ejb.session.SessionManagerBean;
 public class SessionBridgeSocketImpl 
        extends BridgeSocketBaseImpl
        implements SessionBridge
-{
-    private SessionManagerBean smb = null;
-    
+{    
     /**
      * Creates a new instance of SessionBridgeDirectImpl
      * 
@@ -51,15 +50,10 @@ public class SessionBridgeSocketImpl
     
     public LoginResult login( String sAccount, String sPassword )
     {
-        LoginResult result = smb.login( sAccount, sPassword );
-        
-        platform.getBridge().setSessionId( result.getSessionId() );
-        
-        return result;
+        return null;
     }
     
     public void logout()
     {
-        this.smb.logout( platform.getBridge().getSessionId() );
     }
 }

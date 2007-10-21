@@ -22,8 +22,8 @@
 
 package org.joing.runtime.bridge2server;
 
-import ejb.JoingServerException;
-import ejb.session.LoginResult;
+import org.joing.common.dto.session.LoginResult;
+import org.joing.common.exception.JoingServerException;
 
 /**
  * Access the Server (EJBs) by using WebServices.

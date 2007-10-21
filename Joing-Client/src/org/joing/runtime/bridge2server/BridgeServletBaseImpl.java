@@ -22,7 +22,6 @@
 
 package org.joing.runtime.bridge2server;
 
-import ejb.JoingServerException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -30,6 +29,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.rmi.RemoteException;
+import org.joing.common.exception.JoingServerException;
 import org.joing.jvmm.Platform;
 
 /**
