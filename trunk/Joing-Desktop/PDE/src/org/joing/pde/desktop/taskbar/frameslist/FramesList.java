@@ -74,7 +74,7 @@ public class FramesList extends JPanel
         setLayout( grid );
         setMinimumSize( new Dimension( 80, 20 ) );
         setMaximumSize( new Dimension( Integer.MAX_VALUE, Integer.MAX_VALUE ) );
-        setPreferredSize( new Dimension( 810,24 ) );
+        setPreferredSize( new Dimension( 810,24 ) );   // TODO: esto no puede estar a pelo
         
         PDERuntime.getRuntime().getDesktopManager().getDesktop().addDesktopListener( tdl );
     }

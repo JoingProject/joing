@@ -12,6 +12,7 @@ import java.awt.Cursor;
 import java.awt.Image;
 import java.net.URL;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -19,6 +20,7 @@ import org.joing.api.desktop.Desktop;
 import org.joing.applauncher.gui.SystemMonitor;
 import org.joing.jvmm.Platform;
 import org.joing.pde.PDEManager;
+import org.joing.pde.desktop.PDEDesktop;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.runtime.bridge2server.Bridge2Server;
@@ -182,9 +184,9 @@ public final class PDERuntime implements org.joing.api.Runtime
      */
     public Cursor getCursor()
     {
-        ///throw new IllegalAccessException( "Aún no implementado" );
-        ///return Client.getClient().getDesktop().getCursor();
-        return null;
+        PDEDesktop desktop = (PDEDesktop) getDesktopManager().getDesktop();
+        
+        return desktop.getCursor();
     }
     
     /**
@@ -192,8 +194,8 @@ public final class PDERuntime implements org.joing.api.Runtime
      */
     public void setCursor( int nCursorType )
     {
-        ///throw new IllegalAccessException( "Aún no implementado" );
-        ///Client.getClient().getDesktop().setCursor( new Cursor( nCursorType ) );
+        PDEDesktop desktop = (PDEDesktop) getDesktopManager().getDesktop();
+                   desktop.setCursor( new Cursor( nCursorType ) );
     }
     
     /**
@@ -264,13 +266,8 @@ public final class PDERuntime implements org.joing.api.Runtime
     }
     
     public void showSystemMonitor()
-    {
-        JPanel pnlMonitor = null;
-                
-        if( System.getProperty( PDE_AUTONOMO ) != null )
-            pnlMonitor = new SystemMonitor();
-        //else
-        // TODO: pedirle a Antonio que me hage esto --> Platform.getInstance().getMonitor();
+    {// TODO: Hacer que SystemMonitor sea una app independiente (como otra cualquiera)
+        JPanel pnlMonitor = new SystemMonitor();
         
         PDEFrame frame = new PDEFrame( "System Monitor" );
                  frame.getContentPane().add( pnlMonitor );
