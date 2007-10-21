@@ -36,9 +36,11 @@ CREATE TABLE APPLICATIONS(
    PRIMARY KEY (ID_APPLICATION),
    ID_APPLICATION INT GENERATED ALWAYS AS IDENTITY,
    APPLICATION    VARCHAR(64)    NOT NULL    ,  -- Application name (NAME is a reserved SQL word)
+   APP_DOMAIN     INT            NOT NULL    ,  -- Refer to Common.AppDomain.java
+   MIN_DOMAIN_VER VARCHAR(16)    NOT NULL    ,  -- Minimum Domain Version to run the application
    VERSION        VARCHAR(16)    NOT NULL    ,  -- Version
    EXTRA_PATH     VARCHAR(255)               ,  -- From applications dir (defined in Constant.sAPP_DIR)
-   EXECUTABLE     VARCHAR(255)   NOT NULL    ,  -- Normally a .jar or a .class
+   EXECUTABLE     VARCHAR(255)   NOT NULL    ,  -- Normally a .jar or a .class, but could be a native or a C# file
    ARGUMENTS      VARCHAR(255)               ,  -- Arguments to be passed
    ICON_PNG       VARCHAR(4096)  FOR BIT DATA,  -- A PNG (24x24) image up to 4Kb
    ICON_SVG       VARCHAR(16384) FOR BIT DATA,  -- A SVGZ (compresed) image up to 16Kb
@@ -59,6 +61,7 @@ CREATE TABLE APP_DESCRIPTIONS(    -- Application descriptions in different langu
 CREATE TABLE APP_GROUPS(          -- Application groups (categories)
    PRIMARY KEY (ID_APP_GROUP),
    ID_APP_GROUP INT GENERATED ALWAYS AS IDENTITY,
+   APP_GROUP_ID INT            NOT NULL    ,   -- Refer to Common.AppGroup.java
    ICON_PNG     VARCHAR(4096)  FOR BIT DATA,   -- A PNG (24x24) image up to 16Kb
    ICON_SVG     VARCHAR(16384) FOR BIT DATA ); -- A SVGZ (compresed) image up to 32Kb
 

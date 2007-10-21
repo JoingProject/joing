@@ -1,9 +1,10 @@
 
 package ejb.user;
 
-import ejb.user.User;
 import java.util.Locale;
 import javax.ejb.Local;
+import org.joing.common.dto.user.User;
+import org.joing.common.exception.JoingServerUserException;
 
 /**
  * This is the business interface for UserManager enterprise bean.

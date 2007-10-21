@@ -9,8 +9,9 @@
 
 package ejb.session;
 
-import ejb.user.*;
 import javax.ejb.Remote;
+import org.joing.common.dto.session.LoginResult;
+import org.joing.common.exception.JoingServerSessionException;
 
 /**
  * This is the business interface for <code>SessionManager</code> enterprise

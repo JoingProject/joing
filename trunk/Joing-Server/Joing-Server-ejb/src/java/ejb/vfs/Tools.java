@@ -22,7 +22,8 @@
 package ejb.vfs;
 
 import ejb.Constant;
-import ejb.JoingServerException;
+import org.joing.common.exception.JoingServerException;
+import org.joing.common.exception.JoingServerVFSException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
