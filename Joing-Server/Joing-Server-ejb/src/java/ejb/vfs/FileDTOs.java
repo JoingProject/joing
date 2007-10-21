@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
+import org.joing.common.dto.vfs.FileBinary;
+import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.dto.vfs.FileText;
 
 /**
  *

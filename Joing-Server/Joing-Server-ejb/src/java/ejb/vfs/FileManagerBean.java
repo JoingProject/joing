@@ -23,17 +23,12 @@
 package ejb.vfs;
 
 import ejb.Constant;
-import ejb.JoingServerException;
-import ejb.session.JoingServerSessionException;
 import ejb.session.SessionManagerLocal;
-import ejb.user.User;
 import ejb.user.UserManagerLocal;
 import java.io.InputStream;
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -45,6 +40,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import org.joing.common.dto.user.User;
+import org.joing.common.dto.vfs.FileBinary;
+import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.dto.vfs.FileText;
+import org.joing.common.exception.JoingServerException;
+import org.joing.common.exception.JoingServerSessionException;
+import org.joing.common.exception.JoingServerVFSException;
 
 /**
  * Functionality related to Virtual File System (VFS) files' manipulation.

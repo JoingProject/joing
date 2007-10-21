@@ -23,9 +23,11 @@
 package ejb.user;
 
 import ejb.Constant;
-import ejb.user.Local;
-import ejb.user.User;
-import ejb.JoingServerException;
+import org.joing.common.dto.user.Local;
+import org.joing.common.dto.user.User;
+import org.joing.common.exception.JoingServerException;
+import org.joing.common.exception.JoingServerUserException;
+import org.joing.common.exception.JoingServerSessionException;
 import ejb.session.*;
 import ejb.vfs.FileManagerLocal;
 import ejb.vfs.FileSystemTools;
@@ -55,8 +57,9 @@ public class UserManagerBean
 {
     private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
     
-    static final int nMIN_LEN =  6;   // For account and password
-    static final int nMAX_LEN = 32;   // For account and password
+    // These vars are also in JoingServerUserException: changes must be done in both sides
+    private static final int nMIN_LEN =  6;   // For account and password
+    private static final int nMAX_LEN = 32;   // For account and password
     
     @PersistenceContext
     private EntityManager em;
@@ -265,22 +268,6 @@ public class UserManagerBean
             if( em.getTransaction().isActive() )
                 em.getTransaction().rollback();
         }
-    }
-    
-    static String getAccountRestrictions()
-    {
-        return "Invalid account (user name). It has to follow these rules:"+ 
-               "\n   * Minimum length = "+ nMIN_LEN +
-               "\n   * Maximum length = "+ nMAX_LEN +
-               "\n   * Numbers and lowercase letters"+
-               "\n   * Following characters: '.' '-' '_'";
-    }
-    
-    static String getPasswordRestrictions()
-    {
-        return "Invalid password length, minimum = "+ 
-               nMIN_LEN +" and maximum = "+ nMAX_LEN + 
-               "characters.";
     }
     
     //------------------------------------------------------------------------//

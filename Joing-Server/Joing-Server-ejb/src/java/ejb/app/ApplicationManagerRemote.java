@@ -1,11 +1,13 @@
 
 package ejb.app;
 
-import ejb.app.AppDescriptor;
-import ejb.app.Application;
+import org.joing.common.dto.app.AppDescriptor;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.Remote;
+import org.joing.common.dto.app.Application;
+import org.joing.common.dto.app.AppsByGroup;
+import org.joing.common.exception.JoingServerAppException;
 
 /**
  * This is the business interface for <code>ApplicationManager</code> enterprise
@@ -13,7 +15,7 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface ApplicationManagerRemote
-{
+{    
     /**
      * Retrieve a <code>List</code> with instances of <code>Application</code> 
      * class (the DTO for <code>ApplicationEntity</code>) containing, all

@@ -10,9 +10,10 @@
 package ejb.app;
 
 import ejb.Constant;
-import ejb.app.AppDescriptor;
-import ejb.app.Application;
-import ejb.JoingServerException;
+import org.joing.common.dto.app.AppDescriptor;
+import org.joing.common.dto.app.Application;
+import org.joing.common.dto.app.AppsByGroup;
+import org.joing.common.exception.JoingServerAppException;
 import ejb.session.SessionManagerLocal;
 import ejb.user.UserEntity;
 import java.io.Serializable;
@@ -30,6 +31,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.sql.DataSource;
+import org.joing.common.exception.JoingServerException;
 
 /**
  * This class implements operations related with the applications that can be
@@ -59,6 +61,20 @@ public class ApplicationManagerBean
     private SessionManagerLocal sessionManagerBean;
     
     //------------------------------------------------------------------------//
+    
+    /*public List<AppDescriptor> getAvailableDesktops( String sSessionId )
+    {
+        AppDescriptor ad = new AppDescriptor();
+                      ad.setId( 1 );
+                      ad.setName( "PDE" );
+                      ad.setDescription( "Peyrona Desktop Environment - A light and simple desktop for Join'g" );
+                      ad.setVersion( "0.1" );
+                
+        ArrayList<AppDescriptor> list = new ArrayList<AppDescriptor>();
+                                 list.add( ad );
+        return list;
+    }
+    //------------------------------------------------------------------------*/
     
     public List<AppsByGroup> getAvailableForUser( String sSessionId )
            throws JoingServerAppException
@@ -184,20 +200,21 @@ public class ApplicationManagerBean
         
         if( sAccount != null )
         {
-            Connection conn  = null; 
-            Statement  stmt  = null;
-            ResultSet  rs    = null;
+            Connection conn = null; 
+            Statement  stmt = null;
+            ResultSet  rs   = null;
             
             try
             {
                 UserEntity _user  = em.find( UserEntity.class, sAccount );
                 String     sGroup = "";
                 
-                conn  = joing_db.getConnection(); 
-                stmt  = conn.createStatement( ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
-                rs    = stmt.executeQuery( getQuery( sAccount, 
-                                                     _user.getIdLocale().getIdLocale(),
-                                                     nWhich ) );
+                conn = joing_db.getConnection(); 
+                stmt = conn.createStatement( ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
+                rs   = stmt.executeQuery( getQuery( sAccount, 
+                                                    _user.getIdLocale().getIdLocale(),
+                                                    nWhich ) );
+                
                 while( rs.next() )
                 {
                     if( ! sGroup.equals( rs.getString( "GROUP_DESC" ) ) )
@@ -225,8 +242,6 @@ public class ApplicationManagerBean
                 Constant.getLogger().throwing( getClass().getName(), "getApplications(...)", exc );
                 throw new JoingServerAppException( JoingServerException.ACCESS_DB, exc );
             }
-
-
             finally
             {
                 try{ if(rs   != null) rs.close();   }catch( SQLException x ){ /* */ }
@@ -239,7 +254,7 @@ public class ApplicationManagerBean
     }
     
     private String getQuery( String sAccount, int nLocaleId, int nWhich )
-    {
+    { // NEXT: Añadir el "AllowRemoteExecution" ver tabla "USERS_WITH_APPS"
         StringBuilder sbQuery = new StringBuilder( 1024 ).append(
             "SELECT APP_GROUP_DESCRIPTIONS.DESCRIPTION GROUP_DESC,"                ).append(
             "       APPLICATIONS.ID_APPLICATION,"                                  ).append(
@@ -271,7 +286,7 @@ public class ApplicationManagerBean
     }
     
     // To install and uninstall apps
-    private boolean install(    String sSessionId, AppDescriptor app, boolean bInstall    )
+    private boolean install( String sSessionId, AppDescriptor app, boolean bInstall )
             throws JoingServerAppException
     {
         boolean bSuccess = false;
@@ -285,7 +300,7 @@ public class ApplicationManagerBean
             try
             {
                 Query query = em.createQuery( "SELECT a FROM Users_with_Apps a"+
-                                                   " WHERE a.name = :name AND a.version = :version" );
+                                              " WHERE a.name = :name AND a.version = :version" );
                       query.setParameter( "name"   , app.getName()    );
                       query.setParameter( "version", app.getVersion() );
                       
@@ -347,25 +362,4 @@ public class ApplicationManagerBean
         return bHasAccess;*/
         return true;
     }
-    
-//SELECT
-//       APP_GROUP_DESCRIPTIONS.DESCRIPTION GROUP_DESC, APPLICATIONS.ID_APPLICATION, 
-//       APP_DESCRIPTIONS.DESCRIPTION APP_DESC
-//  FROM
-//       USERS_WITH_APPS, APPLICATIONS, APP_DESCRIPTIONS, APPS_WITH_GROUPS, 
-//       APP_GROUPS, APP_GROUP_DESCRIPTIONS, LOCALES
-//
-// WHERE
-//       LOCALES.ID_LOCALE = 2
-//   AND USERS_WITH_APPS.ACCOUNT = 'peyrona'
-//   AND USERS_WITH_APPS.IS_INSTALLED = 1
-//   AND APPLICATIONS.ID_APPLICATION = USERS_WITH_APPS.ID_APPLICATION
-//   AND APP_DESCRIPTIONS.ID_APPLICATION = APPLICATIONS.ID_APPLICATION
-//   AND APP_DESCRIPTIONS.ID_LOCALE = LOCALES.ID_LOCALE
-//   AND APPS_WITH_GROUPS.ID_APPLICATION = APPLICATIONS.ID_APPLICATION
-//   AND APP_GROUPS.ID_APP_GROUP = APPS_WITH_GROUPS.ID_APP_GROUP
-//   AND APP_GROUP_DESCRIPTIONS.ID_APP_GROUP = APP_GROUPS.ID_APP_GROUP
-//   AND APP_GROUP_DESCRIPTIONS.ID_LOCALE = LOCALES.ID_LOCALE
-//
-//ORDER BY APP_GROUP_DESCRIPTIONS.DESCRIPTION, APP_DESCRIPTIONS.DESCRIPTION
 }

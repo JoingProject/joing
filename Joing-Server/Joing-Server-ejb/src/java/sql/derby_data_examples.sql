@@ -44,16 +44,16 @@ insert into app_groups ( ICON_PNG, ICON_SVG )   -- ID_APP_GROUP = 9
 -- ------------------------------------------------------------------
 
 insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
-     values (1, 1, 'Business & Finance');
+     values (1, 1, 'Business');
 
 insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
-     values (1, 2, 'Negocios y Finanzas');
+     values (1, 2, 'Negocios');
 
 insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
-     values (2, 1, 'Desktop Enhancements & Screen-savers');
+     values (2, 1, 'Desktop');
 
 insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
-     values (2, 2, 'Mejoras de escritorio y Salva-pantallas');
+     values (2, 2, 'Escritorio');
 
 insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
      values (3, 1, 'Games');
@@ -74,22 +74,22 @@ insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
      values (5, 2, 'Internet');
 
 insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
-     values (6, 1, 'Multimedia & Design');
+     values (6, 1, 'Multimedia');
 
 insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
-     values (6, 2, 'Multimedia y Diseño');
+     values (6, 2, 'Multimedia');
 
 insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
-     values (7, 1, 'Security & Privacy');
+     values (7, 1, 'Security');
 
 insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
-     values (7, 2, 'Seguridad y Privacidad');
+     values (7, 2, 'Seguridad');
 
 insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
-     values (8, 1, 'Programming & Software Development');
+     values (8, 1, 'Programming');
 
 insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
-     values (8, 2, 'Programación y Desarrollo de software');
+     values (8, 2, 'Programación');
 
 insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
      values (9, 1, 'System Utilities');
@@ -99,7 +99,7 @@ insert into app_group_descriptions ( ID_APP_GROUP, ID_LOCALE, DESCRIPTION )
 
 -- ------------------------------------------------------------------
 
-insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, FILE_TYPES)
+insert into applications (APPLICATION, VERSION, APP_DOMAIN, EXTRA_PATH, EXECUTABLE, FILE_TYPES)
      values ('Notes', '0.1', 'accessories', 'notes.jar', 'txt;ini');
 
 insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE)

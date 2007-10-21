@@ -19,6 +19,8 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.exception.JoingServerVFSException;
 
 /**
  * Functionality related with exploring the Virtual File System (VFS).

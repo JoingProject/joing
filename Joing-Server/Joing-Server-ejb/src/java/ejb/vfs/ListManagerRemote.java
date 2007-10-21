@@ -24,6 +24,8 @@ package ejb.vfs;
 
 import java.util.List;
 import javax.ejb.Remote;
+import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.exception.JoingServerVFSException;
 
 /**
  * This is the business interface for VfsFile enterprise bean.

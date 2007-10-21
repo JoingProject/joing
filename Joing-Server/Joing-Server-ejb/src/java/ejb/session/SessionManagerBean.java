@@ -10,7 +10,10 @@
 package ejb.session;
 
 import ejb.Constant;
-import ejb.JoingServerException;
+import ejb.user.UserEntity;
+import org.joing.common.dto.session.LoginResult;
+import org.joing.common.exception.JoingServerException;
+import org.joing.common.exception.JoingServerSessionException;
 import ejb.user.*;
 import java.io.Serializable;
 import java.util.Date;
