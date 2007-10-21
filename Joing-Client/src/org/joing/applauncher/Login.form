@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.4" maxVersion="1.4" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+<Form version="1.4" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
     <Property name="title" type="java.lang.String" value="Joing :: Login"/>
@@ -28,7 +28,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Component id="lblLogo" alignment="0" pref="295" max="32767" attributes="0"/>
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace pref="135" max="32767" attributes="0"/>
+              <EmptySpace pref="142" max="32767" attributes="0"/>
               <Component id="btnOk" min="-2" pref="72" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="btnCancel" min="-2" max="-2" attributes="0"/>
@@ -44,9 +44,9 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="chkFullScreen" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="txtPassword" alignment="0" pref="208" max="32767" attributes="1"/>
-                  <Component id="txtAccount" alignment="0" pref="208" max="32767" attributes="1"/>
-                  <Component id="cmbDesktop" alignment="1" pref="208" max="32767" attributes="0"/>
+                  <Component id="txtPassword" alignment="0" pref="225" max="32767" attributes="1"/>
+                  <Component id="txtAccount" alignment="0" pref="225" max="32767" attributes="1"/>
+                  <Component id="cmbDesktop" alignment="1" pref="225" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
