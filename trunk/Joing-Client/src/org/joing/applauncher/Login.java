@@ -10,8 +10,8 @@ import java.awt.Cursor;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import org.joing.common.dto.session.LoginResult;
-import org.joing.common.exception.JoingServerException;
+import org.joing.common.ejb.session.LoginResult;
+import org.joing.common.exceptions.JoingServerException;
 import org.joing.jvmm.Platform;
 import org.joing.runtime.bridge2server.Bridge2Server;
 
@@ -19,56 +19,49 @@ import org.joing.runtime.bridge2server.Bridge2Server;
  *
  * @author  Francisco Morero Peyrona
  */
-public class Login extends JDialog
-{    
-    private int     nTries = 0;      // Number of failed tries to login
+public class Login extends JDialog {
+
+    private int nTries = 0; // Number of failed tries to login
     private boolean bValid = false;
-    
+
     //------------------------------------------------------------------------//
-    
     /** Creates new form Login */
-    public Login()
-    {
-        super( (JFrame) null, true );
-        
+    public Login() {
+        super((JFrame) null, true);
+
         initComponents();
         fillDesktopComboBox();
-        
-        getRootPane().setDefaultButton( btnOk );
-        setLocationRelativeTo( null );
-        setDefaultCloseOperation( JDialog.DISPOSE_ON_CLOSE );
-        
-        txtAccount.setText( "peyrona" );
-        txtPassword.setText( "admin" );
+
+        getRootPane().setDefaultButton(btnOk);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        txtAccount.setText("peyrona");
+        txtPassword.setText("admin");
     }
-    
-    public boolean wasSuccessful()
-    {
+
+    public boolean wasSuccessful() {
         return bValid;
     }
-    
-    public boolean fullScreen()
-    {
+
+    public boolean fullScreen() {
         return chkFullScreen.isSelected();
     }
-    
-    public int getApplicationId()
-    {
-        String  sDesktop = (String)  cmbDesktop.getSelectedItem();
-        Integer nAppId   = (Integer) cmbDesktop.getClientProperty( sDesktop );
-        
+
+    public int getApplicationId() {
+        String sDesktop = (String) cmbDesktop.getSelectedItem();
+        Integer nAppId = (Integer) cmbDesktop.getClientProperty( sDesktop );
+
         return nAppId;
     }
-    
+
     //------------------------------------------------------------------------//
-    
-    private void fillDesktopComboBox()
-    {
+    private void fillDesktopComboBox() {
         // TODO: hacerlo (leerlo del servidor)
-        cmbDesktop.addItem( "PDE - Ver. 1.0" );
-        cmbDesktop.putClientProperty( "PDE - Ver. 1.0", new Integer( 1 ) );
+        cmbDesktop.addItem("PDE - Ver. 1.0");
+        cmbDesktop.putClientProperty("PDE - Ver. 1.0", new Integer(1));
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -189,69 +182,58 @@ public class Login extends JDialog
     private void onOk(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onOk
     {//GEN-HEADEREND:event_onOk
         Cursor cursor = getRootPane().getCursor();
-        getRootPane().setCursor( new Cursor( Cursor.WAIT_CURSOR ) );
-        
-        btnOk.setEnabled( false );
-        btnCancel.setEnabled( false );
-        
-        try
-        {
-            Bridge2Server b2s    = Platform.getInstance().getBridge();
-            LoginResult   result = b2s.getSessionBridge().login( txtAccount.getText(), 
-                                                                 String.valueOf( txtPassword.getPassword() ) );
+        getRootPane().setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
-            if( result.isLoginValid() )    // result is guaranted to be not null
-            {
+        btnOk.setEnabled(false);
+        btnCancel.setEnabled(false);
+
+        try {
+            Bridge2Server b2s = Platform.getInstance().getBridge();
+            LoginResult result = b2s.getSessionBridge().login(txtAccount.getText(), String.valueOf(txtPassword.getPassword()));
+
+            if (result.isLoginValid()) {
                 bValid = true;
                 dispose();
-            }
-            else
-            {
-                if( ++nTries == 3 )
-                {
-                    JOptionPane.showMessageDialog( Login.this, "Please check your account and password\nand try it later.");
+            } else {
+                if (++nTries == 3) {
+                    JOptionPane.showMessageDialog(Login.this, "Please check your account and password\nand try it later.");
                     dispose();
-                }
-                else
-                {
+                } else {
                     String sMsg = "Can't login: ";
-                    
-                    if( ! result.isAccountValid() )
-                        sMsg += "invalid account";
 
-                    if( ! result.isPasswordValid() )
-                    {
-                        if( ! result.isAccountValid() )
-                            sMsg += " and password";
-                        else
-                            sMsg += "invalid password";
+                    if (!result.isAccountValid()) {
+                        sMsg += "invalid account";
                     }
-                    
+
+                    if (!result.isPasswordValid()) {
+                        if (!result.isAccountValid()) {
+                            sMsg += " and password";
+                        } else {
+                            sMsg += "invalid password";
+                        }
+                    }
+
                     sMsg += ".\nPlease, try again.";
-                    JOptionPane.showMessageDialog( Login.this, sMsg );
+                    JOptionPane.showMessageDialog(Login.this, sMsg);
                 }
             }
-        }
-        catch( JoingServerException exc )
-        {
+        } catch (JoingServerException exc) {
             // Can't invoke org.joing.runtime.Runtime.getRuntime().showException( ... )
             // because the desktop does not exists yet.
-            JOptionPane.showMessageDialog( this, exc.getLocalizedMessage(), 
-                                           "Error during login", JOptionPane.ERROR_MESSAGE );
+            JOptionPane.showMessageDialog(this, exc.getLocalizedMessage(), "Error during login", JOptionPane.ERROR_MESSAGE);
+        } finally {
+            getRootPane().setCursor(cursor);
+            btnOk.setEnabled(true);
+            btnCancel.setEnabled(true);
         }
-        finally
-        {
-            getRootPane().setCursor( cursor );
-            btnOk.setEnabled( true );
-            btnCancel.setEnabled( true );
-        }
+        // }
     }//GEN-LAST:event_onOk
 
     private void onCancel(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onCancel
     {//GEN-HEADEREND:event_onCancel
         dispose();
     }//GEN-LAST:event_onCancel
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnOk;
@@ -261,5 +243,4 @@ public class Login extends JDialog
     private javax.swing.JTextField txtAccount;
     private javax.swing.JPasswordField txtPassword;
     // End of variables declaration//GEN-END:variables
-  
 }
