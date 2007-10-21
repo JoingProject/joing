@@ -9,10 +9,9 @@
 
 package org.joing.pde.desktop.workarea.desklet.deskLauncher;
 
-import ejb.app.AppDescriptor;
-import java.awt.Image;
 import javax.swing.ImageIcon;
 import org.joing.api.desktop.workarea.desklet.deskLauncher.JoingApplicationLauncher;
+import org.joing.common.dto.app.AppDescriptor;
 
 /**
  *

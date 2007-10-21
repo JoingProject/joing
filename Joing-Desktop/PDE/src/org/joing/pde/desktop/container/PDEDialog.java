@@ -31,9 +31,7 @@ import org.joing.api.desktop.DeskDialog;
  *
  * @author Francisco Morero Peyrona
  */
-public class PDEDialog 
-       extends JOptionPane
-       implements DeskDialog
+public class PDEDialog extends JOptionPane implements DeskDialog
 { // FIXME: hay que mejorar esta clase: estudiar la JOptionPane
     
     private String    sTitle;

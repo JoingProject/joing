@@ -9,7 +9,6 @@
 
 package org.joing.pde;
 
-import ejb.session.LoginResult;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
@@ -20,37 +19,22 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import org.joing.jvmm.Platform;
 import org.joing.pde.desktop.PDEDesktop;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.ScrollPane;
 import java.awt.Toolkit;
 import javax.swing.JApplet;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import org.joing.api.DesktopManager;
 import org.joing.api.desktop.Desktop;
+import org.joing.common.dto.session.LoginResult;
 import org.joing.pde.runtime.PDERuntime;
-import org.joing.pde.desktop.container.PDEFrame;
-import org.joing.pde.desktop.workarea.desklet.deskLauncher.PDEDeskLauncher;
 import org.joing.runtime.bridge2server.Bridge2Server;
 
 /**
@@ -135,7 +119,7 @@ public class PDEManager extends JApplet implements DesktopManager
     {
         getDesktop().close();
 
-        if( frame != null )   // Can't call getFrame(), because this methos constructs the frame
+        if( frame != null )   // Can't call getFrame(), because this method constructs the frame
             frame.dispose();
         else
             stop();
@@ -198,22 +182,23 @@ public class PDEManager extends JApplet implements DesktopManager
     
     public static void main( String[] args )
     {
+        if( args.length > 0 && args[0].equals( "PDE_AUTONOMO" ) )
+        {
+            System.setProperty( PDERuntime.PDE_AUTONOMO, "ACTIVADO" );
+            Bridge2Server.getInstance().getSessionBridge().login( "peyrona", "admin" );
+        }
+        
         try
         {
             // continuous layout on frame resize
-            Toolkit.getDefaultToolkit().setDynamicLayout(true);
+            Toolkit.getDefaultToolkit().setDynamicLayout( true );
             // no flickering on resize
-            System.setProperty("sun.awt.noerasebackground", "true"); 
+            System.setProperty( "sun.awt.noerasebackground", "true" );
         } 
-        catch (Exception ex)
+        catch( Exception exc )
         {
-            ex.printStackTrace();
+            exc.printStackTrace();
         }
-        
-        System.setProperty( PDERuntime.PDE_AUTONOMO, "ACTIVADO" );
-        
-        Bridge2Server b2s    = Bridge2Server.getInstance();
-        LoginResult   result = b2s.getSessionBridge().login( "peyrona", "admin" );
         
         final PDEManager mgr = new PDEManager();
         PDERuntime.getRuntime().setDesktopManager( mgr );
@@ -269,33 +254,30 @@ public class PDEManager extends JApplet implements DesktopManager
         public void actionPerformed( ActionEvent ae )
         {
             nTranslucent += .01;
-            repaint();
+            
+            if( nTranslucent <= .4f )  // At .4 it is totally opaque
+                repaint();
+            else
+                timer.stop();
         }
         
         protected void paintComponent( Graphics g )
         {
-            if( nTranslucent <= .4f )  // At .4 it is totally opaque
-            {
-                Graphics2D g2 = (Graphics2D) g;
-                
-                g2.setColor( Color.black );
-                g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, nTranslucent ));
-                g2.fillRect( 0,0, getWidth(), getHeight() );
-                g2.setColor( Color.white );
-                g2.drawString( "Click to unlock", 15,15 );
-                g2.dispose();
-            }
-            else
-            {
-                timer.stop();
-            }
+            Graphics2D g2 = (Graphics2D) g;
+
+            g2.setColor( Color.black );
+            g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, nTranslucent ));
+            g2.fillRect( 0,0, getWidth(), getHeight() );
+            g2.setColor( Color.white );
+            g2.drawString( "Click to unlock", 15,15 );
+            g2.dispose();         
         }
         
         //--------------------------------------------------------------------//
         // Listeners
         
         public void mouseClicked( MouseEvent me )  {}
-        public void mouseEntered(MouseEvent me )   {}
+        public void mouseEntered( MouseEvent me )  {}
         public void mouseExited( MouseEvent me )   {}
         public void mouseReleased( MouseEvent me ) {}
         public void mousePressed( MouseEvent me )  { PDEManager.this.unlock(); }

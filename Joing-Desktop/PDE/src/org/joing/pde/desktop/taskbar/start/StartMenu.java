@@ -10,9 +10,6 @@
 
 package org.joing.pde.desktop.taskbar.start;
 
-import ejb.app.AppDescriptor;
-import ejb.app.AppsByGroup;
-import ejb.user.User;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
@@ -25,6 +22,9 @@ import javax.swing.JMenuItem;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import org.joing.common.dto.app.AppDescriptor;
+import org.joing.common.dto.app.AppsByGroup;
+import org.joing.common.dto.user.User;
 import org.joing.pde.runtime.ColorSchema;
 import org.joing.pde.runtime.PDERuntime;
 import org.joing.pde.swing.JScrollablePopupMenu;
@@ -45,7 +45,8 @@ class StartMenu extends JScrollablePopupMenu
                                        new EmptyBorder( 3,3,3,3 ) ) );
         addUser();
         addSeparator();
-        addApplications();   
+        addApplications();
+        addSystemMonitor(); // TODO: quitarlo
         addSeparator();
         addLock();
         addExit();
@@ -148,14 +149,10 @@ class StartMenu extends JScrollablePopupMenu
                           
                 menu.add( itemApp );
             }
-            
-            // TODO: hacerlo bien: con IDs para las categorías
-            if( menu.getText().equals( "Accesorios" ) )
-                addSystemMonitor( menu );
         }
     }
     
-    private void addSystemMonitor( JMenu menu )
+    private void addSystemMonitor()
     {
         JMenuItem itmSysMon = new JMenuItem( "System monitor" );
                   itmSysMon.setIcon( PDERuntime.getRuntime().getIcon( this, "images/system_monitor.png", ICON_SIZE, ICON_SIZE ) );
@@ -167,7 +164,7 @@ class StartMenu extends JScrollablePopupMenu
                       }
                   } );
         
-        menu.add( itmSysMon );
+        add( itmSysMon );
     }
     
     private ImageIcon createItemIcon( byte[] abImage )
