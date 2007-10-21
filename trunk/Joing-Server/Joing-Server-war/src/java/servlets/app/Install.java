@@ -6,16 +6,14 @@
 
 package servlets.app;
 
-import ejb.JoingServerException;
-import ejb.app.AppDescriptor;
+import org.joing.common.dto.app.AppDescriptor;
 import ejb.app.ApplicationManagerLocal;
-import ejb.vfs.JoingServerVFSException;
 import java.io.*;
-import java.net.*;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import org.joing.common.exception.JoingServerException;
 import servlets.JoingServerServletException;
 
 /**
@@ -33,7 +31,7 @@ public class Install extends HttpServlet
      * @param response servlet response
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException
+              throws ServletException, IOException
     {
         response.setContentType( "application/octet-stream" );
         

@@ -21,7 +21,7 @@
  */
 package servlets;
 
-import ejb.JoingServerException;
+import org.joing.common.exception.JoingServerException;
 
 /**
  *
@@ -29,7 +29,6 @@ import ejb.JoingServerException;
  */
 public class JoingServerServletException extends JoingServerException
 {
-
     public JoingServerServletException()
     {
         super();

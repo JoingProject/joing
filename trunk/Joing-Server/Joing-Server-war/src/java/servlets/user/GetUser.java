@@ -6,15 +6,14 @@
 
 package servlets.user;
 
-import ejb.JoingServerException;
-import ejb.user.User;
 import ejb.user.UserManagerLocal;
 import java.io.*;
-import java.net.*;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import org.joing.common.dto.user.User;
+import org.joing.common.exception.JoingServerException;
 import servlets.JoingServerServletException;
 
 /**
@@ -50,7 +49,7 @@ public class GetUser extends HttpServlet
             User user = userManagerBean.getUser( sSessionId );
             
             // Write to Client (desktop)
-            writer.writeObject( user );
+            writer.writeObject( (org.joing.common.dto.user.User) user );
             writer.flush();
         }
         catch( JoingServerException exc )

@@ -6,18 +6,17 @@
 
 package servlets.vfs;
 
-import ejb.JoingServerException;
+import org.joing.common.dto.vfs.FileDescriptor;
 import servlets.JoingServerServletException;
 import ejb.vfs.FileManagerLocal;
-import ejb.vfs.JoingServerVFSException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import org.joing.common.exception.JoingServerException;
 
 /**
  *
@@ -44,9 +43,9 @@ public class GetFile extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String sSessionId = (String) reader.readObject();
-            String sPath      = (String) reader.readObject();
-            ejb.vfs.FileDescriptor file = null;
+            String         sSessionId = (String) reader.readObject();
+            String         sPath      = (String) reader.readObject();
+            FileDescriptor file       = null;
             
             // Process request
             file = fileManagerBean.getFile( sSessionId, sPath );
