@@ -25,7 +25,7 @@ package org.joing.runtime.bridge2server;
 import java.util.List;
 import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.app.Application;
-import org.joing.common.dto.app.AppsByGroup;
+import org.joing.common.dto.app.AppGroup;
 
 /**
  *
@@ -49,17 +49,17 @@ public class AppBridgeSocketImpl
         super();
     }
 
-    public List<AppsByGroup> getAvailableForUser()
+    public List<AppGroup> getAvailableForUser( int nEnvironment, int nGroup )
     {
         return null;
     }
 
-    public List<AppsByGroup> getNotInstalledForUser()
+    public List<AppGroup> getNotInstalledForUser( int nEnvironment, int nGroup )
     {
         return null;
     }
 
-    public List<AppsByGroup> getInstalledForUser()
+    public List<AppGroup> getInstalledForUser( int nEnvironment, int nGroup )
     {
         return null;
     }
