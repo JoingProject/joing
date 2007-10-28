@@ -11,8 +11,9 @@ package ejb.app;
 
 import ejb.Constant;
 import org.joing.common.dto.app.AppDescriptor;
+import org.joing.common.dto.app.AppEnvironment;
 import org.joing.common.dto.app.Application;
-import org.joing.common.dto.app.AppsByGroup;
+import org.joing.common.dto.app.AppGroup;
 import org.joing.common.exception.JoingServerAppException;
 import ejb.session.SessionManagerLocal;
 import ejb.user.UserEntity;
@@ -62,36 +63,22 @@ public class ApplicationManagerBean
     
     //------------------------------------------------------------------------//
     
-    /*public List<AppDescriptor> getAvailableDesktops( String sSessionId )
-    {
-        AppDescriptor ad = new AppDescriptor();
-                      ad.setId( 1 );
-                      ad.setName( "PDE" );
-                      ad.setDescription( "Peyrona Desktop Environment - A light and simple desktop for Join'g" );
-                      ad.setVersion( "0.1" );
-                
-        ArrayList<AppDescriptor> list = new ArrayList<AppDescriptor>();
-                                 list.add( ad );
-        return list;
-    }
-    //------------------------------------------------------------------------*/
-    
-    public List<AppsByGroup> getAvailableForUser( String sSessionId )
+    public List<AppGroup> getAvailableForUser( String sSessionId, int nEnviron, int nGroup )
            throws JoingServerAppException
     {   
-        return getApplicationDescriptors( sSessionId, APPS_ALL );
+        return getApplicationDescriptors( sSessionId, APPS_ALL, nEnviron, nGroup );
     }
     
-    public List<AppsByGroup> getNotInstalledForUser( String sSessionId )
-           throws JoingServerAppException
-    {   
-        return getApplicationDescriptors( sSessionId, APPS_NOT_INSTALLED );
-    }
-    
-    public List<AppsByGroup> getInstalledForUser( String sSessionId )
+    public List<AppGroup> getNotInstalledForUser( String sSessionId, int nEnviron, int nGroup )
            throws JoingServerAppException
     {
-        return getApplicationDescriptors( sSessionId, APPS_INSTALLED );
+        return getApplicationDescriptors( sSessionId, APPS_NOT_INSTALLED, nEnviron, nGroup );
+    }
+    
+    public List<AppGroup> getInstalledForUser( String sSessionId, int nEnviron, int nGroup )
+           throws JoingServerAppException
+    {
+        return getApplicationDescriptors( sSessionId, APPS_INSTALLED, nEnviron, nGroup );
     }
     
     public boolean install( String sSessionId, AppDescriptor app )
@@ -192,11 +179,12 @@ public class ApplicationManagerBean
     //------------------------------------------------------------------------//
     // PRIVATES
     
-    private List<AppsByGroup> getApplicationDescriptors( String sSessionId, int nWhich )
+    private List<AppGroup> getApplicationDescriptors( String sSessionId, int nInstallMode,
+                                                      int nEnviron, int nGroup )
             throws JoingServerAppException
     {
-        String            sAccount = sessionManagerBean.getUserAccount( sSessionId );
-        List<AppsByGroup> apps     = new ArrayList<AppsByGroup>();
+        String         sAccount  = sessionManagerBean.getUserAccount( sSessionId );
+        List<AppGroup> lstGroups = new ArrayList<AppGroup>();
         
         if( sAccount != null )
         {
@@ -206,30 +194,35 @@ public class ApplicationManagerBean
             
             try
             {
-                UserEntity _user  = em.find( UserEntity.class, sAccount );
-                String     sGroup = "";
+                UserEntity _user         = em.find( UserEntity.class, sAccount );
+                int        nCurrentGroup = AppGroup.UNKNOWN;
                 
                 conn = joing_db.getConnection(); 
                 stmt = conn.createStatement( ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
-                rs   = stmt.executeQuery( getQuery( sAccount, 
-                                                    _user.getIdLocale().getIdLocale(),
-                                                    nWhich ) );
+                rs   = stmt.executeQuery( getQuery( sAccount, _user.getIdLocale().getIdLocale(),
+                                                    nInstallMode, nEnviron, nGroup ) );
                 
                 while( rs.next() )
                 {
-                    if( ! sGroup.equals( rs.getString( "GROUP_DESC" ) ) )
+                    if( nCurrentGroup != rs.getInt( "GROUP_ID" ) )
                     {
-                        sGroup = rs.getString( "GROUP_DESC" );
-                        apps.add( new AppsByGroup( sGroup ) );
+                        nCurrentGroup = rs.getInt( "GROUP_ID" );
+                        
+                        AppGroup group = new AppGroup( nCurrentGroup );
+                                 group.setName( rs.getString( "GROUP_NAME" ) );
+                                 group.setDescription( rs.getString( "GROUP_DESC" ) );
+                                 // TODO: añadirle los iconos PNG y SVG
+                                 
+                        lstGroups.add( group );   
                     }
                     
                     Query query = em.createNamedQuery( "ApplicationEntity.findByIdApplication" );
-                          query.setParameter( "idApplication", rs.getInt( "ID_APPLICATION" ) );
+                          query.setParameter( "idApplication", rs.getInt( "APP_ID" ) );
                           
                     AppDescriptor app = AppDTOs.createAppDescriptor( (ApplicationEntity) query.getSingleResult() );
                                   app.setDescription( rs.getString( "APP_DESC" ) );
                     
-                    apps.get( apps.size() - 1 ).addApplication( app );
+                    lstGroups.get( lstGroups.size() - 1 ).addApplication( app );
                 }
             }
             catch( RuntimeException exc )
@@ -244,21 +237,24 @@ public class ApplicationManagerBean
             }
             finally
             {
-                try{ if(rs   != null) rs.close();   }catch( SQLException x ){ /* */ }
-                try{ if(stmt != null) stmt.close(); }catch( SQLException x ){ /* */ }
-                try{ if(conn != null) conn.close(); }catch( SQLException x ){ /* */ }
+                try{ if(rs   != null) rs.close();   } catch( SQLException x ){ /* */ }
+                try{ if(stmt != null) stmt.close(); } catch( SQLException x ){ /* */ }
+                try{ if(conn != null) conn.close(); } catch( SQLException x ){ /* */ }
             }
         }
         
-        return apps;
+        return lstGroups;
     }
     
-    private String getQuery( String sAccount, int nLocaleId, int nWhich )
+    private String getQuery( String sAccount, int nLocaleId, int nInstallMode, int nEnviron, int nGroup )
     { // NEXT: Añadir el "AllowRemoteExecution" ver tabla "USERS_WITH_APPS"
         StringBuilder sbQuery = new StringBuilder( 1024 ).append(
-            "SELECT APP_GROUP_DESCRIPTIONS.DESCRIPTION GROUP_DESC,"                ).append(
-            "       APPLICATIONS.ID_APPLICATION,"                                  ).append(
-            "       APP_DESCRIPTIONS.DESCRIPTION APP_DESC"                         ).append(
+            "SELECT APP_GROUP_DESCRIPTIONS.APP_GROUP_ID GROUP_ID,"                 ).append(
+            "       APP_GROUP_DESCRIPTIONS.GROUP_NAME   GROUP_NAME,"               ).append(
+            "       APP_GROUP_DESCRIPTIONS.DESCRIPTION  GROUP_DESC,"               ).append(
+            "       APPLICATIONS.ID_APPLICATION         APP_ID,"                   ).append(
+            "       APPLICATIONS.APPLICATION            APP_NAME,"                 ).append(
+            "       APP_DESCRIPTIONS.DESCRIPTION        APP_DESC"                  ).append(
             "  FROM USERS_WITH_APPS, APPLICATIONS, APP_DESCRIPTIONS,"              ).append(
             "       APPS_WITH_GROUPS, APP_GROUPS, APP_GROUP_DESCRIPTIONS, LOCALES" ).append(
             " WHERE LOCALES.ID_LOCALE = "+ nLocaleId                               ).append(
@@ -271,16 +267,20 @@ public class ApplicationManagerBean
             "   AND APP_GROUP_DESCRIPTIONS.ID_APP_GROUP = APP_GROUPS.ID_APP_GROUP" ).append(
             "   AND APP_GROUP_DESCRIPTIONS.ID_LOCALE = LOCALES.ID_LOCALE" );
         
-        switch( nWhich )
+        if( nEnviron != AppEnvironment.JAVA_ALL )
+            sbQuery.append( " AND APPLICATIONS.ENVIRONMENT = "+ nEnviron );
+        
+        if( nGroup != AppGroup.ALL )
+            sbQuery.append( " AND APP_GROUPS.APP_GROUP_ID = "+ nGroup );
+                    
+        switch( nInstallMode )
         {
             case APPS_INSTALLED    : sbQuery.append( " AND USERS_WITH_APPS.IS_INSTALLED = 1" ); break;
             case APPS_NOT_INSTALLED: sbQuery.append( " AND USERS_WITH_APPS.IS_INSTALLED = 0" ); break;
-            case APPS_ALL          : 
-            default                : break; 
+            case APPS_ALL          : break;
         }
         
-        sbQuery.append( " ORDER BY APP_GROUP_DESCRIPTIONS.DESCRIPTION," ).append(
-                        "          APP_DESCRIPTIONS.DESCRIPTION" );
+        sbQuery.append( " ORDER BY GROUP_ID, APP_NAME" );
         
         return sbQuery.toString();
     }
