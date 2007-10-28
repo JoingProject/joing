@@ -13,7 +13,7 @@ import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import org.joing.common.dto.app.AppsByGroup;
+import org.joing.common.dto.app.AppGroup;
 import org.joing.common.exception.JoingServerException;
 import servlets.JoingServerServletException;
 
@@ -43,9 +43,11 @@ public class GetNotInstalledForUser extends HttpServlet
         {
             // Read from client (desktop)
             String sSessionId = (String) reader.readObject();
+            int    nEnvironment = reader.readInt();
+            int    nGroup       = reader.readInt();
             
             // Process request
-            List<AppsByGroup> apps = applicationManagerBean.getNotInstalledForUser( sSessionId );
+            List<AppGroup> apps = applicationManagerBean.getNotInstalledForUser( sSessionId, nEnvironment, nGroup );
             
             // Write to Client (desktop)
             writer.writeObject( apps );
