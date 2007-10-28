@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package org.joing.common.ejb;
+package org.joing.common;
 
 import java.io.File;
 import java.io.FileInputStream;
