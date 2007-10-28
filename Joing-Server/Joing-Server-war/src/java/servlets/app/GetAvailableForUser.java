@@ -14,7 +14,7 @@ import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import org.joing.common.dto.app.AppsByGroup;
+import org.joing.common.dto.app.AppGroup;
 import org.joing.common.exception.JoingServerException;
 import servlets.JoingServerServletException;
 
@@ -43,10 +43,12 @@ public class GetAvailableForUser extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String sSessionId = (String) reader.readObject();
+            String sSessionId   = (String) reader.readObject();
+            int    nEnvironment = reader.readInt();
+            int    nGroup       = reader.readInt();
             
             // Process request
-            List<AppsByGroup> apps = applicationManagerBean.getAvailableForUser( sSessionId );
+            List<AppGroup> apps = applicationManagerBean.getAvailableForUser( sSessionId, nEnvironment, nGroup );
             
             // Write to Client (desktop)
             writer.writeObject( apps );
