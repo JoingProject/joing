@@ -2,6 +2,22 @@
 --   WebPC - SERVER - TABLES DEFINITION
 -- ********************************************************************************************************************
 
+-- First step: to drop all tables (if any)
+
+DROP TABLE USERS_WITH_APPS;
+DROP TABLE APP_DESCRIPTIONS;
+DROP TABLE APP_GROUP_DESCRIPTIONS;
+DROP TABLE APPS_WITH_GROUPS;
+DROP TABLE APP_PREFERRED;
+DROP TABLE FILES;
+DROP TABLE SESSIONS;
+DROP TABLE APP_GROUPS;
+DROP TABLE APPLICATIONS;
+DROP TABLE USERS;
+DROP TABLE LOCALES;
+
+-- ********************************************************************************************************************
+
 CREATE TABLE USERS(               -- Can't be named 'USER' because it is an SQL-99 keyword
    PRIMARY KEY (ACCOUNT),
    ACCOUNT     VARCHAR(128) NOT NULL ,   -- Identinfies uniquely the user in all Joing communities (<account>@<community>.<domain>)
@@ -35,16 +51,16 @@ CREATE TABLE USERS_WITH_APPS(               -- Many-To-Many: which apps are avai
 CREATE TABLE APPLICATIONS(
    PRIMARY KEY (ID_APPLICATION),
    ID_APPLICATION INT GENERATED ALWAYS AS IDENTITY,
-   APPLICATION    VARCHAR(64)    NOT NULL    ,  -- Application name (NAME is a reserved SQL word)
-   APP_DOMAIN     INT            NOT NULL    ,  -- Refer to Common.AppDomain.java
-   MIN_DOMAIN_VER VARCHAR(16)    NOT NULL    ,  -- Minimum Domain Version to run the application
-   VERSION        VARCHAR(16)    NOT NULL    ,  -- Version
+   APPLICATION    VARCHAR(64)    NOT NULL    ,  -- Application name (NAME is a reserved SQL word)   
+   VERSION        VARCHAR(16)    NOT NULL    ,  -- Application Version
    EXTRA_PATH     VARCHAR(255)               ,  -- From applications dir (defined in Constant.sAPP_DIR)
    EXECUTABLE     VARCHAR(255)   NOT NULL    ,  -- Normally a .jar or a .class, but could be a native or a C# file
    ARGUMENTS      VARCHAR(255)               ,  -- Arguments to be passed
    ICON_PNG       VARCHAR(4096)  FOR BIT DATA,  -- A PNG (24x24) image up to 4Kb
    ICON_SVG       VARCHAR(16384) FOR BIT DATA,  -- A SVGZ (compresed) image up to 16Kb
-   FILE_TYPES     VARCHAR(255)              );  -- File extensions that can manage (v.g: "png;jpg;gif")
+   FILE_TYPES     VARCHAR(255)               ,  -- File extensions that can manage (v.g: "png;jpg;gif")
+   ENVIRONMENT    INT            NOT NULL    ,  -- Refer to Common.dto.app.AppEnvironment.java
+   ENVIRON_VER    VARCHAR(16)    NOT NULL   );  -- Minimum Environment Version to run the application
 
 CREATE TABLE LOCALES(
    PRIMARY KEY (ID_LOCALE),
@@ -60,8 +76,7 @@ CREATE TABLE APP_DESCRIPTIONS(    -- Application descriptions in different langu
 
 CREATE TABLE APP_GROUPS(          -- Application groups (categories)
    PRIMARY KEY (ID_APP_GROUP),
-   ID_APP_GROUP INT GENERATED ALWAYS AS IDENTITY,
-   APP_GROUP_ID INT            NOT NULL    ,   -- Refer to Common.AppGroup.java
+   ID_APP_GROUP INT            NOT NULL    ,   -- Refer to Common.dto.app.AppGroup.java
    ICON_PNG     VARCHAR(4096)  FOR BIT DATA,   -- A PNG (24x24) image up to 16Kb
    ICON_SVG     VARCHAR(16384) FOR BIT DATA ); -- A SVGZ (compresed) image up to 32Kb
 
@@ -69,7 +84,8 @@ CREATE TABLE APP_GROUP_DESCRIPTIONS(    -- Application Group name (descriptive) 
    PRIMARY KEY (ID_APP_GROUP, ID_LOCALE),
    ID_APP_GROUP INT          NOT NULL,
    ID_LOCALE    INT          NOT NULL,  -- Language (as in java.util.Locale)
-   DESCRIPTION  VARCHAR(255) NOT NULL );
+   GROUP_NAME   VARCHAR(64)  NOT NULL,  -- Short name
+   DESCRIPTION  VARCHAR(255)        );  -- Long description
 
 CREATE TABLE APPS_WITH_GROUPS(    -- Many-To-Many: Which apps belong to which groups
    PRIMARY KEY (ID_APPLICATION, ID_APP_GROUP), -- (to be grouped in the menu: categories)

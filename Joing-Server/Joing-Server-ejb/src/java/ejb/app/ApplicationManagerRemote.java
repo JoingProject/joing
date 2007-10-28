@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ejb.Remote;
 import org.joing.common.dto.app.Application;
-import org.joing.common.dto.app.AppsByGroup;
+import org.joing.common.dto.app.AppGroup;
 import org.joing.common.exception.JoingServerAppException;
 
 /**
@@ -26,10 +26,12 @@ public interface ApplicationManagerRemote
      * went wrong.
      *
      * @param sSessionId A valid session (sSessionId in order to obtain the user).
+     * @param nEnviron Environment. Refer to <code>org.joing.common.dto.app.AppEnvironment</code>
+     * @param nGroup App group. Refer to <code>org.joing.common.dto.app.AppGroup</code>
      * @return List of applications matching the criteria.
      */
-    List<AppsByGroup> getAvailableForUser( String sSessionId )
-                      throws JoingServerAppException;
+    List<AppGroup> getAvailableForUser( String sSessionId, int nEnviron, int nGroup )
+                   throws JoingServerAppException;
     
     /**
      * Retrieve a <code>List</code> with instances of <code>Application</code> 
@@ -41,10 +43,12 @@ public interface ApplicationManagerRemote
      * or will be <code>null</code> if something went wrong.
      *
      * @param sSessionId A valid session (sSessionId in order to obtain the user).
+     * @param nEnviron Environment. Refer to <code>org.joing.common.dto.app.AppEnvironment</code>
+     * @param nGroup App group. Refer to <code>org.joing.common.dto.app.AppGroup</code>
      * @return List of applications matching the criteria.
      */
-    List<AppsByGroup> getNotInstalledForUser( String sSessionId )
-                      throws JoingServerAppException;
+    List<AppGroup> getNotInstalledForUser( String sSessionId, int nEnviron, int nGroup )
+                   throws JoingServerAppException;
     
     /**
      * Retrieve a <code>List</code> with instances of <code>Application</code> 
@@ -56,10 +60,12 @@ public interface ApplicationManagerRemote
      * or will be <code>null</code> if something went wrong.
      *
      * @param sSessionId A valid session (sSessionId in order to obtain the user).
+     * @param nEnviron Environment. Refer to <code>org.joing.common.dto.app.AppEnvironment</code>
+     * @param nGroup App group. Refer to <code>org.joing.common.dto.app.AppGroup</code>
      * @return List of applications matching the criteria.
      */
-    List<AppsByGroup> getInstalledForUser( String sSessionId )
-                      throws JoingServerAppException;
+    List<AppGroup> getInstalledForUser( String sSessionId, int nEnviron, int nGroup )
+                   throws JoingServerAppException;
     
     /**
      * Mark an application as to be installed for certain user.
@@ -69,7 +75,7 @@ public interface ApplicationManagerRemote
      * @param sSessionId A valid session (sSessionId in order to obtain the user).
      * @param app The <code>Application</code> instance to be installed.
      */
-    boolean install(    String sSessionId, AppDescriptor app    )
+    boolean install( String sSessionId, AppDescriptor app )
             throws JoingServerAppException;
     
     /**
@@ -80,7 +86,7 @@ public interface ApplicationManagerRemote
      * @param sSessionId A valid session (sSessionId in order to obtain the user).
      * @param app The <code>Application</code> instance to be uninstalled.
      */
-    boolean uninstall(    String sSessionId, AppDescriptor app    )
+    boolean uninstall( String sSessionId, AppDescriptor app )
             throws JoingServerAppException;
     
     /**
@@ -96,7 +102,8 @@ public interface ApplicationManagerRemote
      *         registered application for this file extension
      */
     AppDescriptor getPreferredForType( String sSessionId, String sFileExtension )
-                throws JoingServerAppException;
+                  throws JoingServerAppException;
+    
     /**
      * Returns an instance of Application to read requested application file.
      *
@@ -110,5 +117,5 @@ public interface ApplicationManagerRemote
      * @see #writeText
      */
     Application getApplication( String sSessionId, int nAppId )
-            throws JoingServerAppException;
+                throws JoingServerAppException;
 }
