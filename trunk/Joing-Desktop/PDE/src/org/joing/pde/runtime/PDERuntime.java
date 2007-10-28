@@ -216,7 +216,7 @@ public final class PDERuntime implements org.joing.api.Runtime
                                                         JOptionPane.QUESTION_MESSAGE );
         
         // TODO: comprobar la password
-        return sPassword != null && sPassword.trim().length() > 0; 
+        return sPassword != null && sPassword.trim().length() > 0;
     }
     
     //------------------------------------------------------------------------//
@@ -263,15 +263,5 @@ public final class PDERuntime implements org.joing.api.Runtime
             System.exit( 0 );
         else
             Platform.getInstance().halt();
-    }
-    
-    public void showSystemMonitor()
-    {// TODO: Hacer que SystemMonitor sea una app independiente (como otra cualquiera)
-        JPanel pnlMonitor = new SystemMonitor();
-        
-        PDEFrame frame = new PDEFrame( "System Monitor" );
-                 frame.getContentPane().add( pnlMonitor );
-                 
-        add( frame );
     }
 }

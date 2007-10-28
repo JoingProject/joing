@@ -23,7 +23,8 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import org.joing.common.dto.app.AppDescriptor;
-import org.joing.common.dto.app.AppsByGroup;
+import org.joing.common.dto.app.AppEnvironment;
+import org.joing.common.dto.app.AppGroup;
 import org.joing.common.dto.user.User;
 import org.joing.pde.runtime.ColorSchema;
 import org.joing.pde.runtime.PDERuntime;
@@ -46,7 +47,6 @@ class StartMenu extends JScrollablePopupMenu
         addUser();
         addSeparator();
         addApplications();
-        addSystemMonitor(); // TODO: quitarlo
         addSeparator();
         addLock();
         addExit();
@@ -119,16 +119,19 @@ class StartMenu extends JScrollablePopupMenu
     {
         final String KEY = "JOING_APP_DESCRIPTOR";
         
-        List<AppsByGroup> abgList = PDERuntime.getRuntime().getBridge().getAppBridge().getInstalledForUser();
+        List<AppGroup> lstGroups = PDERuntime.getRuntime().getBridge().getAppBridge().getInstalledForUser( AppEnvironment.JAVA_ALL, AppGroup.ALL );
         
-        for( AppsByGroup abg : abgList )
+        for( AppGroup group : lstGroups )
         {
-            JMenu menu = new JMenu( abg.getDescription() );
-                  menu.setIcon( createItemIcon( abg.getIconPNG() ) );
+            if( group.getId() == AppGroup.DESKTOP )    // Don't show "Desktops" apps
+                break;
+                
+            JMenu menu = new JMenu( group.getName() );
+                  menu.setIcon( createItemIcon( group.getIconPNG() ) );
                
             add( menu );
             
-            List<AppDescriptor> appList = abg.getApplications();
+            List<AppDescriptor> appList = group.getApplications();
             
             for( AppDescriptor appDesc : appList )
             {
@@ -150,21 +153,6 @@ class StartMenu extends JScrollablePopupMenu
                 menu.add( itemApp );
             }
         }
-    }
-    
-    private void addSystemMonitor()
-    {
-        JMenuItem itmSysMon = new JMenuItem( "System monitor" );
-                  itmSysMon.setIcon( PDERuntime.getRuntime().getIcon( this, "images/system_monitor.png", ICON_SIZE, ICON_SIZE ) );
-                  itmSysMon.addActionListener( new ActionListener()
-                  {
-                      public void actionPerformed( ActionEvent ae )
-                      {
-                          PDERuntime.getRuntime().showSystemMonitor();
-                      }
-                  } );
-        
-        add( itmSysMon );
     }
     
     private ImageIcon createItemIcon( byte[] abImage )
