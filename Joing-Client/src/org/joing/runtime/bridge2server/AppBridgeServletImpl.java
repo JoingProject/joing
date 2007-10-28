@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.app.Application;
-import org.joing.common.dto.app.AppsByGroup;
+import org.joing.common.dto.app.AppGroup;
 import org.joing.common.exception.JoingServerException;
 
 /**
@@ -47,41 +47,47 @@ public class AppBridgeServletImpl
     AppBridgeServletImpl()
     {
     }
-
-    public List<AppsByGroup> getAvailableForUser()
+    
+    public List<AppGroup> getAvailableForUser( int nEnvironment, int nGroup )
            throws JoingServerException
     {
-        List<AppsByGroup> apps = null;
+        List<AppGroup> apps = null;
         
         Channel channel = new Channel( APP_GET_AVAILABLES );
                 channel.write( platform.getBridge().getSessionId() );
-        apps = (List<AppsByGroup>) channel.read();
+                channel.write( nEnvironment );
+                channel.write( nGroup );
+        apps = (List<AppGroup>) channel.read();
                 channel.close();
         
         return apps;
     }
     
-    public List<AppsByGroup> getNotInstalledForUser()
+    public List<AppGroup> getNotInstalledForUser( int nEnvironment, int nGroup )
            throws JoingServerException
     {
-        List<AppsByGroup> apps = null;
+        List<AppGroup> apps = null;
         
         Channel channel = new Channel( APP_GET_NOT_INSTALLED );
                 channel.write( platform.getBridge().getSessionId() );
-        apps = (List<AppsByGroup>) channel.read();
+                channel.write( nEnvironment );
+                channel.write( nGroup );
+        apps = (List<AppGroup>) channel.read();
                 channel.close();
                 
         return apps;
     }
     
-    public List<AppsByGroup> getInstalledForUser()
+    public List<AppGroup> getInstalledForUser( int nEnvironment, int nGroup )
            throws JoingServerException
     {
-        List<AppsByGroup> apps = null;
+        List<AppGroup> apps = null;
         
         Channel channel = new Channel( APP_GET_INSTALLED );
                 channel.write( platform.getBridge().getSessionId() );
-        apps = (List<AppsByGroup>) channel.read();
+                channel.write( nEnvironment );
+                channel.write( nGroup );
+        apps = (List<AppGroup>) channel.read();
                 channel.close();
         
         return apps;
