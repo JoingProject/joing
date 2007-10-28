@@ -28,17 +28,18 @@ public class AppDescriptor implements Serializable
     private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
     
     private int          id;
-    private String       name;        // These two fields form the PK
-    private String       version;     // These two fields form the PK
-    
+    private String       name;
+    private String       version;
     private String       executable;
     private String[]     arguments;
     private byte[]       iconPNG;
     private byte[]       iconSVG;
     private List<String> fileTypes;
     private String       description;
+    private boolean      allowRemote;  // Used by ApplicationManagerBean class
     
-    private boolean allowRemote;      // Used by ApplicationManagerBean class
+    private int          environment;  // Defined in org.joing.common.dto.app.AppEnvironment
+    private int          environ_ver;  // Minimum Environment Version to run the application
     
     //------------------------------------------------------------------------//
     
@@ -137,19 +138,58 @@ public class AppDescriptor implements Serializable
         }
     }
     
+    /**
+     * Informs about the file types this application can work with.
+     *
+     * @return An array indicating those file name extensions that this 
+     *         application can operate with.
+     */
     public String[] getFileTypes()
     {
         return fileTypes.toArray( new String[ fileTypes.size() ] );   // Defensive copy
     }
     
+    /**
+     * The application description.
+     *
+     * @return The application description
+     */
     public String getDescription()
     {
         return ((description == null) ? "" : description);
     }
     
+    /**
+     * Tells about the permission for the user to run the application remotely.
+     *
+     * @return <code>true</code> if the user is allowed to run this application
+     *         remotely (will run inside the server and will be viewed from 
+     *         using the client somekind of VNC).
+     */
     public boolean isRemoteExecutionAllowed()
     {
         return allowRemote;
+    }
+    
+    /**
+     * The kind of Java environment this application needs.
+     *
+     * @return The kind of Java environment this application needs.
+     * @see org.joing.common.dto.app.AppEnvironment
+     */
+    public int getEnvironment()
+    {
+        return environment;
+    }
+
+    /**
+     * The minimum environment version needed to run this application.
+     *
+     * @return Minimum environment version needed to run this application.
+     */ 
+    public int getEnvironVersion()
+    {
+        return environ_ver;
     }
     
     //------------------------------------------------------------------------//
@@ -234,5 +274,20 @@ public class AppDescriptor implements Serializable
     public void setDescription( String description )
     {
         description = description;
+    }
+
+    public static long getSerialVersionUID()
+    {
+        return serialVersionUID;
+    }
+
+    public void setEnvironment(int environment)
+    {
+        this.environment = environment;
+    }
+
+    public void setEnvironVersion(int environ_ver)
+    {
+        this.environ_ver = environ_ver;
     }
 }
