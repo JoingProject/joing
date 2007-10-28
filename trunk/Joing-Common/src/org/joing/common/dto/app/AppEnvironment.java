@@ -1,5 +1,5 @@
 /*
- * AppDomain.java
+ * AppEnvironment.java
  *
  * Created on 18 de octubre de 2007, 22:37
  *
@@ -13,7 +13,7 @@ package org.joing.common.dto.app;
  *
  * @author Francisco Morero Peyrona
  */
-public class AppDomain
+public class AppEnvironment
 {
     public final static int JAVA_ALL    =  0;
     
