@@ -27,9 +27,9 @@ public class Constant {
 
     private static String sVersion;
     private static String sSysName; // System name (decided by Join'g provider)
-    private static File fBaseDir; // Joing base directory
-    private static File fAppDir; // Dir for all apps for all users
-    private static File fUserDir; // Dir for all users home dirs
+    private static File fBaseDir;   // Joing base directory
+    private static File fAppDir;    // Dir for all apps for all users
+    private static File fUserDir;   // Dir for all users home dirs
     private static URL emailServer;
     private static long nSessionTimeOut;
 
