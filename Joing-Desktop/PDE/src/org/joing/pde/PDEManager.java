@@ -188,17 +188,8 @@ public class PDEManager extends JApplet implements DesktopManager
             Bridge2Server.getInstance().getSessionBridge().login( "peyrona", "admin" );
         }
         
-        try
-        {
-            // continuous layout on frame resize
-            Toolkit.getDefaultToolkit().setDynamicLayout( true );
-            // no flickering on resize
-            System.setProperty( "sun.awt.noerasebackground", "true" );
-        } 
-        catch( Exception exc )
-        {
-            exc.printStackTrace();
-        }
+        // continuous layout on frame resize
+        Toolkit.getDefaultToolkit().setDynamicLayout( true );
         
         final PDEManager mgr = new PDEManager();
         PDERuntime.getRuntime().setDesktopManager( mgr );
