@@ -152,7 +152,7 @@ public class FramesList extends JPanel
             }
             else if( iframe.isIcon() )
             {
-               PDEFrame.restore( iframe );
+               ((PDEFrame) iframe).restore();
             }
             else
             {
