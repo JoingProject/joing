@@ -33,7 +33,6 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import org.joing.api.DesktopManager;
 import org.joing.api.desktop.Desktop;
-import org.joing.common.dto.session.LoginResult;
 import org.joing.pde.runtime.PDERuntime;
 import org.joing.runtime.bridge2server.Bridge2Server;
 
@@ -208,7 +207,7 @@ public class PDEManager extends JApplet implements DesktopManager
     // Used to lock the screen.
     //------------------------------------------------------------------------//
     
-    private final class MyGlassPane 
+    private final class MyGlassPane
             extends JPanel 
             implements MouseListener, ActionListener
     {

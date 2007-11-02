@@ -8,9 +8,10 @@ package org.joing.pde.desktop.container;
 import java.awt.Color;
 import java.awt.Container;
 import java.beans.PropertyVetoException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JInternalFrame;
 import javax.swing.event.InternalFrameEvent;
-import java.awt.Component;
 import org.joing.api.desktop.DeskFrame;
 import org.joing.api.desktop.Selectable;
 
@@ -18,6 +19,10 @@ public class PDEFrame
        extends JInternalFrame 
         implements Selectable, DeskFrame
 {
+    private boolean bAlwaysOnTop = false;
+    
+    //------------------------------------------------------------------------//
+    
     public PDEFrame()
     {
         this( "" );
@@ -39,31 +44,42 @@ public class PDEFrame
     }
     
     //------------------------------------------------------------------------//
-        
-    public void restore()
+    
+    public void maximize()
     {
-       PDEFrame.restore( this );
+        try
+        {
+            if( ! isMaximum() )
+            {
+                if( isIcon() )
+                    setIcon( false );
+            
+                setMaximum( true );
+            }
+        }
+        catch( PropertyVetoException exc )
+        {
+            // Nothing to do
+        }
     }
     
     /** Used by FramesList */
-    public static void restore( JInternalFrame ifrm )
-    {// @TODO casca cuando se pasa de Maximized a Minimized y a Restored
-       try
-       {
-          if( ifrm.isIcon() )
-          {                        // To restore it must:
-             ifrm.setMaximum( true );   // 1st maximize
-             ifrm.setMaximum( false );  // 2nd restore
-          }
-          else if( ifrm.isMaximum() )
-          {
-              ifrm.setMaximum( false );
-          }
-       }
-       catch( PropertyVetoException exc )
-       {
-          // Nothing to do
-       }
+    public void restore()
+    {
+        try
+        {
+            if( isIcon() || isMaximum() )
+            {
+                if( isIcon() )
+                    setIcon( false );
+                
+                setMaximum( false );
+            }
+        }
+        catch( PropertyVetoException exc )
+        {
+            // Nothing to do
+        }
     }
     
     public void setSelected( boolean bSelected )
@@ -96,7 +112,7 @@ public class PDEFrame
 
             /* Este cacho de código de JInternalFrame es el que hace q se invoque
                el proceso de iconización.
-               Me he ilimitado a remearlo, con la esperanza de que solo sirva para
+               Me he ilimitado a remearlo, con la esperanza de que sólo sirva para
                eso y q ningún otro escuchante utilize este evento.
             Boolean oldValue = isIcon ? Boolean.TRUE : Boolean.FALSE;
             Boolean newValue = b ? Boolean.TRUE : Boolean.FALSE;
@@ -104,6 +120,7 @@ public class PDEFrame
             fireVetoableChange( IS_ICON_PROPERTY, oldValue, newValue );
             isIcon = b;
             firePropertyChange( IS_ICON_PROPERTY, oldValue, newValue );*/
+            
             isIcon = bIcon;
             
             if( bIcon )
@@ -114,6 +131,20 @@ public class PDEFrame
             setSelected( ! bIcon );
             setVisible( ! bIcon );
         }
+    }
+    
+    public boolean isAlwaysOnTop()
+    {
+        return this.bAlwaysOnTop;
+    }
+    
+    public void setAlwaysOnTop( boolean b )
+    { // TODO: hacerlo
+        if( b != bAlwaysOnTop )
+        {
+            this.bAlwaysOnTop = b;
+        }
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     public void setTranslucency( int nPercent )

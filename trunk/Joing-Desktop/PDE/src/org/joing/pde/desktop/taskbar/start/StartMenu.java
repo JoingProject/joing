@@ -25,11 +25,12 @@ import javax.swing.border.LineBorder;
 import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.app.AppEnvironment;
 import org.joing.common.dto.app.AppGroup;
+import org.joing.common.dto.app.AppGroupKey;
 import org.joing.common.dto.user.User;
 import org.joing.pde.runtime.ColorSchema;
 import org.joing.pde.runtime.PDERuntime;
 import org.joing.pde.swing.JScrollablePopupMenu;
-import org.joing.pde.utils.EditUser;
+import org.joing.pde.misce.EditUser;
 
 /**
  *
@@ -119,38 +120,42 @@ class StartMenu extends JScrollablePopupMenu
     {
         final String KEY = "JOING_APP_DESCRIPTOR";
         
-        List<AppGroup> lstGroups = PDERuntime.getRuntime().getBridge().getAppBridge().getInstalledForUser( AppEnvironment.JAVA_ALL, AppGroup.ALL );
+        List<AppGroup> lstGroups = PDERuntime.getRuntime().getBridge().getAppBridge().
+                                              getInstalledForUser( AppEnvironment.JAVA_ALL, AppGroupKey.ALL );
         
-        for( AppGroup group : lstGroups )
+        if( lstGroups != null )
         {
-            if( group.getId() == AppGroup.DESKTOP )    // Don't show "Desktops" apps
-                break;
-                
-            JMenu menu = new JMenu( group.getName() );
-                  menu.setIcon( createItemIcon( group.getIconPNG() ) );
-               
-            add( menu );
-            
-            List<AppDescriptor> appList = group.getApplications();
-            
-            for( AppDescriptor appDesc : appList )
+            for( AppGroup group : lstGroups )
             {
-                JMenuItem itemApp = new JMenuItem( appDesc.getName() );
-                          itemApp.setIcon( createItemIcon( appDesc.getPNGIcon() ) );
-                          itemApp.setToolTipText( appDesc.getDescription() );
-                          itemApp.putClientProperty( KEY, appDesc );
-                          itemApp.addActionListener( new ActionListener()
-                          {
-                              public void actionPerformed( ActionEvent ae )
+                if( group.getGroupKey() == AppGroupKey.DESKTOP )    // Don't show "Desktops" apps
+                    break;
+                
+                JMenu menu = new JMenu( group.getName() );
+                      menu.setIcon( createItemIcon( group.getIconPNG() ) );
+
+                add( menu );
+
+                List<AppDescriptor> appList = group.getApplications();
+
+                for( AppDescriptor appDesc : appList )
+                {
+                    JMenuItem itemApp = new JMenuItem( appDesc.getName() );
+                              itemApp.setIcon( createItemIcon( appDesc.getPNGIcon() ) );
+                              itemApp.setToolTipText( appDesc.getDescription() );
+                              itemApp.putClientProperty( KEY, appDesc );
+                              itemApp.addActionListener( new ActionListener()
                               {
-                                  JMenuItem item = (JMenuItem) ae.getSource();
-                                  AppDescriptor appDesc = (AppDescriptor) item.getClientProperty( KEY );
-                                  
-                                  // TODO: llamar a lo de Antonio
-                              }
-                          } );
-                          
-                menu.add( itemApp );
+                                  public void actionPerformed( ActionEvent ae )
+                                  {
+                                      JMenuItem item = (JMenuItem) ae.getSource();
+                                      AppDescriptor appDesc = (AppDescriptor) item.getClientProperty( KEY );
+
+                                      // TODO: llamar a lo de Antonio
+                                  }
+                              } );
+
+                    menu.add( itemApp );
+                }
             }
         }
     }
