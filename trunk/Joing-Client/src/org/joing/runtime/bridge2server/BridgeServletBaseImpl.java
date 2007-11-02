@@ -76,9 +76,9 @@ public class BridgeServletBaseImpl
     static final String VFS_GET_TRASHCAN      = "vfs/GetTrashcan";
     
     // CLASS VARIABLES
-    private String sBaseURL;
+    protected Platform platform;
     
-    protected Platform platform = Platform.getInstance();
+    private String sBaseURL;
     
     //------------------------------------------------------------------------//
     
@@ -89,8 +89,7 @@ public class BridgeServletBaseImpl
      */
     BridgeServletBaseImpl()
     {
-        Platform platform = Platform.getInstance();
-        
+        platform = Platform.getInstance();
         sBaseURL = platform.getRuntime().getServerBaseURL();
         
         if( ! sBaseURL.endsWith( "/" ) )

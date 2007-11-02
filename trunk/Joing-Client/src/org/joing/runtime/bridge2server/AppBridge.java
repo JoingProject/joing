@@ -11,8 +11,10 @@ package org.joing.runtime.bridge2server;
 
 import java.util.List;
 import org.joing.common.dto.app.AppDescriptor;
+import org.joing.common.dto.app.AppEnvironment;
 import org.joing.common.dto.app.Application;
 import org.joing.common.dto.app.AppGroup;
+import org.joing.common.dto.app.AppGroupKey;
 
 /**
  *
@@ -20,11 +22,11 @@ import org.joing.common.dto.app.AppGroup;
  */
 public interface AppBridge
 {
-    List<AppGroup> getAvailableForUser( int nEnvironment, int nGroup );
+    List<AppGroup> getAvailableForUser( AppEnvironment environ, AppGroupKey groupKey );
     
-    List<AppGroup> getNotInstalledForUser( int nEnvironment, int nGroup );
+    List<AppGroup> getNotInstalledForUser( AppEnvironment environ, AppGroupKey groupKey );
     
-    List<AppGroup> getInstalledForUser( int nEnvironment, int nGroup );
+    List<AppGroup> getInstalledForUser( AppEnvironment environ, AppGroupKey groupKey );
     
     boolean install( AppDescriptor app );
     
