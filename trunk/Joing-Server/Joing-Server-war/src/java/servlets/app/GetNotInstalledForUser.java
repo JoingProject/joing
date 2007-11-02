@@ -13,7 +13,9 @@ import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import org.joing.common.dto.app.AppEnvironment;
 import org.joing.common.dto.app.AppGroup;
+import org.joing.common.dto.app.AppGroupKey;
 import org.joing.common.exception.JoingServerException;
 import servlets.JoingServerServletException;
 
@@ -42,12 +44,12 @@ public class GetNotInstalledForUser extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String sSessionId = (String) reader.readObject();
-            int    nEnvironment = reader.readInt();
-            int    nGroup       = reader.readInt();
+            String         sSessionId = (String)         reader.readObject();
+            AppEnvironment environ    = (AppEnvironment) reader.readObject();
+            AppGroupKey    groupKey   = (AppGroupKey)    reader.readObject();
             
             // Process request
-            List<AppGroup> apps = applicationManagerBean.getNotInstalledForUser( sSessionId, nEnvironment, nGroup );
+            List<AppGroup> apps = applicationManagerBean.getNotInstalledForUser( sSessionId, environ, groupKey );
             
             // Write to Client (desktop)
             writer.writeObject( apps );
