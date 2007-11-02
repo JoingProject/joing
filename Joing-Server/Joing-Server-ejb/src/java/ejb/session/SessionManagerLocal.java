@@ -1,6 +1,5 @@
 package ejb.session;
 
-import ejb.user.*;
 import javax.ejb.Local;
 import org.joing.common.exception.JoingServerSessionException;
 

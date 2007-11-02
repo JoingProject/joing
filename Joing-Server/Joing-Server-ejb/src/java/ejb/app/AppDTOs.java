@@ -10,15 +10,14 @@
 package ejb.app;
 
 import ejb.Constant;
-import org.joing.common.dto.app.AppDescriptor;
-import org.joing.common.dto.app.Application;
-import org.joing.common.exception.JoingServerAppException;
-import ejb.app.*;
 import ejb.vfs.FileSystemTools;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import org.joing.common.dto.app.AppDescriptor;
+import org.joing.common.dto.app.Application;
+import org.joing.common.exception.JoingServerAppException;
 import org.joing.common.exception.JoingServerException;
 
 /**

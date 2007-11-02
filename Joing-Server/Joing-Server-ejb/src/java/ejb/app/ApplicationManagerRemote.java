@@ -1,12 +1,13 @@
 
 package ejb.app;
 
-import org.joing.common.dto.app.AppDescriptor;
 import java.util.List;
-import java.util.Map;
 import javax.ejb.Remote;
+import org.joing.common.dto.app.AppDescriptor;
+import org.joing.common.dto.app.AppEnvironment;
 import org.joing.common.dto.app.Application;
 import org.joing.common.dto.app.AppGroup;
+import org.joing.common.dto.app.AppGroupKey;
 import org.joing.common.exception.JoingServerAppException;
 
 /**
@@ -26,11 +27,11 @@ public interface ApplicationManagerRemote
      * went wrong.
      *
      * @param sSessionId A valid session (sSessionId in order to obtain the user).
-     * @param nEnviron Environment. Refer to <code>org.joing.common.dto.app.AppEnvironment</code>
-     * @param nGroup App group. Refer to <code>org.joing.common.dto.app.AppGroup</code>
+     * @param environ Environment. Refer to <code>org.joing.common.dto.app.AppEnvironment</code>
+     * @param groupKey App group. Refer to <code>org.joing.common.dto.app.AppGroup</code>
      * @return List of applications matching the criteria.
      */
-    List<AppGroup> getAvailableForUser( String sSessionId, int nEnviron, int nGroup )
+    List<AppGroup> getAvailableForUser( String sSessionId, AppEnvironment environ, AppGroupKey groupKey )
                    throws JoingServerAppException;
     
     /**
@@ -43,11 +44,11 @@ public interface ApplicationManagerRemote
      * or will be <code>null</code> if something went wrong.
      *
      * @param sSessionId A valid session (sSessionId in order to obtain the user).
-     * @param nEnviron Environment. Refer to <code>org.joing.common.dto.app.AppEnvironment</code>
-     * @param nGroup App group. Refer to <code>org.joing.common.dto.app.AppGroup</code>
+     * @param environ Environment. Refer to <code>org.joing.common.dto.app.AppEnvironment</code>
+     * @param groupKey App group. Refer to <code>org.joing.common.dto.app.AppGroup</code>
      * @return List of applications matching the criteria.
      */
-    List<AppGroup> getNotInstalledForUser( String sSessionId, int nEnviron, int nGroup )
+    List<AppGroup> getNotInstalledForUser( String sSessionId, AppEnvironment environ, AppGroupKey groupKey )
                    throws JoingServerAppException;
     
     /**
@@ -60,11 +61,11 @@ public interface ApplicationManagerRemote
      * or will be <code>null</code> if something went wrong.
      *
      * @param sSessionId A valid session (sSessionId in order to obtain the user).
-     * @param nEnviron Environment. Refer to <code>org.joing.common.dto.app.AppEnvironment</code>
-     * @param nGroup App group. Refer to <code>org.joing.common.dto.app.AppGroup</code>
+     * @param environ Environment. Refer to <code>org.joing.common.dto.app.AppEnvironment</code>
+     * @param groupKey App group. Refer to <code>org.joing.common.dto.app.AppGroup</code>
      * @return List of applications matching the criteria.
      */
-    List<AppGroup> getInstalledForUser( String sSessionId, int nEnviron, int nGroup )
+    List<AppGroup> getInstalledForUser( String sSessionId, AppEnvironment environ, AppGroupKey groupKey )
                    throws JoingServerAppException;
     
     /**
