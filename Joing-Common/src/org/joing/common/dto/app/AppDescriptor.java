@@ -260,7 +260,7 @@ public class AppDescriptor implements Serializable
      */
     public void setRemoteExecutionAllowed( boolean allowRemote )
     {
-        allowRemote = allowRemote;
+        this.allowRemote = allowRemote;
     }
     
     /**
@@ -273,7 +273,7 @@ public class AppDescriptor implements Serializable
      */
     public void setDescription( String description )
     {
-        description = description;
+        this.description = description;
     }
 
     public static long getSerialVersionUID()

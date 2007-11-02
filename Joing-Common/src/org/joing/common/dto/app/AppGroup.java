@@ -33,25 +33,7 @@ import java.util.List;
  */
 public class AppGroup implements Serializable
 {
-    public final static int UNKNOWN     = -1;
-    public final static int ALL         =  0;
-    
-    public final static int ACCESSORIES =  1;
-    public final static int EDUCATION   =  2;
-    public final static int GAMES       =  3;
-    public final static int GRAPHICS    =  4;
-    public final static int INTERNET    =  5;
-    public final static int MULTIMEDIA  =  6;
-    public final static int OFFICE      =  7;
-    public final static int PROGRAMMING =  8;
-    public final static int SYSTEM      =  9;
-    public final static int OTHER       = 10;
-    
-    public final static int DESKTOP     = 99;   // Desktops: PDE, etc.
-    
-    //------------------------------------------------------------------------//
-    
-    private int                 id;
+    private AppGroupKey         groupKey;
     private String              name;
     private String              description;
     private byte[]              iconPNG;
@@ -62,12 +44,12 @@ public class AppGroup implements Serializable
     
     public AppGroup()
     {
-        this( UNKNOWN );
+        this( AppGroupKey.UNKNOWN );
     }
     
-    public AppGroup( int nId )
+    public AppGroup( AppGroupKey key )
     {
-        this.id          = nId;
+        this.groupKey    = key;
         this.name        = "";
         this.description = "";
         this.iconPNG     = null;
@@ -75,9 +57,9 @@ public class AppGroup implements Serializable
         this.apps        = new ArrayList<AppDescriptor>();
     }
     
-    public int getId()
+    public AppGroupKey getGroupKey()
     {
-        return id;
+        return groupKey;
     }
     
     public String getName()
@@ -112,9 +94,9 @@ public class AppGroup implements Serializable
     //------------------------------------------------------------------------//
     // NEXT: Los siguientes métodos debieran ser package (o al menos protected)
     
-    public void setId( int nId )
+    public void setId( AppGroupKey key )
     {
-        this.id = nId;
+        this.groupKey = key;
     }
     
     public void setName( String name )

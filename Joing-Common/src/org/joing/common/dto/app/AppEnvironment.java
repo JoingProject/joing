@@ -13,14 +13,28 @@ package org.joing.common.dto.app;
  *
  * @author Francisco Morero Peyrona
  */
-public class AppEnvironment
+public enum AppEnvironment
 {
-    public final static int JAVA_ALL    =  0;
+    JAVA_ALL   ( 0 ),
     
-    public final static int JAVA_CLDC   =  1;
-    public final static int JAVA_CDC    =  2;
-    public final static int JAVA_SE     =  3;
-    public final static int JAVA_RUBY   =  4;
-    public final static int JAVA_GROOVY =  5;
-    public final static int JAVA_PYTHON =  6;
+    JAVA_CLDC  ( 1 ),
+    JAVA_CDC   ( 2 ),
+    JAVA_SE    ( 3 ),
+    JAVA_RUBY  ( 4 ),
+    JAVA_GROOVY( 5 ),
+    JAVA_PYTHON( 6 );
+    
+    //------------------------------------------------------------------------//
+    
+    private int nIndex;
+    
+    private AppEnvironment( int nIndex )
+    { 
+        this.nIndex = nIndex;
+    }
+    
+    public int getIndex()
+    { 
+        return this.nIndex;
+    }
 }
