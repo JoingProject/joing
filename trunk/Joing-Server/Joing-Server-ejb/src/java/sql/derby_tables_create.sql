@@ -43,7 +43,6 @@ CREATE TABLE USERS_WITH_APPS(               -- Many-To-Many: which apps are avai
    PRIMARY KEY (ACCOUNT, ID_APPLICATION)  , -- and which will be shown in the menu (installed == true)
    ACCOUNT        VARCHAR(128) NOT NULL   ,
    ID_APPLICATION INT          NOT NULL   ,
-   IS_INSTALLED   SMALLINT     DEFAULT 0  , -- Can this user launch the application? 
    ALLOW_REMOTE   SMALLINT     DEFAULT 1 ); -- Is this user allowed to run this app in the server?
 
 -- ********************************************************************************************************************

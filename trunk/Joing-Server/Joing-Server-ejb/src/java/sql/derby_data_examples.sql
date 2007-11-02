@@ -20,13 +20,13 @@ insert into app_group_descriptions (ID_APP_GROUP, ID_LOCALE, GROUP_NAME)
      values (1, 2, 'Accesorios');
 
 insert into app_group_descriptions (ID_APP_GROUP, ID_LOCALE, GROUP_NAME)
-     values (2, 2, 'Educativos');
+     values (2, 2, 'Educación');
 
 insert into app_group_descriptions (ID_APP_GROUP, ID_LOCALE, GROUP_NAME)
      values (3, 2, 'Juegos');
 
 insert into app_group_descriptions (ID_APP_GROUP, ID_LOCALE, GROUP_NAME)
-     values (4, 2, 'Gráficos');
+     values (4, 2, 'Graficos');
 
 insert into app_group_descriptions (ID_APP_GROUP, ID_LOCALE, GROUP_NAME)
      values (5, 2, 'Internet');
@@ -49,9 +49,8 @@ insert into app_group_descriptions (ID_APP_GROUP, ID_LOCALE, GROUP_NAME)
 insert into app_group_descriptions (ID_APP_GROUP, ID_LOCALE, GROUP_NAME)
      values (99, 2, 'Escritorios');
 
--- ------------------------------------------------------------------
+-- -----------------------------------------------------------------------------
 
--- For inf about ENVIRONMENT, refer to -> org.joing.common.dto.app.AppEnvironment.java
 insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, FILE_TYPES, ENVIRONMENT, ENVIRON_VER)
      values ('PDE', '0.0.1', 'desktops', 'PDE.jar', null, 3, '1.5');
 
@@ -118,25 +117,28 @@ insert into apps_with_groups (ID_APPLICATION, ID_APP_GROUP)
 
 -- ------------------------------------------------------------------
 
-insert into APP_PREFERRED (ID_APPLICATION, FILE_EXTENSION)
+insert into app_preferred (ID_APPLICATION, FILE_EXTENSION)
      values (1, 'txt');
 
-insert into APP_PREFERRED (ID_APPLICATION, FILE_EXTENSION)
+insert into app_preferred (ID_APPLICATION, FILE_EXTENSION)
      values (1, 'ini');
 
 -- ------------------------------------------------------------------
 
-insert into users_with_apps (ACCOUNT, ID_APPLICATION, IS_INSTALLED, ALLOW_REMOTE)
-     values ('peyrona@joing.peyrona.com', 1, 1, 1);
+insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
+     values ('peyrona@joing.peyrona.com', 1, 1);
  
-insert into users_with_apps (ACCOUNT, ID_APPLICATION, IS_INSTALLED, ALLOW_REMOTE)
-     values ('peyrona@joing.peyrona.com', 2, 1, 1);
+insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
+     values ('peyrona@joing.peyrona.com', 2, 1);
 
-insert into users_with_apps (ACCOUNT, ID_APPLICATION, IS_INSTALLED, ALLOW_REMOTE)
-     values ('peyrona@joing.peyrona.com', 3, 1, 0);
+insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
+     values ('peyrona@joing.peyrona.com', 3, 0);
 
-insert into users_with_apps (ACCOUNT, ID_APPLICATION, IS_INSTALLED, ALLOW_REMOTE)
-     values ('peyrona@joing.peyrona.com', 4, 1, 0);
+insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
+     values ('peyrona@joing.peyrona.com', 4, 0);
+
+insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
+     values ('peyrona@joing.peyrona.com', 5, 0);
 
 -- ------------------------------------------------------------------
 
