@@ -154,7 +154,8 @@ public class PDEWorkArea
      */
     protected void showPopupMenu( Point p )
     {
-        // Has to be created every time because some items can change from ivocation to invocation
+        // Has to be created every time because some items can change from ivocation to invocation.
+        // And in this way, we also save memory (it exists in memory only while needed).
         PopupMenu popup = new PopupMenu( this );
                   popup.show( this, p.x, p.y );
     }
@@ -358,12 +359,13 @@ public class PDEWorkArea
         return this;
     }
     
+    // super is in charge of detecting when the JinternalFrame is closed, so it
+    // can remove the frame from the container. 
+    // As this method overrides the parent one, this one does not need to 
+    // "listen" to the frame events.
     public void remove( Component component )
     {
         super.remove( component );
-        validate();
-        repaint( component.getBounds() );
-        
         fireComponentRemoved( component );
     }
     

@@ -15,31 +15,20 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridLayout;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.security.InvalidParameterException;
-import java.util.Collection;
 import java.util.Hashtable;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
-import org.joing.api.desktop.Desktop;
 import org.joing.api.desktop.DesktopListener;
 import org.joing.api.desktop.taskbar.TaskBar;
 import org.joing.api.desktop.workarea.Wallpaper;
 import org.joing.api.desktop.workarea.WorkArea;
 import org.joing.api.desktop.workarea.WorkAreaListener;
-import org.joing.pde.PDEManager;
-import org.joing.pde.desktop.taskbar.TaskPanel;
-import org.joing.pde.desktop.container.PDEDialog;
 import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.runtime.PDERuntime;
 
@@ -74,53 +63,43 @@ public class FramesList extends JPanel
         setLayout( grid );
         setMinimumSize( new Dimension( 80, 20 ) );
         setMaximumSize( new Dimension( Integer.MAX_VALUE, Integer.MAX_VALUE ) );
-        setPreferredSize( new Dimension( 810,24 ) );   // TODO: esto no puede estar a pelo
+        setPreferredSize( new Dimension( 810,24 ) );   // FIXME: esto no puede estar a pelo
         
         PDERuntime.getRuntime().getDesktopManager().getDesktop().addDesktopListener( tdl );
     }
     
     //------------------------------------------------------------------------//
     
-    public void add( JInternalFrame iframe )
+    public void add( PDEFrame iframe )
     {
-        iframe.addInternalFrameListener( tifl );
-        
-        FrameButton fb = new FrameButton( iframe );
-                    fb.addActionListener( new ActionListener()
-                    {
-                        public void actionPerformed( ActionEvent ae )
-                        {
-                            onButtonClicked( ae );
-                        }
-                    } );
-        
-        vButtons.put( iframe, fb );
-        
-        grid.setColumns( grid.getColumns() + 1 );
-        super.add( fb );
-        grid.layoutContainer( this );
+        iframe.addInternalFrameListener( tifl );        
+        _add( iframe, new FrameButton( iframe ) );
     }
     
     public void add( Frame frame )
     {
         frame.addWindowListener( twl );
-        
-        FrameButton fb = new FrameButton( frame );
-                    fb.addActionListener( new ActionListener()
-                    {
-                        public void actionPerformed( ActionEvent ae )
-                        {
-                            onButtonClicked( ae );
-                        }
-                    } );
-        
+        _add( frame, new FrameButton( frame ) );
+    }
+    
+    //------------------------------------------------------------------------//
+    
+    private void _add( Container frame, FrameButton fb )
+    {
+        fb.addActionListener( new ActionListener()
+        {
+            public void actionPerformed( ActionEvent ae )
+            {
+                onButtonClicked( ae );
+            }
+        } );
+                    
         vButtons.put( frame, fb );
         
         grid.setColumns( grid.getColumns() + 1 );
         super.add( fb );
+        grid.layoutContainer( this );
     }
-    
-    //------------------------------------------------------------------------//
     
     private void remove( Container frm )
     {
@@ -129,7 +108,7 @@ public class FramesList extends JPanel
         super.remove( fb );       // Removes the button from the panel
         vButtons.remove( frm );
         grid.setColumns( grid.getColumns() - 1 );
-        updateSeleced();
+        updateSelected();
     }
     
     public void onButtonClicked( ActionEvent ae )
@@ -137,28 +116,13 @@ public class FramesList extends JPanel
         FrameButton btn = (FrameButton) ae.getSource();
         Container   frm = btn.getFrame();
         
-        if( frm instanceof JInternalFrame )
+        if( frm instanceof PDEFrame )
         {
-            JInternalFrame iframe = (JInternalFrame) frm;
+            PDEFrame iframe = (PDEFrame) frm;
             
-            if( iframe.isSelected() )  
-            {
-               if( iframe instanceof PDEFrame )
-                   ((PDEFrame) iframe).setIcon( true );
-               else
-               {
-                    // TODO: hacerlo: poner en modo iconified a la JInternalFrame
-               }
-            }
-            else if( iframe.isIcon() )
-            {
-               ((PDEFrame) iframe).restore();
-            }
-            else
-            {
-               try{ iframe.setSelected( true ); }
-               catch( Exception ex) {}
-            }
+            if(      iframe.isSelected() )  iframe.setIcon( true );
+            else if( iframe.isIcon()     )  iframe.restore();
+            else                            iframe.setSelected( true );
         }
         else
         {
@@ -166,13 +130,13 @@ public class FramesList extends JPanel
             
             if( frame.isActive() )
             {
-                frame.setExtendedState( Frame.ICONIFIED );
+                frame.setExtendedState( frame.getExtendedState() | Frame.ICONIFIED );
             }
             else if( frame.getExtendedState() == Frame.ICONIFIED )
             {
-                frame.setExtendedState( Frame.NORMAL );
+                frame.setExtendedState( frame.getExtendedState() | Frame.NORMAL );
             }
-            else
+            else   // Make it the active (selected) frame
             {
                 frame.setVisible( false );
                 frame.setVisible( true );
@@ -180,7 +144,7 @@ public class FramesList extends JPanel
         }
     }
 
-    private void updateSeleced()
+    private void updateSelected()
     {
         WorkArea waActive = PDERuntime.getRuntime().getDesktopManager().getDesktop().getActiveWorkArea();
         
@@ -226,7 +190,7 @@ public class FramesList extends JPanel
         }
         public void workAreaSelected( WorkArea waPrevious, WorkArea waCurrent )
         {
-            updateSeleced();
+            updateSelected();
         }
     }
     
@@ -234,18 +198,17 @@ public class FramesList extends JPanel
     // INNER CLASS: WorkArea Listener
     //    Heritage:
     //        Container -> JComponent -> JInternalFrame
-    //        Container -> Window     -> Frame
     //        Container -> Window     -> Frame          -> JFrame
     //------------------------------------------------------------------------//
     private class TheWorkAreaListener implements WorkAreaListener
     {
         public void componentAdded( Component comp )
         {
-            if( comp instanceof JInternalFrame )
-                add( (JInternalFrame) comp );
+            if( comp instanceof PDEFrame )
+                FramesList.this.add( (PDEFrame) comp );
                 
             if( comp instanceof Frame )           // Used for Frame and JFrame
-                add( (Frame) comp );
+                FramesList.this.add( (Frame) comp );
         }
 
         public void componentRemoved( Component comp )
@@ -255,7 +218,7 @@ public class FramesList extends JPanel
 
         public void wallpaperChanged( Wallpaper wpNew )
         {
-        }   
+        }
     }
     
     //------------------------------------------------------------------------//
@@ -266,7 +229,7 @@ public class FramesList extends JPanel
     {
         public void internalFrameOpened( InternalFrameEvent ife )
         {
-            updateSeleced();
+            updateSelected();
         }
         
         public void internalFrameClosing( InternalFrameEvent ife )
@@ -280,24 +243,24 @@ public class FramesList extends JPanel
         
         public void internalFrameIconified( InternalFrameEvent ife )
         {
-            updateSeleced();
+            updateSelected();
         }
         
         public void internalFrameDeiconified( InternalFrameEvent ife )
         {
-            updateSeleced();
+            updateSelected();
         }
 
         // Invocado cuando se hace InternalFrame.setSelected( true )
         public void internalFrameActivated( InternalFrameEvent ife )
         {
-            updateSeleced();
+            updateSelected();
         }
         
         // Invocado cuando se hace InternalFrame.setSelected( false ): se procesa en la TaskBar
         public void internalFrameDeactivated( InternalFrameEvent ife )
         {
-            updateSeleced();
+            updateSelected();
         }
     }
     
@@ -309,7 +272,7 @@ public class FramesList extends JPanel
     {
         public void windowOpened( WindowEvent we )
         {
-            updateSeleced();
+            updateSelected();
         }
         
         public void windowClosing( WindowEvent we )
@@ -323,22 +286,22 @@ public class FramesList extends JPanel
         
         public void windowIconified( WindowEvent we )
         {
-            updateSeleced();
+            updateSelected();
         }
         
         public void windowDeiconified( WindowEvent we )
         {
-            updateSeleced();
+            updateSelected();
         }
         
         public void windowActivated( WindowEvent we )
         {
-            updateSeleced();
+            updateSelected();
         }
         
         public void windowDeactivated( WindowEvent we )
         {
-            updateSeleced();
+            updateSelected();
         }
     }
 }
