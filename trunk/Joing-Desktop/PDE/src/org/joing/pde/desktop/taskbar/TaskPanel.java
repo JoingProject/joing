@@ -92,7 +92,7 @@ public abstract class TaskPanel extends JPanel implements MouseListener
     
     private void onPreferences()
     {
-        JPanel pnlPrefs = getPreferencesPanel();
+        final JPanel pnlPrefs = getPreferencesPanel();
         
         if( pnlPrefs == null )
             return;
@@ -109,12 +109,28 @@ public abstract class TaskPanel extends JPanel implements MouseListener
         pnlDialog.add( pnlButton, BorderLayout.SOUTH  );
 
         // Better to use a Frame than a Dialog (this is the way Gnome does it)
-        PDEFrame frame = new PDEFrame( "Preferences" );
-                 frame.setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
-                 frame.getContentPane().add( pnlDialog );
+        final PDEFrame frame = new PDEFrame( "Preferences" );
+                       frame.setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
+                       frame.getContentPane().add( pnlDialog );
+
+        btnAccept.addActionListener( new ActionListener() 
+        {
+            public void actionPerformed( ActionEvent ae )
+            {
+                frame.dispose();
+                onPreferencesChanged( pnlPrefs );
+            }
+        } );
+        
+        btnCancel.addActionListener( new ActionListener() 
+        {
+            public void actionPerformed( ActionEvent ae )
+            {
+                frame.dispose();
+            }
+        } );
 
         PDERuntime.getRuntime().add( frame );
-        // TODO: Al cerrar la dialog, si se hizo click en aceptar, procesar el panel de Porperties
     }
     
     private void onAbout()

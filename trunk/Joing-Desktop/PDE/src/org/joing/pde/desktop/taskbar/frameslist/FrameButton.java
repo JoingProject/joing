@@ -160,20 +160,89 @@ class FrameButton extends JToggleButton
         } );
     }
     
+    private void minimize()
+    {
+        if( getFrame() instanceof Frame )
+        {
+            Frame frm = (Frame) getFrame();
+                  frm.setExtendedState( frm.getExtendedState() | Frame.ICONIFIED );
+        }
+        else
+        {
+            ((PDEFrame) getFrame()).setIcon( true );
+        }
+    }
+    
+    private void maximize()
+    {
+        if( getFrame() instanceof Frame )
+        {
+            Frame frm    = (Frame) getFrame();
+                  frm.setExtendedState( frm.getExtendedState() | Frame.MAXIMIZED_BOTH );
+        }
+        else
+        {
+            ((PDEFrame) getFrame()).maximize();
+        }
+    }
+    
+    private void restore()
+    {
+        if( getFrame() instanceof Frame )
+            {
+                Frame frm = (Frame) getFrame();
+                      frm.setExtendedState( frm.getExtendedState() | Frame.NORMAL );
+            }
+            else
+            {
+                ((PDEFrame) getFrame()).restore();
+            }
+    }
+    
+    private void close()
+    {
+        if( getFrame() instanceof Frame )
+            ((Frame) getFrame()).dispose();
+        else
+            ((PDEFrame) getFrame()).dispose();
+    }
+    
+    private void alwaysOnTop()
+    {
+        if( getFrame() instanceof Frame )
+        {
+            Frame frm = (Frame) getFrame();
+                  frm.setAlwaysOnTop( ! frm.isAlwaysOnTop() );
+        }
+        else
+        {
+            PDEFrame frm = (PDEFrame) getFrame();
+                     frm.setAlwaysOnTop( ! frm.isAlwaysOnTop() );
+        }
+    }
+    
+    private void toWorkArea( WorkArea waDestiny )
+    {// FIXME: Esto no va bien porque se están cogiendo 2 eventos: el de close window y el de add/remove del work area, creo que habría que coger sólo uno de los dos
+        WorkArea  waOrigin  = PDERuntime.getRuntime().getDesktopManager().getDesktop().getActiveWorkArea();
+        
+        waOrigin.remove( getFrame() );
+        waDestiny.add( getFrame() );
+    }
+    
     //------------------------------------------------------------------------//
     // INNER CLASS: Popup Menu
     //------------------------------------------------------------------------//
     private final class ThisPopupMenu extends JPopupMenu implements ActionListener
     {
         // Done using vars (and one char vars) to save memory
-        private static final String MINIMIZE  = "A";
-        private static final String MAXIMIZE  = "B";
-        private static final String RESTORE   = "C";
-        private static final String CLOSE     = "D";
-        private static final String ON_TOP    = "E";
-        private static final String MOVE      = "F";
+        private static final String MINIMIZE    = "A";
+        private static final String MAXIMIZE    = "B";
+        private static final String RESTORE     = "C";
+        private static final String CLOSE       = "D";
+        private static final String ON_TOP      = "E";
+        private static final String TO_WORKAREA = "F";
         
-        private static final String WORK_AREA = "G";
+        private static final String WORK_AREA   = "WORK_AREA";  // Better to have a long name
         
         //--------------------------------------------------------------------//
         
@@ -234,7 +303,7 @@ class FrameButton extends JToggleButton
                 for( WorkArea wa : lstWorkAreas )
                 {
                     item = new JMenuItem( wa.getName() );
-                    item.setActionCommand( MOVE );
+                    item.setActionCommand( TO_WORKAREA  );
                     item.addActionListener( this );
                     item.putClientProperty( WORK_AREA, wa );
                     item.setEnabled( wa != waActive );
@@ -250,70 +319,17 @@ class FrameButton extends JToggleButton
         {
             String sCommand = ae.getActionCommand();
             
-            if( sCommand.equals( MINIMIZE ) )
-            {
-                if( getFrame() instanceof Frame )
-                {
-                    Frame frm = (Frame) getFrame();
-                          frm.setExtendedState( frm.getExtendedState() | Frame.ICONIFIED );
-                }
-                else
-                {
-                    ((PDEFrame) getFrame()).setIcon( true );
-                }
-            }
-            else if( sCommand.equals( MAXIMIZE ) )
-            {
-                if( getFrame() instanceof Frame )
-                {
-                    Frame frm    = (Frame) getFrame();
-                          frm.setExtendedState( frm.getExtendedState() | Frame.MAXIMIZED_BOTH );
-                }
-                else
-                {
-                    ((PDEFrame) getFrame()).maximize();
-                }
-            }
-            else if( sCommand.equals( RESTORE ) )
-            {
-                if( getFrame() instanceof Frame )
-                {
-                    Frame frm = (Frame) getFrame();
-                          frm.setExtendedState( frm.getExtendedState() | Frame.NORMAL );
-                }
-                else
-                {
-                    ((PDEFrame) getFrame()).restore();
-                }
-            }
-            else if( sCommand.equals( CLOSE ) )
-            {
-                if( getFrame() instanceof Frame )
-                    ((Frame) getFrame()).dispose();
-                else
-                    ((PDEFrame) getFrame()).dispose();
-            }
-            else if( sCommand.equals( ON_TOP ) )
-            {
-                if( getFrame() instanceof Frame )
-                {
-                    Frame frm = (Frame) getFrame();
-                          frm.setAlwaysOnTop( ! frm.isAlwaysOnTop() );
-                }
-                else
-                {
-                    PDEFrame frm = (PDEFrame) getFrame();
-                             frm.setAlwaysOnTop( ! frm.isAlwaysOnTop() );
-                }
-            }
-            else if( sCommand.equals( MOVE ) )
+            if(      sCommand.equals( MINIMIZE ) )    minimize();
+            else if( sCommand.equals( MAXIMIZE ) )    maximize();
+            else if( sCommand.equals( RESTORE ) )     restore();
+            else if( sCommand.equals( CLOSE ) )       close();            
+            else if( sCommand.equals( ON_TOP ) )      alwaysOnTop();
+            else if( sCommand.equals( TO_WORKAREA ) )
             {
                 JMenuItem item      = (JMenuItem) ae.getSource();
-                WorkArea  waOrigin  = PDERuntime.getRuntime().getDesktopManager().getDesktop().getActiveWorkArea();
                 WorkArea  waDestiny = (WorkArea) item.getClientProperty( WORK_AREA ); 
                 
-                waOrigin.remove( getFrame() );
-                waDestiny.add( getFrame() );
+                toWorkArea( waDestiny );
             }
         }
     }
