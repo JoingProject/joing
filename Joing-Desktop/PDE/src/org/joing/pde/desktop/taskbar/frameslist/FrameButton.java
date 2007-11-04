@@ -161,18 +161,19 @@ class FrameButton extends JToggleButton
     }
     
     //------------------------------------------------------------------------//
-    
+    // INNER CLASS: Popup Menu
+    //------------------------------------------------------------------------//
     private final class ThisPopupMenu extends JPopupMenu implements ActionListener
     {
-        // Done using vars to save memory
-        private static final String MINIMIZE  = "MINIMIZE";
-        private static final String MAXIMIZE  = "MAXIMIZE";
-        private static final String RESTORE   = "RESTORE";
-        private static final String CLOSE     = "CLOSE";
-        private static final String ON_TOP    = "ON_TOP";
-        private static final String MOVE      = "MOVE";
+        // Done using vars (and one char vars) to save memory
+        private static final String MINIMIZE  = "A";
+        private static final String MAXIMIZE  = "B";
+        private static final String RESTORE   = "C";
+        private static final String CLOSE     = "D";
+        private static final String ON_TOP    = "E";
+        private static final String MOVE      = "F";
         
-        private static final String WORK_AREA = "WORK_AREA";
+        private static final String WORK_AREA = "G";
         
         //--------------------------------------------------------------------//
         

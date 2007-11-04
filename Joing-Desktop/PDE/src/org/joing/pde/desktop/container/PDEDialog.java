@@ -8,22 +8,8 @@
 
 package org.joing.pde.desktop.container;
 
-import java.awt.AWTEvent;
-import java.awt.ActiveEvent;
-import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.MenuComponent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyVetoException;
-import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.MouseInputAdapter;
 import org.joing.api.desktop.DeskDialog;
 
 /**

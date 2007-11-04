@@ -61,9 +61,9 @@ public class FramesList extends JPanel
         tifl = new TheIntenalFrameListener();
         
         setLayout( grid );
-        setMinimumSize( new Dimension( 80, 20 ) );
+        setMinimumSize( new Dimension( 80,20 ) );
         setMaximumSize( new Dimension( Integer.MAX_VALUE, Integer.MAX_VALUE ) );
-        setPreferredSize( new Dimension( 810,24 ) );   // FIXME: esto no puede estar a pelo
+        setPreferredSize( new Dimension( 740,24 ) );   // FIXME: esto no puede estar a pelo
         
         PDERuntime.getRuntime().getDesktopManager().getDesktop().addDesktopListener( tdl );
     }
