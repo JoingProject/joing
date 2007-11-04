@@ -11,6 +11,7 @@ package org.joing.pde.desktop.workarea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -63,10 +64,19 @@ class PopupMenu extends JPopupMenu implements ActionListener
         JMenuItem item = new JMenuItem( sText );
                   item.setActionCommand( sCommand );
                   item.addActionListener( this );
-
+      
         if( sIconName != null )
-            item.setIcon( PDERuntime.getRuntime().getIcon( this, "images/"+ sIconName +".png", 16, 16 )  );
+        {
+            ImageIcon icon = null;
 
+            if( sIconName.equals( "grid" ) )
+                icon = PDERuntime.getRuntime().getIcon( this, "images/"+ sIconName +".png", 16, 16 );
+            else
+                icon = PDERuntime.getRuntime().getIcon( null, sIconName +".png", 16, 16 );
+
+            item.setIcon( icon );
+        }
+        
         return item;
     }
 

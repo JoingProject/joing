@@ -394,7 +394,7 @@ public class PDEDeskLauncher extends PDEDesklet implements Launcher
         {
             add( createMenuItem( "Open"       , "launcher"   , "OPEN"       ) );
             addSeparator();
-            add( createMenuItem( "To trashcan", "to_trashcan", "TRASHCAN"   ) );
+            add( createMenuItem( "To trashcan", "trashcan"   , "TRASHCAN"   ) );
             add( createMenuItem( "Delete"     , "delete"     , "DELETE"     ) );
             addSeparator();
             add( createMenuItem( "Rename"     , null         , "RENAME"     ) );
@@ -409,7 +409,7 @@ public class PDEDeskLauncher extends PDEDesklet implements Launcher
                       item.addActionListener( this );
                       
             if( sIconName != null )
-                item.setIcon( PDERuntime.getRuntime().getIcon( this, "images/"+ sIconName +".png", 16, 16 )  );
+                item.setIcon( PDERuntime.getRuntime().getIcon( null, sIconName +".png", 16, 16 ) );
             
             return item;
         }
