@@ -12,6 +12,7 @@ package org.joing.pde.desktop.taskbar.systray;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import javax.swing.JPanel;
 import org.joing.pde.desktop.taskbar.TaskPanel;
 
 /**
@@ -30,6 +31,8 @@ import org.joing.pde.desktop.taskbar.TaskPanel;
 public class SysTray extends TaskPanel
 {
     private static final int nHGAP = 2;
+    
+    //------------------------------------------------------------------------//
     
     /** Creates a new instance of SysTray */
     public SysTray()
@@ -66,5 +69,22 @@ public class SysTray extends TaskPanel
     public Dimension getPreferredSize()
     {
         return getMinimumSize();
+    }
+
+    //------------------------------------------------------------------------//
+    
+    protected JPanel getAboutPanel()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    protected JPanel getPreferencesPanel()
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    protected void onPreferencesChanged(JPanel pnlPrefs)
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

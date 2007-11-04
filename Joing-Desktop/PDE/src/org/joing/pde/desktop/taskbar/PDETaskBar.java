@@ -56,12 +56,9 @@ public class PDETaskBar extends JPanel implements TaskBar
     }
     
     public void createDefaultComponents()
-    {
-        TaskPanel tpFrameList = new TaskPanel();
-                  tpFrameList.add( new FramesList() );
-                
+    {                
         add( new StartButton() );
-        add( tpFrameList );
+        add( new FramesList() );
         add( new WorkAreaSwitcher() );
         addSysTray();
         getSysTray().add( new ClockDigital() );

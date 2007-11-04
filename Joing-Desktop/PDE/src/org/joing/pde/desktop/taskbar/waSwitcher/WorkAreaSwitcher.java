@@ -10,19 +10,14 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.border.LineBorder;
 import org.joing.api.desktop.Desktop;
 import org.joing.api.desktop.DesktopListener;
 import org.joing.api.desktop.taskbar.TaskBar;
 import org.joing.api.desktop.workarea.WorkArea;
-import org.joing.pde.desktop.container.PDEFrame;
+import org.joing.pde.desktop.taskbar.TaskPanel;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.pde.runtime.PDERuntime;
 
@@ -30,7 +25,7 @@ import org.joing.pde.runtime.PDERuntime;
  *
  * @author fmorero
  */
-public class WorkAreaSwitcher extends JPanel  // FIXME: extends ElMismoQueTodosLosElementosDeLasToolBar  // Así puede heredar el PopupMenu
+public class WorkAreaSwitcher extends TaskPanel
 {
     private GridLayout grid;
     
@@ -42,7 +37,8 @@ public class WorkAreaSwitcher extends JPanel  // FIXME: extends ElMismoQueTodosL
         
         setLayout( grid );
         setBorder( new LineBorder( Color.black, 1 ) );
-        setComponentPopupMenu( new ThisPopupMenu() );    // It is inherited by sub-components
+        setInheritsPopupMenu( true );  // It is also inherited by sub-components
+        setHandleVisible( false );
         
         Desktop desktop = PDERuntime.getRuntime().getDesktopManager().getDesktop();
                 
@@ -61,6 +57,25 @@ public class WorkAreaSwitcher extends JPanel  // FIXME: extends ElMismoQueTodosL
         } );
         
         calculateSizes( lstWorAreas.size() );
+    }
+    
+    //------------------------------------------------------------------------//
+    
+    protected JPanel getAboutPanel()
+    {
+        return null;   // TODO: hacerlo
+    }
+
+    protected JPanel getPreferencesPanel()
+    {
+        return new Preferences();
+    }
+
+    protected void onPreferencesChanged( JPanel pnl )
+    {
+        Preferences pnlPrefs = (Preferences) pnl;
+        
+        // TODO: procesar los cambios
     }
     
     //------------------------------------------------------------------------//
@@ -111,44 +126,15 @@ public class WorkAreaSwitcher extends JPanel  // FIXME: extends ElMismoQueTodosL
         
         for( int n = 0; n < aComp.length; n++ )
         {
-            Map map = (Map) aComp[n];
-            
-            if( map.getTarget() == wa )
-                return map;
+            if( (aComp[n] instanceof Map) )
+            {
+                Map map = (Map) aComp[n];
+                
+                if( map.getTarget() == wa )
+                    return map;
+            }
         }
         
         return null;    // Should never arrive to here
-    }
-    
-    //------------------------------------------------------------------------//
-    // INNER CLASS: Popup Menu
-    //------------------------------------------------------------------------//
-    private final class ThisPopupMenu extends JPopupMenu implements ActionListener
-    {
-        private final static String PREFERENCES = "PR";
-        
-        private ThisPopupMenu()
-        {
-            JMenuItem item;
-            
-            item = new JMenuItem( "Preferences" );
-            item.setActionCommand( PREFERENCES );
-            item.addActionListener( this );
-            
-            add( item );
-        }
-        
-        public void actionPerformed( ActionEvent ae )
-        {
-            Properties prop = new Properties();
-            // FIXME: cambiar esta frame por una dialog modal
-            PDEFrame frame = new PDEFrame( "WorkArea Selector Preferences" );
-                     frame.setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
-                     frame.getContentPane().add( prop );
-                     
-            PDERuntime.getRuntime().add( frame );
-                     
-            // TODO: Al cerrar la dialog, si se hizo click en aceptar, procesar el panel de Porperties
-        }
     }
 }
