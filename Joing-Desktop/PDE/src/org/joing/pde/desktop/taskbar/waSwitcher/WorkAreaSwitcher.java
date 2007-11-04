@@ -41,12 +41,15 @@ public class WorkAreaSwitcher extends TaskPanel
         setHandleVisible( false );
         
         Desktop desktop = PDERuntime.getRuntime().getDesktopManager().getDesktop();
-                
+        
+        // Traverse existing workareas: one or more workareas would exist when this component is shown.
         List<WorkArea> lstWorAreas = desktop.getWorkAreas();
         
         for( WorkArea wa : lstWorAreas )
             onWorkAreaAdded( wa );
+        //--------------------------------------------
         
+        // Now the listener for future add/remove
         desktop.addDesktopListener( new DesktopListener()
         {
             public void workAreaAdded( WorkArea wa )   { onWorkAreaAdded( wa );   }
