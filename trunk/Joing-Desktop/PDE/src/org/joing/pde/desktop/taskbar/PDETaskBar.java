@@ -28,6 +28,7 @@ import org.joing.pde.desktop.taskbar.start.StartButton;
 import org.joing.pde.desktop.taskbar.systray.SysTray;
 import org.joing.pde.runtime.ColorSchema;
 import org.joing.api.desktop.taskbar.TaskBar;
+import org.joing.pde.desktop.taskbar.waSwitcher.WorkAreaSwitcher;
 
 /**
  * TaskBar can hold JComponents or instances of TaskBarPanel
@@ -61,6 +62,7 @@ public class PDETaskBar extends JPanel implements TaskBar
                 
         add( new StartButton() );
         add( tpFrameList );
+        add( new WorkAreaSwitcher() );
         addSysTray();
         getSysTray().add( new ClockDigital() );
     }

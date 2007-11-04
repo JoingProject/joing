@@ -74,8 +74,12 @@ public class PDEDesktop extends JPanel implements Desktop
                        /// TODO: probar esto --> tb.setOrientation( TaskBarOrientation.TOP );
                        
             addTaskBar( tb );
+            
             addWorkArea( new PDEWorkArea() );
-            createTestWorkArea();
+            addWorkArea( new PDEWorkArea() );
+            setActiveWorkArea( getWorkAreas().get( 0 ) );
+            
+            createTestWorkArea( getWorkAreas().get( 0 ) );   // TODO: quitarlo
         }
         else
         {
@@ -107,11 +111,8 @@ public class PDEDesktop extends JPanel implements Desktop
         add( pnlWorkAreas, BorderLayout.CENTER );
     }
     
-    private void createTestWorkArea()  // TODO: quitar este metodo
+    private void createTestWorkArea( WorkArea wa )  // TODO: quitar este metodo
     {
-        WorkArea wa = new PDEWorkArea();
-        addWorkArea( wa );
-        
         PDEDeskLauncher pl1 = new PDEDeskLauncher( "Test" );
         PDEDeskLauncher pl2 = new PDEDeskLauncher( "Notes" );
                         pl2.setLocation( 0,100 );
@@ -181,8 +182,8 @@ public class PDEDesktop extends JPanel implements Desktop
             
             vWorkAreas.add( wa );
             pnlWorkAreas.add( (Component) wa, wa.getName() );
-            setActiveWorkArea( wa );
-            fireWorkAreaAdded( wa );
+            fireWorkAreaAdded( wa );     // First add it
+            setActiveWorkArea( wa );     // Now select it
         }
     }
     
@@ -193,8 +194,8 @@ public class PDEDesktop extends JPanel implements Desktop
         {
             remove( (Component) wa );
             vWorkAreas.remove( wa );
-            fireWorkAreaRemoved( wa );                 // First Removed event is launched
-            setActiveWorkArea( vWorkAreas.get( 0 ) );  // Now Selected event is launched
+            setActiveWorkArea( vWorkAreas.get( 0 ) );  // 1st Selected event is launched
+            fireWorkAreaRemoved( wa );                 // Now Removed event is launched
         }
     }
     
