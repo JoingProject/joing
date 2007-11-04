@@ -30,6 +30,7 @@ import org.joing.api.desktop.workarea.Wallpaper;
 import org.joing.api.desktop.workarea.WorkArea;
 import org.joing.api.desktop.workarea.WorkAreaListener;
 import org.joing.pde.desktop.container.PDEFrame;
+import org.joing.pde.desktop.taskbar.TaskPanel;
 import org.joing.pde.runtime.PDERuntime;
 
 /**
@@ -37,7 +38,7 @@ import org.joing.pde.runtime.PDERuntime;
  * 
  * @author Francisco Morero Peyrona
  */
-public class FramesList extends JPanel
+public class FramesList extends TaskPanel
 {
     private Hashtable<Container, FrameButton> vButtons;   // For speed
     
@@ -63,7 +64,7 @@ public class FramesList extends JPanel
         setLayout( grid );
         setMinimumSize( new Dimension( 80,20 ) );
         setMaximumSize( new Dimension( Integer.MAX_VALUE, Integer.MAX_VALUE ) );
-        setPreferredSize( new Dimension( 740,24 ) );   // FIXME: esto no puede estar a pelo
+        setPreferredSize( new Dimension( 700,24 ) );   // FIXME: esto no puede estar a pelo
         
         PDERuntime.getRuntime().getDesktopManager().getDesktop().addDesktopListener( tdl );
     }
@@ -143,6 +144,25 @@ public class FramesList extends JPanel
             }
         }
     }
+    
+    //------------------------------------------------------------------------//
+    
+    protected JPanel getAboutPanel()
+    {
+        return null;  // NEXT: hacerlo
+    }
+
+    protected JPanel getPreferencesPanel()
+    {
+        return null;   // NEXT: hacerlo
+    }
+
+    protected void onPreferencesChanged(JPanel pnlPrefs)
+    {
+        // NEXT: nada que hacer hasta que no se fabrique el panel de preferencias
+    }
+    
+    //------------------------------------------------------------------------//
 
     private void updateSelected()
     {

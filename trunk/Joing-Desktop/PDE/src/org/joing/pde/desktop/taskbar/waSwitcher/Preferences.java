@@ -12,13 +12,12 @@ import javax.swing.SwingUtilities;
  *
  * @author  fmorero
  */
-class Properties extends javax.swing.JPanel
+class Preferences extends javax.swing.JPanel
 {
     /** Creates new form WorkAreaProperties */
-    public Properties()
+    public Preferences()
     {
         initComponents();
-        btnAccept.setEnabled( false );
     }
     
     /** This method is called from within the constructor to
@@ -35,8 +34,6 @@ class Properties extends javax.swing.JPanel
         jScrollPane1 = new javax.swing.JScrollPane();
         lstNamesWA = new javax.swing.JList();
         lblList = new javax.swing.JLabel();
-        btnAccept = new javax.swing.JButton();
-        btnCancel = new javax.swing.JButton();
 
         lblSpinner.setText("Number of WorkAreas");
 
@@ -45,24 +42,6 @@ class Properties extends javax.swing.JPanel
         jScrollPane1.setViewportView(lstNamesWA);
 
         lblList.setText("WorkArea's names");
-
-        btnAccept.setText("Accept");
-        btnAccept.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                btnAcceptActionPerformed(evt);
-            }
-        });
-
-        btnCancel.setText("Cancel");
-        btnCancel.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                btnCancelActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -76,11 +55,7 @@ class Properties extends javax.swing.JPanel
                         .addComponent(lblSpinner)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(spnWA, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE))
-                    .addComponent(lblList)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnAccept)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnCancel)))
+                    .addComponent(lblList))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -94,28 +69,12 @@ class Properties extends javax.swing.JPanel
                 .addComponent(lblList)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnCancel)
-                    .addComponent(btnAccept))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnAcceptActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnAcceptActionPerformed
-    {//GEN-HEADEREND:event_btnAcceptActionPerformed
-        // TODO: add your handling code here:
-}//GEN-LAST:event_btnAcceptActionPerformed
-
-    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnCancelActionPerformed
-    {//GEN-HEADEREND:event_btnCancelActionPerformed
-        SwingUtilities.getWindowAncestor( this ).dispose();
-    }//GEN-LAST:event_btnCancelActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAccept;
-    private javax.swing.JButton btnCancel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblList;
     private javax.swing.JLabel lblSpinner;

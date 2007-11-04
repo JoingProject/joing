@@ -33,7 +33,7 @@ class FrameButtonToolTip extends JToolTip
     {
         PDEManager pm  = PDERuntime.getRuntime().getDesktopManager();
         Dimension  dim = ((PDEDesktop) pm.getDesktop()).getSize();
-                   dim = new Dimension( dim.width / 8, dim.height / 8 );
+                   dim = new Dimension( dim.width / 7, dim.height / 7 );
         return dim;
     }
     
