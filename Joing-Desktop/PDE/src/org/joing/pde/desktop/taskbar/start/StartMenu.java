@@ -67,9 +67,9 @@ class StartMenu extends JScrollablePopupMenu
         
         if( user != null )
         {
-            String sIcon = "images/user_"+ (user.isMale() ? "" : "fe") +"male.png";
+            String sIcon = "user_"+ (user.isMale() ? "" : "fe") +"male.png";
             
-            item.setIcon( PDERuntime.getRuntime().getIcon( this, sIcon, ICON_SIZE+5, ICON_SIZE+5 ) );
+            item.setIcon( PDERuntime.getRuntime().getIcon( null, sIcon, ICON_SIZE+5, ICON_SIZE+5 ) );
             item.setText( user.getFirstName() +" "+ user.getSecondName() );
 
             item.addActionListener( new ActionListener()

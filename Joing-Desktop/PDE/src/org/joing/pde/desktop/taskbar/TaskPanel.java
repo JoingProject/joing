@@ -21,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.border.EmptyBorder;
 import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.runtime.PDERuntime;
 
@@ -32,6 +33,12 @@ import org.joing.pde.runtime.PDERuntime;
 public abstract class TaskPanel extends JPanel implements MouseListener
 {
     private JLabel handle;
+    
+    // Popup menu items
+    protected JMenuItem itemPreferences;
+    protected JMenuItem itemAbout;
+    protected JMenuItem itemRemove;
+    protected JMenuItem itemMove;
     
     //------------------------------------------------------------------------//
     
@@ -87,50 +94,15 @@ public abstract class TaskPanel extends JPanel implements MouseListener
     protected abstract JPanel getPreferencesPanel();
     
     protected abstract void onPreferencesChanged( JPanel pnlPrefs );
-    
+        
     //------------------------------------------------------------------------//
     
     private void onPreferences()
     {
-        final JPanel pnlPrefs = getPreferencesPanel();
+        JPanel pnlPrefs = getPreferencesPanel();
         
-        if( pnlPrefs == null )
-            return;
-        
-        JButton btnAccept = new JButton( "Accept" );
-        JButton btnCancel = new JButton( "Cancel" );
-        JPanel  pnlButton = new JPanel( new FlowLayout( FlowLayout.LEADING, 5, 0 ) );
-        JPanel  pnlDialog = new JPanel( new BorderLayout( 0,6 ) );
-
-        pnlButton.add( btnAccept );
-        pnlButton.add( btnCancel );
-        
-        pnlDialog.add( pnlPrefs , BorderLayout.CENTER );
-        pnlDialog.add( pnlButton, BorderLayout.SOUTH  );
-
-        // Better to use a Frame than a Dialog (this is the way Gnome does it)
-        final PDEFrame frame = new PDEFrame( "Preferences" );
-                       frame.setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
-                       frame.getContentPane().add( pnlDialog );
-
-        btnAccept.addActionListener( new ActionListener() 
-        {
-            public void actionPerformed( ActionEvent ae )
-            {
-                frame.dispose();
-                onPreferencesChanged( pnlPrefs );
-            }
-        } );
-        
-        btnCancel.addActionListener( new ActionListener() 
-        {
-            public void actionPerformed( ActionEvent ae )
-            {
-                frame.dispose();
-            }
-        } );
-
-        PDERuntime.getRuntime().add( frame );
+        if( pnlPrefs != null )   
+            PDERuntime.getRuntime().add( new TheFrame( pnlPrefs ) );
     }
     
     private void onAbout()
@@ -165,51 +137,103 @@ public abstract class TaskPanel extends JPanel implements MouseListener
     // INNER CLASS: Popup Menu
     //------------------------------------------------------------------------//
     private final class CommonPopupMenu extends JPopupMenu implements ActionListener
-    {
-        private final static String PREFERENCES = "A";
-        private final static String ABOUT       = "B";
-        private final static String REMOVE      = "C";
-        private final static String MOVE        = "D";
-        
-        //--------------------------------------------------------------------//
-        
+    { 
         private CommonPopupMenu()
-        {
-            JMenuItem item;
+        {   
+            itemPreferences = new JMenuItem( "Preferences" );
+            itemPreferences.addActionListener( this );
+            itemPreferences.setIcon( PDERuntime.getRuntime().getIcon( null, "properties.png", 16, 16 ) );
+            add( itemPreferences );
             
-            item = new JMenuItem( "Preferences" );
-            item.setActionCommand( PREFERENCES );
-            item.addActionListener( this );
-            add( item );
-            
-            addSeparator();
-            
-            item = new JMenuItem( "About" );
-            item.setActionCommand( ABOUT );
-            item.addActionListener( this );
-            add( item );
+            itemAbout = new JMenuItem( "About" );
+            itemAbout.addActionListener( this );
+            itemAbout.setIcon( PDERuntime.getRuntime().getIcon( null, "info.png", 16, 16 ) );
+            add( itemAbout );
             
             addSeparator();
             
-            item = new JMenuItem( "Remove from panel" );
-            item.setActionCommand( REMOVE );
-            item.addActionListener( this );
-            add( item );
+            itemRemove = new JMenuItem( "Remove" );
+            itemRemove.addActionListener( this );
+            itemRemove.setIcon( PDERuntime.getRuntime().getIcon( null, "remove.png", 16, 16 ) );
+            add( itemRemove );
             
-            item = new JMenuItem( "Move" );
-            item.setActionCommand( MOVE );
-            item.addActionListener( this );
-            add( item );
+            itemMove = new JMenuItem( "Move" );
+            itemMove.addActionListener( this );
+            itemMove.setIcon( PDERuntime.getRuntime().getIcon( null, "move.png", 16, 16 ) );
+            add( itemMove );
         }
         
         public void actionPerformed( ActionEvent ae )
         {
-            String sCommand = ae.getActionCommand();
+            JMenuItem source = (JMenuItem) ae.getSource();
             
-            if(      sCommand.equals( PREFERENCES ) )  onPreferences();
-            else if( sCommand.equals( ABOUT       ) )  onAbout();
-            else if( sCommand.equals( REMOVE      ) )  onRemove();
-            else if( sCommand.equals( MOVE        ) )  onMove();
+            if(      source == itemPreferences )  onPreferences();
+            else if( source == itemAbout       )  onAbout();
+            else if( source == itemRemove      )  onRemove();
+            else if( source == itemMove        )  onMove();
+        }
+    }
+    
+    //------------------------------------------------------------------------//
+    // INNER CLASS: Default empty frame with [Accept] and [Cancel] buttons
+    //------------------------------------------------------------------------//
+    
+    private final class TheFrame extends PDEFrame
+    {
+        private JButton btnAccept;
+        private JButton btnCancel;
+        private JPanel  pnlContents;
+        
+        TheFrame( JPanel pnl )
+        {
+            pnlContents = pnl;
+            btnAccept   = new JButton( "Accept" );
+            btnCancel   = new JButton( "Cancel" );
+
+            btnAccept.addActionListener( new ActionListener()
+            {
+                public void actionPerformed( ActionEvent ae )
+                {
+                    dispose();
+                    onPreferencesChanged( TheFrame.this.pnlContents );
+                }
+            } );
+        
+            btnCancel.addActionListener( new ActionListener() 
+            {
+                public void actionPerformed( ActionEvent ae )
+                {
+                    dispose();
+                }
+            } );
+            
+            setDefaultCloseOperation( javax.swing.WindowConstants.DISPOSE_ON_CLOSE );
+
+            javax.swing.GroupLayout layout = new javax.swing.GroupLayout( getContentPane() );
+            getContentPane().setLayout(layout);
+            layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(pnlContents, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(btnAccept)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(btnCancel)))
+                    .addContainerGap())
+            );
+            layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(pnlContents, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGap(18, 18, 18)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnAccept)
+                        .addComponent(btnCancel))
+                    .addContainerGap())
+            );
         }
     }
 }

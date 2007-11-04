@@ -10,25 +10,16 @@
 package org.joing.pde.desktop.taskbar.clock;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import org.joing.pde.desktop.taskbar.TaskPanel;
@@ -37,7 +28,7 @@ import org.joing.pde.desktop.taskbar.TaskPanel;
  *
  * @author Francisco Morero Peyrona
  */
-public class ClockDigital extends JPanel
+public class ClockDigital extends TaskPanel
 {
     private final static float nFONT_SIZE = 10f;
     
@@ -57,18 +48,18 @@ public class ClockDigital extends JPanel
         lblTime = new JLabel();
         lblTime.setHorizontalAlignment( JLabel.CENTER );
         lblTime.setFont( getFont().deriveFont( Font.PLAIN, nFONT_SIZE ) );
-        lblTime.setInheritsPopupMenu( true );
         
         lblDate = new JLabel();
         lblDate.setHorizontalAlignment( JLabel.CENTER );
         lblDate.setFont( getFont().deriveFont( Font.PLAIN, nFONT_SIZE ) );
-        lblDate.setInheritsPopupMenu( true );
         
         setLayout( new BorderLayout() );
         add( lblTime, BorderLayout.CENTER );
         add( lblDate, BorderLayout.SOUTH  );
       
         setOpaque( false );
+        setInheritsPopupMenu( true );
+        
         changeFormat( true, true, true );
         createPopup();
         
@@ -92,18 +83,27 @@ public class ClockDigital extends JPanel
         
         addAncestorListener( new AncestorListener()
         {
-            public void ancestorAdded(AncestorEvent event)
-            {
-                ClockDigital.this.timer.start();
-            }
-            public void ancestorMoved(AncestorEvent event)
-            {
-            }
-            public void ancestorRemoved(AncestorEvent event)
-            {
-                ClockDigital.this.timer.stop();
-            }
+            public void ancestorAdded(   AncestorEvent ae ) { ClockDigital.this.timer.start(); }
+            public void ancestorMoved(   AncestorEvent ae ) {}
+            public void ancestorRemoved( AncestorEvent ae ) { ClockDigital.this.timer.stop(); }
         } );
+    }
+    
+    //------------------------------------------------------------------------//
+    
+    protected JPanel getAboutPanel()
+    {
+        return null;   // TODO: hacerlo
+    }
+
+    protected JPanel getPreferencesPanel()
+    {
+        return null;
+    }
+
+    protected void onPreferencesChanged( JPanel pnlPrefs )
+    {
+        // As this component has no preferences panel, tehre is nothing to do.
     }
     
     //------------------------------------------------------------------------//
@@ -128,7 +128,6 @@ public class ClockDigital extends JPanel
     
     private void createPopup()
     {
-        JPopupMenu        popup    = new JPopupMenu();
         JCheckBoxMenuItem itemDate = new JCheckBoxMenuItem( "Show date" );
         JCheckBoxMenuItem itemSecs = new JCheckBoxMenuItem( "Show seconds" );
         JCheckBoxMenuItem item24Hr = new JCheckBoxMenuItem( "24 hours" );
@@ -163,10 +162,11 @@ public class ClockDigital extends JPanel
             }
         } );
         
-        popup.add( itemDate );
-        popup.add( itemSecs );
-        popup.add( item24Hr );
-        
-        setComponentPopupMenu( popup );
+        // Working with inherited PopupMenu
+        JPopupMenu popup = getComponentPopupMenu();
+                   popup.remove( itemPreferences );
+                   popup.add( itemDate, 0 );
+                   popup.add( itemSecs, 1 );
+                   popup.add( item24Hr, 2 );
     }
 }

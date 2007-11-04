@@ -18,6 +18,7 @@ import org.joing.pde.PDEManager;
 import org.joing.pde.desktop.PDEDesktop;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.pde.desktop.container.PDEFrame;
+import org.joing.pde.swing.images.ImagesFactory;
 import org.joing.runtime.bridge2server.Bridge2Server;
 
 /**
@@ -133,14 +134,24 @@ public final class PDERuntime implements org.joing.api.Runtime
     // Local resources
     //------------------------------------------------------------------------// 
     
+    /**
+     * 
+     * @param invoker The class to be used as base to find the files. If null,
+     *                <code>ImagesFactory</code> will be used (common images).
+     * @param sName   Name of file with its extension.
+     * @return        The icon or an standard one if teh requested was not found
+     */
     public ImageIcon getIcon( Object invoker, String sName )
     {
         URL       url  = null;
         ImageIcon icon = null;
         
-        if( invoker != null && sName != null )
+        if( sName != null && sName.length() > 0 )
         {
-            url = invoker.getClass().getResource( sName );
+            if( invoker == null )
+                url  = ImagesFactory.class.getResource( sName );
+            else
+                url = invoker.getClass().getResource( sName );
             
             if( url != null )
                 icon = new ImageIcon( url );
@@ -148,7 +159,7 @@ public final class PDERuntime implements org.joing.api.Runtime
         
         if( icon == null )
         {
-            url  = PDERuntime.class.getResource( "images/no_image.png" );
+            url  = ImagesFactory.class.getResource( "no_image.png" );
             icon = new ImageIcon( url );
         }
         
