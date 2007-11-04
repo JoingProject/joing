@@ -45,7 +45,7 @@ class Map extends JPanel implements Selectable
                 if( me.getButton() == MouseEvent.BUTTON1 )
                 {
                     Desktop desktop = PDERuntime.getRuntime().getDesktopManager().getDesktop();
-                            desktop.setActiveWorkArea( Map.this.workArea  );
+                            desktop.setActiveWorkArea( Map.this.workArea );
                 }
             }
         } );

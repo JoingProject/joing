@@ -22,6 +22,7 @@ import java.awt.event.WindowListener;
 import java.util.Hashtable;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 import org.joing.api.desktop.DesktopListener;
@@ -62,28 +63,44 @@ public class FramesList extends TaskPanel
         tifl = new TheIntenalFrameListener();
         
         setLayout( grid );
+        setBorder( new EmptyBorder( 0, 5, 0, 5 ) );
         setMinimumSize( new Dimension( 80,20 ) );
         setMaximumSize( new Dimension( Integer.MAX_VALUE, Integer.MAX_VALUE ) );
-        setPreferredSize( new Dimension( 700,24 ) );   // FIXME: esto no puede estar a pelo
+        setPreferredSize( new Dimension( 600,24 ) );   // FIXME: esto no puede estar a pelo
         
         PDERuntime.getRuntime().getDesktopManager().getDesktop().addDesktopListener( tdl );
     }
     
     //------------------------------------------------------------------------//
     
-    public void add( PDEFrame iframe )
+    protected JPanel getAboutPanel()
     {
-        iframe.addInternalFrameListener( tifl );        
-        _add( iframe, new FrameButton( iframe ) );
+        return null;  // NEXT: hacerlo
+    }
+
+    protected JPanel getPreferencesPanel()
+    {
+        return null;   // NEXT: hacerlo
+    }
+
+    protected void onPreferencesChanged(JPanel pnlPrefs)
+    {
+        // NEXT: nada que hacer hasta que no se fabrique el panel de preferencias
     }
     
-    public void add( Frame frame )
+    //------------------------------------------------------------------------//
+
+    private void add( Frame frame )
     {
         frame.addWindowListener( twl );
         _add( frame, new FrameButton( frame ) );
     }
     
-    //------------------------------------------------------------------------//
+    private void add( PDEFrame iframe )
+    {
+        iframe.addInternalFrameListener( tifl );        
+        _add( iframe, new FrameButton( iframe ) );
+    }
     
     private void _add( Container frame, FrameButton fb )
     {
@@ -145,25 +162,6 @@ public class FramesList extends TaskPanel
         }
     }
     
-    //------------------------------------------------------------------------//
-    
-    protected JPanel getAboutPanel()
-    {
-        return null;  // NEXT: hacerlo
-    }
-
-    protected JPanel getPreferencesPanel()
-    {
-        return null;   // NEXT: hacerlo
-    }
-
-    protected void onPreferencesChanged(JPanel pnlPrefs)
-    {
-        // NEXT: nada que hacer hasta que no se fabrique el panel de preferencias
-    }
-    
-    //------------------------------------------------------------------------//
-
     private void updateSelected()
     {
         WorkArea waActive = PDERuntime.getRuntime().getDesktopManager().getDesktop().getActiveWorkArea();
@@ -179,7 +177,7 @@ public class FramesList extends TaskPanel
                 boolean b = (frame instanceof Frame) ? ((Frame) frame).isActive()
                                                      : ((JInternalFrame) frame).isSelected();
                 btn.setSelected( b );
-                add( btn );                
+                add( btn );
             }
         }
         

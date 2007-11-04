@@ -6,7 +6,10 @@
 
 package org.joing.pde.desktop.taskbar.waSwitcher;
 
-import javax.swing.SwingUtilities;
+import java.util.List;
+import javax.swing.DefaultListModel;
+import org.joing.api.desktop.workarea.WorkArea;
+import org.joing.pde.runtime.PDERuntime;
 
 /**
  *
@@ -18,6 +21,16 @@ class Preferences extends javax.swing.JPanel
     public Preferences()
     {
         initComponents();
+        
+        DefaultListModel dlm = new DefaultListModel();
+        lstNamesWA.setModel( dlm );
+        
+        List<WorkArea> lstWorAreas = PDERuntime.getRuntime().getDesktopManager().getDesktop().getWorkAreas();
+        
+        spnWA.getModel().setValue( lstWorAreas.size() );
+        
+        for( WorkArea wa : lstWorAreas )
+            dlm.addElement( wa.getName() );
     }
     
     /** This method is called from within the constructor to

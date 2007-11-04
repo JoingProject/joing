@@ -22,10 +22,15 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JTextPane;
 import javax.swing.MenuElement;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.MouseInputAdapter;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import org.joing.api.desktop.workarea.desklet.deskLauncher.Launcher;
 import org.joing.api.desktop.workarea.desklet.deskLauncher.LauncherEvent;
 import org.joing.api.desktop.workarea.desklet.deskLauncher.LauncherEventListener;
@@ -34,7 +39,6 @@ import org.joing.pde.desktop.workarea.desklet.PDEDesklet;
 import org.joing.pde.runtime.ColorSchema;
 import org.joing.pde.runtime.PDERuntime;
 import org.joing.pde.swing.ImageHighlightFilter;
-import org.joing.pde.swing.JMultiLineEditableLabel;
 import org.joing.pde.swing.JRoundPanel;
 
 /**
@@ -48,9 +52,9 @@ public class PDEDeskLauncher extends PDEDesklet implements Launcher
     private boolean bSelected;
     
     // Swing variables
-    private JRoundPanel             pnlAll;
-    private IconComponent           icon;
-    private JMultiLineEditableLabel text;
+    private JRoundPanel   pnlAll;
+    private IconComponent icon;
+    private TextComponent text;
     
     //------------------------------------------------------------------------//
     
@@ -72,7 +76,7 @@ public class PDEDeskLauncher extends PDEDesklet implements Launcher
     public PDEDeskLauncher( String sName, Image image, String sDescription )
     {
         if( image == null )
-            image = new ImageIcon( getClass().getResource( "images/launcher.png" ) ).getImage();
+            image = PDERuntime.getRuntime().getIcon( null, "launcher.png" ).getImage();
         
         initGUI();
         
@@ -259,7 +263,7 @@ public class PDEDeskLauncher extends PDEDesklet implements Launcher
     
     public void rename()
     {
-        text.edit( true );
+        text.setEditable( true );
         /*PopupToRename p4t = new PopupToRename( text );
         Rectangle     rec = text.getBounds();
         
@@ -297,10 +301,11 @@ public class PDEDeskLauncher extends PDEDesklet implements Launcher
         // Inicializo los componentes
         icon = new IconComponent();
         
-        text = new JMultiLineEditableLabel();
+        text = new TextComponent();
         text.setFont( text.getFont().deriveFont( Font.BOLD, 11f ) );
+        /* TODO: mirar cómo hacer esto
         int nPixelsWidth = SwingUtilities.computeStringWidth( text.getFontMetrics( text.getFont() ), "ABC" ) / 3;   // This line must be after setFont(...)
-        text.setColumns( PDEDeskLauncher.this.getPreferredSize().width / nPixelsWidth );
+        text.setColumns( PDEDeskLauncher.this.getPreferredSize().width / nPixelsWidth );*/
         
         pnlAll = new JRoundPanel();
         pnlAll.setOpaque( false );
@@ -352,6 +357,27 @@ public class PDEDeskLauncher extends PDEDesklet implements Launcher
                     setIcon( new ImageIcon( image ) );
                 }
             }
+        }
+    }
+    
+    //------------------------------------------------------------------------//
+    
+    private final class TextComponent extends JTextPane
+    {
+        
+        private TextComponent()
+        {
+            StyledDocument doc = getStyledDocument();
+ 
+            //  Set alignment to be centered for all paragraphs
+            MutableAttributeSet standard = new SimpleAttributeSet();
+            StyleConstants.setAlignment(standard, StyleConstants.ALIGN_CENTER);
+            doc.setParagraphAttributes(0, 0, standard, true);
+        }
+        
+        private void setSelected( boolean b )
+        {
+            
         }
     }
     
