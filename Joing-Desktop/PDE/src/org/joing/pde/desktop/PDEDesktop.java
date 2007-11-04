@@ -12,7 +12,6 @@ package org.joing.pde.desktop;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.JLabel;
@@ -201,10 +200,7 @@ public class PDEDesktop extends JPanel implements Desktop
     
     public List<WorkArea> getWorkAreas()
     {
-        // Defensive copy
-        ArrayList<WorkArea> list = new ArrayList<WorkArea>( vWorkAreas.size() );
-                            list.addAll( vWorkAreas );
-        return list;
+        return vWorkAreas;
     }
     
     public WorkArea getActiveWorkArea()
@@ -214,7 +210,7 @@ public class PDEDesktop extends JPanel implements Desktop
     
     public void setActiveWorkArea( WorkArea wa )
     {
-        if( vWorkAreas.contains( wa ) )
+        if( vWorkAreas.contains( wa ) && (waActive != wa) )
         {
             WorkArea waOld = waActive;
             
@@ -230,10 +226,7 @@ public class PDEDesktop extends JPanel implements Desktop
     
     public List<TaskBar> getTaskBars()
     {
-        // Defensive copy
-        ArrayList<TaskBar> list = new ArrayList<TaskBar>( vTaskBars.size() );
-                           list.addAll( vTaskBars );
-        return list;
+        return vTaskBars;
     }
 
     public void addTaskBar( TaskBar taskbar )
@@ -243,6 +236,7 @@ public class PDEDesktop extends JPanel implements Desktop
         vTaskBars.add( taskbar );
         
         // TODO: ¿Qué pasaría si ya hubiese otra taskbar en esa posición?
+        //       Solución: ignorar (¿lanzar exc?) cuando se quiere añadir una TB donde ya hay una
         if( orientation == TaskBarOrientation.BOTTOM )
         {
             add( (Component) taskbar, BorderLayout.SOUTH );
@@ -265,7 +259,7 @@ public class PDEDesktop extends JPanel implements Desktop
     
     public void removeTaskBar( TaskBar taskbar )
     {
-        // A desktop can contain zero taskbars
+        // A desktop _can_ contain zero taskbars
         if( vTaskBars.contains( taskbar) )
         {
             remove( (Component) taskbar );

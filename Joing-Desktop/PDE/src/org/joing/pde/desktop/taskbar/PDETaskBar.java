@@ -18,7 +18,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 import org.joing.api.desktop.enums.TaskBarOrientation;
 import org.joing.api.desktop.taskbar.TaskBarListener;

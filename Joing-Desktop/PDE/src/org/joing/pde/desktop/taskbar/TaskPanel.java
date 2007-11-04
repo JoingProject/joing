@@ -60,14 +60,22 @@ public abstract class TaskPanel extends JPanel implements MouseListener
 
     public void setHandleVisible( boolean b )
     {
-        handle.setVisible( b );
+        if( b != isHandleVisible() )
+        {
+            if( b )
+                add( handle, BorderLayout.EAST );
+            else
+                remove( handle );    // If I do not remove it a horrible blank space remains in the component
+            
+            handle.setVisible( b );
+        }
     }
-
+    
     //------------------------------------------------------------------------//
     
     // Mouse Listener is needed to show the popup. 
     // See: http://www.jguru.com/forums/view.jsp?EID=1239349
-    public void mouseClicked(MouseEvent me)
+    public void mouseClicked( MouseEvent me )
     {
     }
 
