@@ -19,23 +19,17 @@ import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.JarURLConnection;
-import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Map;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
-import java.util.jar.Manifest;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import org.joing.api.DesktopManager;
+import org.joing.api.desktop.Desktop;
 import org.joing.applauncher.gui.SystemMonitor;
+import org.joing.common.api.DesktopManager;
 import org.joing.jvmm.JoingSecurityManager;
 import org.joing.jvmm.Platform;
+import org.joing.jvmm.RuntimeFactory;
 
 /**
  *
@@ -138,7 +132,7 @@ public class Bootstrap {
         gcItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                Map classLoaderCache = Platform.getInstance().getClassLoaderCache();
+                Map classLoaderCache = RuntimeFactory.getPlatform().getClassLoaderCache();
                 synchronized (classLoaderCache) {
                     classLoaderCache.clear();
                 }
@@ -198,7 +192,8 @@ public class Bootstrap {
         setupSystemMonitor();
         System.setSecurityManager(new JoingSecurityManager());
         Monitor.log("Join'g Successfully Bootstrapped.");
-        Monitor.log("Main Thread Id is " + Platform.getInstance().getMainId());
+        Monitor.log("Main Thread Id is " + 
+                String.valueOf(RuntimeFactory.getPlatform().getMainThreadId()));
 
         // Iniciamos la sesión.
         try {
@@ -207,8 +202,8 @@ public class Bootstrap {
             login.setVisible(true);
 
             if (login.wasSuccessful()) {
-                DesktopManager deskmgr = getDesktopManagerInstance();
-                Platform.getInstance().setDesktopManager(deskmgr);
+                DesktopManager<Desktop> deskmgr = getDesktopManagerInstance();
+                RuntimeFactory.getPlatform().setDesktopManager(deskmgr);
 
                 if (login.fullScreen()) {
                     deskmgr.showInFullScreen();
@@ -216,19 +211,21 @@ public class Bootstrap {
                     deskmgr.showInFrame();
                 }
             } else {
-                Platform.getInstance().halt();
+                RuntimeFactory.getPlatform().halt();
             }
         } catch (Exception e) {
             Monitor.log("Error en start: " + e.getMessage());
         }
     }
+    
 
+    // TODO: Obtener el desktop del servidor
     private static DesktopManager getDesktopManagerInstance() {
         // Platform.getInstance().start( login.getApplicationId() );
         // TODO: habría que conseguir una referencia a la instancia de
         // PDEManager creada por la clase Platform
         try {
-            Platform platform = Platform.getInstance();
+            Platform platform = RuntimeFactory.getPlatform();
             
             String desktop = platform.getClientProp().getProperty("DesktopApp");
             String[] tmp = desktop.split("\\?");
