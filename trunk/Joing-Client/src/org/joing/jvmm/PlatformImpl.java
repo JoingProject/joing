@@ -6,7 +6,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.joing.jvmm;
 
 import java.io.File;
@@ -32,96 +31,155 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 import javax.swing.SwingUtilities;
 import org.joing.Main;
-import org.joing.api.DesktopManager;
 import org.joing.applauncher.Monitor;
+import org.joing.common.api.DesktopManager;
 import org.joing.common.dto.app.Application;
-import org.joing.runtime.bridge2server.AppBridge;
-import org.joing.runtime.bridge2server.Bridge2Server;
+import org.joing.common.jvmm.AppManager;
+import org.joing.common.jvmm.ApplicationExecutionException;
+import org.joing.common.jvmm.JThreadGroup;
+import org.joing.common.runtime.AppBridge;
+import org.joing.common.runtime.Bridge2Server;
+import org.joing.runtime.bridge2server.Bridge2ServerImpl;
 
 /**
  *
  * @author Antonio Varela Lizardi <antonio@icon.net.mx>
  */
-public class Platform {
-
-    private static final Platform instance = new Platform();
+class PlatformImpl implements Platform {
 
     private final Map<Object, ClassLoader> classLoaderCache = new HashMap<Object, ClassLoader>();
-
-    private final AppManager appManager = new AppManager();
-
+    private final AppManager appManager = new AppManagerImpl();
     private final AppContext context = new AppContext();
-
     private final Thread mainThread = Thread.currentThread();
-
     private final PlatformRuntime runtime = PlatformRuntime.getRuntime();
-
-    private final Bridge2Server bridge = new Bridge2Server();
-
+    private final Bridge2Server bridge = new Bridge2ServerImpl();
     private DesktopManager desktopManager = null;
-
     private Properties clientProp = null;
+    private boolean initialized = true;
+    private String serverBaseUrl = null;
+    private boolean autoHandlingExceptions = true;
 
-    private Platform() {
+    public PlatformImpl() {
+
+        clientProp = new Properties();
+
+        // Looks in classpath
+        InputStream is = Main.class.getClassLoader().getResourceAsStream("client.properties");
+
+        if (is != null) {
+            try {
+                clientProp.load(is);
+            } catch (IOException ioe) {
+                System.err.println("IOException caught: " + ioe.getMessage());
+                // At this point and with this implementation, an error getting
+                // the clientProperties leaves us with no way to know the
+                // servletUrl. We can not go further.
+                throw new RuntimeException("Unable to find properties file.");
+            }
+        }
+
+        //        getRuntime().init(clientProp);
+        // establecer la URL del servlet aqui
+        this.serverBaseUrl =
+                clientProp.getProperty(RuntimeEnum.JOING_SERVER_URL.getKey());
+        if (this.serverBaseUrl == null) {
+            this.initialized = false;
+        }
+
     }
 
-    public static Platform getInstance() {
-        return instance;
-    }
-
-    public PlatformRuntime getRuntime() {
-        return this.runtime;
-    }
-
+    @Override
     public Bridge2Server getBridge() {
         return this.bridge;
     }
 
     // temporal
+    @Override
     public Properties getClientProp() {
         return clientProp;
     }
-    
+
     /**
      * init()
      * Inicializa la Plataforma WebPC.
      */
-    public void init(Properties clientProp) {
+    // esto ya no es publico.
+//    public void init(Properties clientProp) {
+//
+//        this.clientProp = clientProp;
+//
+//        runtime.init(clientProp);
+//    }
 
-        this.clientProp = clientProp;
-
-        runtime.init(clientProp);
+    @Override
+    public boolean isInitialized() {
+        return this.initialized;
     }
 
+    @Override
+    public String getServerBaseURL() {
+        return this.serverBaseUrl;
+    }
+
+    @Override
+    public boolean isAutoHandlingExceptions() {
+        return this.autoHandlingExceptions;
+    }
+
+    @Override
+    public void setAutoHandlingExceptions(boolean autoHandleExceptions) {
+        this.autoHandlingExceptions = autoHandleExceptions;
+    }
+
+    @Override
+    public void showException(Throwable exc) {
+        showException("Error", exc);
+    }
+
+    @Override
+    public void showException(String sTitle, Throwable exc) {
+        exc.printStackTrace();
+
+    /*  TODO: hacer q JShowException herede de JDesktopDialog y q actue en consecuencia:
+         *  Nota: utilizar getLocalizedMessage()
+        JShowException dialog = new JShowException( sTitle, exc );
+                       dialog.setLocationRelativeTo( getDesktop() );
+                       dialog.setVisible( true );*/
+    }
 
     /**
      * Regresa el id único del Thread padre. El Thread Padre
      * es el que inició la ejecución de Platform.
      */
-    public long getMainId() {
+    @Override
+    public long getMainThreadId() {
         return mainThread.getId();
     }
 
+    @Override
     public AppManager getAppManager() {
         return appManager;
     }
 
+    @Override
     public Map<Object, ClassLoader> getClassLoaderCache() {
         return classLoaderCache;
     }
 
-
+    @Override
     public DesktopManager getDesktopManager() {
         return desktopManager;
     }
 
-    public void setDesktopManager(DesktopManager dm) {
-        desktopManager = dm;
+    @Override
+    public void setDesktopManager(DesktopManager desktop) {
+        desktopManager = desktop;
     }
 
     /**
      * Obtiene el JThreadGroup. Itera hacia arriba en la jerarquia.
      */
+    @Override
     public JThreadGroup getJThreadGroup() {
         ThreadGroup g = Thread.currentThread().getThreadGroup();
         while (g != null) {
@@ -148,7 +206,7 @@ public class Platform {
      */
     public void start(String idApp, String mainClass, String[] args) throws PlatformException {
 
-//        if (properties == null) {
+        //        if (properties == null) {
 //            throw new PlatformException("Platform not Initialized.");
 //        }
 //        String url = properties.getProperty("WebPc.FileServletUrl");
@@ -188,7 +246,8 @@ public class Platform {
 
         try {
             //Main.start(a, System.out, System.err);
-            Platform.getInstance().start(idApp, a, System.out, System.err);
+            start(idApp, a, System.out, System.err);
+
         } catch (Exception e) {
             throw new PlatformException(e.getMessage());
         }
@@ -239,21 +298,21 @@ public class Platform {
         final Runnable[] runner = new Runnable[1];
         final Thread disposer = new Thread(new Runnable() {
 
-            public void run() {
-                Runnable r = runner[0];
-                runner[0] = null;
-                System.out.println("diposer running: " + r);
-                if (r != null) {
-                    r.run();
-                }
-            }
-        });
+                    public void run() {
+                        Runnable r = runner[0];
+                        runner[0] = null;
+                        System.out.println("diposer running: " + r);
+                        if (r != null) {
+                            r.run();
+                        }
+                    }
+                });
 
         final ClassLoader finalClassLoader = classLoader;
         final String[] finalArgs = appArgs;
 
         // Crea un JThreadGroup
-        final JThreadGroup threadGroup = new JThreadGroup(out, err);
+        final JThreadGroup threadGroup = new JThreadGroupImpl(out, err);
         // Asigna el Disposer. Supongo que necesita en este momento el Disposer,
         // y por esa razon se declara antes y de esta manera tan confusa.
         threadGroup.setDisposer(disposer);
@@ -266,41 +325,41 @@ public class Platform {
 
         Thread thread = new Thread(threadGroup, new Runnable() {
 
-            public void run() {
-                final sun.awt.AppContext appContext = sun.awt.SunToolkit.createNewAppContext();
-                // Este es el Thread que eventualmente ejecuta el Disposer
-                runner[0] = new Runnable() {
-
                     public void run() {
-                        appManager.removeApp(app);
-                        System.out.println("disposing app context: ");
-                        appContext.dispose();
-                    }
-                };
-                try {
-                    // invokeAndWait necesita un Runnable como par�metro, aunque
+                        final sun.awt.AppContext appContext = sun.awt.SunToolkit.createNewAppContext();
+                        // Este es el Thread que eventualmente ejecuta el Disposer
+                        runner[0] = new Runnable() {
+
+                                    public void run() {
+                                        appManager.removeApp(app);
+                                        System.out.println("disposing app context: ");
+                                        appContext.dispose();
+                                    }
+                                };
+                        try {
+                            // invokeAndWait necesita un Runnable como par�metro, aunque
                     // en realidad no lo ejecuta como un Thread. El Runnable se
                     // coloca en el EDT (Event Dispatch Thread) y si el objeto
                     // es Runnable, simplemente invoca el metodo run().
-                    SwingUtilities.invokeAndWait(new Runnable() {
+                            SwingUtilities.invokeAndWait(new Runnable() {
 
-                        public void run() {
-                            try {
-                                Class c = finalClassLoader.loadClass(finalClassName);
-                                Method main = c.getMethod("main", new Class[]{String[].class});
-                                //Method main = finalClassLoader.loadClass(finalClassName).getMethod("main", new Class[]{String[].class});
-                                main.invoke(null, new Object[]{finalArgs});
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                threadGroup.close(); // aqui se usa el disposer
-                            }
+                                        public void run() {
+                                            try {
+                                                Class c = finalClassLoader.loadClass(finalClassName);
+                                                Method main = c.getMethod("main", new Class[]{String[].class});
+                                                //Method main = finalClassLoader.loadClass(finalClassName).getMethod("main", new Class[]{String[].class});
+                                                main.invoke(null, new Object[]{finalArgs});
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                                threadGroup.close(); // aqui se usa el disposer
+                                            }
+                                        }
+                                    });
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+                    }
+                });
         thread.start();
     }
 
@@ -381,7 +440,6 @@ public class Platform {
         String mainClassName = null;
         String[] appArgs = new String[0]; // un array de 1?
         ClassLoader classLoader = null;
-        final Platform platform = Platform.getInstance();
 
         for (int i = 0; i < argv.length; i++) {
 
@@ -396,7 +454,9 @@ public class Platform {
                 while (izer.hasMoreTokens()) {
                     String urlString = izer.nextToken();
                     URL u;
-                    if (!urlString.startsWith("http:") && !urlString.startsWith("file:") && !urlString.startsWith("jar:")) {
+                    if (!urlString.startsWith("http:") &&
+                            !urlString.startsWith("file:") &&
+                            !urlString.startsWith("jar:")) {
                         // Es un archivo ubicado en el disco local
                         File f = new File(urlString).getCanonicalFile();
                         u = f.toURI().toURL();
@@ -414,14 +474,15 @@ public class Platform {
                 // un URL[] con un URLClassLoader. Si no se encuentra en el
                 // Map, entonces crear el ClassLoader con el mismo de Main
                 // y agrega el registro al cache.
-                Map<Object, ClassLoader> classLoaderCache = platform.getClassLoaderCache();
-                synchronized (classLoaderCache) {
+                Map<Object, ClassLoader> classLdrCache = getClassLoaderCache();
+                synchronized (classLdrCache) {
                     // Busca el Mapping
-                    loader = (URLClassLoader) classLoaderCache.get(urlArray);
+                    loader = (URLClassLoader) classLdrCache.get(urlArray);
                     if (loader == null) {
                         // No existe, crea el ClassLoader y lo guarda.
-                        loader = new URLClassLoader(urlArray, Main.class.getClassLoader());
-                        classLoaderCache.put(urlArray, loader);
+                        loader =
+                                new URLClassLoader(urlArray, Main.class.getClassLoader());
+                        classLdrCache.put(urlArray, loader);
                     }
                 }
                 classLoader = loader;
@@ -447,21 +508,21 @@ public class Platform {
         final Runnable[] runner = new Runnable[1];
         final Thread disposer = new Thread(new Runnable() {
 
-            public void run() {
-                Runnable r = runner[0];
-                runner[0] = null;
-                System.out.println("diposer running: " + r);
-                if (r != null) {
-                    r.run();
-                }
-            }
-        });
+                    public void run() {
+                        Runnable r = runner[0];
+                        runner[0] = null;
+                        System.out.println("diposer running: " + r);
+                        if (r != null) {
+                            r.run();
+                        }
+                    }
+                });
 
         final ClassLoader finalClassLoader = classLoader;
         final String[] finalArgs = appArgs;
 
         // Crea un JThreadGroup
-        final JThreadGroup threadGroup = new JThreadGroup(out, err);
+        final JThreadGroup threadGroup = new JThreadGroupImpl(out, err);
         // Asigna el Disposer. Supongo que necesita en este momento el Disposer,
         // y por esa razon se declara antes y de esta manera tan confusa.
         threadGroup.setDisposer(disposer);
@@ -469,51 +530,53 @@ public class Platform {
         final String finalClassName = mainClassName;
 
         // Crea una Nueva aplicacion "nativa"
-        final AppImpl app = new AppImpl(platform.getAppManager(), threadGroup, finalClassName);
-        platform.getAppManager().addApp(app);
+        final AppImpl app =
+                new AppImpl(getAppManager(), threadGroup, finalClassName);
+        getAppManager().addApp(app);
 
         Thread thread = new Thread(threadGroup, new Runnable() {
 
-            public void run() {
-                final sun.awt.AppContext appContext = sun.awt.SunToolkit.createNewAppContext();
-                // Este es el Thread que eventualmente ejecuta el Disposer
-                runner[0] = new Runnable() {
-
                     public void run() {
-                        platform.getAppManager().removeApp(app);
-                        System.out.println("disposing app context: ");
-                        appContext.dispose();
-                    }
-                };
-                try {
-                    // invokeAndWait necesita un Runnable como parámetro, aunque
+                        final sun.awt.AppContext appContext =
+                                sun.awt.SunToolkit.createNewAppContext();
+                        // Este es el Thread que eventualmente ejecuta el Disposer
+                        runner[0] = new Runnable() {
+
+                                    public void run() {
+                                        getAppManager().removeApp(app);
+                                        System.out.println("disposing app context: ");
+                                        appContext.dispose();
+                                    }
+                                };
+                        try {
+                            // invokeAndWait necesita un Runnable como parámetro, aunque
                     // en realidad no lo ejecuta como un Thread. El Runnable se
                     // coloca en el EDT (Event Dispatch Thread) y si el objeto
                     // es Runnable, simplemente invoca el metodo run().
-                    SwingUtilities.invokeAndWait(new Runnable() {
+                            SwingUtilities.invokeAndWait(new Runnable() {
 
-                        public void run() {
-                            try {
-                                Class c = finalClassLoader.loadClass(finalClassName);
-                                Method main = c.getMethod("main", new Class[]{String[].class});
-                                //Method main = finalClassLoader.loadClass(finalClassName).getMethod("main", new Class[]{String[].class});
-                                main.setAccessible(true);
-                                main.invoke(null, new Object[]{finalArgs});
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                threadGroup.close(); // aqui se usa el disposer
-                            }
+                                        public void run() {
+                                            try {
+                                                Class c = finalClassLoader.loadClass(finalClassName);
+                                                Method main = c.getMethod("main", new Class[]{String[].class});
+                                                //Method main = finalClassLoader.loadClass(finalClassName).getMethod("main", new Class[]{String[].class});
+                                                main.setAccessible(true);
+                                                main.invoke(null, new Object[]{finalArgs});
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                                threadGroup.close(); // aqui se usa el disposer
+                                            }
+                                        }
+                                    });
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+                    }
+                });
         thread.start();
     }
 
-
+    @Override
     public void start(int appId) throws ApplicationExecutionException {
 
         AppBridge appBridge = bridge.getAppBridge();
@@ -528,7 +591,7 @@ public class Platform {
         }
 
         try {
-            
+
             JarInputStream jis = new JarInputStream(app.getContent());
             String mainClass = getMainClassName(jis);
 
@@ -565,12 +628,24 @@ public class Platform {
             List<String> argLst = new ArrayList<String>();
             tmpDir = clientProp.getProperty("FileUrlPrefix");
             tmpDir = (tmpDir == null) ? "file://" : tmpDir;
-            
+
             argLst.add("-classpath");
             argLst.add(tmpDir + fileName + "!/");
             argLst.add(mainClass);
-            
-            String[] args = argLst.toArray(new String[] {});
+
+            String[] args = argLst.toArray(new String[]
+              
+            {
+
+
+              
+        }
+
+
+
+    
+
+    );
 
             start(args, System.out, System.err);
             
@@ -598,6 +673,7 @@ public class Platform {
     /**
      * Halts the system - now
      */
+    @Override
     public void halt() {
         Runtime.getRuntime().exit(0); // fix this
     }
@@ -605,6 +681,7 @@ public class Platform {
     /**
      * Issues a Clean Shutdown.
      */
+    @Override
     public void shutdown() {
         halt(); // fix this.
     }

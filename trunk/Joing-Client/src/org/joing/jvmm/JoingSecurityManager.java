@@ -10,6 +10,7 @@
 package org.joing.jvmm;
 
 import org.joing.applauncher.Monitor;
+import org.joing.common.jvmm.JThreadGroup;
 
 /**
  *
@@ -32,7 +33,7 @@ public class JoingSecurityManager extends SecurityManager {
 
             if (className.equals("java.lang.System") && methodName.equals("exit")) {
 
-                JThreadGroup tg = Platform.getInstance().getJThreadGroup();
+                JThreadGroup tg = RuntimeFactory.getPlatform().getJThreadGroup();
                 if (tg != null) {
                     tg.close();
                     throw new RuntimeException("exit");
@@ -41,7 +42,7 @@ public class JoingSecurityManager extends SecurityManager {
             }
         }
         
-        if(Thread.currentThread().getId() != Platform.getInstance().getMainId()) {
+        if(Thread.currentThread().getId() != RuntimeFactory.getPlatform().getMainThreadId()) {
             Monitor.log("Call to exit() by unauthorized Thread with id " + Thread.currentThread().getId());
             //throw new RuntimeException("Call to exit() by unauthorized entity.");
         } 

@@ -9,6 +9,10 @@
 
 package org.joing.jvmm;
 
+import org.joing.common.jvmm.App;
+import org.joing.common.jvmm.AppManager;
+import org.joing.common.jvmm.JThreadGroup;
+
 /**
  *
  * @author Antonio Varela Lizardi <antonio@icon.net.mx>
@@ -26,10 +30,12 @@ public class AppImpl implements App {
         threadGroup = tg;
     }
 
+    @Override
     public String getMainClassName() {
         return this.mainClass;
     }
 
+    @Override
     public void destroy() {
         threadGroup.close();
     }

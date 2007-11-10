@@ -26,6 +26,10 @@ import java.util.Properties;
 import javax.swing.JOptionPane;
 
 /**
+ * -------------------------------------------
+ * Esta clase es candidado a eliminarse.     -
+ * -------------------------------------------
+ * 
  * The Runtime class.
  * <p>
  * Contains miscellaneous methods used intensively and extensively through all 
