@@ -23,6 +23,7 @@ package ejb.app;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import org.joing.common.exception.JoingServerAppException;
 
 /**
  * This class has all the properties plus the content (normally the JAR) of the 
