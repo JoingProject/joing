@@ -12,8 +12,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import org.joing.common.dto.session.LoginResult;
 import org.joing.common.exception.JoingServerException;
-import org.joing.jvmm.Platform;
-import org.joing.runtime.bridge2server.Bridge2Server;
+import org.joing.common.runtime.Bridge2Server;
+import org.joing.jvmm.RuntimeFactory;
 
 /**
  *
@@ -188,7 +188,7 @@ public class Login extends JDialog {
         btnCancel.setEnabled(false);
 
         try {
-            Bridge2Server b2s = Platform.getInstance().getBridge();
+            Bridge2Server b2s = RuntimeFactory.getPlatform().getBridge();
             LoginResult result = b2s.getSessionBridge().login(txtAccount.getText(), String.valueOf(txtPassword.getPassword()));
 
             if (result.isLoginValid()) {
