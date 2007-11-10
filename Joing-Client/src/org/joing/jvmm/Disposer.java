@@ -10,7 +10,9 @@
 package org.joing.jvmm;
 
 /**
- *
+ * This is an example Disposer Thread. Invoked from
+ * JThreadGroup.close(), should clean up threading infrastructure.
+ * 
  * @author Antonio Varela Lizardi <antonio@icon.net.mx>
  */
 public class Disposer implements Runnable {

@@ -12,6 +12,7 @@ package org.joing.jvmm;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import org.joing.common.jvmm.JThreadGroup;
 
 /**
  * Esta clase está relacionada con el codigo encargado de ejecutar las
@@ -33,7 +34,7 @@ public class SysOut {
         
         mOut = new OutputStream() {
             public void write(int b) throws IOException {
-                JThreadGroup tg = Platform.getInstance().getJThreadGroup();  // getJThreadGroup debe pasarse a Platform
+                JThreadGroup tg = RuntimeFactory.getPlatform().getJThreadGroup();  // getJThreadGroup debe pasarse a Platform
                 if (tg != null) {
                     tg.getOut().write(b);
                 } else {
@@ -41,7 +42,7 @@ public class SysOut {
                 }
             }
             public void flush() throws IOException {
-                JThreadGroup tg = Platform.getInstance().getJThreadGroup();
+                JThreadGroup tg = RuntimeFactory.getPlatform().getJThreadGroup();
                 if (tg != null) {
                     tg.getOut().flush();
                 } else {
@@ -52,7 +53,7 @@ public class SysOut {
         
         mErr = new OutputStream() {
             public void write(int b) throws IOException {
-                JThreadGroup tg = Platform.getInstance().getJThreadGroup();
+                JThreadGroup tg = RuntimeFactory.getPlatform().getJThreadGroup();
                 if (tg != null) {
                     tg.getErr().write(b);
                 } else {
@@ -60,7 +61,7 @@ public class SysOut {
                 }
             }
             public void flush() throws IOException {
-                JThreadGroup tg = Platform.getInstance().getJThreadGroup();
+                JThreadGroup tg = RuntimeFactory.getPlatform().getJThreadGroup();
                 if (tg != null) {
                     tg.getErr().flush();
                 } else {
