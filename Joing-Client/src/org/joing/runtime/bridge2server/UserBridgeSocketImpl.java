@@ -26,7 +26,7 @@ import java.util.List;
 import org.joing.common.dto.user.Local;
 import org.joing.common.dto.user.User;
 
-// NEXT: Implementar esta clase
+import org.joing.common.runtime.UserBridge;
 
 /**
  *

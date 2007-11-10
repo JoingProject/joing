@@ -31,8 +31,9 @@ import java.util.List;
 import org.joing.common.dto.user.User;
 import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.exception.JoingServerVFSException;
+import org.joing.common.runtime.Bridge2Server;
 import org.joing.jvmm.Platform;
-import org.joing.runtime.bridge2server.Bridge2Server;
+import org.joing.jvmm.RuntimeFactory;
 
 /**
  * This class is needed to build <code>JoingFileSystemView</code>
@@ -55,7 +56,7 @@ public class VFSFile extends File
     private String         sChild   = null;   // Used only to create files and dirs
     
     
-    private Platform platform = Platform.getInstance();
+    private Platform platform = RuntimeFactory.getPlatform();
     //------------------------------------------------------------------------//
     
     /**

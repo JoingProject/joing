@@ -22,6 +22,7 @@
 
 package org.joing.runtime.bridge2server;
 
+import org.joing.common.runtime.SessionBridge;
 import org.joing.common.dto.session.LoginResult;
 import org.joing.common.exception.JoingServerException;
 
@@ -36,6 +37,9 @@ public class SessionBridgeServletImpl
        extends BridgeServletBaseImpl
        implements SessionBridge
 {
+    
+        private String sSessionId = null;
+        
     /**
      * Creates a new instance of SessionBridgeServletImpl
      * 
@@ -58,7 +62,8 @@ public class SessionBridgeServletImpl
 
         if( result != null && result.isLoginValid() )
             // Store Session ID to be used in all invocations to Server
-            platform.getBridge().setSessionId( result.getSessionId() );
+            //platform.getBridge().setSessionId( result.getSessionId() );
+            this.sSessionId = result.getSessionId();
         
         return result;
     }
@@ -66,8 +71,22 @@ public class SessionBridgeServletImpl
     public void logout()
            throws JoingServerException
     {
+        
+        if (this.sSessionId == null) {
+            // throw an exception instead?
+            return;
+        }
+        
         Channel channel = new Channel( SESSION_LOGOUT );
-                channel.write( platform.getBridge().getSessionId() );
+                //channel.write( platform.getBridge().getSessionId() );
+                channel.write( this.sSessionId );
                 channel.close();
     }
+    
+    @Override
+    public String getSessionId()
+    {
+        return sSessionId;
+    }
+    
 }
