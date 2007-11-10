@@ -31,6 +31,7 @@ import java.net.URLConnection;
 import java.rmi.RemoteException;
 import org.joing.common.exception.JoingServerException;
 import org.joing.jvmm.Platform;
+import org.joing.jvmm.RuntimeFactory;
 
 /**
  *
@@ -89,8 +90,8 @@ public class BridgeServletBaseImpl
      */
     BridgeServletBaseImpl()
     {
-        platform = Platform.getInstance();
-        sBaseURL = platform.getRuntime().getServerBaseURL();
+        platform = RuntimeFactory.getPlatform();
+        sBaseURL = platform.getServerBaseURL();
         
         if( ! sBaseURL.endsWith( "/" ) )
             sBaseURL += "/";
@@ -187,7 +188,7 @@ public class BridgeServletBaseImpl
             }
             catch( ClassNotFoundException exc )
             {
-                Platform.getInstance().getRuntime().showException( 
+                RuntimeFactory.getPlatform().showException( 
                         "This exception should not happen", exc );
             }
             

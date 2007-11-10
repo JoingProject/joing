@@ -26,6 +26,7 @@ import java.util.List;
 import org.joing.common.dto.user.Local;
 import org.joing.common.dto.user.User;
 import org.joing.common.exception.JoingServerException;
+import org.joing.common.runtime.UserBridge;
 
 /**
  *
@@ -52,7 +53,7 @@ public class UserBridgeServletImpl
         User user = null;
  
         Channel channel = new Channel( USER_GET_USER );
-                channel.write( platform.getBridge().getSessionId() );
+                channel.write( platform.getBridge().getSessionBridge().getSessionId() );
         user = (User) channel.read();
                 channel.close();
 
@@ -65,7 +66,7 @@ public class UserBridgeServletImpl
         User user2Ret = null;
         
         Channel channel = new Channel( USER_UPDATE_USER );
-                channel.write( platform.getBridge().getSessionId() );
+                channel.write( platform.getBridge().getSessionBridge().getSessionId() );
                 channel.write( user );
         user2Ret = (User) channel.read();
                 channel.close();
@@ -79,7 +80,7 @@ public class UserBridgeServletImpl
         List<Local> list = null;
         
         Channel channel = new Channel( USER_LOCALS );
-                channel.write( platform.getBridge().getSessionId() );
+                channel.write( platform.getBridge().getSessionBridge().getSessionId() );
         list = (List<Local>) channel.read();
                 channel.close();
         

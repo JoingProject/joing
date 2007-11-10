@@ -28,6 +28,7 @@ import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.dto.vfs.FileText;
 
 // NEXT: Implementar esta clase
+import org.joing.common.runtime.VFSBridge;
 
 /**
  *

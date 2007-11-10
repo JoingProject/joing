@@ -22,6 +22,7 @@
 
 package org.joing.runtime.bridge2server;
 
+import org.joing.common.runtime.SessionBridge;
 import org.joing.common.dto.session.LoginResult;
 
 // NEXT: Implementar esta clase
@@ -48,12 +49,19 @@ public class SessionBridgeSocketImpl
         super();
     }
     
+    @Override
     public LoginResult login( String sAccount, String sPassword )
     {
         return null;
     }
     
+    @Override
     public void logout()
     {
+    }
+
+    @Override
+    public String getSessionId() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
