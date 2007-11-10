@@ -21,14 +21,7 @@
  */
 package org.joing;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 import org.joing.applauncher.Bootstrap;
-import org.joing.jvmm.Platform;
 
 /**
  *
@@ -42,44 +35,36 @@ public class Main {
 
     public static void main(String[] args) {
 
-        args = new String[0];  // TODO: quitarlo
-        
-        Properties clientProps = new Properties();
-        // arg 1 can be the properties file.
-        if (args.length == 1) {
-            try {
-                File propFile = new File(args[0]);
-                if (propFile.exists() == false) {
-                    System.err.println("Could not find the specified properties file.");
-                    return;
-                }
+//        args = new String[0];  // TODO: quitarlo
+//        
+//        Properties clientProps = new Properties();
+//        // arg 1 can be the properties file.
+//        if (args.length == 1) {
+//            try {
+//                File propFile = new File(args[0]);
+//                if (propFile.exists() == false) {
+//                    System.err.println("Could not find the specified properties file.");
+//                    return;
+//                }
+//
+//                FileInputStream fis = new FileInputStream(propFile);
+//                clientProps.load(fis);
+//            } catch (FileNotFoundException fnfe) {
+//                System.err.println("FileNotFoundException caught: " + fnfe.getMessage());
+//                return;
+//            } catch (IOException ioe) {
+//                System.err.println("IOException caught: " + ioe.getMessage());
+//                return;
+//            }
+//        }
 
-                FileInputStream fis = new FileInputStream(propFile);
-                clientProps.load(fis);
-            } catch (FileNotFoundException fnfe) {
-                System.err.println("FileNotFoundException caught: " + fnfe.getMessage());
-                return;
-            } catch (IOException ioe) {
-                System.err.println("IOException caught: " + ioe.getMessage());
-                return;
-            }
-        } else {
-
-            InputStream is = Main.class.getClassLoader().getResourceAsStream("client.properties");
-
-            if (is != null) {
-                try {
-                    clientProps.load(is);
-                } catch (IOException ioe) {
-                    System.err.println("IOException caught: " + ioe.getMessage());
-                    return;
-                }
-            }
-            // will try to continue with defaults (empty properties)
-        }
-
-        final Platform platform = Platform.getInstance();
-        platform.init(clientProps);
+        // Init no forma parte del contrato, por eso invocamos directamente
+        // una instancia de PlatformImpl. Cuando quede resuelto el asunto
+        // de las ClientProperties se debera eliminar esto la llamada a
+        // platform.init(clientProps).
+        //final Platform platform = RuntimeFactory.getPlatform();
+//        final Platform platform = (Platform)RuntimeFactory.getPlatform();
+//        platform.init(clientProps);
 
         Bootstrap.init();
     }
