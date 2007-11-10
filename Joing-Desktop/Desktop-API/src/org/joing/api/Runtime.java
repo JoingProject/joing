@@ -12,7 +12,6 @@ package org.joing.api;
 import java.awt.Cursor;
 import java.net.URL;
 import javax.swing.ImageIcon;
-import org.joing.api.desktop.Desktop;
 
 /**
  *
