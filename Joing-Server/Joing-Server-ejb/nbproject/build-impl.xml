@@ -15,8 +15,7 @@ is divided into following sections:
   - cleanup
 
         -->
-<project xmlns:ejbjarproject1="http://www.netbeans.org/ns/j2ee-ejbjarproject/1" xmlns:ejbjarproject2="http://www.netbeans.org/ns/j2ee-ejbjarproject/2" xmlns:ejbjarproject3="http://www.netbeans.org/ns/j2ee-ejbjarproject/3" basedir=".." default="build" name="Joing-Server-ejb-impl">
-    <import file="extendArchiveGF.xml"/>
+<project xmlns:ejbjarproject1="http://www.netbeans.org/ns/j2ee-ejbjarproject/1" xmlns:ejbjarproject2="http://www.netbeans.org/ns/j2ee-ejbjarproject/2" xmlns:ejbjarproject3="http://www.netbeans.org/ns/j2ee-ejbjarproject/3" basedir=".." default="default" name="Joing-Server-ejb-impl">
     <import file="ant-deploy.xml"/>
     <target depends="dist,javadoc" description="Build whole project." name="default"/>
     <!-- 
@@ -81,6 +80,15 @@ is divided into following sections:
             </not>
         </condition>
         <property name="source.encoding" value="${file.encoding}"/>
+        <condition property="javadoc.encoding.used" value="${javadoc.encoding}">
+            <and>
+                <isset property="javadoc.encoding"/>
+                <not>
+                    <equals arg1="${javadoc.encoding}" arg2=""/>
+                </not>
+            </and>
+        </condition>
+        <property name="javadoc.encoding.used" value="${source.encoding}"/>
     </target>
     <target name="-post-init">
         <!-- Empty placeholder for easier customization. -->
@@ -112,7 +120,7 @@ is divided into following sections:
             <attribute default="${build.classes.dir}" name="destdir"/>
             <attribute default="${javac.classpath}:${j2ee.platform.classpath}" name="classpath"/>
             <attribute default="${javac.debug}" name="debug"/>
-            <attribute default="${jaxws.endorsed.dir}" name="jaxwsendorsed"/>
+            <attribute default="" name="javac.compilerargs.jaxws"/>
             <element name="customize" optional="true"/>
             <sequential>
                 <property name="javac.compilerargs" value=""/>
@@ -120,8 +128,7 @@ is divided into following sections:
                     <classpath>
                         <path path="@{classpath}"/>
                     </classpath>
-                    <compilerarg line="-Djava.endorsed.dirs='@{jaxwsendorsed}'"/>
-                    <compilerarg line="${javac.compilerargs}"/>
+                    <compilerarg line="${javac.compilerargs} @{javac.compilerargs.jaxws}"/>
                     <customize/>
                 </javac>
             </sequential>
@@ -208,6 +215,7 @@ is divided into following sections:
             <attribute default="${main.class}" name="classname"/>
             <attribute default="${debug.classpath}" name="classpath"/>
             <attribute default="${application.args}" name="args"/>
+            <element name="customize" optional="true"/>
             <sequential>
                 <java classname="@{classname}" fork="true">
                     <jvmarg line="${debug-args-line}"/>
@@ -216,6 +224,7 @@ is divided into following sections:
                         <path path="@{classpath}"/>
                     </classpath>
                     <arg line="@{args}"/>
+                    <customize/>
                 </java>
             </sequential>
         </macrodef>
@@ -224,8 +233,12 @@ is divided into following sections:
     <!--
                 COMPILATION SECTION
             -->
-    <target depends="init" if="no.dist.ear.dir" name="-deps-module-jar" unless="no.deps"/>
-    <target depends="init" if="dist.ear.dir" name="-deps-ear-jar" unless="no.deps"/>
+    <target depends="init" if="no.dist.ear.dir" name="-deps-module-jar" unless="no.deps">
+        <ant antfile="${project.Joing-Common}/build.xml" inheritall="false" target="jar"/>
+    </target>
+    <target depends="init" if="dist.ear.dir" name="-deps-ear-jar" unless="no.deps">
+        <ant antfile="${project.Joing-Common}/build.xml" inheritall="false" target="jar"/>
+    </target>
     <target depends="init, -deps-module-jar, -deps-ear-jar" name="deps-jar"/>
     <target depends="init,deps-jar" name="-pre-pre-compile">
         <mkdir dir="${build.classes.dir}"/>
@@ -235,9 +248,15 @@ is divided into following sections:
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
     </target>
-    <target depends="compile" name="library-inclusion-in-archive"/>
+    <target depends="compile" name="library-inclusion-in-archive">
+        <copy file="${reference.Joing-Common.jar}" todir="${build.classes.dir}"/>
+    </target>
     <target depends="compile" name="library-inclusion-in-manifest">
-        <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update"/>
+        <basename file="${reference.Joing-Common.jar}" property="included.lib.reference.Joing-Common.jar"/>
+        <copy file="${reference.Joing-Common.jar}" todir="${dist.ear.dir}"/>
+        <manifest file="${build.ear.classes.dir}/META-INF/MANIFEST.MF" mode="update">
+            <attribute name="Class-Path" value="${included.lib.reference.Joing-Common.jar} "/>
+        </manifest>
     </target>
     <target name="-copy-meta-inf">
         <copy todir="${classes.dir}">
@@ -278,7 +297,7 @@ is divided into following sections:
     <!--
                 DIST BUILDING SECTION
             -->
-    <target depends="-extend-archive" name="-pre-dist">
+    <target name="-pre-dist">
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
     </target>
@@ -394,7 +413,7 @@ is divided into following sections:
             -->
     <target depends="init" name="javadoc-build">
         <mkdir dir="${dist.javadoc.dir}"/>
-        <javadoc additionalparam="${javadoc.additionalparam}" author="${javadoc.author}" destdir="${dist.javadoc.dir}" failonerror="true" noindex="${javadoc.noindex}" nonavbar="${javadoc.nonavbar}" notree="${javadoc.notree}" private="${javadoc.private}" source="${javac.source}" splitindex="${javadoc.splitindex}" use="${javadoc.use}" useexternalfile="true" version="${javadoc.version}" windowtitle="${javadoc.windowtitle}">
+        <javadoc additionalparam="${javadoc.additionalparam}" author="${javadoc.author}" charset="${javadoc.encoding.used}" destdir="${dist.javadoc.dir}" docencoding="${javadoc.encoding.used}" encoding="${javadoc.encoding.used}" failonerror="true" noindex="${javadoc.noindex}" nonavbar="${javadoc.nonavbar}" notree="${javadoc.notree}" private="${javadoc.private}" source="${javac.source}" splitindex="${javadoc.splitindex}" use="${javadoc.use}" useexternalfile="true" version="${javadoc.version}" windowtitle="${javadoc.windowtitle}">
             <classpath>
                 <path path="${javac.classpath}:${j2ee.platform.classpath}"/>
             </classpath>
@@ -478,7 +497,17 @@ is divided into following sections:
             -->
     <target depends="init,compile-test" if="have.tests" name="-debug-start-debuggee-test">
         <fail unless="test.class">Must select one file in the IDE or set test.class</fail>
-        <ejbjarproject1:debug args="${test.class}" classname="junit.textui.TestRunner" classpath="${debug.test.classpath}"/>
+        <property location="${build.test.results.dir}/TEST-${test.class}.xml" name="test.report.file"/>
+        <delete file="${test.report.file}"/>
+        <!-- the directory must exist, otherwise the XML formatter would fail -->
+        <mkdir dir="${build.test.results.dir}"/>
+        <ejbjarproject1:debug args="${test.class}" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner" classpath="${ant.home}/lib/ant.jar:${ant.home}/lib/ant-junit.jar:${debug.test.classpath}">
+            <customize>
+                <arg value="showoutput=true"/>
+                <arg value="formatter=org.apache.tools.ant.taskdefs.optional.junit.BriefJUnitResultFormatter"/>
+                <arg value="formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,${test.report.file}"/>
+            </customize>
+        </ejbjarproject1:debug>
     </target>
     <target depends="init,compile-test" if="netbeans.home+have.tests" name="-debug-start-debugger-test">
         <ejbjarproject1:nbjpdastart classpath="${debug.test.classpath}" name="${test.class}"/>
@@ -491,7 +520,9 @@ is divided into following sections:
     <!--
                 CLEANUP SECTION
             -->
-    <target depends="init" if="no.dist.ear.dir" name="deps-clean" unless="no.deps"/>
+    <target depends="init" if="no.dist.ear.dir" name="deps-clean" unless="no.deps">
+        <ant antfile="${project.Joing-Common}/build.xml" inheritall="false" target="clean"/>
+    </target>
     <target depends="init" name="-do-clean">
         <delete dir="${build.dir}"/>
         <delete dir="${dist.dir}"/>
