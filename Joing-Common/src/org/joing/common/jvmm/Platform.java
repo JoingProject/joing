@@ -3,14 +3,11 @@
  * and open the template in the editor.
  */
 
-package org.joing.jvmm;
+package org.joing.common.jvmm;
 
 import java.util.Map;
 import java.util.Properties;
 import org.joing.common.api.DesktopManager;
-import org.joing.common.jvmm.AppManager;
-import org.joing.common.jvmm.ApplicationExecutionException;
-import org.joing.common.jvmm.JThreadGroup;
 import org.joing.common.runtime.Bridge2Server;
 
 /**
