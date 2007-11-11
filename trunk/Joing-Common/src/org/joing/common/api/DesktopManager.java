@@ -5,7 +5,7 @@
 
 package org.joing.common.api;
 
-import org.joing.jvmm.Platform;
+import org.joing.common.jvmm.Platform;
 
 /**
  *
