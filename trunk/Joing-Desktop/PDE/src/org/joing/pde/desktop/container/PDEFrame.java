@@ -7,11 +7,17 @@ package org.joing.pde.desktop.container;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyVetoException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.event.InternalFrameEvent;
+import javax.swing.plaf.basic.BasicInternalFrameUI;
 import org.joing.api.desktop.DeskFrame;
 import org.joing.api.desktop.Selectable;
 
@@ -41,6 +47,7 @@ public class PDEFrame
     public PDEFrame( String title, boolean resizable, boolean closable )
     {
         super( title, resizable, closable, true, true );
+        init();
     }
     
     //------------------------------------------------------------------------//
@@ -173,5 +180,30 @@ public class PDEFrame
             
             setLocation( Math.max( nX, 0 ), Math.max( nY, 0 ) );
         }
+    }
+    
+    //------------------------------------------------------------------------//
+    
+    private void init()
+    {
+        JComponent pane = ((BasicInternalFrameUI) getUI()).getNorthPane();
+        
+        pane.addMouseListener( new MouseAdapter()
+        {// TODO: hacer que click con el btn izq sobre el icono de la barra de título abra el popup
+            // Note: isPopupTrigger() does not work
+            public void mousePressed( MouseEvent me )
+            {
+                if( me.getButton() == MouseEvent.BUTTON2 || me.getButton() == MouseEvent.BUTTON3 )
+                    showPopupMenu( me.getPoint() );
+            }
+        } );
+    }
+    
+    private void showPopupMenu( Point p )
+    {
+        // Has to be created every time because some items can change from ivocation to invocation.
+        // And in this way, we also save memory (it exists in memory only while needed).
+        FramePopupMenu popup = new FramePopupMenu( this );            
+                       popup.show( this, p.x, p.y );
     }
 }

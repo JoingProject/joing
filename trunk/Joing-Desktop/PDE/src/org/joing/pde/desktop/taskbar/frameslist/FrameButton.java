@@ -34,6 +34,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolTip;
 import javax.swing.event.MouseInputAdapter;
 import org.joing.api.desktop.workarea.WorkArea;
+import org.joing.pde.desktop.container.FramePopupMenu;
 import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.runtime.PDERuntime;
 
@@ -132,8 +133,14 @@ class FrameButton extends JToggleButton
     {
         // Has to be created every time because some items can change from ivocation to invocation.
         // And in this way, we also save memory (it exists in memory only while needed).
-        ThisPopupMenu popup = new ThisPopupMenu();
-                      popup.show( this, p.x, p.y );
+        FramePopupMenu popup;
+        
+        if( frame != null )
+            popup = new FramePopupMenu( frame );
+        else
+            popup = new FramePopupMenu( iframe );
+            
+        popup.show( this, p.x, p.y );
     }
     
     private void initButton( String sTitle, Icon icon )
@@ -158,179 +165,5 @@ class FrameButton extends JToggleButton
                     showPopupMenu( me.getPoint() );
             }
         } );
-    }
-    
-    private void minimize()
-    {
-        if( getFrame() instanceof Frame )
-        {
-            Frame frm = (Frame) getFrame();
-                  frm.setExtendedState( frm.getExtendedState() | Frame.ICONIFIED );
-        }
-        else
-        {
-            ((PDEFrame) getFrame()).setIcon( true );
-        }
-    }
-    
-    private void maximize()
-    {
-        if( getFrame() instanceof Frame )
-        {
-            Frame frm    = (Frame) getFrame();
-                  frm.setExtendedState( frm.getExtendedState() | Frame.MAXIMIZED_BOTH );
-        }
-        else
-        {
-            ((PDEFrame) getFrame()).maximize();
-        }
-    }
-    
-    private void restore()
-    {
-        if( getFrame() instanceof Frame )
-            {
-                Frame frm = (Frame) getFrame();
-                      frm.setExtendedState( frm.getExtendedState() | Frame.NORMAL );
-            }
-            else
-            {
-                ((PDEFrame) getFrame()).restore();
-            }
-    }
-    
-    private void close()
-    {
-        if( getFrame() instanceof Frame )
-            ((Frame) getFrame()).dispose();
-        else
-            ((PDEFrame) getFrame()).dispose();
-    }
-    
-    private void alwaysOnTop()
-    {
-        if( getFrame() instanceof Frame )
-        {
-            Frame frm = (Frame) getFrame();
-                  frm.setAlwaysOnTop( ! frm.isAlwaysOnTop() );
-        }
-        else
-        {
-            PDEFrame frm = (PDEFrame) getFrame();
-                     frm.setAlwaysOnTop( ! frm.isAlwaysOnTop() );
-        }
-    }
-    
-    private void toWorkArea( WorkArea waDestiny )
-    {// FIXME: Esto no va bien porque se están cogiendo 2 eventos: el de close window y el de add/remove del work area, creo que habría que coger sólo uno de los dos
-        WorkArea  waOrigin  = PDERuntime.getRuntime().getDesktopManager().getDesktop().getActiveWorkArea();
-        
-        waOrigin.remove( getFrame() );
-        waDestiny.add( getFrame() );
-    }
-    
-    //------------------------------------------------------------------------//
-    // INNER CLASS: Popup Menu
-    //------------------------------------------------------------------------//
-    private final class ThisPopupMenu extends JPopupMenu implements ActionListener
-    {
-        // Done using vars (and one char vars) to save memory
-        private static final String MINIMIZE    = "A";
-        private static final String MAXIMIZE    = "B";
-        private static final String RESTORE     = "C";
-        private static final String CLOSE       = "D";
-        private static final String ON_TOP      = "E";
-        private static final String TO_WORKAREA = "F";
-        
-        private static final String WORK_AREA   = "WORK_AREA";  // Better to have a long name
-        
-        //--------------------------------------------------------------------//
-        
-        private ThisPopupMenu()
-        {
-            JMenuItem item;
-            
-            item = new JMenuItem( "Minimize" );
-            item.setActionCommand( MINIMIZE );
-            item.addActionListener( this );
-            item.setEnabled( FrameButton.this.frame != null ? 
-                             FrameButton.this.frame.getExtendedState() != Frame.ICONIFIED :
-                             ! FrameButton.this.iframe.isIcon() );
-            
-            add( item );
-            
-            item = new JMenuItem( "Maximize" );
-            item.setActionCommand( MAXIMIZE );
-            item.addActionListener( this );
-            item.setEnabled( FrameButton.this.frame != null ? 
-                             FrameButton.this.frame.getExtendedState() != Frame.MAXIMIZED_BOTH :
-                             ! FrameButton.this.iframe.isMaximum() );
-            add( item );
-            
-            item = new JMenuItem( "Restore" );
-            item.setActionCommand( RESTORE );
-            item.addActionListener( this );
-            item.setEnabled( FrameButton.this.frame != null ?
-                             FrameButton.this.frame.getExtendedState() != Frame.NORMAL :
-                             (FrameButton.this.iframe.isMaximum() || FrameButton.this.iframe.isIcon()) );
-            add( item );
-            
-            item = new JMenuItem( "Close" );
-            item.setActionCommand( CLOSE );
-            item.addActionListener( this );
-            add( item );
-            
-            addSeparator();
-            
-            JCheckBoxMenuItem itemCheck = new JCheckBoxMenuItem( "Always on top" );
-                              itemCheck.setActionCommand( ON_TOP );
-                              itemCheck.addActionListener( this );
-                              itemCheck.setEnabled( FrameButton.this.frame != null ? 
-                                                    FrameButton.this.frame.isAlwaysOnTopSupported() :
-                                                    true );
-                              itemCheck.setSelected( FrameButton.this.frame != null ? 
-                                                     FrameButton.this.frame.isAlwaysOnTop() :
-                                                     FrameButton.this.iframe.isAlwaysOnTop() );
-            add( itemCheck );
-            
-            List<WorkArea> lstWorkAreas = PDERuntime.getRuntime().getDesktopManager().getDesktop().getWorkAreas();
-            WorkArea       waActive     = PDERuntime.getRuntime().getDesktopManager().getDesktop().getActiveWorkArea();
-
-            if( lstWorkAreas.size() > 1 )
-            {
-                JMenu menu = new JMenu( "Move to desktop..." );
-                
-                for( WorkArea wa : lstWorkAreas )
-                {
-                    item = new JMenuItem( wa.getName() );
-                    item.setActionCommand( TO_WORKAREA  );
-                    item.addActionListener( this );
-                    item.putClientProperty( WORK_AREA, wa );
-                    item.setEnabled( wa != waActive );
-
-                    menu.add( item );
-                }
-                
-                add( menu );
-            }
-        }
-        
-        public void actionPerformed( ActionEvent ae )
-        {
-            String sCommand = ae.getActionCommand();
-            
-            if(      sCommand.equals( MINIMIZE ) )    minimize();
-            else if( sCommand.equals( MAXIMIZE ) )    maximize();
-            else if( sCommand.equals( RESTORE ) )     restore();
-            else if( sCommand.equals( CLOSE ) )       close();            
-            else if( sCommand.equals( ON_TOP ) )      alwaysOnTop();
-            else if( sCommand.equals( TO_WORKAREA ) )
-            {
-                JMenuItem item      = (JMenuItem) ae.getSource();
-                WorkArea  waDestiny = (WorkArea) item.getClientProperty( WORK_AREA ); 
-                
-                toWorkArea( waDestiny );
-            }
-        }
     }
 }

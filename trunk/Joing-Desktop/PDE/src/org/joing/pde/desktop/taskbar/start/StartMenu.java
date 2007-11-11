@@ -30,7 +30,8 @@ import org.joing.common.dto.user.User;
 import org.joing.pde.runtime.ColorSchema;
 import org.joing.pde.runtime.PDERuntime;
 import org.joing.pde.swing.JScrollablePopupMenu;
-import org.joing.pde.misce.EditUser;
+import org.joing.pde.misce.apps.EditUser;
+import org.joing.pde.misce.apps.ProxyConfig;
 
 /**
  *
@@ -76,7 +77,7 @@ class StartMenu extends JScrollablePopupMenu
             {
                 public void actionPerformed( ActionEvent ae )
                 {
-                    (new EditUser()).edit();
+                    PDERuntime.getRuntime().add( new EditUser() );
                 }
             } );
         }
@@ -120,6 +121,7 @@ class StartMenu extends JScrollablePopupMenu
     {
         final String KEY = "JOING_APP_DESCRIPTOR";
         
+        boolean        bSystemAppsAdded = false;
         List<AppGroup> lstGroups = PDERuntime.getRuntime().getBridge().getAppBridge().
                                               getInstalledForUser( AppEnvironment.JAVA_ALL, AppGroupKey.ALL );
         
@@ -132,6 +134,12 @@ class StartMenu extends JScrollablePopupMenu
                 
                 JMenu menu = new JMenu( group.getName() );
                       menu.setIcon( createItemIcon( group.getIconPNG() ) );
+                      
+                if( group.getGroupKey() == AppGroupKey.SYSTEM )
+                {
+                    addPDESystemApps( menu );
+                    bSystemAppsAdded = true;
+                }
 
                 add( menu );
 
@@ -157,7 +165,31 @@ class StartMenu extends JScrollablePopupMenu
                     menu.add( itemApp );
                 }
             }
+            
+            if( ! bSystemAppsAdded ) // This almost never will happen because users will have at least one app in System
+            {
+                JMenu menuSys = new JMenu( "System" );
+                addPDESystemApps( menuSys );
+                add( menuSys );
+            }
         }
+    }
+    
+    // Add some apps that are in PDE.jar to System menu
+    private void addPDESystemApps( JMenu menu )
+    {
+        JMenuItem itemProxy = new JMenuItem( "Proxy" );
+                  itemProxy.setIcon( ProxyConfig.getIcon( ICON_SIZE, ICON_SIZE ) );
+                  itemProxy.addActionListener( new ActionListener()
+                  {
+                      public void actionPerformed( ActionEvent ae )
+                      {
+                          PDERuntime.getRuntime().add( new ProxyConfig() );
+                      }
+                  } );
+        menu.add( itemProxy );
+        
+        // TODO: Añadir SystemMonitor
     }
     
     private ImageIcon createItemIcon( byte[] abImage )

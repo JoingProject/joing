@@ -21,9 +21,9 @@ public class ColorSchema
     private static Color desktopBackground;
     private static Color taskbarBackground;
     
-    private static Color desktopLauncherForegroundUnSelected;
-    private static Color desktopLauncherForegroundSelected;
-    private static Color desktopLauncherBackground;    // PDELauncher label is not opaque when unselected
+    private static Color deskLauncherTextForegroundUnSelected;
+    private static Color deskLauncherTextForegroundSelected;
+    private static Color deskLauncherTextBackground;    // PDELauncher label is not opaque when unselected
         
     private static Color UserNameBackground;
     private static Color UserNameForeground;
@@ -59,21 +59,21 @@ public class ColorSchema
     // This method does not exists because in PDE, the unselected label is not opaque
     // public Color getDesktopLauncherBackgroundUnSelected()
     
-    public Color getDesktopLauncherForegroundSelected()
+    public Color getDeskLauncherTextForegroundSelected()
     {
-        return desktopLauncherForegroundSelected;
+        return deskLauncherTextForegroundSelected;
     }
     
-    public Color getDesktopLauncherBackground()
+    public Color getDeskLauncherTextForegroundUnSelected()
     {
-        return desktopLauncherBackground;
+        return deskLauncherTextForegroundUnSelected;
+    }
+    
+    public Color getDeskLauncherTextBackground()
+    {
+        return deskLauncherTextBackground;
     }
    
-    public Color getDesktopLauncherForegroundUnSelected()
-    {
-        return desktopLauncherForegroundUnSelected;
-    }
-    
     public Color getUserNameBackground()
     {
         return UserNameBackground;
@@ -95,9 +95,9 @@ public class ColorSchema
         desktopBackground = new Color( 255, 255, 220 );
         taskbarBackground = new Color( 230, 230, 221 );
         
-        desktopLauncherForegroundUnSelected = Color.black;
-        desktopLauncherBackground           = new Color(  28,  55,  83 );
-        desktopLauncherForegroundSelected   = Color.white;
+        deskLauncherTextBackground           = new Color( 128, 145, 153 );
+        deskLauncherTextForegroundUnSelected = Color.black;
+        deskLauncherTextForegroundSelected   = Color.white;
         
         UserNameBackground = Color.darkGray;
         UserNameForeground = Color.white;

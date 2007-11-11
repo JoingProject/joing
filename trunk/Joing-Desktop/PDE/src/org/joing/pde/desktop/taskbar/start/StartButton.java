@@ -18,12 +18,8 @@ import java.awt.event.MouseEvent;
 import java.awt.image.FilteredImageSource;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JScrollPane;
 import javax.swing.MenuSelectionManager;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
-import org.joing.api.desktop.workarea.desklet.deskLauncher.Launcher;
 import org.joing.pde.runtime.PDERuntime;
 import org.joing.pde.swing.ImageHighlightFilter;
 

@@ -3,15 +3,13 @@
  * and open the template in the editor.
  */
 
-package org.joing.pde.misce;
-
-import org.joing.pde.desktop.workarea.desklet.PDEDesklet;
+package org.joing.pde.misce.apps;
 
 /**
  *
  * @author fmorero
  */
-public class Trashcan extends PDEDesklet
+public class Trashcan
 {
     // TODO: hacerlo (es un Desklet)
 }
