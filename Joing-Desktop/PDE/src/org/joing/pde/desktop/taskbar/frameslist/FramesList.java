@@ -22,7 +22,6 @@ import java.awt.event.WindowListener;
 import java.util.Hashtable;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 import org.joing.api.desktop.DesktopListener;
@@ -63,10 +62,9 @@ public class FramesList extends TaskPanel
         tifl = new TheIntenalFrameListener();
         
         setLayout( grid );
-        setBorder( new EmptyBorder( 0, 5, 0, 5 ) );
         setMinimumSize( new Dimension( 80,20 ) );
         setMaximumSize( new Dimension( Integer.MAX_VALUE, Integer.MAX_VALUE ) );
-        setPreferredSize( new Dimension( 600,24 ) );   // FIXME: esto no puede estar a pelo
+        setPreferredSize( new Dimension( 480,24 ) );
         
         PDERuntime.getRuntime().getDesktopManager().getDesktop().addDesktopListener( tdl );
     }

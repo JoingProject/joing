@@ -27,15 +27,15 @@ import org.joing.api.desktop.Desktop;
 import org.joing.api.desktop.DesktopListener;
 import org.joing.api.desktop.enums.TaskBarOrientation;
 import org.joing.api.desktop.workarea.WorkArea;
-import org.joing.pde.desktop.taskbar.clock.AnAnimation;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.api.desktop.taskbar.TaskBar;
 import org.joing.pde.desktop.taskbar.PDETaskBar;
 import org.joing.pde.desktop.container.PDECanvas;
 import org.joing.pde.desktop.container.PDEDialog;
 import org.joing.pde.desktop.container.PDEFrame;
-import org.joing.pde.desktop.workarea.desklet.PDEDesklet;
-import org.joing.pde.desktop.workarea.desklet.deskLauncher.PDEDeskLauncher;
+import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
+import org.joing.pde.misce.apps.NasaPhoto;
+import org.joing.pde.misce.apps.memon.MemMon;
 
 /**
  *
@@ -119,15 +119,13 @@ public class PDEDesktop extends JPanel implements Desktop
         wa.add( pl1 );
         wa.add( pl2 );
         
-        AnAnimation animation = new AnAnimation();
-                    animation.start();
-        JLabel      lblDesklet = new JLabel( "Desklet demo" );
-                    lblDesklet.setHorizontalAlignment( JLabel.CENTER );
-        PDEDesklet desklet = new PDEDesklet();
-                   desklet.add( animation , BorderLayout.CENTER );
-                   desklet.add( lblDesklet, BorderLayout.SOUTH  );
-                   desklet.setBounds( 100, 150, 160,160 );
-        wa.add( desklet );
+        MemMon memon = new MemMon();
+               memon.setBounds( 10,200, memon.getPreferredSize().width, memon.getPreferredSize().height );
+        wa.add( memon );
+        
+        NasaPhoto nasa = new NasaPhoto();
+                  nasa.setBounds( 10,350, nasa.getPreferredSize().width, nasa.getPreferredSize().height );
+        wa.add( nasa );
         
         JLabel lblCanvas = new JLabel( "<html><h2>Soy un canvas.</h2>Y esto es <u>texto <font color=\"#0066CC\">HTML</font></u>.</h3></html>" );
         PDECanvas canvas = (PDECanvas) createCanvas();

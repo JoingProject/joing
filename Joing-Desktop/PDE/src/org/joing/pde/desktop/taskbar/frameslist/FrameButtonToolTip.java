@@ -49,11 +49,8 @@ class FrameButtonToolTip extends JToolTip
     
     public void paintComponent( Graphics g )
     {
-        BufferedImage bi = new BufferedImage( toShow.getWidth(), toShow.getHeight(), 
-                                              BufferedImage.TYPE_INT_RGB );
-        toShow.paint( bi.createGraphics() );
-
-        g.drawImage( bi.getScaledInstance( getWidth(), getHeight(), Image.SCALE_SMOOTH ), 
-                     0, 0, this );
+        BufferedImage bi = new BufferedImage( toShow.getWidth(), toShow.getHeight(), BufferedImage.TYPE_INT_RGB );
+        toShow.paint( bi.createGraphics() );    // createGraphics() is preferred over getGraphics(). See JavaDoc.
+        g.drawImage( bi.getScaledInstance( getWidth(), getHeight(), Image.SCALE_SMOOTH ), 0, 0, this );
     }
 }

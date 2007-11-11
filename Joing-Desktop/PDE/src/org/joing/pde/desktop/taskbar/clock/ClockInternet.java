@@ -16,10 +16,8 @@ package org.joing.pde.desktop.taskbar.clock;
 // NEXT: To be implemented...
 public class ClockInternet
 {
-    
     /** Creates a new instance of ClockInternet */
     public ClockInternet()
     {
-    }
-    
+    }   
 }

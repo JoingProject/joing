@@ -8,17 +8,23 @@
 package org.joing.pde.runtime;
 
 import java.applet.Applet;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.net.URL;
+import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import org.joing.api.desktop.workarea.WorkArea;
 import org.joing.jvmm.Platform;
 import org.joing.pde.PDEManager;
 import org.joing.pde.desktop.PDEDesktop;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.pde.desktop.container.PDEFrame;
-import org.joing.pde.swing.images.ImagesFactory;
+import org.joing.pde.misce.images.ImagesFactory;
 import org.joing.runtime.bridge2server.Bridge2Server;
 
 /**
@@ -50,6 +56,46 @@ public final class PDERuntime implements org.joing.api.Runtime
     
     private PDERuntime()
     {
+    }
+    
+    //------------------------------------------------------------------------//
+    
+    /**
+     * Convenience method to add a PDEFrame to the default work area.
+     * It also makes: pack(), center() and setVisible( true ).
+     */
+    public void add( final PDEFrame frame )
+    {
+        SwingUtilities.invokeLater( new Runnable()
+        {
+            public void run()
+            {
+                // First, add to desktop
+                getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
+
+                frame.center();
+                frame.setVisible( true );
+            }
+        } );
+    }
+    
+    public void remove( Component comp )
+    {
+        List<WorkArea> lstWA = getDesktopManager().getDesktop().getWorkAreas();
+        
+        for( WorkArea wa : lstWA )
+        {
+            Component[] ac  = ((PDEWorkArea) wa).getComponents();
+            
+            for( int n = 0; n < ac.length; n++ )
+            {
+                if( ac[n] == comp )
+                {
+                    wa.remove( comp );
+                    break;
+                }
+            }
+        }
     }
     
     //------------------------------------------------------------------------//
@@ -130,6 +176,20 @@ public final class PDERuntime implements org.joing.api.Runtime
                                      JOptionPane.YES_NO_OPTION ) == JOptionPane.YES_OPTION;
     }
     
+    /**
+     * Asks for password and validates it agains the server.
+     * 
+     * @return <code>true</code> if password is correct.
+     */
+    public boolean askForPassword()
+    {// TODO: cambiar el JTextField por un JPasswordField
+        String sPassword = JOptionPane.showInputDialog( null, "", "Enter password", 
+                                                        JOptionPane.QUESTION_MESSAGE );
+        
+        // TODO: comprobar la password (mandarla al servidor y que él la valide)
+        return sPassword != null && sPassword.trim().length() > 0;
+    }
+    
     //------------------------------------------------------------------------//
     // Local resources
     //------------------------------------------------------------------------// 
@@ -149,9 +209,16 @@ public final class PDERuntime implements org.joing.api.Runtime
         if( sName != null && sName.length() > 0 )
         {
             if( invoker == null )
-                url  = ImagesFactory.class.getResource( sName );
+            {
+                url = ImagesFactory.class.getResource( sName );
+            }
             else
-                url = invoker.getClass().getResource( sName );
+            {
+                if( invoker instanceof Class )
+                    url = ((Class) invoker).getResource( sName );
+                else
+                    url = invoker.getClass().getResource( sName );
+            }
             
             if( url != null )
                 icon = new ImageIcon( url );
@@ -182,7 +249,7 @@ public final class PDERuntime implements org.joing.api.Runtime
     }
     
     //------------------------------------------------------------------------//
-    // Miscellaneous
+    // Cursors
     //------------------------------------------------------------------------//
     
     /**
@@ -205,25 +272,41 @@ public final class PDERuntime implements org.joing.api.Runtime
     }
     
     /**
-     * Convenience method to add a PDEFrame to the default work area.
-     * It also makes: pack(), center() and setVisible( true ).
+     * Creates a custom cursor asuming that the image is under cursor 
+     * application directory.
+     * 
+     * @param sImageName
+     * @param pHotSpot
+     * @param sName
+     * @return
      */
-    public void add( PDEFrame frame )
+    public Cursor createCursor( String sImageName, Point pHotSpot, String sName )
     {
-        getDesktopManager().getDesktop().getActiveWorkArea().add( frame );  // First, add to desktop
-        frame.pack();
-        frame.center();
-        frame.setVisible( true );
+        if( sImageName.indexOf( '.' ) == -1 )
+            sImageName += ".png";
+        
+        Image image = getIcon( null, "cursors/"+ sImageName ).getImage();
+        
+        return Toolkit.getDefaultToolkit().createCustomCursor( image, pHotSpot, sName );        
     }
     
-    public boolean askForPassword()
-    {// TODO: cambiar el JTextField por un JPasswordField
-        String sPassword = JOptionPane.showInputDialog( null, "", "Enter password", 
-                                                        JOptionPane.QUESTION_MESSAGE );
-        
-        // TODO: comprobar la password
-        return sPassword != null && sPassword.trim().length() > 0;
+    /**
+     * Sets the cursor by first creating the custom image.
+     * 
+     * @param sImageName
+     * @param pHotSpot
+     * @param sName
+     */
+    public void setCursor( String sImageName, Point pHotSpot, String sName )
+    {
+        PDEDesktop desktop = (PDEDesktop) getDesktopManager().getDesktop();
+                   desktop.setCursor( createCursor( sImageName, pHotSpot, sName ) );
     }
+    
+    //------------------------------------------------------------------------//
+    // Miscellaneous
+    //------------------------------------------------------------------------//
+    
     
     //------------------------------------------------------------------------//
     // Esto lo necesito para ejecutar PDE de modo autónomo (sin que lo lance

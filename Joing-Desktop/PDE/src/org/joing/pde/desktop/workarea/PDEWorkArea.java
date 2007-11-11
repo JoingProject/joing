@@ -12,10 +12,10 @@ package org.joing.pde.desktop.workarea;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.beans.XMLDecoder;
-import java.beans.XMLEncoder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,7 +30,9 @@ import org.joing.api.desktop.workarea.WorkAreaListener;
 import org.joing.pde.desktop.container.PDECanvas;
 import org.joing.pde.desktop.container.PDEDialog;
 import org.joing.pde.desktop.container.PDEFrame;
-import org.joing.pde.desktop.workarea.desklet.deskLauncher.PDEDeskLauncher;
+import org.joing.pde.desktop.deskwidget.PDEDeskWidget;
+import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
+import org.joing.pde.desktop.deskwidget.desklet.PDEDesklet;
 import org.joing.pde.runtime.ColorSchema;
 import org.joing.pde.runtime.PDERuntime;
 
@@ -46,13 +48,14 @@ public class PDEWorkArea
 {
     private static final Integer LAYER_WALLPAPER     = new Integer(-10 );
     private static final Integer LAYER_CANVAS        = new Integer(  0 );
-    private static final Integer LAYER_DESK_LAUNCHER = new Integer( 10 );
-    private static final Integer LAYER_APPLICATION   = new Integer( 20 );
-    private static final Integer LAYER_DIALOG        = new Integer( 30 );
+    private static final Integer LAYER_DESKLET       = new Integer( 10 );
+    private static final Integer LAYER_DESK_LAUNCHER = new Integer( 20 );
+    private static final Integer LAYER_APPLICATION   = new Integer( 30 );
+    private static final Integer LAYER_DIALOG        = new Integer( 40 );
     
     private Wallpaper wallpaper;
     
-    private Dimension gridDimension = new Dimension( 16,16 );  // Tamaño de la cuadrícula del grid
+    private Dimension gridDimension = new Dimension( 16,16 );  // Grid size
     private boolean   bSnapToGrid   = true;
     
     //-------------------------------------------------------------------------//
@@ -70,23 +73,19 @@ public class PDEWorkArea
 
     // This method has to be kept because it is used by JOptionInternalXXX
     public void add( Component component, Object constraints )
-    {
+    { // FIXME: cuando tenga resuelto el asunto de las Dialog, puedo prescindir
+      //        de la JOptionPane y entonces puedo hacer con este add como con los demás (throw ...)
         super.add( component, constraints );
     }
-    
     
     public void load( InputStream in ) throws IOException, ClassNotFoundException
     {
         // TODO: hacerlo
-        
-        XMLDecoder decoder = new XMLDecoder( in );
     }
     
     public void save( OutputStream out )
     {
         // TODO: guardar las properties de la WorkArea
-        
-        XMLEncoder encoder = new XMLEncoder( out );
         
         List<Component> lstComponents = getOfType( Component.class );
         
@@ -248,16 +247,15 @@ public class PDEWorkArea
      */
     public void removeSelectedComponents( Class clazz )
     {
-        /*List vSelected = getSelected( clazz );
+        List vSelected = getSelected( clazz, true );
         
         if( vSelected.size() > 0 )
         {
             while( vSelected.size() > 0 )
                 remove( (Component) vSelected.get( 0 ) );
             
-            repaint();  // Sin repaint() no funciona: NO tocar
-        }*/
-        PDERuntime.getRuntime().showMessage( "Option not yet implemented" );
+            repaint();  // Without repaint() does not work: dont't touch
+        }
     }   
     
     //------------------------------------------------------------------------//
@@ -270,31 +268,28 @@ public class PDEWorkArea
      */
     protected void adjustComponentSize( Component component )
     {
-        // TODO: ver: GraphicsConfiguration (por ahora asumo que sólo hay 1 monitor)
-        //       Si activo este código, no se ve nada en el Desktop
+       /* Dimension dim = getSize();
         
-        // Check position
-        /*if( component.getX() < 0 || component.getY() < 0 )
+        if( dim.width > 0 && dim.height > 0 )       // WA is visible
         {
-            Point point = findEmptyLocation( component  );
-            component.setLocation( point.x, point.y );
-        }
-        else if( isShowing() )
-        {
-            // TODO: comprobar que el comp no se ha salido por abajo y/o por la derecha
-            //comp.setLocation( point.x, point.y );
-        }
-        
-        // Check size
-        if( component.getWidth() == 0 )
-        {
-            component.setSize( Math.max( 10, component.getPreferredSize().width    ),
-                          Math.max( 10, component.getPreferredSize().height  )  );
-        }
-        else if( isShowing() )
-        {
-            component.setSize( Math.min( component.getWidth() , getWidth()    ),
-                          Math.max( component.getHeight(), getHeight()  )  );
+            Rectangle bounds = component.getBounds();
+
+            if( bounds.x < 0 || bounds.y < 0 || bounds.width <= 0 || bounds.height <= 0 )
+                throw new IndexOutOfBoundsException( "Component bounds are invalid" );
+
+            // Check size (has to be done before position)
+            if( bounds.width > dim.width )
+                component.setSize( new Dimension( dim.width, bounds.height ) );
+
+            if( bounds.height > dim.height )
+                component.setSize( new Dimension( bounds.width, dim.height ) );
+
+            // Check position
+            if( (bounds.x + bounds.width) > dim.width )
+                component.setLocation( 0, bounds.y );      // NEXT: esto es mejorable
+
+            if( (bounds.y + bounds.height) > dim.height )
+                component.setLocation( bounds.x, 0 );      // NEXT: esto es mejorable
         }*/
     }
     
@@ -349,9 +344,10 @@ public class PDEWorkArea
         adjustComponentSize( component );
         
         if(      component instanceof PDEDeskLauncher )  super.add( component, LAYER_DESK_LAUNCHER );
+        else if( component instanceof PDEDesklet      )  addDesklet( (PDEDesklet) component );
         else if( component instanceof PDECanvas       )  super.add( component, LAYER_CANVAS );
         else if( component instanceof PDEDialog       )  super.add( component, LAYER_DIALOG );
-        else if( component instanceof PDEFrame        )  super.add( component, LAYER_APPLICATION );
+        else if( component instanceof PDEFrame        )  addFrame( (PDEFrame) component );
         else                                             super.add( component, LAYER_APPLICATION );
         
         fireComponentAdded( component );
@@ -447,6 +443,8 @@ public class PDEWorkArea
         // TODO: hacerlo
     }
     
+    //------------------------------------------------------------------------//
+    
     protected void fireComponentAdded( Component l )
     {
         Object[] listeners = listenerList.getListenerList();
@@ -481,5 +479,33 @@ public class PDEWorkArea
             if( listeners[n] == WorkAreaListener.class )
                 ((WorkAreaListener) listeners[n+1]).wallpaperChanged( wpNew );
         }
+    }
+    
+    //------------------------------------------------------------------------//
+    
+    private void addDesklet( PDEDesklet desklet )
+    {
+        // TODO: comprobar que no es menor que el tamaño mínimo ni mayor que el máximo
+        
+        super.add( desklet, LAYER_DESKLET );
+    }
+    
+    private void addFrame( PDEFrame frame )
+    {
+        frame.pack();
+        
+        super.add( frame, LAYER_APPLICATION );
+        
+        // Ensures that frame is not bigger than WorkArea
+        Insets    insets = getInsets();
+        Dimension dim    = getSize();
+                  dim.width  -= (insets.left + insets.right);
+                  dim.height -= (insets.top  + insets.bottom);
+
+        if( frame.getWidth() > dim.width )
+            frame.setSize( dim.width, frame.getHeight() );
+
+        if( frame.getHeight() > dim.height )
+            frame.setSize( frame.getWidth(), dim.height );
     }
 }

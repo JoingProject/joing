@@ -8,7 +8,6 @@ package org.joing.pde.desktop.taskbar.waSwitcher;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.util.List;
@@ -18,7 +17,6 @@ import org.joing.api.desktop.Desktop;
 import org.joing.api.desktop.DesktopListener;
 import org.joing.api.desktop.taskbar.TaskBar;
 import org.joing.api.desktop.workarea.WorkArea;
-import org.joing.jvmm.SysOut;
 import org.joing.pde.desktop.taskbar.TaskPanel;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.pde.runtime.PDERuntime;
@@ -94,8 +92,6 @@ public class WorkAreaSwitcher extends TaskPanel
         grid.setColumns( grid.getColumns() + 1 );
         add( map );
         grid.layoutContainer( this );
-        
-System.out.println( "Columns = "+ grid.getColumns() );
     }
     
     private void onWorkAreaRemoved( WorkArea wa )
