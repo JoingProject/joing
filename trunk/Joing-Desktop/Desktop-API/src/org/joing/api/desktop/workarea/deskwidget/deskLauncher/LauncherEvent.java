@@ -8,12 +8,11 @@
  * License: {license}
  */
 
-package org.joing.api.desktop.workarea.desklet.deskLauncher;
+package org.joing.api.desktop.workarea.deskwidget.deskLauncher;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.EventObject;
-import org.joing.api.desktop.workarea.desklet.*;
 
 /**
  * Events that can occur over a Launcher.

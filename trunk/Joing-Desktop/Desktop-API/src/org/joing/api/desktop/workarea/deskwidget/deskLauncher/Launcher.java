@@ -7,11 +7,11 @@
  * and open the template in the editor.
  */
 
-package org.joing.api.desktop.workarea.desklet.deskLauncher; 
+package org.joing.api.desktop.workarea.deskwidget.deskLauncher; 
 
 import java.awt.Image;
 import org.joing.api.desktop.Selectable;
-import org.joing.api.desktop.workarea.desklet.Desklet;
+import org.joing.api.desktop.workarea.deskwidget.DeskWidget;
 
 /**
  * Common base class for all kind of "icons like" that are shown in the desk.
@@ -21,7 +21,7 @@ import org.joing.api.desktop.workarea.desklet.Desklet;
  * 
  * updated by: Francisco Morero Peyrona
  */
-public interface Launcher extends Desklet, Selectable
+public interface Launcher extends DeskWidget, Selectable
 {
     public Image  getImage();               // I use Image because it is in AWT (ImageIcon is in 
     public void   setImage( Image image );  // Swing) and in this way the interface can be use widely
