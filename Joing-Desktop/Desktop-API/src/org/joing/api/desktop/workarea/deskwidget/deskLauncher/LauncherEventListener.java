@@ -7,10 +7,9 @@
  * and open the template in the editor.
  */
 
-package org.joing.api.desktop.workarea.desklet.deskLauncher;
+package org.joing.api.desktop.workarea.deskwidget.deskLauncher;
 
 import java.util.EventListener;
-import org.joing.api.desktop.workarea.desklet.*;
 
 /**
  *

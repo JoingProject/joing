@@ -1,5 +1,5 @@
 /*
- * Desklet.java
+ * DeskWidget.java
  *
  * Created on 18 de septiembre de 2007, 0:13
  *
@@ -7,16 +7,16 @@
  * and open the template in the editor.
  */
 
-package org.joing.api.desktop.workarea.desklet;
+package org.joing.api.desktop.workarea.deskwidget;
 
-import java.awt.Component;
 import java.awt.Point;
 
 /**
- *
+ * The base class for a kind of desktop gadgets.
+ * 
  * @author Francisco Morero Peyrona
  */
-public interface Desklet
+public interface DeskWidget
 {
     public String getName();
     public void   setName( String name );
