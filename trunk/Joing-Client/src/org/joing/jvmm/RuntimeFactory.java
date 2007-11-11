@@ -5,6 +5,8 @@
 
 package org.joing.jvmm;
 
+import org.joing.common.jvmm.Platform;
+
 /**
  * Una de las desiciones importantes aqui será determinar que implementación
  * de Platform será la que se regresa. Esta desicion debera ser influida

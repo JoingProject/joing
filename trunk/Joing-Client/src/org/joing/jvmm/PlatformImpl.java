@@ -37,6 +37,7 @@ import org.joing.common.dto.app.Application;
 import org.joing.common.jvmm.AppManager;
 import org.joing.common.jvmm.ApplicationExecutionException;
 import org.joing.common.jvmm.JThreadGroup;
+import org.joing.common.jvmm.Platform;
 import org.joing.common.runtime.AppBridge;
 import org.joing.common.runtime.Bridge2Server;
 import org.joing.runtime.bridge2server.Bridge2ServerImpl;
