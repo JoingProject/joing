@@ -27,8 +27,8 @@ import javax.swing.SwingUtilities;
 import org.joing.api.desktop.Desktop;
 import org.joing.applauncher.gui.SystemMonitor;
 import org.joing.common.api.DesktopManager;
+import org.joing.common.jvmm.Platform;
 import org.joing.jvmm.JoingSecurityManager;
-import org.joing.jvmm.Platform;
 import org.joing.jvmm.RuntimeFactory;
 
 /**
