@@ -9,8 +9,6 @@
 
 package org.joing.applauncher;
 
-import java.awt.AWTException;
-import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
@@ -22,12 +20,8 @@ import java.awt.event.ActionListener;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Map;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import org.joing.api.desktop.Desktop;
-import org.joing.applauncher.gui.SystemMonitor;
-import org.joing.common.api.DesktopManager;
-import org.joing.common.jvmm.Platform;
+import org.joing.common.desktopAPI.DesktopManager;
+import org.joing.common.clientAPI.jvmm.Platform;
 import org.joing.jvmm.JoingSecurityManager;
 import org.joing.jvmm.RuntimeFactory;
 
@@ -40,35 +34,7 @@ public class Bootstrap {
     public Bootstrap() {
     }
 
-    public static void setupSystemMonitor() {
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-//                SystemMonitor sm = new SystemMonitor();
-                final SystemMonitor sm = Monitor.getSystemMonitor();
-
-                JFrame frame = new JFrame("Join'g System Monitor");
-                frame.getContentPane().add(sm);
-                frame.pack();
-                frame.setLocationRelativeTo(null);
-                frame.setVisible(false);
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-                try {
-                    setupTrayIcon(frame);
-                    frame.setDefaultCloseOperation(frame.HIDE_ON_CLOSE);
-                } catch (LinkageError le) {
-                    frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
-                    frame.setVisible(true);
-                    Monitor.log("Unable to Create Tray Icon.");
-                }
-            }
-        });
-    }
-
-
-
-    private static void setupTrayIcon(final JFrame frame) {
+    private static void setupTrayIcon() {
 
         if (SystemTray.isSupported() == false) {
             System.err.println("Tray Icon not supported...");
@@ -76,7 +42,6 @@ public class Bootstrap {
             return;
         }
 
-        SystemTray tray = SystemTray.getSystemTray();
         URL u = Bootstrap.class.getResource("resources/java32.png");
         Image image = Toolkit.getDefaultToolkit().getImage(u);
 
@@ -109,24 +74,7 @@ public class Bootstrap {
             }
         };
 
-        ActionListener frameAction = new ActionListener() {
-            boolean firstTime = true;
-
-            public void actionPerformed(ActionEvent e) {
-                if (firstTime) {
-                    firstTime = false;
-                    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-                    Dimension size = frame.getSize();
-                    frame.setLocation(screen.width / 2 - size.width / 2, screen.height / 2 - size.height / 2);
-                }
-                frame.setVisible(true);
-            }
-        };
-
         final PopupMenu popup = new PopupMenu();
-        MenuItem appItem = new MenuItem("System Monitor");
-        popup.add(appItem);
-        appItem.addActionListener(frameAction);
         MenuItem gcItem = new MenuItem("Garbage Collect");
         popup.add(gcItem);
         gcItem.addActionListener(new ActionListener() {
@@ -165,15 +113,15 @@ public class Bootstrap {
         defaultItem.addActionListener(exitListener);
         popup.add(defaultItem);
         TrayIcon trayIcon = new TrayIcon(image, "Java", popup);
-
-
-        trayIcon.setImageAutoSize(true);
-        trayIcon.addActionListener(frameAction);
-        //trayIcon.addMouseListener(mouseListener);
-        try {
-            tray.add(trayIcon);
-        } catch (AWTException e) {
-//            System.err.println("TrayIcon could not be installed...");
+                 trayIcon.setImageAutoSize(true);
+        
+        try
+        {
+            SystemTray.getSystemTray().add(trayIcon);    
+        }
+        catch ( Exception exc )
+        {
+            // TODO: hacer algo?
         }
     }
 
@@ -189,20 +137,21 @@ public class Bootstrap {
      * of fetching a session Id.
      */
     public static void init() {
-        setupSystemMonitor();
         System.setSecurityManager(new JoingSecurityManager());
         Monitor.log("Join'g Successfully Bootstrapped.");
         Monitor.log("Main Thread Id is " + 
                 String.valueOf(RuntimeFactory.getPlatform().getMainThreadId()));
 
+        setupTrayIcon();
+        
         // Iniciamos la sesión.
         try {
-
             Login login = new Login();
             login.setVisible(true);
 
             if (login.wasSuccessful()) {
-                DesktopManager<Desktop> deskmgr = getDesktopManagerInstance();
+                DesktopManager deskmgr = getDesktopManagerInstance();
+                               deskmgr.setPlatform( RuntimeFactory.getPlatform() );
                 RuntimeFactory.getPlatform().setDesktopManager(deskmgr);
 
                 if (login.fullScreen()) {

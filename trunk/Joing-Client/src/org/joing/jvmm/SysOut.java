@@ -12,7 +12,7 @@ package org.joing.jvmm;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import org.joing.common.jvmm.JThreadGroup;
+import org.joing.common.clientAPI.jvmm.JThreadGroup;
 
 /**
  * Esta clase está relacionada con el codigo encargado de ejecutar las

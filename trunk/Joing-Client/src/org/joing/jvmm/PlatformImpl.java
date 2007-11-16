@@ -32,14 +32,14 @@ import java.util.jar.Manifest;
 import javax.swing.SwingUtilities;
 import org.joing.Main;
 import org.joing.applauncher.Monitor;
-import org.joing.common.api.DesktopManager;
+import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.dto.app.Application;
-import org.joing.common.jvmm.AppManager;
-import org.joing.common.jvmm.ApplicationExecutionException;
-import org.joing.common.jvmm.JThreadGroup;
-import org.joing.common.jvmm.Platform;
-import org.joing.common.runtime.AppBridge;
-import org.joing.common.runtime.Bridge2Server;
+import org.joing.common.clientAPI.jvmm.AppManager;
+import org.joing.common.clientAPI.jvmm.ApplicationExecutionException;
+import org.joing.common.clientAPI.jvmm.JThreadGroup;
+import org.joing.common.clientAPI.jvmm.Platform;
+import org.joing.common.clientAPI.runtime.AppBridge;
+import org.joing.common.clientAPI.runtime.Bridge2Server;
 import org.joing.runtime.bridge2server.Bridge2ServerImpl;
 
 /**

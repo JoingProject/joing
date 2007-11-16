@@ -30,7 +30,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.rmi.RemoteException;
 import org.joing.common.exception.JoingServerException;
-import org.joing.common.jvmm.Platform;
+import org.joing.common.clientAPI.jvmm.Platform;
 import org.joing.jvmm.RuntimeFactory;
 
 /**

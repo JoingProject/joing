@@ -27,7 +27,7 @@ import org.joing.common.dto.vfs.FileBinary;
 import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.dto.vfs.FileText;
 import org.joing.common.exception.JoingServerException;
-import org.joing.common.runtime.VFSBridge;
+import org.joing.common.clientAPI.runtime.VFSBridge;
 
 /**
  *
