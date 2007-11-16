@@ -22,6 +22,7 @@ import java.net.URLClassLoader;
 import java.util.Map;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.clientAPI.jvmm.Platform;
+import org.joing.common.dto.app.AppDescriptor;
 import org.joing.jvmm.JoingSecurityManager;
 import org.joing.jvmm.RuntimeFactory;
 
@@ -150,7 +151,7 @@ public class Bootstrap {
             login.setVisible(true);
 
             if (login.wasSuccessful()) {
-                DesktopManager deskmgr = getDesktopManagerInstance();
+                DesktopManager deskmgr = getDesktopManagerInstance( login.getApplicationDescriptor() );
                                deskmgr.setPlatform( RuntimeFactory.getPlatform() );
                 RuntimeFactory.getPlatform().setDesktopManager(deskmgr);
 
@@ -169,13 +170,10 @@ public class Bootstrap {
     
 
     // TODO: Obtener el desktop del servidor
-    private static DesktopManager getDesktopManagerInstance() {
-        // Platform.getInstance().start( login.getApplicationId() );
-        // TODO: habría que conseguir una referencia a la instancia de
-        // PDEManager creada por la clase Platform
+    private static DesktopManager getDesktopManagerInstance( AppDescriptor appDesc ) {
         try {
             Platform platform = RuntimeFactory.getPlatform();
-            
+            // TODO: Bajarse del server el DesktopManager descrito en appDesc y lanzarla
             String desktop = platform.getClientProp().getProperty("DesktopApp");
             String[] tmp = desktop.split("\\?");
             desktop = tmp[0];

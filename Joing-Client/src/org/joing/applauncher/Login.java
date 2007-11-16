@@ -7,12 +7,18 @@
 package org.joing.applauncher;
 
 import java.awt.Cursor;
+import java.util.List;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import org.joing.common.clientAPI.runtime.AppBridge;
 import org.joing.common.dto.session.LoginResult;
 import org.joing.common.exception.JoingServerException;
 import org.joing.common.clientAPI.runtime.Bridge2Server;
+import org.joing.common.dto.app.AppDescriptor;
+import org.joing.common.dto.app.AppEnvironment;
+import org.joing.common.dto.app.AppGroup;
+import org.joing.common.dto.app.AppGroupKey;
 import org.joing.jvmm.RuntimeFactory;
 
 /**
@@ -48,18 +54,33 @@ public class Login extends JDialog {
         return chkFullScreen.isSelected();
     }
 
-    public int getApplicationId() {
-        String sDesktop = (String) cmbDesktop.getSelectedItem();
-        Integer nAppId = (Integer) cmbDesktop.getClientProperty( sDesktop );
+    public AppDescriptor getApplicationDescriptor() {
+        String        sDesktop = (String) cmbDesktop.getSelectedItem();
+        AppDescriptor appDesc  = (AppDescriptor) cmbDesktop.getClientProperty( sDesktop );
 
-        return nAppId;
+        return appDesc;
     }
 
     //------------------------------------------------------------------------//
     private void fillDesktopComboBox() {
-        // TODO: hacerlo (leerlo del servidor)
-        cmbDesktop.addItem("PDE - Ver. 1.0");
-        cmbDesktop.putClientProperty("PDE - Ver. 1.0", new Integer(1));
+        cmbDesktop.addItem( "PDE - Recordatorio: corregir error" );
+        cmbDesktop.putClientProperty( "PDE - Recordatorio: corregir error", null );
+// TODO: hacer que esto funcione -->
+//En Login::fillDesktopComboBox() (es donde se piden las apps de tipo DESKTOP), se 
+//produce un error. Esto es así porque la sentencia SQL del lado del servidor (en 
+//ApplicationManagerBean::getAvailableForUser()) está incompleta: sólo funciona 
+//bien cuando los parámetros: "AppEnvironment" y "AppGroupKey" son genéricos. 
+//Ver el método ApplicationManagerBean::getQuery(...)
+        
+//        AppBridge           bridge     = RuntimeFactory.getPlatform().getBridge().getAppBridge();
+//        List<AppGroup>      lstGroups  = bridge.getAvailableForUser( AppEnvironment.JAVA_ALL, AppGroupKey.DESKTOP );
+//        List<AppDescriptor> lstAppDesc = (List<AppDescriptor>) lstGroups.get( 0 );
+//        
+//        for( AppDescriptor appDesc : lstAppDesc )
+//        {
+//            cmbDesktop.addItem( appDesc.getName() );
+//            cmbDesktop.putClientProperty( appDesc.getName(), appDesc );
+//        }
     }
 
     /** This method is called from within the constructor to
