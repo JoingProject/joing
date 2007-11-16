@@ -23,11 +23,11 @@
 
 package org.joing.runtime.bridge2server;
 
-import org.joing.common.runtime.AppBridge;
-import org.joing.common.runtime.Bridge2Server;
-import org.joing.common.runtime.SessionBridge;
-import org.joing.common.runtime.UserBridge;
-import org.joing.common.runtime.VFSBridge;
+import org.joing.common.clientAPI.runtime.AppBridge;
+import org.joing.common.clientAPI.runtime.Bridge2Server;
+import org.joing.common.clientAPI.runtime.SessionBridge;
+import org.joing.common.clientAPI.runtime.UserBridge;
+import org.joing.common.clientAPI.runtime.VFSBridge;
 
 /**
  *

@@ -11,21 +11,14 @@ package org.joing.applauncher;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.joing.applauncher.gui.SystemMonitor;
 
 /**
  *
  * @author Antonio Varela Lizardi <antonio@icon.net.mx>
  */
-public class Monitor extends SystemMonitor {
-
-    private static final SystemMonitor systemMonitor = new SystemMonitor();
-
+public class Monitor{
+    
     public Monitor() {
-    }
-
-    public static SystemMonitor getSystemMonitor() {
-        return systemMonitor;
     }
     
     /**
@@ -38,6 +31,6 @@ public class Monitor extends SystemMonitor {
 
         sb.append("[").append(sdf.format(new Date())).append("]: ");
         sb.append(msg);
-        systemMonitor.addLogMessage(sb.toString());  
+        // FIXME: hacerlo con eventos --> systemMonitor.addLogMessage(sb.toString());
     }
 }

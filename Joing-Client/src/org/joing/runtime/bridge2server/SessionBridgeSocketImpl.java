@@ -22,7 +22,7 @@
 
 package org.joing.runtime.bridge2server;
 
-import org.joing.common.runtime.SessionBridge;
+import org.joing.common.clientAPI.runtime.SessionBridge;
 import org.joing.common.dto.session.LoginResult;
 
 // NEXT: Implementar esta clase

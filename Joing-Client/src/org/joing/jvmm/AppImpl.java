@@ -9,9 +9,9 @@
 
 package org.joing.jvmm;
 
-import org.joing.common.jvmm.App;
-import org.joing.common.jvmm.AppManager;
-import org.joing.common.jvmm.JThreadGroup;
+import org.joing.common.clientAPI.jvmm.App;
+import org.joing.common.clientAPI.jvmm.AppManager;
+import org.joing.common.clientAPI.jvmm.JThreadGroup;
 
 /**
  *

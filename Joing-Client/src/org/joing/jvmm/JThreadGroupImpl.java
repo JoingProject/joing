@@ -11,7 +11,7 @@ package org.joing.jvmm;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import org.joing.common.jvmm.JThreadGroup;
+import org.joing.common.clientAPI.jvmm.JThreadGroup;
 
 /**
  * Joing's own ThreadGroup implementation. Based on Chris Oliver's example.

@@ -31,8 +31,8 @@ import java.util.List;
 import org.joing.common.dto.user.User;
 import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.exception.JoingServerVFSException;
-import org.joing.common.jvmm.Platform;
-import org.joing.common.runtime.Bridge2Server;
+import org.joing.common.clientAPI.jvmm.Platform;
+import org.joing.common.clientAPI.runtime.Bridge2Server;
 import org.joing.jvmm.RuntimeFactory;
 
 /**

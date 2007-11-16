@@ -11,9 +11,9 @@ package org.joing.jvmm;
 
 import java.util.HashSet;
 import java.util.Set;
-import org.joing.common.jvmm.App;
-import org.joing.common.jvmm.AppListener;
-import org.joing.common.jvmm.AppManager;
+import org.joing.common.clientAPI.jvmm.App;
+import org.joing.common.clientAPI.jvmm.AppListener;
+import org.joing.common.clientAPI.jvmm.AppManager;
 
 /**
  *

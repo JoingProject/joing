@@ -5,7 +5,7 @@
 
 package org.joing.jvmm;
 
-import org.joing.common.jvmm.Platform;
+import org.joing.common.clientAPI.jvmm.Platform;
 
 /**
  * Una de las desiciones importantes aqui será determinar que implementación

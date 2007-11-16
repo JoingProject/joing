@@ -10,7 +10,7 @@
 package org.joing.jvmm;
 
 import org.joing.applauncher.Monitor;
-import org.joing.common.jvmm.JThreadGroup;
+import org.joing.common.clientAPI.jvmm.JThreadGroup;
 
 /**
  *
