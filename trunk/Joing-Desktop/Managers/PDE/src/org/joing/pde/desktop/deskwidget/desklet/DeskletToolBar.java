@@ -19,13 +19,11 @@ import org.joing.pde.swing.JRoundPanel;
  *
  * @author Francisco Morero Peyrona
  */
-
 class DeskAppletToolBar extends JRoundPanel implements ActionListener
 {
     private PDEDeskletButton btnSize;
     private PDEDeskletButton btnClose;
     private PDEDeskletButton btnSetup;
-    private PDEDeskletButton btnDrag;
 
     private ImageIcon iconGrow;
     private ImageIcon iconReduce;
@@ -60,10 +58,6 @@ class DeskAppletToolBar extends JRoundPanel implements ActionListener
         btnSetup.addActionListener( this );
         add( btnSetup );
         add( Box.createRigidArea( new Dimension( 0,9 ) ) );
-        
-        btnDrag = new PDEDeskletButton( "drag", "Drag (move)"  );
-        btnDrag.addActionListener( this );
-        add( btnDrag );
     }
     
     public Dimension getPreferredSize()
@@ -94,10 +88,9 @@ class DeskAppletToolBar extends JRoundPanel implements ActionListener
     {
         Object sender = ae.getSource();
 
-        if(      sender == btnSize )  { onSize();        }
-        else if( sender == btnSize )  { owner.onClose(); }
-        else if( sender == btnSize )  { owner.onSetup(); }
-        else if( sender == btnSize )  { owner.onDrag();  }
+        if(      sender == btnSize  )  { onSize();        }
+        else if( sender == btnClose )  { owner.onClose(); }
+        else if( sender == btnSetup )  { owner.onSetup(); }
     }
     
     //------------------------------------------------------------------------//
@@ -124,7 +117,6 @@ class DeskAppletToolBar extends JRoundPanel implements ActionListener
             case SIZE : remove( btnSize  ); break;
             case CLOSE: remove( btnClose ); break;
             case SETUP: remove( btnSetup ); break;
-            case DRAG : remove( btnDrag  ); break;
         }
     }
     
