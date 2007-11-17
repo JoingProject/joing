@@ -258,39 +258,6 @@ public class PDEWorkArea
     
     //------------------------------------------------------------------------//
     
-    /** 
-     * Cheks (and chage if necessary) that passed component is not bigger than
-     * the desktop and that it is inside visible area.
-     * <p>
-     * If its size is zero, it is sat to a minimum size.
-     */
-    protected void adjustComponentSize( Component component )
-    {
-       /* Dimension dim = getSize();
-        
-        if( dim.width > 0 && dim.height > 0 )       // WA is visible
-        {
-            Rectangle bounds = component.getBounds();
-
-            if( bounds.x < 0 || bounds.y < 0 || bounds.width <= 0 || bounds.height <= 0 )
-                throw new IndexOutOfBoundsException( "Component bounds are invalid" );
-
-            // Check size (has to be done before position)
-            if( bounds.width > dim.width )
-                component.setSize( new Dimension( dim.width, bounds.height ) );
-
-            if( bounds.height > dim.height )
-                component.setSize( new Dimension( bounds.width, dim.height ) );
-
-            // Check position
-            if( (bounds.x + bounds.width) > dim.width )
-                component.setLocation( 0, bounds.y );      // NEXT: esto es mejorable
-
-            if( (bounds.y + bounds.height) > dim.height )
-                component.setLocation( bounds.x, 0 );      // NEXT: esto es mejorable
-        }*/
-    }
-    
     protected Point findEmptyLocation( Component component )
     {
         // TODO: hacerlo mejor
@@ -339,8 +306,6 @@ public class PDEWorkArea
     
     public Component add( Component component )
     {
-        adjustComponentSize( component );
-        
         if(      component instanceof PDEDeskLauncher )  super.add( component, LAYER_DESK_LAUNCHER );
         else if( component instanceof PDEDesklet      )  addDesklet( (PDEDesklet) component );
         else if( component instanceof PDECanvas       )  super.add( component, LAYER_CANVAS );
@@ -485,14 +450,42 @@ public class PDEWorkArea
     {
         // TODO: comprobar que no es menor que el tamaño mínimo ni mayor que el máximo
         
+       /* Dimension dim = getSize();
+        
+        if( dim.width > 0 && dim.height > 0 )       // WA is visible
+        {
+            Rectangle bounds = component.getBounds();
+
+            if( bounds.x < 0 || bounds.y < 0 || bounds.width <= 0 || bounds.height <= 0 )
+                throw new IndexOutOfBoundsException( "Component bounds are invalid" );
+
+            // Check size (has to be done before position)
+            if( bounds.width > dim.width )
+                component.setSize( new Dimension( dim.width, bounds.height ) );
+
+            if( bounds.height > dim.height )
+                component.setSize( new Dimension( bounds.width, dim.height ) );
+
+            // Check position
+            if( (bounds.x + bounds.width) > dim.width )
+                component.setLocation( 0, bounds.y );      // NEXT: esto es mejorable
+
+            if( (bounds.y + bounds.height) > dim.height )
+                component.setLocation( bounds.x, 0 );      // NEXT: esto es mejorable
+        }*/
+        
         super.add( desklet, LAYER_DESKLET );
     }
     
     private void addFrame( PDEFrame frame )
     {
-        super.add( frame, LAYER_APPLICATION );
+        if( frame.isAutoArrange() )
+        {
+            frame.pack();
+        }
         
         // Ensures that frame is not bigger than WorkArea
+        // (because the same user can run Joing in many different-size devices)
         Insets    insets = getInsets();
         Dimension dim    = getSize();
                   dim.width  -= (insets.left + insets.right);
@@ -503,5 +496,16 @@ public class PDEWorkArea
             
         if( frame.getHeight() > dim.height )
             frame.setSize( frame.getWidth(), dim.height );
+        
+        // Add to container
+        super.add( frame, LAYER_APPLICATION );
+        
+        if( frame.isAutoArrange() )
+        {
+            frame.setVisible( true );  // 1st, must be visble, because this is the way to have a parent
+            frame.center();
+            frame.setSelected( true );
+            frame.toFront();
+        }
     }
 }

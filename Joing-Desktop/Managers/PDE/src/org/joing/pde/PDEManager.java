@@ -159,6 +159,8 @@ public class PDEManager extends JApplet implements DesktopManager
             frame.dispose();
         else
             stop();
+        
+        platform.shutdown();
     }
     
     public void lock()
@@ -220,8 +222,9 @@ public class PDEManager extends JApplet implements DesktopManager
     }
     
     //------------------------------------------------------------------------//
-    // INNER CLASS: MyGlassPane
-    // Used to lock the screen.
+    // INNER CLASS: MyGlassPane. Used to lock the screen.
+    // This GlasPane is not based on GlassPaneBase because in this way is more
+    // efficient: it is visible only upon request and locks the screen.
     //------------------------------------------------------------------------//
     
     private final class MyGlassPane

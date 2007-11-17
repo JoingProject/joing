@@ -78,11 +78,7 @@ class StartMenu extends JScrollablePopupMenu
             {
                 public void actionPerformed( ActionEvent ae )
                 {
-                    PDEFrame frame = new EditUser();
-                             frame.pack();
-                             frame.center();
-                             frame.setVisible( true );
-                    PDEManager.getInstance().getDesktop().add( frame );
+                    PDEManager.getInstance().getDesktop().add( new EditUser() );
                 }
             } );
         }
@@ -189,11 +185,7 @@ class StartMenu extends JScrollablePopupMenu
                   {
                       public void actionPerformed( ActionEvent ae )
                       {
-                          PDEFrame frame = new ProxyConfig();
-                                   frame.pack();
-                                   frame.center();
-                                   frame.setVisible( true );
-                          PDEManager.getInstance().getDesktop().add( frame );
+                          PDEManager.getInstance().getDesktop().add( new ProxyConfig() );
                       }
                   } );
         menu.add( itemProxy );

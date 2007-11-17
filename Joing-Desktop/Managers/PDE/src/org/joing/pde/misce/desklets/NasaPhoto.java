@@ -240,9 +240,6 @@ public class NasaPhoto extends PDEDesklet implements Runnable
         {
             PDEFrame frame = new PDEFrame( "NASA Astronomy Picture" );
                      frame.add( new JScrollPane( new JLabel( new ImageIcon( image ) ) ) );
-                     frame.pack();
-                     frame.center();
-                     frame.setVisible( true );
             PDEManager.getInstance().getDesktop().add( frame );
         }
     }

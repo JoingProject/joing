@@ -108,13 +108,7 @@ public abstract class TaskPanel extends JPanel implements MouseListener
         JPanel pnlPrefs = getPreferencesPanel();
         
         if( pnlPrefs != null )
-        {
-            PDEFrame frame = new TheFrame( pnlPrefs );
-                     frame.pack();
-                     frame.center();
-                     frame.setVisible( true );
-            PDEManager.getInstance().getDesktop().add( frame );
-        }
+            PDEManager.getInstance().getDesktop().add( new TheFrame( pnlPrefs ) );
     }
     
     private void onAbout()
@@ -127,13 +121,9 @@ public abstract class TaskPanel extends JPanel implements MouseListener
             pnlAbout.add( new JLabel( "There is no information about this component." ) );
         }
         
-        // Better to use a Frame than a Dialog (this is the way Gnome does it)
+        // Better to use a Frame than a Dialog (modaless: this is the way Gnome does it)
         PDEFrame frame = new PDEFrame( "About" );
-                 frame.setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
-                 frame.getContentPane().add( pnlAbout );
-                 frame.pack();
-                 frame.center();
-                 frame.setVisible( true );
+                 frame.add( pnlAbout );
         PDEManager.getInstance().getDesktop().add( frame );
     }
     
@@ -221,8 +211,6 @@ public abstract class TaskPanel extends JPanel implements MouseListener
                 }
             } );
             
-            setDefaultCloseOperation( javax.swing.WindowConstants.DISPOSE_ON_CLOSE );
-
             javax.swing.GroupLayout layout = new javax.swing.GroupLayout( getContentPane() );
             getContentPane().setLayout(layout);
             layout.setHorizontalGroup(
