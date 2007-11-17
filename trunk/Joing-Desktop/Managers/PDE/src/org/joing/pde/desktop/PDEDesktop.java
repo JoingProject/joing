@@ -129,6 +129,7 @@ public class PDEDesktop extends JPanel implements Desktop
                   canvas.setBounds( 330, 130, 240, 80 );
         wa.add( canvas );
 
+        //---------------------------------------------------------------------
         JSlider slrTranslucency = new JSlider( JSlider.HORIZONTAL, 0, 100, 0 );
                 slrTranslucency.setMajorTickSpacing( 10 );
                 slrTranslucency.setPaintLabels( true );
@@ -145,9 +146,10 @@ public class PDEDesktop extends JPanel implements Desktop
                 } );
                     
         PDEFrame frm = new PDEFrame( "Example Join'g Frame" );
-                 frm.getContentPane().add( new JLabel( "Translucency" ), BorderLayout.NORTH );
-                 frm.getContentPane().add( slrTranslucency, BorderLayout.SOUTH );
+                 frm.add( new JLabel( "Translucency" ), BorderLayout.NORTH );
+                 frm.add( slrTranslucency, BorderLayout.SOUTH );
                  frm.setBounds( 150, 50, 300, 200 );
+                 frm.setAutoArrange( false );
                  frm.setVisible( true );
                  wa.add( frm );
                  frm.setSelected( true );

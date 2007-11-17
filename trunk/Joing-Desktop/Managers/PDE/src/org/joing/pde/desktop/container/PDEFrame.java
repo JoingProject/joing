@@ -18,11 +18,25 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
 import org.joing.common.desktopAPI.Selectable;
 import org.joing.common.desktopAPI.container.DeskFrame;
 
+/**
+ * An improved JInternalFrame.
+ * 
+ * Among other things:
+ * <ul>
+ * <li> Easier to use
+ * <li> Translucent background property
+ * <li> AlwaysOnTop property
+ * <li> Easy to add to a WorkArea (by default)
+ * <li> By default setDefaultCloseOperation( JInternalFrame.DISPOSE_ON_CLOSE )
+ * </ul>
+ * @author Francisco Morero Peyrona
+ */
 public class PDEFrame 
        extends JInternalFrame 
         implements Selectable, DeskFrame
 {
     private boolean bAlwaysOnTop = false;
+    private boolean bAutoArrange = true;
     
     //------------------------------------------------------------------------//
     
@@ -169,9 +183,9 @@ public class PDEFrame
     
     public void center()
     {
-        if( getParent() != null )
+        if( getDesktopPane() != null )
         {
-            Container cp =  getParent();
+            Container cp = getDesktopPane();
             int       nX = (cp.getSize().width  - getWidth())  / 2;
             int       nY = (cp.getSize().height - getHeight()) / 2;
             
@@ -179,15 +193,41 @@ public class PDEFrame
         }
     }
     
+    /**
+     * Return AutoArrange property status.
+     * @return AutoArrange property status.
+     */
+    public boolean isAutoArrange()
+    {
+        return bAutoArrange;
+    }
+
+    /**
+     * If <code>true</code>, when frame is added to the WorkArea, it will be 
+     * automatically packed, centered, selected and moved to front.
+     * <p>
+     * By default it is <code>true</code>.
+     * 
+     * @param bAutoArrange New AutoArrange property status
+     */
+    public void setAutoArrange( boolean bAutoArrange )
+    {
+        this.bAutoArrange = bAutoArrange;
+    }
+    
     //------------------------------------------------------------------------//
     
     private void init()
     {
+        setDefaultCloseOperation( JInternalFrame.DISPOSE_ON_CLOSE );
+        setAutoArrange( true );
+        
         JComponent pane = ((BasicInternalFrameUI) getUI()).getNorthPane();
         
         pane.addMouseListener( new MouseAdapter()
         {// TODO: hacer que click con el btn izq sobre el icono de la barra de título abra el popup
-            // Note: isPopupTrigger() does not work
+            
+            // Note: In this context, isPopupTrigger() does not work
             public void mousePressed( MouseEvent me )
             {
                 if( me.getButton() == MouseEvent.BUTTON2 || me.getButton() == MouseEvent.BUTTON3 )

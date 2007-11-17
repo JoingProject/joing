@@ -235,7 +235,8 @@ public class PDEDeskLauncher extends PDEDeskWidget implements Launcher
     // ACTIONS
     // TODO: Creo que estas actions no pertencen al DeskLauncher, 
     //       sino a la WorkArea: hay que pensar en ello.
-    //       Estas son lanzadas desde el popup y sólo deberían llamar al container (WorkArea)
+    //       Estas son lanzadas desde el popup y quizás lo que deberían hacer es 
+    //       llamar al container (WorkArea)
     public void delete()
     {
         if( PDEManager.getInstance().getRuntime().confirmDialog( "Delete launcher", 
@@ -327,7 +328,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements Launcher
                    (int) getPreferredSize().getWidth(), 
                    (int) getPreferredSize().getHeight() );
         add( pnlAll, BorderLayout.CENTER );
-        getGlassPane().addMouseListener( new GlassPaneMouseListener() );
+        setGlassPane( new GlassPaneDeskLauncher( this ) );
     }
 
     //------------------------------------------------------------------------//
@@ -428,36 +429,6 @@ public class PDEDeskLauncher extends PDEDeskWidget implements Launcher
             if( ! b )
                 text.setEditable( false );    // Just in case it was editing
         }
-    }
-    
-    //------------------------------------------------------------------------//
-    // FIXME: Esta clase: ¿tiene que heredar de la misma que tiene el padre (=> hacer la del padre protected)?
-    private final class GlassPaneMouseListener extends MouseInputAdapter
-    {
-        public void mouseClicked( MouseEvent me )
-        {
-            if( me.getClickCount() == 2 )
-                PDEDeskLauncher.this.launch();
-        }
-
-        // Pone el icono en highlighted
-        public void mouseEntered( MouseEvent me )
-        {
-            PDEDeskLauncher.this.setHighlighted( true );
-        }
-        
-        // Quita el icono de highlighted
-        public void mouseExited( MouseEvent me )
-        {
-            PDEDeskLauncher.this.setHighlighted( false );
-        }
-        
-        public void mousePressed( MouseEvent me )
-        {
-            boolean bCtrlPressed = (me.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) != 0;
-            
-            PDEDeskLauncher.this.setSelected( true, bCtrlPressed );
-        }        
     }
     
     //------------------------------------------------------------------------//
