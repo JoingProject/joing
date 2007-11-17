@@ -1,6 +1,5 @@
 package org.joing.pde.swing;
 
-import org.joing.pde.misce.gpt.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.AWTEventListener;
