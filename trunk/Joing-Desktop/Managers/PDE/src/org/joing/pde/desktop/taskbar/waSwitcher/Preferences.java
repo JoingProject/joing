@@ -8,9 +8,8 @@ package org.joing.pde.desktop.taskbar.waSwitcher;
 
 import java.util.List;
 import javax.swing.DefaultListModel;
+import org.joing.common.desktopAPI.DesktopFactory;
 import org.joing.common.desktopAPI.workarea.WorkArea;
-import org.joing.pde.PDEManager;
-import org.joing.pde.PDERuntime;
 
 /**
  *
@@ -26,7 +25,7 @@ class Preferences extends javax.swing.JPanel
         DefaultListModel dlm = new DefaultListModel();
         lstNamesWA.setModel( dlm );
         
-        List<WorkArea> lstWorAreas = PDEManager.getInstance().getDesktop().getWorkAreas();
+        List<WorkArea> lstWorAreas = DesktopFactory.getDM().getDesktop().getWorkAreas();
         
         spnWA.getModel().setValue( lstWorAreas.size() );
         
@@ -91,5 +90,4 @@ class Preferences extends javax.swing.JPanel
     private javax.swing.JList lstNamesWA;
     private javax.swing.JSpinner spnWA;
     // End of variables declaration//GEN-END:variables
-    
 }

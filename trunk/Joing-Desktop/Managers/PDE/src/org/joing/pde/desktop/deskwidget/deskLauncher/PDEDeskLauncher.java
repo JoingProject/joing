@@ -17,7 +17,6 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.awt.image.FilteredImageSource;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -29,18 +28,18 @@ import javax.swing.MenuElement;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.MouseInputAdapter;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import org.joing.common.desktopAPI.DesktopFactory;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.Launcher;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.LauncherEvent;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.LauncherEventListener;
+import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.pde.desktop.deskwidget.PDEDeskWidget;
 import org.joing.pde.ColorSchema;
-import org.joing.pde.PDEManager;
 import org.joing.pde.swing.ImageHighlightFilter;
 import org.joing.pde.swing.JRoundPanel;
 
@@ -80,7 +79,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements Launcher
     public PDEDeskLauncher( String sName, Image image, String sDescription )
     {
         if( image == null )
-            image = PDEManager.getInstance().getRuntime().getIcon( null, "launcher.png" ).getImage();
+            image = DesktopFactory.getDM().getRuntime().getIcon( null, "launcher.png" ).getImage();
         
         initGUI();
         
@@ -239,12 +238,12 @@ public class PDEDeskLauncher extends PDEDeskWidget implements Launcher
     //       llamar al container (WorkArea)
     public void delete()
     {
-        if( PDEManager.getInstance().getRuntime().confirmDialog( "Delete launcher", 
+        if( DesktopFactory.getDM().getRuntime().confirmDialog( "Delete launcher", 
                                                    "Are you sure you want to delete it?\n"+
                                                    "(deleted objects can not be recovered)" ) )
         {
-            PDEWorkArea workArea = (PDEWorkArea) SwingUtilities.getAncestorOfClass( PDEWorkArea.class, this );
-                        workArea.remove( this );
+            WorkArea workArea = (PDEWorkArea) SwingUtilities.getAncestorOfClass( PDEWorkArea.class, this );
+                     workArea.remove( this );
                 
             // There is not a fireLauncherDeleted() because it can be resolved   
             // by adding a listner to the WorkArea
@@ -253,7 +252,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements Launcher
     
     public void toTrashcan()
     {
-        if( PDEManager.getInstance().getRuntime().confirmDialog( "Send launcher to trashcan", 
+        if( DesktopFactory.getDM().getRuntime().confirmDialog( "Send launcher to trashcan", 
                                                    "Are you sure you want to send it to trashcan?" ) )
         {
             
@@ -262,7 +261,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements Launcher
                         
             // TODO: mandarlo a la papelera e implementar el fire
             // fireLauncherToTrashcan( this );
-            PDEManager.getInstance().getRuntime().showMessage( "Option not yet implemented" );
+            DesktopFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
         }
     }
     
@@ -455,7 +454,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements Launcher
                       item.addActionListener( this );
                       
             if( sIconName != null )
-                item.setIcon( PDEManager.getInstance().getRuntime().getIcon( null, sIconName +".png", 16, 16 ) );
+                item.setIcon( DesktopFactory.getDM().getRuntime().getIcon( null, sIconName +".png", 16, 16 ) );
             
             return item;
         }

@@ -24,7 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
-import org.joing.pde.PDEManager;
+import org.joing.common.desktopAPI.DesktopFactory;
 import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.deskwidget.desklet.PDEDesklet;
 
@@ -240,7 +240,7 @@ public class NasaPhoto extends PDEDesklet implements Runnable
         {
             PDEFrame frame = new PDEFrame( "NASA Astronomy Picture" );
                      frame.add( new JScrollPane( new JLabel( new ImageIcon( image ) ) ) );
-            PDEManager.getInstance().getDesktop().add( frame );
+            DesktopFactory.getDM().getDesktop().add( frame );
         }
     }
 }

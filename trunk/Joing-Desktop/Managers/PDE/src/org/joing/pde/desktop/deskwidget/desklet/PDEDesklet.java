@@ -5,10 +5,12 @@
 
 package org.joing.pde.desktop.deskwidget.desklet;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
-import org.joing.pde.PDEManager;
+import org.joing.common.desktopAPI.DesktopFactory;
+import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.deskwidget.PDEDeskWidget;
 
 /**
@@ -35,7 +37,7 @@ import org.joing.pde.desktop.deskwidget.PDEDeskWidget;
  * </ul>
  * @author Francisco Morero Peyrona
  */
-public abstract class PDEDesklet extends PDEDeskWidget
+public abstract class PDEDesklet extends PDEDeskWidget //implements 
 {
     DeskAppletToolBar toolBar;
     
@@ -73,7 +75,10 @@ public abstract class PDEDesklet extends PDEDeskWidget
      */
     protected void onClose()
     {
-        PDEManager.getInstance().getDesktop().remove( this );
+        WorkArea wa = DesktopFactory.getDM().getDesktop().findWorkAreaFor( this );
+        
+        wa.remove( this );
+        ((Component) wa).repaint( getX(), getY(), getWidth(), getHeight() );
     }
     
     protected void onSetup()
@@ -138,6 +143,6 @@ public abstract class PDEDesklet extends PDEDeskWidget
 
     public enum ToolBarButton
     {
-        SIZE, CLOSE, SETUP, DRAG;
+        SIZE, CLOSE, SETUP;
     }
 }

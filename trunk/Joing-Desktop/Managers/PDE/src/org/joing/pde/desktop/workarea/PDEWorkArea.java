@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JDesktopPane;
 import javax.swing.event.MouseInputAdapter;
+import org.joing.common.desktopAPI.DesktopFactory;
 import org.joing.common.desktopAPI.Selectable;
 import org.joing.common.desktopAPI.workarea.Wallpaper;
 import org.joing.common.desktopAPI.workarea.WorkArea;
@@ -32,7 +33,6 @@ import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
 import org.joing.pde.desktop.deskwidget.desklet.PDEDesklet;
 import org.joing.pde.ColorSchema;
-import org.joing.pde.PDEManager;
 
 /**
  * This class contains internal operativity for the Desk.
@@ -179,7 +179,7 @@ public class PDEWorkArea
             
             removeSelectedComponents( clazz );
         }*/
-        PDEManager.getInstance().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
     }
     
     /**
@@ -199,7 +199,7 @@ public class PDEWorkArea
             Client.getClient().getClipBoard().clear();
             Client.getClient().getClipBoard().add( vSelected );
         }*/
-        PDEManager.getInstance().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
     }
 
     /**
@@ -233,7 +233,7 @@ public class PDEWorkArea
             
             root.setCursor( Cursor.getPredefinedCursor( Cursor.DEFAULT_CURSOR) );
         }*/
-        PDEManager.getInstance().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
     }
 
     /**

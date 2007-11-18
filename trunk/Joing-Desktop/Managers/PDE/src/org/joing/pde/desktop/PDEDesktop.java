@@ -265,7 +265,7 @@ public class PDEDesktop extends JPanel implements Desktop
     }
     
     //------------------------------------------------------------------------//
-    // GENERIC ADD AND REMOVE
+    // GENERIC ADD AND REMOVE AND FIND
     
     /**
      * Convenience method to add a component to the default work area.
@@ -285,6 +285,14 @@ public class PDEDesktop extends JPanel implements Desktop
      */
     public void remove( Component comp )
     {
+        WorkArea wa = findWorkAreaFor( comp );
+        
+        if( wa != null )
+            wa.remove( comp );
+    }
+    
+    public WorkArea findWorkAreaFor( Component comp )
+    {
         List<WorkArea> lstWA = getWorkAreas();
         
         for( WorkArea wa : lstWA )
@@ -294,12 +302,11 @@ public class PDEDesktop extends JPanel implements Desktop
             for( int n = 0; n < ac.length; n++ )
             {
                 if( ac[n] == comp )
-                {
-                    wa.remove( comp );
-                    break;
-                }
+                    return wa;
             }
         }
+        
+        return null;
     }
     
     //------------------------------------------------------------------------//

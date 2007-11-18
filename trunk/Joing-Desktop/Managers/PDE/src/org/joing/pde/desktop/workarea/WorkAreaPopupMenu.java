@@ -15,8 +15,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import org.joing.common.desktopAPI.DesktopFactory;
 import org.joing.common.desktopAPI.workarea.WorkArea;
-import org.joing.pde.PDEManager;
 
 /**
  * 
@@ -37,8 +37,8 @@ class WorkAreaPopupMenu extends JPopupMenu implements ActionListener
         addSeparator();
         add( createMenuItem( "Properties"     , "properties", "PROPERTIES"   ) );
 
-        List<WorkArea> lstWorkAreas = PDEManager.getInstance().getDesktop().getWorkAreas();
-        WorkArea       waActive     = PDEManager.getInstance().getDesktop().getActiveWorkArea();
+        List<WorkArea> lstWorkAreas = DesktopFactory.getDM().getDesktop().getWorkAreas();
+        WorkArea       waActive     = DesktopFactory.getDM().getDesktop().getActiveWorkArea();
         
         if( lstWorkAreas.size() > 1 )
         {
@@ -70,9 +70,9 @@ class WorkAreaPopupMenu extends JPopupMenu implements ActionListener
             ImageIcon icon = null;
 
             if( sIconName.equals( "grid" ) )
-                icon = PDEManager.getInstance().getRuntime().getIcon( this, "images/"+ sIconName +".png", 16, 16 );
+                icon = DesktopFactory.getDM().getRuntime().getIcon( this, "images/"+ sIconName +".png", 16, 16 );
             else
-                icon = PDEManager.getInstance().getRuntime().getIcon( null, sIconName +".png", 16, 16 );
+                icon = DesktopFactory.getDM().getRuntime().getIcon( null, sIconName +".png", 16, 16 );
 
             item.setIcon( icon );
         }
@@ -96,30 +96,30 @@ class WorkAreaPopupMenu extends JPopupMenu implements ActionListener
     private void switchToWorkArea( JMenuItem item )
     {
         WorkArea waTarget = (WorkArea) item.getClientProperty( "WORK_AREA" );
-        PDEManager.getInstance().getDesktop().setActiveWorkArea( waTarget ); 
+        DesktopFactory.getDM().getDesktop().setActiveWorkArea( waTarget ); 
     }
     
     private void createFolder()
     {
         // TODO: hacerlo
-        PDEManager.getInstance().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
     }
     
     private void createLauncher()
     {
         // TODO: hacerlo
-        PDEManager.getInstance().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
     }
     
     private void toggleAlign()
     {
         // TODO: hacerlo
-        PDEManager.getInstance().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
     }
     
     private void editProperties()
     {
         // TODO: hacerlo
-        PDEManager.getInstance().getInstance().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
     }
 }

@@ -22,14 +22,13 @@ import javax.swing.JMenuItem;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import org.joing.common.desktopAPI.DesktopFactory;
 import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.app.AppEnvironment;
 import org.joing.common.dto.app.AppGroup;
 import org.joing.common.dto.app.AppGroupKey;
 import org.joing.common.dto.user.User;
 import org.joing.pde.ColorSchema;
-import org.joing.pde.PDEManager;
-import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.swing.JScrollablePopupMenu;
 import org.joing.pde.misce.apps.EditUser;
 import org.joing.pde.misce.apps.ProxyConfig;
@@ -65,20 +64,20 @@ class StartMenu extends JScrollablePopupMenu
                   item.setBorder( new EmptyBorder( 4,4,4,4 ) );
                   item.setFont( item.getFont().deriveFont( Font.BOLD, item.getFont().getSize() + 4 ) );
 
-        User user = PDEManager.getInstance().getBridge().getUserBridge().getUser();
+        User user = DesktopFactory.getDM().getBridge().getUserBridge().getUser();
         
         if( user != null )
         {
             String sIcon = "user_"+ (user.isMale() ? "" : "fe") +"male.png";
             
-            item.setIcon( PDEManager.getInstance().getRuntime().getIcon( null, sIcon, ICON_SIZE+5, ICON_SIZE+5 ) );
+            item.setIcon( DesktopFactory.getDM().getRuntime().getIcon( null, sIcon, ICON_SIZE+5, ICON_SIZE+5 ) );
             item.setText( user.getFirstName() +" "+ user.getSecondName() );
 
             item.addActionListener( new ActionListener()
             {
                 public void actionPerformed( ActionEvent ae )
                 {
-                    PDEManager.getInstance().getDesktop().add( new EditUser() );
+                    DesktopFactory.getDM().getDesktop().add( new EditUser() );
                 }
             } );
         }
@@ -93,12 +92,12 @@ class StartMenu extends JScrollablePopupMenu
     private void addLock()
     {
         JMenuItem itmLock = new JMenuItem( "Lock session" );
-                  itmLock.setIcon( PDEManager.getInstance().getRuntime().getIcon( this, "images/lock.png", ICON_SIZE, ICON_SIZE ) );
+                  itmLock.setIcon( DesktopFactory.getDM().getRuntime().getIcon( this, "images/lock.png", ICON_SIZE, ICON_SIZE ) );
                   itmLock.addActionListener( new ActionListener()
                   {
                       public void actionPerformed( ActionEvent ae )
                       {
-                          PDEManager.getInstance().lock();
+                          DesktopFactory.getDM().lock();
                       }
                   } );
         add( itmLock );
@@ -107,12 +106,12 @@ class StartMenu extends JScrollablePopupMenu
     private void addExit()
     {
         JMenuItem itmExit = new JMenuItem( "End session" );
-                  itmExit.setIcon( PDEManager.getInstance().getRuntime().getIcon( this, "images/exit.png", ICON_SIZE, ICON_SIZE ) );
+                  itmExit.setIcon( DesktopFactory.getDM().getRuntime().getIcon( this, "images/exit.png", ICON_SIZE, ICON_SIZE ) );
                   itmExit.addActionListener( new ActionListener()
                   {
                       public void actionPerformed( ActionEvent ae )
                       {
-                          PDEManager.getInstance().close();
+                          DesktopFactory.getDM().close();
                       }
                   } );
         add( itmExit );
@@ -123,7 +122,7 @@ class StartMenu extends JScrollablePopupMenu
         final String KEY = "JOING_APP_DESCRIPTOR";
         
         boolean        bSystemAppsAdded = false;
-        List<AppGroup> lstGroups = PDEManager.getInstance().getBridge().getAppBridge().
+        List<AppGroup> lstGroups = DesktopFactory.getDM().getBridge().getAppBridge().
                                               getInstalledForUser( AppEnvironment.JAVA_ALL, AppGroupKey.ALL );
         
         if( lstGroups != null )
@@ -185,7 +184,7 @@ class StartMenu extends JScrollablePopupMenu
                   {
                       public void actionPerformed( ActionEvent ae )
                       {
-                          PDEManager.getInstance().getDesktop().add( new ProxyConfig() );
+                          DesktopFactory.getDM().getDesktop().add( new ProxyConfig() );
                       }
                   } );
         menu.add( itemProxy );
