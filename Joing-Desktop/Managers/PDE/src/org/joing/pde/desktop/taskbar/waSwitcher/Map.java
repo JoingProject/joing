@@ -10,8 +10,8 @@ import java.awt.event.MouseEvent;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputAdapter;
 import org.joing.common.desktopAPI.Desktop;
+import org.joing.common.desktopAPI.DesktopFactory;
 import org.joing.common.desktopAPI.Selectable;
-import org.joing.pde.PDEManager;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 
 /**
@@ -44,7 +44,7 @@ class Map extends JPanel implements Selectable
             {
                 if( me.getButton() == MouseEvent.BUTTON1 )
                 {
-                    Desktop desktop = PDEManager.getInstance().getDesktop();
+                    Desktop desktop = DesktopFactory.getDM().getDesktop();
                             desktop.setActiveWorkArea( Map.this.workArea );
                 }
             }

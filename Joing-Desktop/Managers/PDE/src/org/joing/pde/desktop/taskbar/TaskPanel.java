@@ -15,12 +15,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import org.joing.pde.PDEManager;
+import org.joing.common.desktopAPI.DesktopFactory;
 import org.joing.pde.desktop.container.PDEFrame;
 
 /**
@@ -108,7 +107,7 @@ public abstract class TaskPanel extends JPanel implements MouseListener
         JPanel pnlPrefs = getPreferencesPanel();
         
         if( pnlPrefs != null )
-            PDEManager.getInstance().getDesktop().add( new TheFrame( pnlPrefs ) );
+            DesktopFactory.getDM().getDesktop().add( new TheFrame( pnlPrefs ) );
     }
     
     private void onAbout()
@@ -124,7 +123,7 @@ public abstract class TaskPanel extends JPanel implements MouseListener
         // Better to use a Frame than a Dialog (modaless: this is the way Gnome does it)
         PDEFrame frame = new PDEFrame( "About" );
                  frame.add( pnlAbout );
-        PDEManager.getInstance().getDesktop().add( frame );
+        DesktopFactory.getDM().getDesktop().add( frame );
     }
     
     private void onRemove()
@@ -146,24 +145,24 @@ public abstract class TaskPanel extends JPanel implements MouseListener
         {   
             itemPreferences = new JMenuItem( "Preferences" );
             itemPreferences.addActionListener( this );
-            itemPreferences.setIcon( PDEManager.getInstance().getRuntime().getIcon( null, "properties.png", 16, 16 ) );
+            itemPreferences.setIcon( DesktopFactory.getDM().getRuntime().getIcon( null, "properties.png", 16, 16 ) );
             add( itemPreferences );
             
             itemAbout = new JMenuItem( "About" );
             itemAbout.addActionListener( this );
-            itemAbout.setIcon( PDEManager.getInstance().getRuntime().getIcon( null, "info.png", 16, 16 ) );
+            itemAbout.setIcon( DesktopFactory.getDM().getRuntime().getIcon( null, "info.png", 16, 16 ) );
             add( itemAbout );
             
             addSeparator();
             
             itemRemove = new JMenuItem( "Remove" );
             itemRemove.addActionListener( this );
-            itemRemove.setIcon( PDEManager.getInstance().getRuntime().getIcon( null, "remove.png", 16, 16 ) );
+            itemRemove.setIcon( DesktopFactory.getDM().getRuntime().getIcon( null, "remove.png", 16, 16 ) );
             add( itemRemove );
             
             itemMove = new JMenuItem( "Move" );
             itemMove.addActionListener( this );
-            itemMove.setIcon( PDEManager.getInstance().getRuntime().getIcon( null, "move.png", 16, 16 ) );
+            itemMove.setIcon( DesktopFactory.getDM().getRuntime().getIcon( null, "move.png", 16, 16 ) );
             add( itemMove );
         }
         

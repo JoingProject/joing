@@ -6,10 +6,9 @@
 
 package org.joing.pde.misce.apps;
 
+import org.joing.common.desktopAPI.DesktopFactory;
 import org.joing.common.dto.user.User;
-import org.joing.pde.PDEManager;
 import org.joing.pde.desktop.container.PDEFrame;
-import org.joing.pde.PDERuntime;
 
 /**
  *
@@ -23,11 +22,11 @@ public class EditUser extends PDEFrame
     public EditUser()
     {
         initComponents();
-        user = PDEManager.getInstance().getBridge().getUserBridge().getUser();
+        user = DesktopFactory.getDM().getBridge().getUserBridge().getUser();
         initComponentsValues();
         
         String sIcon = "user_"+ (user.isMale() ? "" : "fe") +"male.png";
-        setFrameIcon( PDEManager.getInstance().getRuntime().getIcon( null, sIcon, 20, 20 ) );
+        setFrameIcon( DesktopFactory.getDM().getRuntime().getIcon( null, sIcon, 20, 20 ) );
     }
         
     //------------------------------------------------------------------------//

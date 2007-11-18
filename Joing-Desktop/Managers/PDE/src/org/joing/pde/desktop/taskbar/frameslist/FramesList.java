@@ -24,12 +24,12 @@ import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
+import org.joing.common.desktopAPI.DesktopFactory;
 import org.joing.common.desktopAPI.DesktopListener;
 import org.joing.common.desktopAPI.taskbar.TaskBar;
 import org.joing.common.desktopAPI.workarea.Wallpaper;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.common.desktopAPI.workarea.WorkAreaListener;
-import org.joing.pde.PDEManager;
 import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.taskbar.TaskPanel;
 
@@ -66,7 +66,7 @@ public class FramesList extends TaskPanel
         setMaximumSize( new Dimension( Integer.MAX_VALUE, Integer.MAX_VALUE ) );
         setPreferredSize( new Dimension( 480,24 ) );
         
-        PDEManager.getInstance().getDesktop().addDesktopListener( tdl );
+        DesktopFactory.getDM().getDesktop().addDesktopListener( tdl );
     }
     
     //------------------------------------------------------------------------//
@@ -162,7 +162,7 @@ public class FramesList extends TaskPanel
     
     private void updateSelected()
     {
-        WorkArea waActive = PDEManager.getInstance().getDesktop().getActiveWorkArea();
+        WorkArea waActive = DesktopFactory.getDM().getDesktop().getActiveWorkArea();
         
         removeAll();
         

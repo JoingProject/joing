@@ -9,7 +9,7 @@ package org.joing.pde.misce.apps;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import javax.swing.ImageIcon;
-import org.joing.pde.PDEManager;
+import org.joing.common.desktopAPI.DesktopFactory;
 import org.joing.pde.desktop.container.PDEFrame;
 
 /**
@@ -33,7 +33,7 @@ public class ProxyConfig extends PDEFrame
     
     public static ImageIcon getIcon( int nWidth, int nHeight )
     {
-        return PDEManager.getInstance().getRuntime().getIcon( ProxyConfig.class, "proxy_logo.png", nWidth, nHeight );
+        return DesktopFactory.getDM().getRuntime().getIcon( ProxyConfig.class, "proxy_logo.png", nWidth, nHeight );
     }
     
     //------------------------------------------------------------------------//
