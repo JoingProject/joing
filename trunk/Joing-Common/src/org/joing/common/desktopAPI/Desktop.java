@@ -20,33 +20,36 @@ import org.joing.common.desktopAPI.taskbar.TaskBar;
  */
 public interface Desktop
 {
-    public void close();
+    void close();
     
     // Work Areas
-    public List<WorkArea> getWorkAreas();
-    public void addWorkArea( WorkArea workarea );
-    public void removeWorkArea( WorkArea workarea );
-    public WorkArea getActiveWorkArea();
-    public void setActiveWorkArea( WorkArea workarea  );
+    List<WorkArea> getWorkAreas();
+    void addWorkArea( WorkArea workarea );
+    void removeWorkArea( WorkArea workarea );
+    WorkArea getActiveWorkArea();
+    void setActiveWorkArea( WorkArea workarea  );
     
     // Task Bars
-    public List<TaskBar> getTaskBars();
-    public void addTaskBar( TaskBar taskbar );
-    public void removeTaskBar( TaskBar taskbar );
+    List<TaskBar> getTaskBars();
+    void addTaskBar( TaskBar taskbar );
+    void removeTaskBar( TaskBar taskbar );
     
-    // GENERIC ADD AND REMOVE
+    // Genric add(), remove() and find()
     /**
      * Convenience method to add a component to the default work area.
      * @param comp Component to be added.
+     * @return Component added.
      */
-    public Component add( Component comp );
+    Component add( Component comp );
     /**
      * Convenience method to remove a component from the work area where it is
      * located.
      * 
      * @param comp Component to be removed.
+     * @@return Component removed or null if component was not found.
      */
-    public void remove( Component comp );
+    void remove( Component comp );
+    WorkArea findWorkAreaFor( Component comp );
     
     // Events
     public void addDesktopListener( DesktopListener dl );
