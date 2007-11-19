@@ -39,7 +39,7 @@ import org.joing.pde.desktop.deskwidget.PDEDeskWidget;
  */
 public abstract class PDEDesklet extends PDEDeskWidget //implements 
 {
-    DeskAppletToolBar toolBar;
+    private DeskAppletToolBar toolBar;
     
     public PDEDesklet()
     {
@@ -48,14 +48,17 @@ public abstract class PDEDesklet extends PDEDeskWidget //implements
     
     public Dimension getMinimumSize()
     {
-        return toolBar.getMinimumSize();
+        Dimension dimMin = toolBar.getMinimumSize();
+                  dimMin.width *= 2;
+                  
+        return dimMin;
     }
     
     // TODO: Mirar aquí 
     // http://msdn.microsoft.com/msdnmag/issues/07/08/SideBar/default.aspx?loc=es
     //------------------------------------------------------------------------//
     
-    protected void onShow()   // TODO: hacer que se llame este método
+    protected void onShow()
     {
         // Empty
     }
@@ -86,14 +89,9 @@ public abstract class PDEDesklet extends PDEDeskWidget //implements
         // Empty
     }
     
-    protected void onDrag()
-    {
-        // TODO: hacerlo
-    }
-    
     protected void toogleSizeButton()
     {
-        //toolBar.onSize();
+        // TODO; mirar esto --> toolBar.onSize();
     }
     
     // For user custom buttons
@@ -112,6 +110,13 @@ public abstract class PDEDesklet extends PDEDeskWidget //implements
     protected void remove( PDEDesklet.ToolBarButton btn )
     {
         toolBar.remove( btn );
+    }
+    
+    //------------------------------------------------------------------------//
+    
+    void setToolBarVisible( boolean b )
+    {
+        toolBar.setVisible( b );
     }
     
     //------------------------------------------------------------------------//

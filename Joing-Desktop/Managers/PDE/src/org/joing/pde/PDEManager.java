@@ -280,4 +280,9 @@ public class PDEManager extends JApplet implements DesktopManager
         public void mouseReleased( MouseEvent me ) {}
         public void mousePressed( MouseEvent me )  { PDEManager.this.unlock(); }
     }
+    
+    public static void main( String[] as )
+    {
+        org.joing.applauncher.Bootstrap.init();
+    }
 }

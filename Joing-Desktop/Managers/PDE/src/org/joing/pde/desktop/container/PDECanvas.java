@@ -7,9 +7,13 @@
 
 package org.joing.pde.desktop.container;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.LayoutManager;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import org.joing.common.desktopAPI.container.DeskCanvas;
 
 /**
@@ -22,10 +26,58 @@ import org.joing.common.desktopAPI.container.DeskCanvas;
  */
 public class PDECanvas extends JPanel implements DeskCanvas
 {
+    protected JRootPane root;
+    
+    //------------------------------------------------------------------------//
+    
     public PDECanvas()
     {
         setOpaque( false );
+        
+        root = new JRootPane();
+        ((JPanel) root.getContentPane()).setOpaque( false );
+
+        // Añado el root pane a este JPanel
+        super.setLayout( new BorderLayout() );
+        super.add( root, BorderLayout.CENTER );
     }
+    
+    //------------------------------------------------------------------------//
+    // METHODS REDIRECTED TO this.root.getContentPane
+
+    public LayoutManager getLayout()
+    {
+        if( root != null )
+            return root.getContentPane().getLayout();
+        else
+            return null;
+    }
+    
+    public void setLayout( LayoutManager lm )
+    { 
+        if( root != null )
+            root.getContentPane().setLayout( lm );
+    }
+    
+    public Component getGlassPane()
+    {
+        return root.getGlassPane();
+    }
+    
+    public void setGlassPane( Component glass )
+    {
+        root.setGlassPane( glass );
+    }
+    
+    //------------------------------------------------------------------------//
+    
+    public Component add( Component c )             { return root.getContentPane().add( c );    }
+    public Component add( Component c, int n )      { return root.getContentPane().add( c, n ); }
+    public Component add( String s, Component c )   { return root.getContentPane().add( s, c ); }
+    public void add( Component c, Object o, int n ) { root.getContentPane().add( c, o, n );     }
+    public void add( Component c, Object o )        { root.getContentPane().add( c, o );        }
+    
+    //------------------------------------------------------------------------//
     
     /**
      *  Center this in desktopPane

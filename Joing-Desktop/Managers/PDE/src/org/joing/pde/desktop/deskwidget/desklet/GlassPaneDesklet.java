@@ -56,11 +56,11 @@ public class GlassPaneDesklet extends GlassPaneBase
     
     protected void mouseEntered( MouseEvent me )
     {
-        desklet.toolBar.setVisible( true );
+        desklet.setToolBarVisible( true );
     }
 
     protected void mouseExited( MouseEvent me )
     {
-        desklet.toolBar.setVisible( false );
+        desklet.setToolBarVisible( false );
     }    
 }

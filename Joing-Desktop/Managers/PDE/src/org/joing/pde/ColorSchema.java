@@ -14,8 +14,9 @@ import java.awt.Color;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
+// FIXME: Hacer que implement in interface y cambiar en todos sitios la clase por el interface 
 public class ColorSchema
 {
     private static Color desktopBackground;
