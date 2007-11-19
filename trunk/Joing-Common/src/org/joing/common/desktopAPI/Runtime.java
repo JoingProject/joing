@@ -55,8 +55,9 @@ public interface Runtime
      */
     public boolean   yesOrNoDialog( String sTitle, String sMessage );
     /**
-     * Asks for password and validates it agains the server.
-     * 
+     * Asks for password and validates it agains the server.<br>
+     * (For security reasons, the password is not stored locally, not even in 
+     * memory).
      * @return <code>true</code> if password is correct.
      */
     public boolean   askForPassword();

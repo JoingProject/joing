@@ -5,6 +5,8 @@
 
 package org.joing.common.desktopAPI.deskwidget.desklet;
 
+import org.joing.common.desktopAPI.deskwidget.DeskWidget;
+
 /**
  * A desklet is small applications that is shown on the desktop.
  * 
@@ -14,7 +16,7 @@ package org.joing.common.desktopAPI.deskwidget.desklet;
  * 
  * @author Francisco Morero Peyrona
  */
-public interface Desklet
+public interface Desklet extends DeskWidget
 {   // FIXME: hay que definir este interface y hacer que PDEDesklet lo implemente
     /*protected void onShow()
     {
