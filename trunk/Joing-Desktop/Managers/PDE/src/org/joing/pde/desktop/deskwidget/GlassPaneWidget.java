@@ -44,6 +44,9 @@ public class GlassPaneWidget extends GlassPaneBase
 
         // I prefer to handle events personally in order to show the popup. 
         // See: http://www.jguru.com/forums/view.jsp?EID=1239349
+        // Another advantage of this approach is that it saves memory because the
+        // JPopupMenu is in memery only meanwhile it is shown (it is created and
+        // destroied every time).
         if( me.isPopupTrigger() )
             widget.showPopup( me.getPoint() );
     }

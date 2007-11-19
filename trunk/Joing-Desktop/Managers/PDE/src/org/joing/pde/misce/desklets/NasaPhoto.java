@@ -49,20 +49,13 @@ public class NasaPhoto extends PDEDesklet implements Runnable
     //------------------------------------------------------------------------//
     
     public NasaPhoto()
-    {
-        // TODO: quitar esto
-        //-------------------------------------------------------------
-//        System.getProperties().put( "http.proxySet" , "true" );
-//        System.getProperties().put( "http.proxyHost", "10.234.16.4" );
-//        System.getProperties().put( "http.proxyPort", "8080" );
-        //-------------------------------------------------------------
-        
+    {        
         lstPhotos  = new ArrayList<String>();
         
         lblPhoto = new JLabel( "NASA photos" );
         lblPhoto.setForeground( Color.white );
         lblPhoto.setHorizontalAlignment( JLabel.CENTER );
-        lblPhoto.setToolTipText( "NASA astronomy pictures carousel (right-click for menu)" );
+        lblPhoto.setToolTipText( "NASA astronomy pictures carousel" );
         lblPhoto.addMouseListener( new MouseAdapter() 
         {
             public void mouseClicked( MouseEvent me )
@@ -97,6 +90,7 @@ public class NasaPhoto extends PDEDesklet implements Runnable
     
     public void onSetup()
     {
+        DesktopFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
         // todo: hacerlo
     }
     
@@ -162,6 +156,8 @@ public class NasaPhoto extends PDEDesklet implements Runnable
             }
         }
     }
+    
+    //------------------------------------------------------------------------//
     
     private boolean connect()
     {
