@@ -5,8 +5,6 @@
 
 package org.joing.common.desktopAPI.taskbar;
 
-import java.awt.Point;
-import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DeskContainer;
 
 /**
@@ -15,10 +13,6 @@ import org.joing.common.desktopAPI.DeskContainer;
  */
 public interface TaskBarPanel extends DeskContainer
 {
-    void add( DeskComponent dc );
-    void add( DeskComponent dc, Point pt );
-    void remove( DeskComponent dc );
-    
     boolean isLocked();
     void    setLocked( boolean b );
     

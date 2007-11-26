@@ -9,7 +9,7 @@ package org.joing.common.desktopAPI;
  *
  * @author fmorero
  */
-public class DesktopFactory
+public class DesktopManagerFactory
 {
     private static DesktopManager dm = null;
     

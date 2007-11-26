@@ -5,6 +5,7 @@
 
 package org.joing.common.desktopAPI;
 
+import org.joing.common.desktopAPI.desktop.Desktop;
 import org.joing.common.clientAPI.jvmm.Platform;
 import org.joing.common.clientAPI.runtime.Bridge2Server;
 

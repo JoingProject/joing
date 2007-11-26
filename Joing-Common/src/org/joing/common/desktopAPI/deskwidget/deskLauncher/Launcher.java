@@ -9,7 +9,6 @@
 
 package org.joing.common.desktopAPI.deskwidget.deskLauncher; 
 
-import java.awt.Image;
 import org.joing.common.desktopAPI.deskwidget.DeskWidget;
 
 /**
@@ -24,9 +23,6 @@ public interface Launcher extends DeskWidget
 {
     boolean isSelected();
     void    setSelected( boolean b );
-    
-    public Image  getImage();               // I use Image because it is in AWT (ImageIcon is in 
-    public void   setImage( Image image );  // Swing) and in this way the interface can be use widely
     
     public boolean launch();
     
