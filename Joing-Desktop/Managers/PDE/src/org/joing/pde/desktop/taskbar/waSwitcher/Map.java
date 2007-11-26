@@ -9,9 +9,8 @@ import java.awt.Color;
 import java.awt.event.MouseEvent;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputAdapter;
-import org.joing.common.desktopAPI.Desktop;
-import org.joing.common.desktopAPI.DesktopFactory;
-import org.joing.common.desktopAPI.Selectable;
+import org.joing.common.desktopAPI.desktop.Desktop;
+import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 
 /**
@@ -19,7 +18,7 @@ import org.joing.pde.desktop.workarea.PDEWorkArea;
  * 
  * @author Francisco Morero Peyrona
  */
-class Map extends JPanel implements Selectable
+class Map extends JPanel
 {
     // TODO: estos colores tienen que ser parte del sistema de colores
     private static Color clrSelected   = Color.pink;
@@ -44,7 +43,7 @@ class Map extends JPanel implements Selectable
             {
                 if( me.getButton() == MouseEvent.BUTTON1 )
                 {
-                    Desktop desktop = DesktopFactory.getDM().getDesktop();
+                    Desktop desktop = DesktopManagerFactory.getDM().getDesktop();
                             desktop.setActiveWorkArea( Map.this.workArea );
                 }
             }

@@ -15,15 +15,11 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.JDesktopPane;
 import javax.swing.event.MouseInputAdapter;
-import org.joing.common.desktopAPI.DesktopFactory;
-import org.joing.common.desktopAPI.Selectable;
+import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.common.desktopAPI.DesktopManagerFactory;
+import org.joing.common.desktopAPI.pane.DeskWindow;
 import org.joing.common.desktopAPI.workarea.Wallpaper;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.common.desktopAPI.workarea.WorkAreaListener;
@@ -40,10 +36,10 @@ import org.joing.pde.ColorSchema;
  * It is not public because all public interface has to be accesed using Desk
  * @author Francisco Morero Peyrona
  */
-public class PDEWorkArea 
-       extends JDesktopPane 
-       implements WorkArea
+public class PDEWorkArea extends JDesktopPane implements WorkArea
 {
+    private static final String DONT_USE_ME = "Do not use me";
+    
     private static final Integer LAYER_WALLPAPER     = new Integer(-10 );
     private static final Integer LAYER_CANVAS        = new Integer(  0 );
     private static final Integer LAYER_DESKLET       = new Integer( 10 );
@@ -62,36 +58,6 @@ public class PDEWorkArea
     {
         super();
         initGUI();
-    }
-    
-    // Las pongo sólo para no llamarlas por error y q se monte un zapatiesto -------------------------
-    public Component add( Component c, int n )      { throw new IllegalAccessError("Do not use me"); }
-    public Component add( String s, Component c )   { throw new IllegalAccessError("Do not use me"); }
-    public void add( Component c, Object o, int n ) { throw new IllegalAccessError("Do not use me"); }
-
-    // This method has to be kept because it is used by JOptionInternalXXX
-    public void add( Component component, Object constraints )
-    { // FIXME: cuando tenga resuelto el asunto de las Dialog, puedo prescindir
-      //        de la JOptionPane y entonces puedo hacer con este add como con los demás (throw ...)
-        super.add( component, constraints );
-    }
-    
-    public void load( InputStream in ) throws IOException, ClassNotFoundException
-    {
-        // TODO: hacerlo
-    }
-    
-    public void save( OutputStream out )
-    {
-        // TODO: guardar las properties de la WorkArea
-        
-        List<Component> lstComponents = getOfType( Component.class );
-        
-        for( Component comp : lstComponents )
-        {
-            /*if( comp instanceof Externalizable )
-                ((Externalizable) comp).writeExternal( oo );*/
-        }
     }
     
     //------------------------------------------------------------------------//
@@ -179,7 +145,7 @@ public class PDEWorkArea
             
             removeSelectedComponents( clazz );
         }*/
-        DesktopFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopManagerFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
     }
     
     /**
@@ -199,7 +165,7 @@ public class PDEWorkArea
             Client.getClient().getClipBoard().clear();
             Client.getClient().getClipBoard().add( vSelected );
         }*/
-        DesktopFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopManagerFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
     }
 
     /**
@@ -233,7 +199,7 @@ public class PDEWorkArea
             
             root.setCursor( Cursor.getPredefinedCursor( Cursor.DEFAULT_CURSOR) );
         }*/
-        DesktopFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopManagerFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
     }
 
     /**
@@ -243,18 +209,52 @@ public class PDEWorkArea
      * 
      * @param clazz Desired class
      */
-    public void removeSelectedComponents( Class clazz )
-    {
-        List vSelected = getSelected( clazz, true );
-        
-        if( vSelected.size() > 0 )
-        {
-            while( vSelected.size() > 0 )
-                remove( (Component) vSelected.get( 0 ) );
-            
-            repaint();  // Without repaint() does not work: dont't touch
-        }
-    }   
+//    public void removeSelectedComponents( Class clazz )
+//    {
+//        List vSelected = getSelected( clazz, true );
+//        
+//        if( vSelected.size() > 0 )
+//        {
+//            while( vSelected.size() > 0 )
+//                remove( (Component) vSelected.get( 0 ) );
+//            
+//            repaint();  // Without repaint() does not work: dont't touch
+//        }
+//    }   
+    
+    
+    
+//    public List<Component> getSelected( Class clazz, boolean bSelected )
+//    {
+//        List<Component> in  = getOfType( clazz );
+//        List<Component> out = new ArrayList<Component>( in.size() );
+//        
+//        for( Component comp : in )
+//        {
+//            if( comp instanceof Selectable && ((Selectable) comp).isSelected() != bSelected )
+//                out.add( comp );
+//        }
+//        
+//        return out;
+//    }
+    
+    /**
+     * Selects objects in desktop that match passed class.
+     * <p>
+     * Clazz must be implement interface <code>Selectable</code>
+     *  
+     * @param clazz The Class
+     */
+//    public void setSelected( Class clazz, boolean bSelected )
+//    {
+//        List<Component> list = getOfType( clazz );
+//        
+//        for( Component comp : list )
+//        {
+//            if( comp instanceof Selectable )
+//                ((Selectable) comp).setSelected( bSelected );
+//        }
+//    }
     
     //------------------------------------------------------------------------//
     
@@ -292,10 +292,10 @@ public class PDEWorkArea
                 
                 if( me.isPopupTrigger() )
                     showPopupMenu( me.getPoint() );
-                else
-                    // Si llega aqui es q se ha hecho clic en el desktop, ya q si se hace clic en un 
-                    // componente contenido en el desktop, el desktop no llega a recibir el evento.
-                    setSelected( Component.class, false );
+// FIXME        else
+//                    // Si llega aqui es q se ha hecho clic en el desktop, ya q si se hace clic en un 
+//                    // componente contenido en el desktop, el desktop no llega a recibir el evento.
+//                    setSelected( Component.class, false );
             }
         }  );
     }
@@ -304,28 +304,42 @@ public class PDEWorkArea
     // WorkArea interface implementation
     //------------------------------------------------------------------------//
     
-    public Component add( Component component )
+    // Just to avoid accidental use of them  ---------------------------------------------------------
+    public Component add( Component c )             { throw new IllegalAccessError(DONT_USE_ME); }
+    public Component add( Component c, int n )      { throw new IllegalAccessError(DONT_USE_ME); }
+    public Component add( String s, Component c )   { throw new IllegalAccessError(DONT_USE_ME); }
+    public void add( Component c, Object o )        { throw new IllegalAccessError(DONT_USE_ME); }
+    public void add( Component c, Object o, int n ) { throw new IllegalAccessError(DONT_USE_ME); }
+    public void remove( Component c )               { throw new IllegalAccessError(DONT_USE_ME); }
+    //------------------------------------------------------------------------------------------------
+    
+    public void add( DeskComponent dc )
     {
+        Component component = (Component) dc;
+        
         if(      component instanceof PDEDeskLauncher )  super.add( component, LAYER_DESK_LAUNCHER );
         else if( component instanceof PDEDesklet      )  addDesklet( (PDEDesklet) component );
         else if( component instanceof PDECanvas       )  super.add( component, LAYER_CANVAS );
         else if( component instanceof PDEDialog       )  super.add( component, LAYER_DIALOG );
-        else if( component instanceof PDEFrame        )  addFrame( (PDEFrame) component );
+        else if( component instanceof PDEFrame        )  addFrame( (PDEFrame) component, true );
         else                                             super.add( component, LAYER_APPLICATION );
         
-        fireComponentAdded( component );
-        
-        return this;
+        fireComponentAdded( dc );
+    }
+    
+    public void add( DeskWindow dc, boolean bAutoArrange )
+    {
+        addFrame( (PDEFrame) dc, bAutoArrange );
     }
     
     // super is in charge of detecting when the JinternalFrame is closed, so it
     // can remove the frame from the container. 
     // As this method overrides the parent one, this one does not need to 
     // "listen" to the frame events.
-    public void remove( Component component )
+    public void remove( DeskComponent dc )
     {
-        super.remove( component );
-        fireComponentRemoved( component );
+        super.remove( (Component) dc );
+        fireComponentRemoved( dc );
     }
     
     public Wallpaper getWallpaper()
@@ -349,58 +363,6 @@ public class PDEWorkArea
         listenerList.remove( WorkAreaListener.class, wal );
     }
     
-    /**
-     * Get all objects in dekstop that match passed class,
-     * or an empty <code>Vector</code> one if there is no one selected.
-     * <p>
-     * To select objects of all classes, simply pass <code>Component</code>
-     */
-    public List<Component> getOfType( Class clazz )
-    {
-        ArrayList<Component> list  = new ArrayList<Component>();                
-        Component[]          aComp = getComponents();
-        
-        for( int n = 0; n < aComp.length; n++ )
-        {
-            if( clazz.isInstance( aComp[n] ) )
-                list.add( aComp[n] );
-        }
-        
-        return list;
-    }
-    
-    public List<Component> getSelected( Class clazz, boolean bSelected )
-    {
-        List<Component> in  = getOfType( clazz );
-        List<Component> out = new ArrayList<Component>( in.size() );
-        
-        for( Component comp : in )
-        {
-            if( comp instanceof Selectable && ((Selectable) comp).isSelected() != bSelected )
-                out.add( comp );
-        }
-        
-        return out;
-    }
-    
-    /**
-     * Selects objects in desktop that match passed class.
-     * <p>
-     * Clazz must be implement interface <code>Selectable</code>
-     *  
-     * @param clazz The Class
-     */
-    public void setSelected( Class clazz, boolean bSelected )
-    {
-        List<Component> list = getOfType( clazz );
-        
-        for( Component comp : list )
-        {
-            if( comp instanceof Selectable )
-                ((Selectable) comp).setSelected( bSelected );
-        }
-    }
-    
     public void close()
     {
         // TODO: hacerlo
@@ -408,7 +370,7 @@ public class PDEWorkArea
     
     //------------------------------------------------------------------------//
     
-    protected void fireComponentAdded( Component l )
+    protected void fireComponentAdded( DeskComponent dc )
     {
         Object[] listeners = listenerList.getListenerList();
         
@@ -416,11 +378,11 @@ public class PDEWorkArea
         for( int n = listeners.length - 2; n >= 0; n -= 2 )
         {
             if( listeners[n] == WorkAreaListener.class )
-                ((WorkAreaListener) listeners[n+1]).componentAdded( l );
+                ((WorkAreaListener) listeners[n+1]).componentAdded( dc );
         }
     }
     
-    protected void fireComponentRemoved( Component l )
+    protected void fireComponentRemoved( DeskComponent dc )
     {
         Object[] listeners = listenerList.getListenerList();
         
@@ -428,7 +390,7 @@ public class PDEWorkArea
         for( int n = listeners.length - 2; n >= 0; n -= 2 )
         {
             if( listeners[n] == WorkAreaListener.class )
-                ((WorkAreaListener) listeners[n+1]).componentRemoved( l );
+                ((WorkAreaListener) listeners[n+1]).componentRemoved( dc );
         }
     }
     
@@ -477,12 +439,10 @@ public class PDEWorkArea
         super.add( desklet, LAYER_DESKLET );
     }
     
-    private void addFrame( PDEFrame frame )
+    private void addFrame( PDEFrame frame, boolean bAutoArrange )
     {
-        if( frame.isAutoArrange() )
-        {
+        if( bAutoArrange )
             frame.pack();
-        }
         
         // Ensures that frame is not bigger than WorkArea
         // (because the same user can run Joing in many different-size devices)
@@ -500,7 +460,7 @@ public class PDEWorkArea
         // Add to container
         super.add( frame, LAYER_APPLICATION );
         
-        if( frame.isAutoArrange() )
+        if( bAutoArrange )
         {
             frame.setVisible( true );  // 1st, must be visble, because this is the way to have a parent
             frame.center();

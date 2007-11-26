@@ -14,24 +14,13 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.util.List;
 import java.util.Vector;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import org.joing.common.desktopAPI.Desktop;
-import org.joing.common.desktopAPI.DesktopListener;
-import org.joing.common.desktopAPI.enums.TaskBarOrientation;
+import org.joing.common.desktopAPI.desktop.Desktop;
+import org.joing.common.desktopAPI.desktop.DesktopListener;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.common.desktopAPI.taskbar.TaskBar;
 import org.joing.pde.desktop.taskbar.PDETaskBar;
-import org.joing.pde.desktop.container.PDECanvas;
-import org.joing.pde.desktop.container.PDEFrame;
-import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
-import org.joing.pde.misce.desklets.NasaPhoto;
-import org.joing.pde.misce.desklets.memon.MemMon;
 
 /**
  *
@@ -108,7 +97,7 @@ public class PDEDesktop extends JPanel implements Desktop
     
     private void createTestWorkArea( WorkArea wa )  // TODO: quitar este metodo
     {
-        PDEDeskLauncher pl1 = new PDEDeskLauncher( "Test" );
+        /*PDEDeskLauncher pl1 = new PDEDeskLauncher( "Test" );
         PDEDeskLauncher pl2 = new PDEDeskLauncher( "Notes" );
                         pl2.setLocation( 0,100 );
 
@@ -128,8 +117,9 @@ public class PDEDesktop extends JPanel implements Desktop
                   canvas.add( lblCanvas, BorderLayout.CENTER );
                   canvas.setBounds( 330, 130, 240, 80 );
         wa.add( canvas );
-
+*/
         //---------------------------------------------------------------------
+        /*
         JSlider slrTranslucency = new JSlider( JSlider.HORIZONTAL, 0, 100, 0 );
                 slrTranslucency.setMajorTickSpacing( 10 );
                 slrTranslucency.setPaintLabels( true );
@@ -139,7 +129,7 @@ public class PDEDesktop extends JPanel implements Desktop
                     public void stateChanged( ChangeEvent ce )
                     {
                         JSlider slr = (JSlider) ce.getSource();
-
+                        
                         PDEFrame frm = (PDEFrame) SwingUtilities.getAncestorOfClass( PDEFrame.class, slr );
                                  frm.setTranslucency( slr.getValue() );
                     }
@@ -153,6 +143,7 @@ public class PDEDesktop extends JPanel implements Desktop
                  frm.setVisible( true );
                  wa.add( frm );
                  frm.setSelected( true );
+         */
     }
     
     //------------------------------------------------------------------------//
@@ -227,25 +218,25 @@ public class PDEDesktop extends JPanel implements Desktop
 
     public void addTaskBar( TaskBar taskbar )
     {
-        TaskBarOrientation orientation = taskbar.getOrientation();
+        TaskBar.Orientation orientation = taskbar.getOrientation();
         
         vTaskBars.add( taskbar );
         
         // TODO: ¿Qué pasaría si ya hubiese otra taskbar en esa posición?
         //       Solución: ignorar (¿lanzar exc?) cuando se quiere añadir una TB donde ya hay una
-        if( orientation == TaskBarOrientation.BOTTOM )
+        if( orientation == TaskBar.Orientation.BOTTOM )
         {
             add( (Component) taskbar, BorderLayout.SOUTH );
         }
-        else if( orientation == TaskBarOrientation.TOP )
+        else if( orientation == TaskBar.Orientation.TOP )
         {
             add( (Component) taskbar, BorderLayout.NORTH );
         }
-        else if( orientation == TaskBarOrientation.LEFT )
+        else if( orientation == TaskBar.Orientation.LEFT )
         {
             add( (Component) taskbar, BorderLayout.WEST );
         }
-        else if( orientation == TaskBarOrientation.RIGHT )
+        else if( orientation == TaskBar.Orientation.RIGHT )
         {
             add( (Component) taskbar, BorderLayout.EAST );
         }
@@ -262,51 +253,6 @@ public class PDEDesktop extends JPanel implements Desktop
             vTaskBars.remove( taskbar );
             fireTaskBarRemoved( taskbar );
         }
-    }
-    
-    //------------------------------------------------------------------------//
-    // GENERIC ADD AND REMOVE AND FIND
-    
-    /**
-     * Convenience method to add a component to the default work area.
-     * 
-     * @param comp Component to be added.
-     */
-    public Component add( Component comp )
-    {
-        return getActiveWorkArea().add( comp );
-    }
-    
-    /**
-     * Convenience method to remove a component from the work area where it is
-     * located.
-     * 
-     * @param comp Component to be removed.
-     */
-    public void remove( Component comp )
-    {
-        WorkArea wa = findWorkAreaFor( comp );
-        
-        if( wa != null )
-            wa.remove( comp );
-    }
-    
-    public WorkArea findWorkAreaFor( Component comp )
-    {
-        List<WorkArea> lstWA = getWorkAreas();
-        
-        for( WorkArea wa : lstWA )
-        {
-            Component[] ac  = ((PDEWorkArea) wa).getComponents();
-            
-            for( int n = 0; n < ac.length; n++ )
-            {
-                if( ac[n] == comp )
-                    return wa;
-            }
-        }
-        
-        return null;
     }
     
     //------------------------------------------------------------------------//

@@ -24,7 +24,6 @@ public class MemMon extends PDEDesklet
     
     public MemMon()
     {
-        setDescription( "Memory Monitor" );
         setBackground( Color.black );
         setBorder( new LineBorder( Color.gray ) );
         setMinimumSize(   new Dimension(  80, 60 ) );

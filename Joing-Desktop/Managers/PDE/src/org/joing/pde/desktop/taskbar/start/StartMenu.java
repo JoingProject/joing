@@ -17,12 +17,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import org.joing.common.desktopAPI.DesktopFactory;
+import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.common.desktopAPI.DesktopManagerFactory;
+import org.joing.common.desktopAPI.pane.DeskFrame;
 import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.app.AppEnvironment;
 import org.joing.common.dto.app.AppGroup;
@@ -32,6 +35,7 @@ import org.joing.pde.ColorSchema;
 import org.joing.pde.swing.JScrollablePopupMenu;
 import org.joing.pde.misce.apps.EditUser;
 import org.joing.pde.misce.apps.ProxyConfig;
+import org.joing.pde.vfs.JoingFileSystemView;
 
 /**
  *
@@ -64,20 +68,20 @@ class StartMenu extends JScrollablePopupMenu
                   item.setBorder( new EmptyBorder( 4,4,4,4 ) );
                   item.setFont( item.getFont().deriveFont( Font.BOLD, item.getFont().getSize() + 4 ) );
 
-        User user = DesktopFactory.getDM().getBridge().getUserBridge().getUser();
+        User user = DesktopManagerFactory.getDM().getBridge().getUserBridge().getUser();
         
         if( user != null )
         {
             String sIcon = "user_"+ (user.isMale() ? "" : "fe") +"male.png";
             
-            item.setIcon( DesktopFactory.getDM().getRuntime().getIcon( null, sIcon, ICON_SIZE+5, ICON_SIZE+5 ) );
+            item.setIcon( DesktopManagerFactory.getDM().getRuntime().getIcon( null, sIcon, ICON_SIZE+5, ICON_SIZE+5 ) );
             item.setText( user.getFirstName() +" "+ user.getSecondName() );
 
             item.addActionListener( new ActionListener()
             {
                 public void actionPerformed( ActionEvent ae )
                 {
-                    DesktopFactory.getDM().getDesktop().add( new EditUser() );
+                    (new EditUser()).showFrame();
                 }
             } );
         }
@@ -92,12 +96,12 @@ class StartMenu extends JScrollablePopupMenu
     private void addLock()
     {
         JMenuItem itmLock = new JMenuItem( "Lock session" );
-                  itmLock.setIcon( DesktopFactory.getDM().getRuntime().getIcon( this, "images/lock.png", ICON_SIZE, ICON_SIZE ) );
+                  itmLock.setIcon( DesktopManagerFactory.getDM().getRuntime().getIcon( this, "images/lock.png", ICON_SIZE, ICON_SIZE ) );
                   itmLock.addActionListener( new ActionListener()
                   {
                       public void actionPerformed( ActionEvent ae )
                       {
-                          DesktopFactory.getDM().lock();
+                          DesktopManagerFactory.getDM().lock();
                       }
                   } );
         add( itmLock );
@@ -106,12 +110,12 @@ class StartMenu extends JScrollablePopupMenu
     private void addExit()
     {
         JMenuItem itmExit = new JMenuItem( "End session" );
-                  itmExit.setIcon( DesktopFactory.getDM().getRuntime().getIcon( this, "images/exit.png", ICON_SIZE, ICON_SIZE ) );
+                  itmExit.setIcon( DesktopManagerFactory.getDM().getRuntime().getIcon( this, "images/exit.png", ICON_SIZE, ICON_SIZE ) );
                   itmExit.addActionListener( new ActionListener()
                   {
                       public void actionPerformed( ActionEvent ae )
                       {
-                          DesktopFactory.getDM().close();
+                          DesktopManagerFactory.getDM().close();
                       }
                   } );
         add( itmExit );
@@ -122,7 +126,7 @@ class StartMenu extends JScrollablePopupMenu
         final String KEY = "JOING_APP_DESCRIPTOR";
         
         boolean        bSystemAppsAdded = false;
-        List<AppGroup> lstGroups = DesktopFactory.getDM().getBridge().getAppBridge().
+        List<AppGroup> lstGroups = DesktopManagerFactory.getDM().getBridge().getAppBridge().
                                               getInstalledForUser( AppEnvironment.JAVA_ALL, AppGroupKey.ALL );
         
         if( lstGroups != null )
@@ -184,7 +188,15 @@ class StartMenu extends JScrollablePopupMenu
                   {
                       public void actionPerformed( ActionEvent ae )
                       {
-                          DesktopFactory.getDM().getDesktop().add( new ProxyConfig() );
+                          (new ProxyConfig()).showFrame();
+                          
+                          JoingFileSystemView jfsv = JoingFileSystemView.getFileSystemView();
+                          
+                          DeskFrame frmFileChooser = DesktopManagerFactory.getDM().getRuntime().createFrame();
+                                    frmFileChooser.setTitle( "Open file" );
+                                    frmFileChooser.add( new FileChooser() );
+                          
+                          DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea().add( frmFileChooser );
                       }
                   } );
         menu.add( itemProxy );
@@ -205,5 +217,13 @@ class StartMenu extends JScrollablePopupMenu
         }
         
         return icon;
+    }
+    
+    private class FileChooser extends JFileChooser implements DeskComponent
+    {
+        FileChooser()
+        {
+            
+        }
     }
 }

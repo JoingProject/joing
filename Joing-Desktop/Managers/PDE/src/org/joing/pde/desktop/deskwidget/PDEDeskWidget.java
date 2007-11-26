@@ -22,12 +22,8 @@ import org.joing.pde.desktop.container.PDECanvas;
  *
  * @author Francisco Morero Peyrona
  */
-public class PDEDeskWidget extends PDECanvas implements DeskWidget
+public abstract class PDEDeskWidget extends PDECanvas implements DeskWidget
 {
-    private String sDescription;
-    
-    //------------------------------------------------------------------------//
-    
     /**
      * Creates a new instance of PDEDeskWidget
      */
@@ -35,28 +31,12 @@ public class PDEDeskWidget extends PDECanvas implements DeskWidget
     {
         root.setGlassPane( new GlassPaneWidget( this ) );
     }
-
+    
+    public abstract void close();
+    
     //------------------------------------------------------------------------//
     // Following methods from DeskWidget interface already exists in JPanel:
     // getName(), setName(...), getLocation(), setLocation(...), 
-    
-    public String getDescription()
-    {
-        return sDescription;
-    }
-    
-    public void setDescription( String sDescription )
-    {
-        if( sDescription != null )
-        {
-            sDescription = sDescription.trim();
-        
-            if( sDescription.length() == 0 )
-                sDescription = null;
-        }
-        
-        this.sDescription = sDescription;
-    }
     
     protected void showPopup( Point ptWhere )
     {

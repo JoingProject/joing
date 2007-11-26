@@ -16,8 +16,14 @@ import java.awt.Toolkit;
 import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import org.joing.common.desktopAPI.DesktopFactory;
+import org.joing.common.desktopAPI.DesktopManagerFactory;
+import org.joing.common.desktopAPI.pane.DeskCanvas;
+import org.joing.common.desktopAPI.pane.DeskDialog;
+import org.joing.common.desktopAPI.pane.DeskFrame;
 import org.joing.common.desktopAPI.workarea.WorkArea;
+import org.joing.pde.desktop.container.PDECanvas;
+import org.joing.pde.desktop.container.PDEDialog;
+import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.misce.images.ImagesFactory;
 
 /**
@@ -32,6 +38,30 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
     // Only PDEManager has an instance of PDERuntime
     PDERuntime()
     {
+    }
+    
+    //------------------------------------------------------------------------//
+    // Create Containers
+    //------------------------------------------------------------------------//
+    
+    public DeskCanvas createCanvas()
+    {
+        return new PDECanvas();
+    }
+    
+    public DeskFrame createFrame()
+    {
+        return new PDEFrame();
+    }
+    
+    public DeskDialog createDialog( DeskFrame owner )
+    {
+        return new PDEDialog( owner );
+    }
+    
+    public DeskDialog createDialog( DeskDialog owner )
+    {
+        return new PDEDialog( owner );
     }
     
     //------------------------------------------------------------------------//
@@ -50,14 +80,14 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
     
     public void showMessage( String sMessage )
     {
-        WorkArea workArea = DesktopFactory.getDM().getDesktop().getActiveWorkArea();
+        WorkArea workArea = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
         
         JOptionPane.showInternalMessageDialog( (Component) workArea, sMessage );
     }
     
     public void showMessage( String sTitle, String sMessage )
     {
-        WorkArea workArea = DesktopFactory.getDM().getDesktop().getActiveWorkArea();
+        WorkArea workArea = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
         
         JOptionPane.showInternalMessageDialog( (Component) workArea, sMessage, sTitle,
                                                JOptionPane.INFORMATION_MESSAGE );
@@ -65,7 +95,7 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
     
     public boolean confirmDialog( String sTitle, String sMessage )
     {
-        WorkArea workArea = DesktopFactory.getDM().getDesktop().getActiveWorkArea();
+        WorkArea workArea = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
         
         return JOptionPane.showInternalConfirmDialog( 
                                      (Component) workArea, sMessage, sTitle,
@@ -74,7 +104,7 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
     
     public boolean yesOrNoDialog( String sTitle, String sMessage )
     {
-        WorkArea workArea = DesktopFactory.getDM().getDesktop().getActiveWorkArea();
+        WorkArea workArea = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
         
         return JOptionPane.showInternalConfirmDialog( 
                                      (Component) workArea, sMessage, sTitle,

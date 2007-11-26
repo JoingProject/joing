@@ -19,75 +19,56 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.Hashtable;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
-import org.joing.common.desktopAPI.DesktopFactory;
-import org.joing.common.desktopAPI.DesktopListener;
+import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.common.desktopAPI.DesktopManagerFactory;
+import org.joing.common.desktopAPI.desktop.DesktopListener;
+import org.joing.common.desktopAPI.pane.DeskFrame;
 import org.joing.common.desktopAPI.taskbar.TaskBar;
 import org.joing.common.desktopAPI.workarea.Wallpaper;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.common.desktopAPI.workarea.WorkAreaListener;
 import org.joing.pde.desktop.container.PDEFrame;
-import org.joing.pde.desktop.taskbar.TaskPanel;
+import org.joing.pde.desktop.taskbar.PDETaskBarPanel;
 
 /**
  * A component that shows all opened frames: Frame, JFrame, JDesktopFrame
  * 
  * @author Francisco Morero Peyrona
  */
-public class FramesList extends TaskPanel
+public class FramesList extends PDETaskBarPanel
 {
-    private Hashtable<Container, FrameButton> vButtons;   // For speed
+    private GridLayout grid;
     
     private TheDesktopListener      tdl;
     private TheWorkAreaListener     twal;
     private TheWindowListener       twl;
     private TheIntenalFrameListener tifl;
     
-    private GridLayout grid;
-    
     //------------------------------------------------------------------------//
     
     public FramesList()
     {
-        vButtons = new Hashtable<Container, FrameButton>();
-        grid     = new GridLayout( 1, 0, 2, 0 );
+        grid = new GridLayout( 1, 0, 2, 0 );
+        ///((JPanel) getContent()).setLayout( grid );
         
         tdl  = new TheDesktopListener();
         twal = new TheWorkAreaListener();
         twl  = new TheWindowListener();
         tifl = new TheIntenalFrameListener();
         
-        setLayout( grid );
-        setMinimumSize( new Dimension( 80,20 ) );
+        DesktopManagerFactory.getDM().getDesktop().addDesktopListener( tdl );
+        
+        setMinimumSize( new Dimension( 80,22 ) );
         setMaximumSize( new Dimension( Integer.MAX_VALUE, Integer.MAX_VALUE ) );
         setPreferredSize( new Dimension( 480,24 ) );
-        
-        DesktopFactory.getDM().getDesktop().addDesktopListener( tdl );
     }
     
     //------------------------------------------------------------------------//
     
-    protected JPanel getAboutPanel()
-    {
-        return null;  // NEXT: hacerlo
-    }
-
-    protected JPanel getPreferencesPanel()
-    {
-        return null;   // NEXT: hacerlo
-    }
-
-    protected void onPreferencesChanged(JPanel pnlPrefs)
-    {
-        // NEXT: nada que hacer hasta que no se fabrique el panel de preferencias
-    }
-    
-    //------------------------------------------------------------------------//
-
     private void add( Frame frame )
     {
         frame.addWindowListener( twl );
@@ -109,22 +90,34 @@ public class FramesList extends TaskPanel
                 onButtonClicked( ae );
             }
         } );
-                    
-        vButtons.put( frame, fb );
         
         grid.setColumns( grid.getColumns() + 1 );
-        super.add( fb );
+        add( fb );
         grid.layoutContainer( this );
+        updateSelected();
     }
     
-    private void remove( Container frm )
+    private void remove( Container frame )
     {
-        FrameButton fb = vButtons.get( frm );
+        Component[] aComp = getComponents();
         
-        super.remove( fb );       // Removes the button from the panel
-        vButtons.remove( frm );
-        grid.setColumns( grid.getColumns() - 1 );
-        updateSelected();
+        // Find the button associated with passed frame
+        for( int n = 0; n < aComp.length; n++ )
+        {
+            if( aComp[n] instanceof FrameButton )
+            {
+                FrameButton fb = (FrameButton) aComp[n];
+                
+                if( frame == fb.getFrame() )
+                {
+                    super.remove( fb );       // Removes the button from the panel
+                    grid.setColumns( grid.getColumns() - 1 );
+                    grid.layoutContainer( this );
+                    updateSelected();
+                    break;
+                }
+            }
+        }
     }
     
     public void onButtonClicked( ActionEvent ae )
@@ -136,8 +129,8 @@ public class FramesList extends TaskPanel
         {
             PDEFrame iframe = (PDEFrame) frm;
             
-            if(      iframe.isSelected() )  iframe.setIcon( true );
-            else if( iframe.isIcon()     )  iframe.restore();
+            if(      iframe.isSelected() )  iframe.setStatus( DeskFrame.Status.MINIMIZED );
+            else if( iframe.isIcon()     )  iframe.setStatus( DeskFrame.Status.RESTORED  );
             else                            iframe.setSelected( true );
         }
         else
@@ -162,26 +155,24 @@ public class FramesList extends TaskPanel
     
     private void updateSelected()
     {
-        WorkArea waActive = DesktopFactory.getDM().getDesktop().getActiveWorkArea();
+        WorkArea    waActive = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
+        Component[] aComp    = getComponents();///pnlButtons.getComponents();
         
-        removeAll();
-        
-        for( FrameButton btn : vButtons.values() )
+        for( int n = 0; n < aComp.length; n++ )
         {
-            Container frame = btn.getFrame();
-            
-            if( frame.getParent() == waActive )
+            if( aComp[n] instanceof FrameButton )
             {
-                boolean b = (frame instanceof Frame) ? ((Frame) frame).isActive()
-                                                     : ((JInternalFrame) frame).isSelected();
-                btn.setSelected( b );
-                add( btn );
+                FrameButton frmbtn = (FrameButton) aComp[n];
+                Container   frame  = frmbtn.getFrame();
+
+                if( frame.getParent() == waActive )
+                {
+                    boolean b = (frame instanceof Frame) ? ((Frame) frame).isActive()
+                                                         : ((JInternalFrame) frame).isSelected();
+                    frmbtn.setSelected( b );
+                }
             }
         }
-        
-        grid.setColumns( getComponentCount() );
-        grid.layoutContainer( this );
-        repaint();
     }
     
     //------------------------------------------------------------------------//
@@ -218,16 +209,13 @@ public class FramesList extends TaskPanel
     //------------------------------------------------------------------------//
     private class TheWorkAreaListener implements WorkAreaListener
     {
-        public void componentAdded( Component comp )
+        public void componentAdded( DeskComponent comp )
         {
-            if( comp instanceof PDEFrame )
-                FramesList.this.add( (PDEFrame) comp );
-                
-            if( comp instanceof Frame )           // Used for Frame and JFrame
-                FramesList.this.add( (Frame) comp );
+                 if( comp instanceof PDEFrame ) FramesList.this.add( (PDEFrame) comp );
+            else if( comp instanceof Frame    ) FramesList.this.add( (Frame)    comp ); // Used for Frame and JFrame
         }
 
-        public void componentRemoved( Component comp )
+        public void componentRemoved( DeskComponent comp )
         {
             // Not needed to remove the listener -> G.C. takes care of it
         }

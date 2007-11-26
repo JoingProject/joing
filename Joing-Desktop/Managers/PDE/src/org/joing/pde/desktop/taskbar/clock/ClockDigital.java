@@ -13,6 +13,7 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JCheckBoxMenuItem;
@@ -22,24 +23,24 @@ import javax.swing.JPopupMenu;
 import javax.swing.Timer;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
-import org.joing.pde.desktop.taskbar.TaskPanel;
+import org.joing.common.desktopAPI.DeskComponent;
 
 /**
  *
  * @author Francisco Morero Peyrona
  */
-public class ClockDigital extends TaskPanel
+public class ClockDigital extends JPanel implements DeskComponent
 {
     private final static float nFONT_SIZE = 10f;
     
     private SimpleDateFormat sdfTime;
-    private SimpleDateFormat sdfDate;
-    private JLabel  lblTime;
-    private JLabel  lblDate;
-    private boolean bShowDate;
-    private boolean bShowSecs;
-    private boolean b24Format;
-    private Timer   timer;
+    private DateFormat       dfDate;
+    private JLabel           lblTime;
+    private JLabel           lblDate;
+    private boolean          bShowDate;
+    private boolean          bShowSecs;
+    private boolean          b24Format;
+    private Timer            timer;
     
     //------------------------------------------------------------------------//
     
@@ -56,8 +57,7 @@ public class ClockDigital extends TaskPanel
         setLayout( new BorderLayout() );
         add( lblTime, BorderLayout.CENTER );
         add( lblDate, BorderLayout.SOUTH  );
-      
-        setOpaque( false );
+        
         setInheritsPopupMenu( true );
         
         changeFormat( true, true, true );
@@ -67,17 +67,7 @@ public class ClockDigital extends TaskPanel
         {
             public void actionPerformed( ActionEvent ae )
             {
-                Date date = new Date();
-                
-                ClockDigital.this.lblTime.setText( ClockDigital.this.sdfTime.format( date ) );
-                
-                if( ClockDigital.this.bShowDate )
-                {
-                    String sDate = ClockDigital.this.sdfDate.format( date );
-                    
-                    if( ! ClockDigital.this.lblDate.getText().equals( sDate ) )
-                        ClockDigital.this.lblDate.setText( sDate );
-                }
+                ClockDigital.this.update();
             }
         } );
         
@@ -103,10 +93,21 @@ public class ClockDigital extends TaskPanel
 
     protected void onPreferencesChanged( JPanel pnlPrefs )
     {
-        // As this component has no preferences panel, tehre is nothing to do.
+        // As this component has no preferences panel, there is nothing to do.
     }
     
     //------------------------------------------------------------------------//
+    
+    protected void update()
+    {
+        long nSecsFromMidnight = (System.currentTimeMillis() / 1000) % (24 * 60 * 60);
+        Date date = new Date();
+                
+        lblTime.setText( sdfTime.format( date ) );
+                
+        if( (nSecsFromMidnight <= 1) || (lblDate.getText().isEmpty()) )
+            lblDate.setText( dfDate.format( date ) );
+    }
     
     private void changeFormat( boolean bShowDate, boolean bShowSecs, boolean b24Format )
     {
@@ -115,8 +116,8 @@ public class ClockDigital extends TaskPanel
         this.b24Format = b24Format;
         
         sdfTime = new SimpleDateFormat( (bShowSecs ? "HH:mm:ss" : "HH:mm") + (b24Format ? "" : " a" ) );
-        sdfDate = new SimpleDateFormat( "dd/MM/yyyy" ); // TODO: la fecha tiene que estar en formato Local
-
+        dfDate = DateFormat.getDateInstance( DateFormat.MEDIUM );
+        
         float nFontSize = (float) (bShowDate ? nFONT_SIZE : nFONT_SIZE * 1.2);
         
         lblTime.setFont( getFont().deriveFont( Font.PLAIN, nFontSize ) );
@@ -162,11 +163,9 @@ public class ClockDigital extends TaskPanel
             }
         } );
         
-        // Working with inherited PopupMenu
-        JPopupMenu popup = getComponentPopupMenu();
-                   popup.remove( itemPreferences );
-                   popup.add( itemDate, 0 );
-                   popup.add( itemSecs, 1 );
-                   popup.add( item24Hr, 2 );
+        JPopupMenu popup = new JPopupMenu();
+                   popup.add( itemDate );
+                   popup.add( itemSecs );
+                   popup.add( item24Hr );
     }
 }

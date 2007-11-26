@@ -12,8 +12,7 @@ package org.joing.pde.desktop.taskbar.systray;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import javax.swing.JPanel;
-import org.joing.pde.desktop.taskbar.TaskPanel;
+import org.joing.pde.desktop.taskbar.PDETaskBarPanel;
 
 /**
  * AKA: "Notification Area", "Taskbar Status Area", etc.<br>
@@ -23,12 +22,12 @@ import org.joing.pde.desktop.taskbar.TaskPanel;
  * and<br>
  * http://java.sun.com/developer/technicalArticles/J2SE/Desktop/javase6/systemtray/
  * <p>
- * In PDE it is mainly a TaskPanel that has a special name (SysTray) and can be 
- * accessed from the TaskBar.
+ * In PDE it is mainly a PDETaskBarPanel that has a special name (SysTray) and can 
+ * be accessed from the TaskBar.
  *
  * @author Francisco Morero Peyrona
  */
-public class SysTray extends TaskPanel
+public class SysTray extends PDETaskBarPanel
 {
     private static final int nHGAP = 2;
     
@@ -56,7 +55,7 @@ public class SysTray extends TaskPanel
         }
         
         nWidth += (aComp.length - 1) * nHGAP;
-        nWidth += 12;  // TODO: el 12 es por el component que está a la izq ("||"): hacer esto bien, no así, a lo bestia
+        nWidth += 10;  // TODO: el 12 es por el component que está a la izq ("||"): hacer esto bien, no así, a lo bestia
         
         return new Dimension( nWidth, nHeight );
     }
@@ -69,22 +68,5 @@ public class SysTray extends TaskPanel
     public Dimension getPreferredSize()
     {
         return getMinimumSize();
-    }
-
-    //------------------------------------------------------------------------//
-    
-    protected JPanel getAboutPanel()
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    protected JPanel getPreferencesPanel()
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    protected void onPreferencesChanged(JPanel pnlPrefs)
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

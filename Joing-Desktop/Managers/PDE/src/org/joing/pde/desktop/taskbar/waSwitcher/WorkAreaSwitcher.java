@@ -13,19 +13,19 @@ import java.awt.Insets;
 import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
-import org.joing.common.desktopAPI.Desktop;
-import org.joing.common.desktopAPI.DesktopFactory;
-import org.joing.common.desktopAPI.DesktopListener;
+import org.joing.common.desktopAPI.desktop.Desktop;
+import org.joing.common.desktopAPI.DesktopManagerFactory;
+import org.joing.common.desktopAPI.desktop.DesktopListener;
 import org.joing.common.desktopAPI.taskbar.TaskBar;
 import org.joing.common.desktopAPI.workarea.WorkArea;
-import org.joing.pde.desktop.taskbar.TaskPanel;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
+import org.joing.pde.swing.PDEDeskComponent;
 
 /**
  *
  * @author fmorero
  */
-public class WorkAreaSwitcher extends TaskPanel
+public class WorkAreaSwitcher extends PDEDeskComponent
 {
     private GridLayout grid;
     
@@ -38,9 +38,9 @@ public class WorkAreaSwitcher extends TaskPanel
         setLayout( grid );
         setBorder( new LineBorder( Color.black, 1 ) );
         setInheritsPopupMenu( true );  // It is also inherited by sub-components
-        setHandleVisible( false );
+        //setHandleVisible( false );
         
-        Desktop desktop = DesktopFactory.getDM().getDesktop();
+        Desktop desktop = DesktopManagerFactory.getDM().getDesktop();
         
         // Traverse existing workareas: one or more workareas would exist when this component is shown.
         List<WorkArea> lstWorAreas = desktop.getWorkAreas();

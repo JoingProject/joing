@@ -17,26 +17,18 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import javax.swing.AbstractButton;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JInternalFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
 import javax.swing.JToolTip;
 import javax.swing.event.MouseInputAdapter;
-import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.container.FramePopupMenu;
 import org.joing.pde.desktop.container.PDEFrame;
-import org.joing.pde.PDERuntime;
 
 /**
  * Every button in the Frames List: each one represents a Frame, JFrame or 

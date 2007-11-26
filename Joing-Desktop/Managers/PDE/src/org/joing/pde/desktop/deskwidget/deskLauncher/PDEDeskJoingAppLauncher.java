@@ -48,7 +48,7 @@ public class PDEDeskJoingAppLauncher extends PDEDeskLauncher
             image = ad.getPNGIcon();
         
         setName( ad.getName() );
-        setDescription( ad.getDescription() );
+        setToolTipText( ad.getDescription() );
         
         if( image.length > 0 )   // If (len == 0) => ther is no image defined
             setImage( new ImageIcon( image ).getImage() );

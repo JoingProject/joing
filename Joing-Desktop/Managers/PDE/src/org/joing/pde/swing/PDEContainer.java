@@ -1,38 +1,33 @@
 /*
- * (c) Telco Domótica S.L.
- * Todos los derechos reservados.
- * 
- * Creado el 22-ago-2005 a las 16:34:44
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
  */
 
-package org.joing.pde.desktop.container;
+package org.joing.pde.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dimension;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import org.joing.common.desktopAPI.Closeable;
 import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.pane.DeskCanvas;
+import org.joing.common.desktopAPI.DeskContainer;
 
 /**
- * A JPanel placed over the background image (if any) and below all other
- * desktop objects.
- * <p>
- * Useful for information, publicity panels and similar. 
+ * Class implementing the DeskContainer interface.
  * 
  * @author Francisco Morero Peyrona
  */
-public class PDECanvas extends JPanel implements DeskCanvas
+public class PDEContainer extends JPanel implements DeskContainer
 {
     private static final String DONT_USE_ME = "Do not use me";
     
     protected JRootPane root;
     
-    public PDECanvas()
+    //------------------------------------------------------------------------//
+    
+    public PDEContainer()
     {
         setOpaque( false );
         
@@ -54,23 +49,12 @@ public class PDECanvas extends JPanel implements DeskCanvas
         root.getContentPane().remove( (Component) dc );
     }
     
-    /**
-     *  Center this in desktopPane
-     */
-    public void center()
-    {
-        Dimension size1 = getParent().getSize();
-        Dimension size2 = getPreferredSize();
-        int nX = (size1.width  - size2.width)  / 2;
-        int nY = (size1.height - size2.height) / 2;
-        
-        setBounds( Math.max( nX, 0 ), Math.max( nY, 0 ), size2.width, size2.height );
-    }
-    
     public void close()
     {
         close( (Container) this );
     }
+    
+    //------------------------------------------------------------------------//
     
     private void close( Container c )
     {
@@ -93,34 +77,4 @@ public class PDECanvas extends JPanel implements DeskCanvas
     public void add( Component c, Object o, int n ) { throw new IllegalAccessError(DONT_USE_ME); }
     public void remove( Component c )               { throw new IllegalAccessError(DONT_USE_ME); }
     //------------------------------------------------------------------------------------------------
-    
-    //------------------------------------------------------------------------//
-    // METHODS REDIRECTED TO this.root
-    // FIXME: var cómo hacer las cosas sin public galsspane
-    public Component getGlassPane()
-    {
-        return root.getGlassPane();
-    }
-    
-    public void setGlassPane( Component glass )
-    {
-        root.setGlassPane( glass );
-    }
-    
-    /**
-     *
-     */
-    public void setTranslucency( int nPercent )
-    {
-        nPercent = (nPercent < 0 ? 0 : nPercent > 100 ? 100 : nPercent);
-        nPercent = 255 * nPercent / 100;    // Pasarlo de 0 a 100 a 0 a 255
-        
-        setOpaque( nPercent == 0 );
-        
-        if( nPercent > 0 )
-        {
-            Color clr = getBackground();
-            setBackground( new Color( clr.getRed(), clr.getGreen(), clr.getBlue(), 255 - nPercent ) );
-        }
-    }
 }

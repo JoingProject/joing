@@ -1,5 +1,5 @@
 /*
- * TaskPanel.java
+ * PDETaskBarPanel.java
  *
  * Created on 15 de septiembre de 2007, 22:07
  *
@@ -10,6 +10,7 @@
 package org.joing.pde.desktop.taskbar;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -19,53 +20,70 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import org.joing.common.desktopAPI.DesktopFactory;
+import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.common.desktopAPI.DesktopManagerFactory;
+import org.joing.common.desktopAPI.pane.DeskFrame;
+import org.joing.common.desktopAPI.taskbar.TaskBarListener;
+import org.joing.common.desktopAPI.taskbar.TaskBarPanel;
 import org.joing.pde.desktop.container.PDEFrame;
+import org.joing.pde.swing.JToolBarHandle;
+import org.joing.pde.swing.PDEContainer;
 
 /**
  * The base class for most part of the widtgets that are shown in the TaskBar.
  * 
  * @author Francisco Morero Peyrona
  */
-public abstract class TaskPanel extends JPanel implements MouseListener
+public class PDETaskBarPanel 
+       extends JPanel 
+       implements MouseListener, 
+                  TaskBarPanel
 {
-    private JLabel handle;
+    private boolean        bLocked;
+    private JToolBarHandle handle;
     
     // Popup menu items
     protected JMenuItem itemPreferences;
     protected JMenuItem itemAbout;
     protected JMenuItem itemRemove;
     protected JMenuItem itemMove;
+    protected JMenuItem itemLock;
     
     //------------------------------------------------------------------------//
     
-    /** Creates a new instance of TaskPanel */
-    public TaskPanel()
+    /** Creates a new instance of PDETaskBarPanel */
+    public PDETaskBarPanel()
     {
-        handle = new JLabel( "||" );
+        bLocked    = false;
+        handle     = new JToolBarHandle( this );
+        add( handle, BorderLayout.WEST );
         
-        setOpaque( false );
-        addMouseListener( this );
-        add( handle, BorderLayout.EAST );
         setComponentPopupMenu( new CommonPopupMenu() );    // It is inherited by sub-components
+        
+        addMouseListener( this );
     }
     
-    public boolean isHandleVisible()
+    //------------------------------------------------------------------------//
+    // PDETaskBarPanel interface
+    
+    public boolean isLocked()
     {
-        return handle.isVisible();
+        return bLocked;
+    }
+    
+    public void setLocked( boolean b )
+    {
+        bLocked = b; 
+    }
+    
+    public void addTaskBarPanelListener( TaskBarListener tbl )
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
-    public void setHandleVisible( boolean b )
+    public void removeTaskBarPanelListener( TaskBarListener tbl )
     {
-        if( b != isHandleVisible() )
-        {
-            if( b )
-                add( handle, BorderLayout.EAST );
-            else
-                remove( handle );    // If I do not remove it a horrible blank space remains in the component
-            
-            handle.setVisible( b );
-        }
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
     
     //------------------------------------------------------------------------//
@@ -91,39 +109,53 @@ public abstract class TaskPanel extends JPanel implements MouseListener
     public void mouseExited(MouseEvent e)
     {
     }
-
+    
     //------------------------------------------------------------------------//
     
-    protected abstract JPanel getAboutPanel();
+    protected DeskComponent getAboutPanel()
+    {
+        // FIXME: Decidir qué hacer con esto
+        return null;
+    }
     
-    protected abstract JPanel getPreferencesPanel();
+    protected DeskComponent getPreferencesPanel()
+    {
+        // FIXME: Decidir qué hacer con esto
+        return null;
+    }
     
-    protected abstract void onPreferencesChanged( JPanel pnlPrefs );
+    protected void onPreferencesChanged( DeskComponent prefs )
+    {
+        // FIXME: Decidir qué hacer con esto
+    }
         
     //------------------------------------------------------------------------//
     
     private void onPreferences()
     {
-        JPanel pnlPrefs = getPreferencesPanel();
+        DeskComponent prefs = getPreferencesPanel();
         
-        if( pnlPrefs != null )
-            DesktopFactory.getDM().getDesktop().add( new TheFrame( pnlPrefs ) );
+        if( prefs != null )
+            DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea().add( new TheFrame( (Component) prefs ) );
     }
     
     private void onAbout()
     {
-        JPanel pnlAbout = getAboutPanel();
+        DeskComponent about = getAboutPanel();
         
-        if( pnlAbout == null )
+        if( about == null )
         {
-            pnlAbout = new JPanel();
-            pnlAbout.add( new JLabel( "There is no information about this component." ) );
+            JPanel pnl = new JPanel();
+                   pnl.add( new JLabel( "There is no information about this component." ) );
+            about = (DeskComponent) pnl;
         }
         
         // Better to use a Frame than a Dialog (modaless: this is the way Gnome does it)
-        PDEFrame frame = new PDEFrame( "About" );
-                 frame.add( pnlAbout );
-        DesktopFactory.getDM().getDesktop().add( frame );
+        DeskFrame frame = DesktopManagerFactory.getDM().getRuntime().createFrame();
+                  frame.setTitle( "About" );
+                  frame.add( about );
+                  
+        DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea().add( frame );
     }
     
     private void onRemove()
@@ -136,6 +168,11 @@ public abstract class TaskPanel extends JPanel implements MouseListener
         throw new UnsupportedOperationException( "Operation not supported yet." );
     }
     
+    private void onLock()
+    {
+        bLocked = ! bLocked;
+    }
+    
     //------------------------------------------------------------------------//
     // INNER CLASS: Popup Menu
     //------------------------------------------------------------------------//
@@ -145,25 +182,31 @@ public abstract class TaskPanel extends JPanel implements MouseListener
         {   
             itemPreferences = new JMenuItem( "Preferences" );
             itemPreferences.addActionListener( this );
-            itemPreferences.setIcon( DesktopFactory.getDM().getRuntime().getIcon( null, "properties.png", 16, 16 ) );
+            itemPreferences.setIcon( DesktopManagerFactory.getDM().getRuntime().getIcon( null, "properties.png", 16, 16 ) );
             add( itemPreferences );
             
             itemAbout = new JMenuItem( "About" );
             itemAbout.addActionListener( this );
-            itemAbout.setIcon( DesktopFactory.getDM().getRuntime().getIcon( null, "info.png", 16, 16 ) );
+            itemAbout.setIcon( DesktopManagerFactory.getDM().getRuntime().getIcon( null, "info.png", 16, 16 ) );
             add( itemAbout );
             
             addSeparator();
             
             itemRemove = new JMenuItem( "Remove" );
             itemRemove.addActionListener( this );
-            itemRemove.setIcon( DesktopFactory.getDM().getRuntime().getIcon( null, "remove.png", 16, 16 ) );
+            itemRemove.setIcon( DesktopManagerFactory.getDM().getRuntime().getIcon( null, "remove.png", 16, 16 ) );
             add( itemRemove );
             
             itemMove = new JMenuItem( "Move" );
             itemMove.addActionListener( this );
-            itemMove.setIcon( DesktopFactory.getDM().getRuntime().getIcon( null, "move.png", 16, 16 ) );
+            itemMove.setIcon( DesktopManagerFactory.getDM().getRuntime().getIcon( null, "move.png", 16, 16 ) );
+            itemMove.setEnabled( ! isLocked() );
             add( itemMove );
+            
+            itemLock = new JMenuItem( "Lock" );
+            itemLock.addActionListener( this );
+            itemLock.setIcon( DesktopManagerFactory.getDM().getRuntime().getIcon( null, "lock.png", 16, 16 ) );
+            add( itemLock );
         }
         
         public void actionPerformed( ActionEvent ae )
@@ -174,6 +217,7 @@ public abstract class TaskPanel extends JPanel implements MouseListener
             else if( source == itemAbout       )  onAbout();
             else if( source == itemRemove      )  onRemove();
             else if( source == itemMove        )  onMove();
+            else if( source == itemLock        )  onLock();
         }
     }
     
@@ -183,22 +227,22 @@ public abstract class TaskPanel extends JPanel implements MouseListener
     
     private final class TheFrame extends PDEFrame
     {
-        private JButton btnAccept;
-        private JButton btnCancel;
-        private JPanel  pnlContents;
+        private JButton   btnAccept;
+        private JButton   btnCancel;
+        private Component contents;
         
-        TheFrame( JPanel pnl )
+        TheFrame( Component pnl )
         {
-            pnlContents = pnl;
-            btnAccept   = new JButton( "Accept" );
-            btnCancel   = new JButton( "Cancel" );
+            contents  = pnl;
+            btnAccept = new JButton( "Accept" );
+            btnCancel = new JButton( "Cancel" );
 
             btnAccept.addActionListener( new ActionListener()
             {
                 public void actionPerformed( ActionEvent ae )
                 {
                     dispose();
-                    onPreferencesChanged( TheFrame.this.pnlContents );
+                    onPreferencesChanged( (DeskComponent) TheFrame.this.contents );
                 }
             } );
         
@@ -217,7 +261,7 @@ public abstract class TaskPanel extends JPanel implements MouseListener
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                     .addContainerGap()
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(pnlContents, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(contents, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(btnAccept)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -228,7 +272,7 @@ public abstract class TaskPanel extends JPanel implements MouseListener
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(pnlContents, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(contents, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGap(18, 18, 18)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnAccept)
@@ -236,5 +280,20 @@ public abstract class TaskPanel extends JPanel implements MouseListener
                     .addContainerGap())
             );
         }
+    }
+
+    public void add( DeskComponent dc )
+    {
+        add( (Component) dc );
+    }
+
+    public void remove( DeskComponent dc )
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+    public void close()
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 }

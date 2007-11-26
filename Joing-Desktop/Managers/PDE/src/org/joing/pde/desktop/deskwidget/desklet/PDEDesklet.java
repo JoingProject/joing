@@ -9,8 +9,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
-import org.joing.common.desktopAPI.DesktopFactory;
 import org.joing.common.desktopAPI.workarea.WorkArea;
+import org.joing.pde.PDEUtilities;
 import org.joing.pde.desktop.deskwidget.PDEDeskWidget;
 
 /**
@@ -54,6 +54,11 @@ public abstract class PDEDesklet extends PDEDeskWidget //implements
         return dimMin;
     }
     
+    public void close()
+    {
+        onClose();
+    }
+    
     // TODO: Mirar aquí 
     // http://msdn.microsoft.com/msdnmag/issues/07/08/SideBar/default.aspx?loc=es
     //------------------------------------------------------------------------//
@@ -78,7 +83,7 @@ public abstract class PDEDesklet extends PDEDeskWidget //implements
      */
     protected void onClose()
     {
-        WorkArea wa = DesktopFactory.getDM().getDesktop().findWorkAreaFor( this );
+        WorkArea wa = PDEUtilities.findWorkAreaFor( this );
         
         wa.remove( this );
         ((Component) wa).repaint( getX(), getY(), getWidth(), getHeight() );
