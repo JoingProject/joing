@@ -15,7 +15,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import org.joing.common.desktopAPI.DesktopFactory;
+import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 
 /**
@@ -37,8 +37,8 @@ class WorkAreaPopupMenu extends JPopupMenu implements ActionListener
         addSeparator();
         add( createMenuItem( "Properties"     , "properties", "PROPERTIES"   ) );
 
-        List<WorkArea> lstWorkAreas = DesktopFactory.getDM().getDesktop().getWorkAreas();
-        WorkArea       waActive     = DesktopFactory.getDM().getDesktop().getActiveWorkArea();
+        List<WorkArea> lstWorkAreas = DesktopManagerFactory.getDM().getDesktop().getWorkAreas();
+        WorkArea       waActive     = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
         
         if( lstWorkAreas.size() > 1 )
         {
@@ -70,9 +70,9 @@ class WorkAreaPopupMenu extends JPopupMenu implements ActionListener
             ImageIcon icon = null;
 
             if( sIconName.equals( "grid" ) )
-                icon = DesktopFactory.getDM().getRuntime().getIcon( this, "images/"+ sIconName +".png", 16, 16 );
+                icon = DesktopManagerFactory.getDM().getRuntime().getIcon( this, "images/"+ sIconName +".png", 16, 16 );
             else
-                icon = DesktopFactory.getDM().getRuntime().getIcon( null, sIconName +".png", 16, 16 );
+                icon = DesktopManagerFactory.getDM().getRuntime().getIcon( null, sIconName +".png", 16, 16 );
 
             item.setIcon( icon );
         }
@@ -96,30 +96,30 @@ class WorkAreaPopupMenu extends JPopupMenu implements ActionListener
     private void switchToWorkArea( JMenuItem item )
     {
         WorkArea waTarget = (WorkArea) item.getClientProperty( "WORK_AREA" );
-        DesktopFactory.getDM().getDesktop().setActiveWorkArea( waTarget ); 
+        DesktopManagerFactory.getDM().getDesktop().setActiveWorkArea( waTarget ); 
     }
     
     private void createFolder()
     {
         // TODO: hacerlo
-        DesktopFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopManagerFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
     }
     
     private void createLauncher()
     {
         // TODO: hacerlo
-        DesktopFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopManagerFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
     }
     
     private void toggleAlign()
     {
         // TODO: hacerlo
-        DesktopFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopManagerFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
     }
     
     private void editProperties()
     {
         // TODO: hacerlo
-        DesktopFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopManagerFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
     }
 }

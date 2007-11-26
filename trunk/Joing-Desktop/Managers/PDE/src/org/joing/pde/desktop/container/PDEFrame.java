@@ -6,17 +6,20 @@
 package org.joing.pde.desktop.container;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
-import org.joing.common.desktopAPI.Selectable;
-import org.joing.common.desktopAPI.container.DeskFrame;
+import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.common.desktopAPI.pane.DeskFrame;
 
 /**
  * An improved JInternalFrame.
@@ -31,74 +34,48 @@ import org.joing.common.desktopAPI.container.DeskFrame;
  * </ul>
  * @author Francisco Morero Peyrona
  */
-public class PDEFrame 
-       extends JInternalFrame 
-        implements Selectable, DeskFrame
+public class PDEFrame extends JInternalFrame implements DeskFrame
 {
     private boolean bAlwaysOnTop = false;
-    private boolean bAutoArrange = true;
     
     //------------------------------------------------------------------------//
     
     public PDEFrame()
-    {
-        this( "" );
-    }
-
-    public PDEFrame( String title )
-    {
-        this( title, true );
-    }
-
-    public PDEFrame( String title, boolean resizable )
-    {
-        this( title, resizable, true );
-    }
-
-    public PDEFrame( String title, boolean resizable, boolean closable )
-    {
-        super( title, resizable, closable, true, true );
-        init();
+    {           // resizable, closable, maximizable, minimizable
+        super( "", true, true, true, true );
     }
     
     //------------------------------------------------------------------------//
+    // Container interface
     
-    public void maximize()
+    public void add( DeskComponent dc )
+    {
+        getContentPane().add( (Component) dc );
+    }
+    
+    public void remove( DeskComponent dc )
+    {
+        getContentPane().remove( (Component) dc );
+    }
+    
+    //------------------------------------------------------------------------//
+    // Closeable interface
+    
+    public void close()
     {
         try
         {
-            if( ! isMaximum() )
-            {
-                if( isIcon() )
-                    setIcon( false );
-            
-                setMaximum( true );
-            }
+            setClosed( true );
         }
         catch( PropertyVetoException exc )
         {
-            // Nothing to do
         }
+        
+        dispose();
     }
     
-    /** Used by FramesList */
-    public void restore()
-    {
-        try
-        {
-            if( isIcon() || isMaximum() )
-            {
-                if( isIcon() )
-                    setIcon( false );
-                
-                setMaximum( false );
-            }
-        }
-        catch( PropertyVetoException exc )
-        {
-            // Nothing to do
-        }
-    }
+    //------------------------------------------------------------------------//
+    // DeskWindow interface
     
     public void setSelected( boolean bSelected )
     {
@@ -112,8 +89,21 @@ public class PDEFrame
         }
     }
     
+    public void setIcon( Image image )
+    {
+        setFrameIcon( new ImageIcon( image ) );
+    }
+    
+    public Image getIcon()
+    {
+        return ((ImageIcon) getFrameIcon()).getImage();
+    }
+    
     /**
-     * Redefined because I need a different behaviour when a JInterlFrame is iconnized.
+     * Redefined from JInternalFrame because I need a different behaviour 
+     * when a JInterlFrame is iconnized.
+     * <p>
+     * This method can't be provate but should not be used outside of this class.
      */
     public void setIcon( boolean bIcon )
     {
@@ -149,6 +139,40 @@ public class PDEFrame
             setSelected( ! bIcon );
             setVisible( ! bIcon );
         }
+    }    
+    
+    public void center()
+    {
+        if( getDesktopPane() != null )
+        {
+            Container cp = getDesktopPane();
+            int       nX = (cp.getSize().width  - getWidth())  / 2;
+            int       nY = (cp.getSize().height - getHeight()) / 2;
+            
+            setLocation( Math.max( nX, 0 ), Math.max( nY, 0 ) );
+        }
+    }
+    
+    //------------------------------------------------------------------------//
+    // DeskFrame Interface
+    
+    public void setStatus( Status status )
+    {
+        switch( status )
+        {
+            case MAXIMIZED: maximize(); break;
+            case MINIMIZED: minimize(); break;
+            case RESTORED : restore();  break;
+        }
+    }
+    
+    public Status getStatus()
+    {
+        if( isMaximum() ) return Status.MAXIMIZED;
+        if( isIcon() )    return Status.MINIMIZED;
+        
+        return Status.RESTORED;
+            
     }
     
     public boolean isAlwaysOnTop()
@@ -164,6 +188,9 @@ public class PDEFrame
         }
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+    //------------------------------------------------------------------------//
+    // Special PDE methods
     
     public void setTranslucency( int nPercent )
     {
@@ -181,46 +208,54 @@ public class PDEFrame
         repaint();
     }
     
-    public void center()
+    //------------------------------------------------------------------------//
+    // PRIVATES
+    
+    private void minimize()
     {
-        if( getDesktopPane() != null )
+        setIcon( true );
+    }
+    
+    private void maximize()
+    {
+        try
         {
-            Container cp = getDesktopPane();
-            int       nX = (cp.getSize().width  - getWidth())  / 2;
-            int       nY = (cp.getSize().height - getHeight()) / 2;
+            if( ! isMaximum() )
+            {
+                if( isIcon() )
+                    setIcon( false );
             
-            setLocation( Math.max( nX, 0 ), Math.max( nY, 0 ) );
+                setMaximum( true );
+            }
+        }
+        catch( PropertyVetoException exc )
+        {
+            // Nothing to do
         }
     }
     
-    /**
-     * Return AutoArrange property status.
-     * @return AutoArrange property status.
-     */
-    public boolean isAutoArrange()
+    /** Used by FramesList */
+    private void restore()
     {
-        return bAutoArrange;
+        try
+        {
+            if( isIcon() || isMaximum() )
+            {
+                if( isIcon() )
+                    setIcon( false );
+                
+                setMaximum( false );
+            }
+        }
+        catch( PropertyVetoException exc )
+        {
+            // Nothing to do
+        }
     }
-
-    /**
-     * If <code>true</code>, when frame is added to the WorkArea, it will be 
-     * automatically packed, centered, selected and moved to front.
-     * <p>
-     * By default it is <code>true</code>.
-     * 
-     * @param bAutoArrange New AutoArrange property status
-     */
-    public void setAutoArrange( boolean bAutoArrange )
-    {
-        this.bAutoArrange = bAutoArrange;
-    }
-    
-    //------------------------------------------------------------------------//
     
     private void init()
     {
         setDefaultCloseOperation( JInternalFrame.DISPOSE_ON_CLOSE );
-        setAutoArrange( true );
         
         JComponent pane = ((BasicInternalFrameUI) getUI()).getNorthPane();
         

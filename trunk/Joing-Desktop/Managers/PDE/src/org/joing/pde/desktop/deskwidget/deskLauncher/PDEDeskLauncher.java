@@ -32,7 +32,7 @@ import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
-import org.joing.common.desktopAPI.DesktopFactory;
+import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.Launcher;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.LauncherEvent;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.LauncherEventListener;
@@ -73,19 +73,18 @@ public class PDEDeskLauncher extends PDEDeskWidget implements Launcher
     
     public PDEDeskLauncher( String sName, Image image )
     {
-        this( sName, image, null );
-    }
-    
-    public PDEDeskLauncher( String sName, Image image, String sDescription )
-    {
         if( image == null )
-            image = DesktopFactory.getDM().getRuntime().getIcon( null, "launcher.png" ).getImage();
+            image = DesktopManagerFactory.getDM().getRuntime().getIcon( null, "launcher.png" ).getImage();
         
         initGUI();
         
         setName( sName );
         setImage( image );
-        setDescription( sDescription );
+    }
+    
+    public void close()
+    {
+        // Nothing to do
     }
     
     //------------------------------------------------------------------------//
@@ -190,7 +189,6 @@ public class PDEDeskLauncher extends PDEDeskWidget implements Launcher
     { // TODO: hay que revisar todos los clone para poder hacer los cut, copy & paste
         PDEDeskLauncher clone = new PDEDeskLauncher();
                         clone.setName( "Copy of "+ getName() );
-                        clone.setDescription( getDescription() );
                         clone.setImage( getImage() );
                  
         return clone;
@@ -204,30 +202,30 @@ public class PDEDeskLauncher extends PDEDeskWidget implements Launcher
     // This method is called from this.GlassPaneMouseListner::mousePressed(...)
     protected void setSelected( final boolean bNewStatus, final boolean bIncremental )
     {
-        if( bNewStatus != isSelected() )
-        {
-            // FIXME: En lugar de buscar el padre e invocar sus métodos, sería 
-            //        más elegante (y más acorde con Java) lanzar simplemente
-            //        el evento y que el padre lo escuche y reaccione
-            if( PDEDeskLauncher.this.getParent() != null && 
-                PDEDeskLauncher.this.getParent() instanceof PDEWorkArea )
-            {
-                PDEWorkArea wa = (PDEWorkArea) PDEDeskLauncher.this.getParent();
-
-                if( ! bIncremental )
-                    wa.setSelected( Component.class, false );  // Deselects all
-                else
-                    wa.moveToFront( PDEDeskLauncher.this );
-            }
-
-            setSelected( bNewStatus );
-            
-            // When selection is incremental, 2 events are fired: the 1st one
-            // indicating that the Launcher was selected and the 2nd one 
-            // indicating that it is an incremental selection
-            if( bIncremental )
-                fireSelectionIncrementalEvent( new LauncherEvent( this, bNewStatus ) );
-        }
+//        if( bNewStatus != isSelected() )
+//        {
+//            // FIXME: En lugar de buscar el padre e invocar sus métodos, sería 
+//            //        más elegante (y más acorde con Java) lanzar simplemente
+//            //        el evento y que el padre lo escuche y reaccione
+//            if( PDEDeskLauncher.this.getParent() != null && 
+//                PDEDeskLauncher.this.getParent() instanceof PDEWorkArea )
+//            {
+//                PDEWorkArea wa = (PDEWorkArea) PDEDeskLauncher.this.getParent();
+//
+//                if( ! bIncremental )
+//                    wa.setSelected( Component.class, false );  // Deselects all
+//                else
+//                    wa.moveToFront( PDEDeskLauncher.this );
+//            }
+//
+//            setSelected( bNewStatus );
+//            
+//            // When selection is incremental, 2 events are fired: the 1st one
+//            // indicating that the Launcher was selected and the 2nd one 
+//            // indicating that it is an incremental selection
+//            if( bIncremental )
+//                fireSelectionIncrementalEvent( new LauncherEvent( this, bNewStatus ) );
+//        }
     }
     
     //------------------------------------------------------------------------//
@@ -238,12 +236,12 @@ public class PDEDeskLauncher extends PDEDeskWidget implements Launcher
     //       llamar al container (WorkArea)
     public void delete()
     {
-        if( DesktopFactory.getDM().getRuntime().confirmDialog( "Delete launcher", 
+        if( DesktopManagerFactory.getDM().getRuntime().confirmDialog( "Delete launcher", 
                                                    "Are you sure you want to delete it?\n"+
                                                    "(deleted objects can not be recovered)" ) )
         {
             WorkArea workArea = (PDEWorkArea) SwingUtilities.getAncestorOfClass( PDEWorkArea.class, this );
-                     workArea.remove( this );
+                     // FIXME: hacerlo --> workArea.remove( this );
                 
             // There is not a fireLauncherDeleted() because it can be resolved   
             // by adding a listner to the WorkArea
@@ -252,16 +250,16 @@ public class PDEDeskLauncher extends PDEDeskWidget implements Launcher
     
     public void toTrashcan()
     {
-        if( DesktopFactory.getDM().getRuntime().confirmDialog( "Send launcher to trashcan", 
+        if( DesktopManagerFactory.getDM().getRuntime().confirmDialog( "Send launcher to trashcan", 
                                                    "Are you sure you want to send it to trashcan?" ) )
         {
             
             PDEWorkArea workArea = (PDEWorkArea) SwingUtilities.getAncestorOfClass( PDEWorkArea.class, this );
-                        workArea.remove( this );
+                        // FIXME: hacerlo --> workArea.remove( this );
                         
             // TODO: mandarlo a la papelera e implementar el fire
             // fireLauncherToTrashcan( this );
-            DesktopFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
+            DesktopManagerFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
         }
     }
     
@@ -454,7 +452,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements Launcher
                       item.addActionListener( this );
                       
             if( sIconName != null )
-                item.setIcon( DesktopFactory.getDM().getRuntime().getIcon( null, sIconName +".png", 16, 16 ) );
+                item.setIcon( DesktopManagerFactory.getDM().getRuntime().getIcon( null, sIconName +".png", 16, 16 ) );
             
             return item;
         }

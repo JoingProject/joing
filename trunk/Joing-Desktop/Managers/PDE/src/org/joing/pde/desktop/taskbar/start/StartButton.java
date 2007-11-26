@@ -20,14 +20,15 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.MenuSelectionManager;
 import javax.swing.border.EmptyBorder;
-import org.joing.common.desktopAPI.DesktopFactory;
+import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.pde.swing.ImageHighlightFilter;
 
 /**
  *
  * @author fmorero
  */
-public final class StartButton extends JLabel
+public final class StartButton extends JLabel implements DeskComponent
 {
     private ImageIcon icon;
     private StartMenu popup;
@@ -39,7 +40,7 @@ public final class StartButton extends JLabel
         popup = new StartMenu();            
         initGUI();        
     }
-    
+        
     // Redefined from JComponent
     public Point getPopupLocation()
     {
@@ -71,7 +72,7 @@ public final class StartButton extends JLabel
     
     private void initGUI()
     {
-        icon = DesktopFactory.getDM().getRuntime().getIcon( this, "images/start.png" );
+        icon = DesktopManagerFactory.getDM().getRuntime().getIcon( this, "images/start.png" );
         
         setBorder( new EmptyBorder( 0,2,0,4 ) );
         setIcon( icon );

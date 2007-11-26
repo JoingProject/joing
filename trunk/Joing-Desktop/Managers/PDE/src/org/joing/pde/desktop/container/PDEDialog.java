@@ -10,18 +10,19 @@ package org.joing.pde.desktop.container;
 
 import java.awt.Container;
 import javax.swing.JOptionPane;
-import org.joing.common.desktopAPI.container.DeskDialog;
+import org.joing.common.desktopAPI.pane.DeskDialog;
+import org.joing.common.desktopAPI.pane.DeskFrame;
 
 /**
  *
  *
  * @author Francisco Morero Peyrona
  */
-public class PDEDialog extends JOptionPane implements DeskDialog
+public class PDEDialog extends PDEFrame implements DeskDialog
 { // FIXME: hay que mejorar esta clase: estudiar la JOptionPane
     
-    private String    sTitle;
     private Container owner;
+    private DeskDialog.ExitValue exitValue = DeskDialog.ExitValue.CANCELED;
     
     //------------------------------------------------------------------------//
 
@@ -29,23 +30,28 @@ public class PDEDialog extends JOptionPane implements DeskDialog
     {
     }
     
-    public PDEDialog( PDEFrame owner )
+    public PDEDialog( DeskFrame owner )
     {
-        this.owner = owner;
+        this.owner = (PDEFrame) owner;
     }
     
-    public PDEDialog( PDEDialog owner )
+    public PDEDialog( DeskDialog owner )
     {
-        this.owner = owner;
+        this.owner = (PDEDialog) owner;
+    }
+    
+    public boolean isModal()
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
-    public String getTitle()
+    public void setModal( boolean b )
     {
-        return this.sTitle;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
-
-    public void setTitle( String sTitle )
+    
+    public DeskDialog.ExitValue getExitValue()
     {
-        this.sTitle = sTitle;
+        return exitValue;
     }
 }

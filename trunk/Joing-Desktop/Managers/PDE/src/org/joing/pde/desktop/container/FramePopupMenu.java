@@ -14,7 +14,8 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import org.joing.common.desktopAPI.DesktopFactory;
+import org.joing.common.desktopAPI.DesktopManagerFactory;
+import org.joing.common.desktopAPI.pane.DeskFrame;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 
 /**
@@ -60,7 +61,7 @@ public class FramePopupMenu extends JPopupMenu
         }
         else
         {
-            ((PDEFrame) getFrame()).setIcon( true );
+            ((PDEFrame) getFrame()).setStatus( DeskFrame.Status.MINIMIZED );
         }
     }
     
@@ -73,7 +74,7 @@ public class FramePopupMenu extends JPopupMenu
         }
         else
         {
-            ((PDEFrame) getFrame()).maximize();
+            ((PDEFrame) getFrame()).setStatus( DeskFrame.Status.MAXIMIZED );
         }
     }
     
@@ -86,7 +87,7 @@ public class FramePopupMenu extends JPopupMenu
         }
         else
         {
-            ((PDEFrame) getFrame()).restore();
+            ((PDEFrame) getFrame()).setStatus( DeskFrame.Status.RESTORED );
         }
     }
     
@@ -114,10 +115,10 @@ public class FramePopupMenu extends JPopupMenu
     
     private void toWorkArea( WorkArea waDestiny )
     {// FIXME: Esto no va bien porque se están cogiendo 2 eventos: el de close window y el de add/remove del work area, creo que habría que coger sólo uno de los dos
-        WorkArea  waOrigin  = DesktopFactory.getDM().getDesktop().getActiveWorkArea();
+        /*WorkArea  waOrigin  = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
         
         waOrigin.remove( getFrame() );
-        waDestiny.add( getFrame() );
+        waDestiny.add( getFrame() );*/
     }
     
     private void init()
@@ -166,8 +167,8 @@ public class FramePopupMenu extends JPopupMenu
                           } );                          
         add( itemCheck );
 
-        List<WorkArea> lstWorkAreas = DesktopFactory.getDM().getDesktop().getWorkAreas();
-        WorkArea       waActive     = DesktopFactory.getDM().getDesktop().getActiveWorkArea();
+        List<WorkArea> lstWorkAreas = DesktopManagerFactory.getDM().getDesktop().getWorkAreas();
+        WorkArea       waActive     = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
 
         if( lstWorkAreas.size() > 1 )
         {

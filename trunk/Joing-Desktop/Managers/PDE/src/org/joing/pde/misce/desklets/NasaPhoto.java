@@ -24,8 +24,9 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
-import org.joing.common.desktopAPI.DesktopFactory;
-import org.joing.pde.desktop.container.PDEFrame;
+import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.common.desktopAPI.DesktopManagerFactory;
+import org.joing.common.desktopAPI.pane.DeskFrame;
 import org.joing.pde.desktop.deskwidget.desklet.PDEDesklet;
 
 /**
@@ -68,7 +69,6 @@ public class NasaPhoto extends PDEDesklet implements Runnable
         
         setDelay( 60 );   // 1 min
         
-        setDescription( lblPhoto.getToolTipText() );
         setOpaque( true );
         setBackground( Color.black );
         setBorder( new LineBorder( Color.gray ) );
@@ -90,7 +90,7 @@ public class NasaPhoto extends PDEDesklet implements Runnable
     
     public void onSetup()
     {
-        DesktopFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopManagerFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
         // todo: hacerlo
     }
     
@@ -234,9 +234,13 @@ public class NasaPhoto extends PDEDesklet implements Runnable
     {
         if( image != null )
         {
-            PDEFrame frame = new PDEFrame( "NASA Astronomy Picture" );
-                     frame.add( new JScrollPane( new JLabel( new ImageIcon( image ) ) ) );
-            DesktopFactory.getDM().getDesktop().add( frame );
+            JScrollPane sp = new JScrollPane( new JLabel( new ImageIcon( image ) ) );
+            
+            DeskFrame frame = DesktopManagerFactory.getDM().getRuntime().createFrame();
+                      frame.setTitle( "NASA Astronomy Picture" );
+                      frame.add( (DeskComponent) sp );
+                      
+            DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea().add( frame );
         }
     }
 }

@@ -33,7 +33,7 @@ import javax.swing.JApplet;
 import javax.swing.JFrame;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.clientAPI.runtime.Bridge2Server;
-import org.joing.common.desktopAPI.DesktopFactory;
+import org.joing.common.desktopAPI.DesktopManagerFactory;
 
 /**
  * DesktopManager interface implementation.
@@ -65,7 +65,7 @@ public class PDEManager extends JApplet implements DesktopManager
         // Continuous layout on frame resize
         Toolkit.getDefaultToolkit().setDynamicLayout( true );
         
-        DesktopFactory.init( this );
+        DesktopManagerFactory.init( this );
     }
     
     //------------------------------------------------------------------------//
@@ -87,35 +87,49 @@ public class PDEManager extends JApplet implements DesktopManager
     
     public void showInFrame()
     {
-        getMainFrame().pack();
-        getMainFrame().setVisible( true );
-        
-        if( Toolkit.getDefaultToolkit().isFrameStateSupported( Frame.MAXIMIZED_BOTH ) )
-            getMainFrame().setExtendedState( Frame.MAXIMIZED_BOTH );
-        else
-            getMainFrame().setSize( Toolkit.getDefaultToolkit().getScreenSize() );
-        
-        getDesktop().load();   // Do not move this line !
+        try
+        {
+            getMainFrame().pack();
+            getMainFrame().setVisible( true );
+
+            if( Toolkit.getDefaultToolkit().isFrameStateSupported( Frame.MAXIMIZED_BOTH ) )
+                getMainFrame().setExtendedState( Frame.MAXIMIZED_BOTH );
+            else
+                getMainFrame().setSize( Toolkit.getDefaultToolkit().getScreenSize() );
+
+            getDesktop().load();   // Do not move this line !
+        }
+        catch( Exception exc )
+        {
+            exc.printStackTrace();   // TODO: mostrarla sólo por pantalla
+        }
     }
     
     public void showInFullScreen()
     {
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice      gs = ge.getDefaultScreenDevice();
-        
-        if( gs.isFullScreenSupported() )
+        try
         {
-            getMainFrame().setUndecorated( true );
-            getMainFrame().setResizable( false );
-            getMainFrame().pack();
-            
-            gs.setFullScreenWindow( frame );
-            
-            getDesktop().load();   // Do not move this line !
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            GraphicsDevice      gs = ge.getDefaultScreenDevice();
+
+            if( gs.isFullScreenSupported() )
+            {
+                getMainFrame().setUndecorated( true );
+                getMainFrame().setResizable( false );
+                getMainFrame().pack();
+
+                gs.setFullScreenWindow( frame );
+
+                getDesktop().load();   // Do not move this line !
+            }
+            else
+            {
+                showInFrame();
+            }
         }
-        else
+        catch( Exception exc )
         {
-            showInFrame();
+            exc.printStackTrace();   // TODO: mostrarla sólo por pantalla
         }
     }
     

@@ -39,14 +39,9 @@ public class PDEDeskUserAppLauncher extends PDEDeskLauncher
     
     public PDEDeskUserAppLauncher( String sName, Image image )
     {
-        super( sName, image, null );
+        super( sName, image );
     }
     
-    public PDEDeskUserAppLauncher( String sName, Image image, String sDescription )
-    {
-        super( sName, image, sDescription );
-    }
-
     public String getCommand()
     {
         return this.sCommand;
