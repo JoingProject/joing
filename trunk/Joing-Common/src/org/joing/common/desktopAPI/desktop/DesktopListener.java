@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package org.joing.common.desktopAPI;
+package org.joing.common.desktopAPI.desktop;
 
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import java.util.EventListener;

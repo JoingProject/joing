@@ -12,6 +12,7 @@ package org.joing.common.desktopAPI.workarea;
 import org.joing.common.desktopAPI.Closeable;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DeskContainer;
+import org.joing.common.desktopAPI.pane.DeskWindow;
 
 /**
  *
@@ -24,6 +25,8 @@ public interface WorkArea extends Closeable
     
     void add( DeskComponent dc );    
     void remove( DeskComponent dc );
+    
+    void add( DeskWindow dc, boolean bAutoArrange );    
     
     Wallpaper getWallpaper();
     void      setWallpaper( Wallpaper wallpaper );

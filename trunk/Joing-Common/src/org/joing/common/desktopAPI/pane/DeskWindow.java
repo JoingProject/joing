@@ -25,19 +25,4 @@ public interface DeskWindow extends DeskPane
     
     Image getIcon();
     void  setIcon( Image icon );
-    
-    /**
-     * Return AutoArrange property status.
-     * @return AutoArrange property status.
-     */
-    boolean isAutoArrange();
-    /**
-     * If <code>true</code>, when frame is added to the WorkArea, it will be 
-     * automatically packed, centered, selected and moved to front.
-     * <p>
-     * By default it is <code>true</code>.
-     * 
-     * @param bAutoArrange New AutoArrange property status
-     */
-    void setAutoArrange( boolean bAutoArrange );
 }
