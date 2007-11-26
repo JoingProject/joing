@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package org.joing.common.desktopAPI.container;
+package org.joing.common.desktopAPI.pane;
 
 /**
  * Creates a new dialog.
@@ -18,6 +18,12 @@ package org.joing.common.desktopAPI.container;
  * <p>
  * @author Francisco Morero Peyrona
  */
-public interface DeskDialog extends DeskFrame
+public interface DeskDialog extends DeskWindow
 {
+    public enum ExitValue { CANCELED, ACCEPTED }
+    
+    boolean isModal();
+    void    setModal( boolean  b );
+    
+    ExitValue getExitValue();
 }
