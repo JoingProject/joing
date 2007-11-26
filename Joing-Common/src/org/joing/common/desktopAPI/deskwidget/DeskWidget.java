@@ -9,21 +9,13 @@
 
 package org.joing.common.desktopAPI.deskwidget;
 
-import java.awt.Point;
-import org.joing.common.desktopAPI.container.DeskCanvas;
+import org.joing.common.desktopAPI.pane.DeskCanvas;
 
 /**
- * The base class for a kind of desktop gadgets.
+ * The base class for a kind of desktop gadgets: DeskLaunchers and DeskLets.
  * 
  * @author Francisco Morero Peyrona
  */
 public interface DeskWidget extends DeskCanvas
 {
-    public String getName();
-    public void   setName( String name );
-    public String getDescription();
-    public void   setDescription( String name );
-    
-    public Point  getLocation();
-    public void   setLocation( Point pt );    
 }

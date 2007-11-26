@@ -18,60 +18,26 @@ import org.joing.common.desktopAPI.deskwidget.DeskWidget;
  */
 public interface Desklet extends DeskWidget
 {   // FIXME: hay que definir este interface y hacer que PDEDesklet lo implemente
-    /*protected void onShow()
-    {
-        // Empty
-    }
+    /*protected void onShow();
+    protected void onGrow();
+    protected void onReduce();
     
-    protected void onGrow()
-    {
-        // Empty
-    }
-    
-    protected void onReduce()
-    {
-        // Empty
-    }
+    protected void onClose();
     
     
-    protected void onClose()
-    {
-        WorkArea wa = DesktopFactory.getDM().getDesktop().findWorkAreaFor( this );
-        
-        wa.remove( this );
-        ((Component) wa).repaint( getX(), getY(), getWidth(), getHeight() );
-    }
+    protected void onSetup();
     
-    protected void onSetup()
-    {
-        // Empty
-    }
+    protected void onDrag();
     
-    protected void onDrag()
-    {
-        // TODO: hacerlo
-    }
-    
-    protected void toogleSizeButton()
-    {
-        //toolBar.onSize();
-    }
+    protected void toogleSizeButton();
     
     // For user custom buttons
-    protected void add( PDEDeskletButton button )
-    {
-        toolBar.add( button );
-    }
+    protected void add( PDEDeskletButton button );
 
     // For user custom buttons
-    protected void remove( PDEDeskletButton button )
-    {
-        toolBar.remove( button );
-    }
+    protected void remove( PDEDeskletButton button );
     
     // For standard buttons
-    protected void remove( PDEDesklet.ToolBarButton btn )
-    {
-        toolBar.remove( btn );
-    }*/
+    protected void remove( PDEDesklet.ToolBarButton btn );
+     */
 }

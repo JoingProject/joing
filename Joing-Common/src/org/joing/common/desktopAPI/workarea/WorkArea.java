@@ -9,27 +9,25 @@
 
 package org.joing.common.desktopAPI.workarea;
 
-import java.awt.Component;
-import java.util.List;
+import org.joing.common.desktopAPI.Closeable;
+import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.common.desktopAPI.DeskContainer;
 
 /**
  *
- * @author mario
+ * @author Francisco Morero Peyrona
  */
-public interface WorkArea
+public interface WorkArea extends Closeable
 {
-    public String          getName();
-    public void            setName( String sName );
-    public Component       add( Component component );
-    public void            remove( Component component );
-    public List<Component> getOfType( Class clazz );
-    public List<Component> getSelected( Class clazz, boolean bSelected );
-    public void            setSelected( Class clazz, boolean bSelected );
-    public void            close();
+    String getName();
+    void   setName( String name );
     
-    public Wallpaper getWallpaper();
-    public void      setWallpaper( Wallpaper wallpaper );
+    void add( DeskComponent dc );    
+    void remove( DeskComponent dc );
     
-    public void addWorkAreaListener( WorkAreaListener wal );
-    public void removeWorkAreaListener( WorkAreaListener wal );
+    Wallpaper getWallpaper();
+    void      setWallpaper( Wallpaper wallpaper );
+    
+    void addWorkAreaListener( WorkAreaListener wal );
+    void removeWorkAreaListener( WorkAreaListener wal );
 }

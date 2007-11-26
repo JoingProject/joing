@@ -11,6 +11,9 @@ package org.joing.common.desktopAPI;
 
 import java.net.URL;
 import javax.swing.ImageIcon;
+import org.joing.common.desktopAPI.pane.DeskCanvas;
+import org.joing.common.desktopAPI.pane.DeskDialog;
+import org.joing.common.desktopAPI.pane.DeskFrame;
 
 /**
  *
@@ -18,26 +21,34 @@ import javax.swing.ImageIcon;
  */
 public interface Runtime
 {
+    DeskCanvas createCanvas();
+    
+    DeskFrame createFrame();
+    
+    DeskDialog createDialog( DeskFrame owner );
+    
+    DeskDialog createDialog( DeskDialog owner );
+    
     /**
      * Shows an exception in a JDialog.
      * 
      * @param exc     Exception to be shown
      * @param bReport <code>true</code> when error should be reported to TelcoDomo
      */
-    public void      showException( Throwable exc, String sTitle );
+    void      showException( Throwable exc, String sTitle );
     /**
      * Shows a message in a dialog with title "Information" and an OK button.
      * 
      * @param sMessage Message to be shown
      */
-    public void      showMessage( String sMessage );
+    void      showMessage( String sMessage );
     /**
      * Shows a message in a dialog and an OK button.
      * 
      * @param sTitle   Dialog window title (if <code>null</code> or empty string passed, title will be empty)
      * @param sMessage Message to be shown
      */
-    public void      showMessage( String sTitle, String sMessage );
+    void      showMessage( String sTitle, String sMessage );
     /**
      * Shows a confimation modal dialog.
      * 
@@ -45,7 +56,7 @@ public interface Runtime
      * @param sMessage  Message to ask confirmation about
      * @return <code>true</code> if 'OK' button pressed, otherwise ('CANCEL' button or close dialog) return <code>false</code>
      */
-    public boolean   confirmDialog( String sTitle, String sMessage );
+    boolean   confirmDialog( String sTitle, String sMessage );
     /**
      * Shows a confimation modal dialog.
      * 
@@ -53,14 +64,14 @@ public interface Runtime
      * @param sMessage  Message to ask confirmation about
      * @return <code>true</code> if 'YES' button pressed, otherwise ('NO' button or close dialog) return <code>false</code>
      */
-    public boolean   yesOrNoDialog( String sTitle, String sMessage );
+    boolean   yesOrNoDialog( String sTitle, String sMessage );
     /**
      * Asks for password and validates it agains the server.<br>
      * (For security reasons, the password is not stored locally, not even in 
      * memory).
      * @return <code>true</code> if password is correct.
      */
-    public boolean   askForPassword();
+    boolean   askForPassword();
     /**
      * Return an icon which location is relative to passed class.
      * 
@@ -69,7 +80,7 @@ public interface Runtime
      * @param sName   Name of file with its extension.
      * @return        The icon or an standard one if teh requested was not found
      */
-    public ImageIcon getIcon( Object invokerClass, String s );
+    ImageIcon getIcon( Object invokerClass, String s );
     /**
      * Return an icon (with specific dimension) which location is relative to 
      * passed class.
@@ -79,11 +90,11 @@ public interface Runtime
      * @param sName   Name of file with its extension.
      * @return        The icon or an standard one if teh requested was not found
      */
-    public ImageIcon getIcon( Object invokerClass, String s, int nWidth, int nHeight ); 
+    ImageIcon getIcon( Object invokerClass, String s, int nWidth, int nHeight ); 
     /**
      * Play a sound stored in an URL.
      * 
      * @param urlSound
      */
-    public void      play( URL urlSound );
+    void      play( URL urlSound );
 }

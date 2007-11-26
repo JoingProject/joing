@@ -9,8 +9,8 @@
 
 package org.joing.common.desktopAPI.workarea;
 
-import java.awt.Component;
 import java.util.EventListener;
+import org.joing.common.desktopAPI.DeskComponent;
 
 /**
  *
@@ -18,8 +18,8 @@ import java.util.EventListener;
  */
 public interface WorkAreaListener extends EventListener
 {
-    public void componentAdded( Component comp );
-    public void componentRemoved( Component comp );
+    public void componentAdded( DeskComponent comp );
+    public void componentRemoved( DeskComponent comp );
     
     /**
      * wpNew can be <code>null</code> if wallpaper was removed
