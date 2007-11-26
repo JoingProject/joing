@@ -9,28 +9,33 @@
 
 package org.joing.common.desktopAPI.taskbar;
 
-import java.awt.Component;
 import java.awt.Point;
-import java.util.List;
-import org.joing.common.desktopAPI.enums.TaskBarOrientation;
+import org.joing.common.desktopAPI.Closeable;
+import org.joing.common.desktopAPI.DeskComponent;
 
 /**
  *
- * @author mario
+ * @author Francisco Morero Peyrona
  */
-public interface TaskBar
-{    
-    public Component       add( Component component );
-    public Component       add( Component component, Point pt );
-    public void            remove( Component component );
-    public List<Component> getOfType( Class clazz );
+public interface TaskBar extends Closeable
+{
+    public enum Orientation { TOP, BOTTOM, LEFT, RIGHT, FREE }
     
-    public boolean isAutoHide();
-    public void setAutoHide( boolean autohide );
+    void add( TaskBarPanel tbp );
+    void add( TaskBarPanel tbp, Point pt );
+    void add( DeskComponent dc );
+    void add( DeskComponent dc, Point pt );
+    void remove( TaskBarPanel tbp );
+    void remove( DeskComponent dc );
     
-    public TaskBarOrientation getOrientation();
-    public void setOrientation( TaskBarOrientation orientation );
+    TaskBarPanel getSysTray();
     
-    public void addTaskBarListener( TaskBarListener tbl );
-    public void removeTaskBarListener( TaskBarListener tbl );
+    boolean isAutoHide();
+    void setAutoHide( boolean autohide );
+    
+    Orientation getOrientation();
+    void setOrientation( Orientation orientation );
+    
+    void addTaskBarListener( TaskBarListener tbl );
+    void removeTaskBarListener( TaskBarListener tbl );
 }

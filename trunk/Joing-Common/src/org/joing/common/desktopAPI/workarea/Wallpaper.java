@@ -9,19 +9,20 @@
 
 package org.joing.common.desktopAPI.workarea;
 
+import java.awt.Image;
 import java.io.FileDescriptor;
 import java.net.URL;
-import org.joing.common.desktopAPI.enums.WallpaperMode;
 
 /**
  *
  * @author Mario Serrano Leones
  */
 public interface Wallpaper
-{   
-    public Object        getSource();
-    public void          setSource(FileDescriptor fd);
-    public void          setSource(URL source);
-    public WallpaperMode getMode();
-    public void          setMode(WallpaperMode mode);
+{
+    public enum Mode { EXPANDED, CENTER, TILES; }
+    
+    Image getSource();
+    void  setSource( Image image );
+    Mode  getMode();
+    void  setMode( Mode mode );
 }

@@ -9,8 +9,9 @@
 
 package org.joing.common.desktopAPI.taskbar;
 
-import java.awt.Component;
 import java.util.EventListener;
+import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.common.desktopAPI.DeskContainer;
 
 /**
  *
@@ -18,6 +19,8 @@ import java.util.EventListener;
  */
 public interface TaskBarListener extends EventListener
 {    
-    public void componentAdded( Component component );
-    public void componentRemoved( Component component );
+    public void componentAdded( DeskComponent dc );
+    public void componentRemoved( DeskComponent dc );
+    public void componentAdded( DeskContainer dc );
+    public void componentRemoved( DeskContainer dc );
 }
