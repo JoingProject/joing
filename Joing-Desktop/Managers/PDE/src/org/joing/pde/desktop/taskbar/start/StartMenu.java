@@ -32,6 +32,7 @@ import org.joing.common.dto.app.AppGroup;
 import org.joing.common.dto.app.AppGroupKey;
 import org.joing.common.dto.user.User;
 import org.joing.pde.ColorSchema;
+import org.joing.pde.PDEUtilities;
 import org.joing.pde.swing.JScrollablePopupMenu;
 import org.joing.pde.misce.apps.EditUser;
 import org.joing.pde.misce.apps.ProxyConfig;
@@ -74,7 +75,7 @@ class StartMenu extends JScrollablePopupMenu
         {
             String sIcon = "user_"+ (user.isMale() ? "" : "fe") +"male.png";
             
-            item.setIcon( DesktopManagerFactory.getDM().getRuntime().getIcon( null, sIcon, ICON_SIZE+5, ICON_SIZE+5 ) );
+            item.setIcon( PDEUtilities.getIcon( null, sIcon, ICON_SIZE+5, ICON_SIZE+5 ) );
             item.setText( user.getFirstName() +" "+ user.getSecondName() );
 
             item.addActionListener( new ActionListener()
@@ -96,7 +97,7 @@ class StartMenu extends JScrollablePopupMenu
     private void addLock()
     {
         JMenuItem itmLock = new JMenuItem( "Lock session" );
-                  itmLock.setIcon( DesktopManagerFactory.getDM().getRuntime().getIcon( this, "images/lock.png", ICON_SIZE, ICON_SIZE ) );
+                  itmLock.setIcon( PDEUtilities.getIcon( this, "images/lock.png", ICON_SIZE, ICON_SIZE ) );
                   itmLock.addActionListener( new ActionListener()
                   {
                       public void actionPerformed( ActionEvent ae )
@@ -110,7 +111,7 @@ class StartMenu extends JScrollablePopupMenu
     private void addExit()
     {
         JMenuItem itmExit = new JMenuItem( "End session" );
-                  itmExit.setIcon( DesktopManagerFactory.getDM().getRuntime().getIcon( this, "images/exit.png", ICON_SIZE, ICON_SIZE ) );
+                  itmExit.setIcon( PDEUtilities.getIcon( this, "images/exit.png", ICON_SIZE, ICON_SIZE ) );
                   itmExit.addActionListener( new ActionListener()
                   {
                       public void actionPerformed( ActionEvent ae )

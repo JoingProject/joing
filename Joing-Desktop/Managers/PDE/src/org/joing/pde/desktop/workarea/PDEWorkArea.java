@@ -19,6 +19,8 @@ import javax.swing.JDesktopPane;
 import javax.swing.event.MouseInputAdapter;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManagerFactory;
+import org.joing.common.desktopAPI.Selectable;
+import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.desktopAPI.pane.DeskWindow;
 import org.joing.common.desktopAPI.workarea.Wallpaper;
 import org.joing.common.desktopAPI.workarea.WorkArea;
@@ -29,6 +31,7 @@ import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
 import org.joing.pde.desktop.deskwidget.desklet.PDEDesklet;
 import org.joing.pde.ColorSchema;
+import org.joing.pde.swing.EventListenerList;
 
 /**
  * This class contains internal operativity for the Desk.
@@ -52,11 +55,18 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     private Dimension gridDimension = new Dimension( 16,16 );  // Grid size
     private boolean   bSnapToGrid   = true;
     
-    //-------------------------------------------------------------------------//
+    private EventListenerList listenerList;
+    
+    private DeskLauncherListener deskLauncherListener;    // Only one instance for all launchers to save memory
+    
+    //------------------------------------------------------------------------//
     
     public PDEWorkArea()
     {
         super();
+        listenerList         = new EventListenerList();
+        deskLauncherListener = new DeskLauncherListener();
+        
         initGUI();
     }
     
@@ -109,7 +119,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         
     //------------------------------------------------------------------------//
     // WorkAreaPopupMenu issues
-    //-------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
     
     /**
      * 
@@ -123,9 +133,9 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
                   popup.show( this, p.x, p.y );
     }
     
-    //-------------------------------------------------------------------------//
-    // Components issues
-    //-------------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
+    // Cut, copy & paste components
+    //------------------------------------------------------------------------//
 
     /**
      * Removes from clipboard those components that match passed class.
@@ -220,11 +230,9 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
 //            
 //            repaint();  // Without repaint() does not work: dont't touch
 //        }
-//    }   
+//    }
     
-    
-    
-//    public List<Component> getSelected( Class clazz, boolean bSelected )
+//    private List<Component> getSelected( Class clazz, boolean bSelected )
 //    {
 //        List<Component> in  = getOfType( clazz );
 //        List<Component> out = new ArrayList<Component>( in.size() );
@@ -237,15 +245,15 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
 //        
 //        return out;
 //    }
-    
-    /**
-     * Selects objects in desktop that match passed class.
-     * <p>
-     * Clazz must be implement interface <code>Selectable</code>
-     *  
-     * @param clazz The Class
-     */
-//    public void setSelected( Class clazz, boolean bSelected )
+//    
+//    /**
+//     * Selects objects in desktop that match passed class.
+//     * <p>
+//     * Clazz must be implement interface <code>Selectable</code>
+//     *  
+//     * @param clazz The Class
+//     */
+//    private void setSelected( Class clazz, boolean bSelected )
 //    {
 //        List<Component> list = getOfType( clazz );
 //        
@@ -292,10 +300,15 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
                 
                 if( me.isPopupTrigger() )
                     showPopupMenu( me.getPoint() );
-// FIXME        else
-//                    // Si llega aqui es q se ha hecho clic en el desktop, ya q si se hace clic en un 
-//                    // componente contenido en el desktop, el desktop no llega a recibir el evento.
-//                    setSelected( Component.class, false );
+                else
+                {   // Si llega aqui es q se ha hecho clic en el desktop, ya q si se hace clic en un 
+                    // componente contenido en el desktop, el desktop no llega a recibir el evento.
+                    Component[] aComp = getComponents();
+
+                    for( int n = 0; n < aComp.length; n++ )
+                        if( aComp[n] instanceof Selectable )
+                            ((Selectable) aComp[n]).setSelected( false );
+                }
             }
         }  );
     }
@@ -310,20 +323,20 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     public Component add( String s, Component c )   { throw new IllegalAccessError(DONT_USE_ME); }
     public void add( Component c, Object o )        { throw new IllegalAccessError(DONT_USE_ME); }
     public void add( Component c, Object o, int n ) { throw new IllegalAccessError(DONT_USE_ME); }
-    public void remove( Component c )               { throw new IllegalAccessError(DONT_USE_ME); }
     //------------------------------------------------------------------------------------------------
     
     public void add( DeskComponent dc )
     {
         Component component = (Component) dc;
         
-        if(      component instanceof PDEDeskLauncher )  super.add( component, LAYER_DESK_LAUNCHER );
+        if(      component instanceof PDEDeskLauncher )  addDeskLauncher( (PDEDeskLauncher) dc );
         else if( component instanceof PDEDesklet      )  addDesklet( (PDEDesklet) component );
         else if( component instanceof PDECanvas       )  super.add( component, LAYER_CANVAS );
         else if( component instanceof PDEDialog       )  super.add( component, LAYER_DIALOG );
         else if( component instanceof PDEFrame        )  addFrame( (PDEFrame) component, true );
         else                                             super.add( component, LAYER_APPLICATION );
         
+        moveToFront( (Component) dc );
         fireComponentAdded( dc );
     }
     
@@ -338,8 +351,19 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     // "listen" to the frame events.
     public void remove( DeskComponent dc )
     {
-        super.remove( (Component) dc );
-        fireComponentRemoved( dc );
+        remove( (Component) dc );
+    }
+    
+    /**
+     * This method is needed because it is used by JDesktopPane among others
+     * <p>
+     * Redefined to invoke fireComponentRemoved(...)
+     * @param c Component to be removed
+     */
+    public void remove( Component c )               
+    { 
+        super.remove( c );
+        fireComponentRemoved( (DeskComponent) c );
     }
     
     public Wallpaper getWallpaper()
@@ -360,7 +384,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
 
     public void removeWorkAreaListener( WorkAreaListener wal )
     {
-        listenerList.remove( WorkAreaListener.class, wal );
+        listenerList.remove( wal );
     }
     
     public void close()
@@ -372,38 +396,29 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     
     protected void fireComponentAdded( DeskComponent dc )
     {
-        Object[] listeners = listenerList.getListenerList();
+        WorkAreaListener[] al = listenerList.getListeners( WorkAreaListener.class );
         
         // Process the listeners last to first, notifying
-        for( int n = listeners.length - 2; n >= 0; n -= 2 )
-        {
-            if( listeners[n] == WorkAreaListener.class )
-                ((WorkAreaListener) listeners[n+1]).componentAdded( dc );
-        }
+        for( int n = al.length - 1; n >= 0; n-- )
+            al[n].componentAdded( dc );
     }
     
     protected void fireComponentRemoved( DeskComponent dc )
     {
-        Object[] listeners = listenerList.getListenerList();
+         WorkAreaListener[] al = listenerList.getListeners( WorkAreaListener.class );
         
-        // Process the listeners last to first, notifying)
-        for( int n = listeners.length - 2; n >= 0; n -= 2 )
-        {
-            if( listeners[n] == WorkAreaListener.class )
-                ((WorkAreaListener) listeners[n+1]).componentRemoved( dc );
-        }
+        // Process the listeners last to first, notifying
+        for( int n = al.length - 1; n >= 0; n-- )
+            al[n].componentRemoved( dc );
     }
     
     protected void fireWallpaperChanged( Wallpaper wpNew )
     {
-        Object[] listeners = listenerList.getListenerList();
+         WorkAreaListener[] al = listenerList.getListeners( WorkAreaListener.class );
         
         // Process the listeners last to first, notifying
-        for( int n = listeners.length - 2; n >= 0; n -= 2 )
-        {
-            if( listeners[n] == WorkAreaListener.class )
-                ((WorkAreaListener) listeners[n+1]).wallpaperChanged( wpNew );
-        }
+        for( int n = al.length - 1; n >= 0; n-- )
+            al[n].wallpaperChanged( wpNew );
     }
     
     //------------------------------------------------------------------------//
@@ -439,6 +454,12 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         super.add( desklet, LAYER_DESKLET );
     }
     
+    private void addDeskLauncher( PDEDeskLauncher dl )
+    {
+        dl.addLauncherListener( deskLauncherListener );
+        super.add( dl, LAYER_DESK_LAUNCHER );
+    }
+    
     private void addFrame( PDEFrame frame, boolean bAutoArrange )
     {
         if( bAutoArrange )
@@ -466,6 +487,38 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             frame.center();
             frame.setSelected( true );
             frame.toFront();
+        }
+    }
+    
+    //------------------------------------------------------------------------//
+    // INNER CLASS: PDEDeskLauncher listener
+    //------------------------------------------------------------------------//
+    
+    private final class DeskLauncherListener 
+            implements org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncherListener    
+    {
+        public void selection( DeskLauncher dl )
+        {
+            if( dl.isSelected() )  // If the event refers to a selected launcher that becomes to unselected, we are not interested
+            {
+                Component[] aComp = getComponents();
+
+                for( int n = 0; n < aComp.length; n++ )
+                {
+                    if( aComp[n] instanceof PDEDeskLauncher )
+                        ((PDEDeskLauncher) aComp[n]).setSelected( aComp[n] == dl );
+                }
+            }
+        }
+        
+        public void selectionIncremental( DeskLauncher dl )
+        {
+            // Nothing to do
+        }
+        
+        public void launched( DeskLauncher dl )
+        {
+            // Nothing to do
         }
     }
 }

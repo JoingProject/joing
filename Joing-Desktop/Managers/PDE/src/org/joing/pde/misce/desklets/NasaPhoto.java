@@ -5,7 +5,6 @@
 
 package org.joing.pde.misce.desklets;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
@@ -20,6 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -65,7 +65,7 @@ public class NasaPhoto extends PDEDesklet implements Runnable
                     showImage();
             }
         } );
-        add( lblPhoto, BorderLayout.CENTER );
+        add( lblPhoto );
         
         setDelay( 60 );   // 1 min
         
@@ -234,13 +234,21 @@ public class NasaPhoto extends PDEDesklet implements Runnable
     {
         if( image != null )
         {
-            JScrollPane sp = new JScrollPane( new JLabel( new ImageIcon( image ) ) );
+            MyScrollPane sp = new MyScrollPane( new JLabel( new ImageIcon( image ) ) );
             
             DeskFrame frame = DesktopManagerFactory.getDM().getRuntime().createFrame();
                       frame.setTitle( "NASA Astronomy Picture" );
                       frame.add( (DeskComponent) sp );
                       
             DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea().add( frame );
+        }
+    }
+    
+    private class MyScrollPane extends JScrollPane implements DeskComponent
+    {
+        private MyScrollPane( JComponent comp )
+        {
+            super( comp );
         }
     }
 }

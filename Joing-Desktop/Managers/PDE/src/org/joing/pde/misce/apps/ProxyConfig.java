@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.pane.DeskFrame;
+import org.joing.pde.PDEUtilities;
 
 /**
  *
@@ -19,7 +20,7 @@ import org.joing.common.desktopAPI.pane.DeskFrame;
  */
 public class ProxyConfig extends JPanel implements DeskComponent
 {
-    // TODO: Mirar aquí (para añadir más cosas al frame): 
+    // TODO: Mirar aquí (para añadir más cosas al panel): 
     //       http://java.sun.com/j2se/1.5.0/docs/guide/net/properties.html
     private DeskFrame frame;
     
@@ -34,7 +35,7 @@ public class ProxyConfig extends JPanel implements DeskComponent
     {
         frame = DesktopManagerFactory.getDM().getRuntime().createFrame();
         frame.setTitle( "Proxy Config" );
-        frame.setIcon( getIcon( 20, 20 ).getImage() );
+        ///frame.setIcon( getIcon( 20, 20 ).getImage() );  FIXME
         frame.add( this );
         
         DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea().add( frame );
@@ -42,7 +43,7 @@ public class ProxyConfig extends JPanel implements DeskComponent
     
     public static ImageIcon getIcon( int nWidth, int nHeight )
     {
-        return DesktopManagerFactory.getDM().getRuntime().getIcon( ProxyConfig.class, "proxy_logo.png", nWidth, nHeight );
+        return PDEUtilities.getIcon( ProxyConfig.class, "proxy_logo.png", nWidth, nHeight );
     }
     
     //------------------------------------------------------------------------//

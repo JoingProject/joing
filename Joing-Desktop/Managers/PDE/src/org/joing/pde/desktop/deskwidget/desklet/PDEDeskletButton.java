@@ -14,7 +14,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.FilteredImageSource;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import org.joing.common.desktopAPI.DesktopManagerFactory;
+import org.joing.pde.PDEUtilities;
 import org.joing.pde.swing.ImageHighlightFilter;
 
 /**
@@ -33,8 +33,7 @@ public class PDEDeskletButton extends JLabel
      */
     PDEDeskletButton( String sImage, String sTipText )
     {
-        org.joing.common.desktopAPI.Runtime runtime = DesktopManagerFactory.getDM().getRuntime();
-        init( runtime.getIcon( this, "images/"+ sImage +".png", 12, 12 ), sTipText );
+        init( PDEUtilities.getIcon( this, "images/"+ sImage +".png", 12, 12 ), sTipText );
     }
     
     public PDEDeskletButton( ImageIcon icon, String sTipText )

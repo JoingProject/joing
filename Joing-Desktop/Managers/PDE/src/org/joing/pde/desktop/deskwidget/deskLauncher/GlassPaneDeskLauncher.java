@@ -13,7 +13,7 @@ import org.joing.pde.desktop.deskwidget.GlassPaneWidget;
  */
 class GlassPaneDeskLauncher extends GlassPaneWidget
 {
-    protected PDEDeskLauncher launcher;
+    private PDEDeskLauncher launcher;
     
     GlassPaneDeskLauncher( PDEDeskLauncher launcher )
     {
@@ -36,10 +36,18 @@ class GlassPaneDeskLauncher extends GlassPaneWidget
                 super.onMouseEvent( me ); break;
         }
     }
-
+    
+    protected void mousePressed( MouseEvent me )
+    {
+        super.mousePressed( me );
+        
+        if( me.getButton() == MouseEvent.BUTTON1 )
+            launcher.setSelected( true, me.isControlDown() );
+    }
+    
     protected void mouseClicked( MouseEvent me )
     {
-        if( me.getClickCount() == 2 )
+        if( me.getButton() == MouseEvent.BUTTON1 && me.getClickCount() == 2 )
             launcher.launch();
     }
     
@@ -51,13 +59,5 @@ class GlassPaneDeskLauncher extends GlassPaneWidget
     protected void mouseExited( MouseEvent me )
     {
         launcher.setHighlighted( false );
-    }
-
-    protected void mousePressed( MouseEvent me )
-    {
-        super.mousePressed( me );
-        
-        boolean bCtrlPressed = (me.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) != 0;
-        launcher.setSelected( true, bCtrlPressed );
     }
 }

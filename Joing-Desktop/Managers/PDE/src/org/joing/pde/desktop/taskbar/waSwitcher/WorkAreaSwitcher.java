@@ -33,7 +33,7 @@ public class WorkAreaSwitcher extends PDEDeskComponent
     
     public WorkAreaSwitcher()
     {
-        grid = new GridLayout( 1, 0, 2, 0 );
+        grid = new GridLayout( 1, 0, 0, 0 );
         
         setLayout( grid );
         setBorder( new LineBorder( Color.black, 1 ) );

@@ -22,6 +22,7 @@ import javax.swing.MenuSelectionManager;
 import javax.swing.border.EmptyBorder;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManagerFactory;
+import org.joing.pde.PDEUtilities;
 import org.joing.pde.swing.ImageHighlightFilter;
 
 /**
@@ -72,7 +73,7 @@ public final class StartButton extends JLabel implements DeskComponent
     
     private void initGUI()
     {
-        icon = DesktopManagerFactory.getDM().getRuntime().getIcon( this, "images/start.png" );
+        icon = PDEUtilities.getIcon( this, "images/start.png" );
         
         setBorder( new EmptyBorder( 0,2,0,4 ) );
         setIcon( icon );
