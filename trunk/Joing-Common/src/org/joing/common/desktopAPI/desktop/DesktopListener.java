@@ -10,14 +10,13 @@
 package org.joing.common.desktopAPI.desktop;
 
 import org.joing.common.desktopAPI.workarea.WorkArea;
-import java.util.EventListener;
 import org.joing.common.desktopAPI.taskbar.TaskBar;
 
 /**
  *
  * @author Francisco Morero Peyrona
  */
-public interface DesktopListener extends EventListener
+public interface DesktopListener
 {
     /**
      * Invoked when a WorkArea has been added to the Desktop.

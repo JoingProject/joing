@@ -9,7 +9,6 @@
 
 package org.joing.common.desktopAPI.taskbar;
 
-import java.awt.Point;
 import org.joing.common.desktopAPI.Closeable;
 import org.joing.common.desktopAPI.DeskComponent;
 
@@ -22,9 +21,9 @@ public interface TaskBar extends Closeable
     public enum Orientation { TOP, BOTTOM, LEFT, RIGHT, FREE }
     
     void add( TaskBarPanel tbp );
-    void add( TaskBarPanel tbp, Point pt );
+    void add( TaskBarPanel tbp, int x, int y );
     void add( DeskComponent dc );
-    void add( DeskComponent dc, Point pt );
+    void add( DeskComponent dc, int x, int y );
     void remove( TaskBarPanel tbp );
     void remove( DeskComponent dc );
     

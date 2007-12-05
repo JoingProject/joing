@@ -5,10 +5,11 @@
 package org.joing.common.desktopAPI;
 
 /**
- * Indicates that the object is going to be closed.
+ * Indicates that the object has operations to do before being closed.
  * <p>
  * Components that implement this interface will be notified when the desktop is 
- * going to be closed.
+ * going to be closed. Having in this way an opportunity to perform the 
+ * house-keeping.
  * 
  * @author Francisco Morero Peyrona
  */

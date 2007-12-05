@@ -11,7 +11,6 @@ package org.joing.common.desktopAPI.workarea;
 
 import org.joing.common.desktopAPI.Closeable;
 import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.DeskContainer;
 import org.joing.common.desktopAPI.pane.DeskWindow;
 
 /**

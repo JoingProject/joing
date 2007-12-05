@@ -9,8 +9,7 @@
 
 package org.joing.common.desktopAPI;
 
-import java.net.URL;
-import javax.swing.ImageIcon;
+import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.desktopAPI.pane.DeskCanvas;
 import org.joing.common.desktopAPI.pane.DeskDialog;
 import org.joing.common.desktopAPI.pane.DeskFrame;
@@ -22,6 +21,8 @@ import org.joing.common.desktopAPI.pane.DeskFrame;
 public interface Runtime
 {
     DeskCanvas createCanvas();
+    
+    DeskLauncher createLauncher();
     
     DeskFrame createFrame();
     
@@ -72,29 +73,4 @@ public interface Runtime
      * @return <code>true</code> if password is correct.
      */
     boolean   askForPassword();
-    /**
-     * Return an icon which location is relative to passed class.
-     * 
-     * @param invoker The class to be used as base to find the files. If null,
-     *                <code>ImagesFactory</code> will be used (common images).
-     * @param sName   Name of file with its extension.
-     * @return        The icon or an standard one if teh requested was not found
-     */
-    ImageIcon getIcon( Object invokerClass, String s );
-    /**
-     * Return an icon (with specific dimension) which location is relative to 
-     * passed class.
-     * 
-     * @param invoker The class to be used as base to find the files. If null,
-     *                <code>ImagesFactory</code> will be used (common images).
-     * @param sName   Name of file with its extension.
-     * @return        The icon or an standard one if teh requested was not found
-     */
-    ImageIcon getIcon( Object invokerClass, String s, int nWidth, int nHeight ); 
-    /**
-     * Play a sound stored in an URL.
-     * 
-     * @param urlSound
-     */
-    void      play( URL urlSound );
 }

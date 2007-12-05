@@ -5,24 +5,21 @@
 
 package org.joing.common.desktopAPI.pane;
 
-import java.awt.Image;
+import org.joing.common.desktopAPI.Selectable;
 
 /**
  * Common interface to Frames and Dialogs.
  * 
  * @author Francisco Morero Peyrona
  */
-public interface DeskWindow extends DeskPane
+public interface DeskWindow extends DeskPane, Selectable
 {
-    boolean isSelected();
-    void    setSelected( boolean b );
-    
     boolean isResizable();
     void    setResizable( boolean b );
     
     String getTitle();
     void   setTitle( String sTitle );
     
-    Image getIcon();
-    void  setIcon( Image icon );
+    byte[] getIcon();
+    void   setIcon( byte[] image );
 }
