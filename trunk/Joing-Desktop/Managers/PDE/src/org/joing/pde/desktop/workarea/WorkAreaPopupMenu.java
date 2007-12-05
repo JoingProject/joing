@@ -17,6 +17,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.workarea.WorkArea;
+import org.joing.pde.PDEUtilities;
 
 /**
  * 
@@ -70,9 +71,9 @@ class WorkAreaPopupMenu extends JPopupMenu implements ActionListener
             ImageIcon icon = null;
 
             if( sIconName.equals( "grid" ) )
-                icon = DesktopManagerFactory.getDM().getRuntime().getIcon( this, "images/"+ sIconName +".png", 16, 16 );
+                icon = PDEUtilities.getIcon( this, "images/"+ sIconName +".png", 16, 16 );
             else
-                icon = DesktopManagerFactory.getDM().getRuntime().getIcon( null, sIconName +".png", 16, 16 );
+                icon = PDEUtilities.getIcon( null, sIconName +".png", 16, 16 );
 
             item.setIcon( icon );
         }

@@ -11,8 +11,6 @@
 package org.joing.pde.desktop.taskbar;
 
 import java.awt.Component;
-import java.awt.Point;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -28,6 +26,7 @@ import org.joing.pde.desktop.taskbar.systray.SysTray;
 import org.joing.pde.ColorSchema;
 import org.joing.common.desktopAPI.taskbar.TaskBar;
 import org.joing.pde.desktop.taskbar.waSwitcher.WorkAreaSwitcher;
+import org.joing.pde.swing.EventListenerList;
 
 /**
  * TaskBar can hold JComponents or instances of TaskBarPanel
@@ -41,14 +40,17 @@ public class PDETaskBar extends JPanel implements TaskBar
     private TaskBar.Orientation orientation;
     private boolean             bAutoHide;
     
+    private EventListenerList listenerList;
+    
     //------------------------------------------------------------------------//
     
     /** Creates a new instance of TaskBar */
     public PDETaskBar()
     {
-        orientation = TaskBar.Orientation.BOTTOM;
-        bAutoHide   = false;
-        
+        orientation  = TaskBar.Orientation.BOTTOM;
+        bAutoHide    = false;
+        listenerList = new EventListenerList();
+                
         setOpaque( true );
         setLayout( new BoxLayout( this, BoxLayout.X_AXIS ) );
         setBackground( ColorSchema.getInstance().getTaskBarBackground() );
@@ -99,7 +101,7 @@ public class PDETaskBar extends JPanel implements TaskBar
         fireComponentAdded( tbp );
     }
 
-    public void add( TaskBarPanel tbp, Point pt )
+    public void add( TaskBarPanel tbp, int x, int y )
     {
         add( tbp );   // TODO: mejorarlo
     }
@@ -111,7 +113,7 @@ public class PDETaskBar extends JPanel implements TaskBar
         fireComponentAdded( tbo );
     }
 
-    public void add( DeskComponent tbo, Point pt )
+    public void add( DeskComponent tbo, int x, int y )
     {
         add( tbo );   // TODO: mejorarlo
     }
@@ -172,7 +174,7 @@ public class PDETaskBar extends JPanel implements TaskBar
 
     public void removeTaskBarListener( TaskBarListener tbl )
     {
-        listenerList.remove( TaskBarListener.class, tbl );
+        listenerList.remove( tbl );
     }
     
     //------------------------------------------------------------------------//
@@ -201,27 +203,24 @@ public class PDETaskBar extends JPanel implements TaskBar
     
     private void fire( Object obj, boolean bAdded )
     {
-        Object[] listeners = listenerList.getListenerList();
+        TaskBarListener[] al = listenerList.getListeners( TaskBarListener.class );
         
-        // Process the listeners last to first, notifying
-        for( int n = listeners.length - 2; n >= 0; n -= 2 )
+        // Process the al last to first, notifying
+        for( int n = al.length - 1; n >= 0; n-- )
         {
-            if( listeners[n] == TaskBarListener.class )
+            if( bAdded )
             {
-                if( bAdded )
-                {
-                    if( obj instanceof DeskComponent )
-                        ((TaskBarListener) listeners[n+1]).componentAdded( (DeskComponent) obj );
-                    else
-                        ((TaskBarListener) listeners[n+1]).componentAdded( (DeskContainer) obj );
-                }
+                if( obj instanceof DeskComponent )
+                    al[n].componentAdded( (DeskComponent) obj );
                 else
-                {
-                    if( obj instanceof DeskComponent )
-                        ((TaskBarListener) listeners[n+1]).componentRemoved( (DeskComponent) obj );
-                    else
-                        ((TaskBarListener) listeners[n+1]).componentRemoved( (DeskContainer) obj );
-                }
+                    al[n].componentAdded( (DeskContainer) obj );
+            }
+            else
+            {
+                if( obj instanceof DeskComponent )
+                    al[n].componentRemoved( (DeskComponent) obj );
+                else
+                    al[n].componentRemoved( (DeskContainer) obj );
             }
         }
     }

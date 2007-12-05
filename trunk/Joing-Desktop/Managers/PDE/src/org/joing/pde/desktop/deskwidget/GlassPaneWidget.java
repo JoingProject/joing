@@ -14,16 +14,16 @@ import org.joing.pde.swing.GlassPaneBase;
  */
 public class GlassPaneWidget extends GlassPaneBase
 {
-    private Point ptMousePosition;
     private PDEDeskWidget widget;     // 4 speed
+    private Point ptMousePosition;
     
     //------------------------------------------------------------------------//
     
     public GlassPaneWidget( PDEDeskWidget owner )
     {
         super( owner );
-        widget = owner;        
-        ptMousePosition = new Point();
+        this.widget = owner;        
+        ptMousePosition = null;
     }
     
     //------------------------------------------------------------------------//
@@ -39,23 +39,32 @@ public class GlassPaneWidget extends GlassPaneBase
     
     protected void mousePressed( MouseEvent me )  
     {
-        if( me.getButton() == MouseEvent.BUTTON1 )
-            ptMousePosition = me.getPoint();
-
         // I prefer to handle events personally in order to show the popup. 
         // See: http://www.jguru.com/forums/view.jsp?EID=1239349
         // Another advantage of this approach is that it saves memory because the
         // JPopupMenu is in memery only meanwhile it is shown (it is created and
         // destroied every time).
         if( me.isPopupTrigger() )
+        {
             widget.showPopup( me.getPoint() );
+        }
+        else
+        {
+            if( me.getButton() == MouseEvent.BUTTON1 )
+                ptMousePosition = me.getPoint();
+            else
+                ptMousePosition = null;   // Used also as flag to know if drag was started by left (BUTTON1) click
+        }
     }
 
     protected void mouseDragged( MouseEvent me )
     {
-        int x = me.getPoint().x + widget.getX() - ptMousePosition.x;
-        int y = me.getPoint().y + widget.getY() - ptMousePosition.y;
+        if( ptMousePosition != null )
+        {
+            int x = me.getPoint().x + widget.getX() - ptMousePosition.x;
+            int y = me.getPoint().y + widget.getY() - ptMousePosition.y;
 
-        widget.setLocation( x,y );
+            widget.setLocation( x,y );
+        }
     }
 }

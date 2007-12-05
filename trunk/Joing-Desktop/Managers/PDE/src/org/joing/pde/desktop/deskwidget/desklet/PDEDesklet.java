@@ -136,8 +136,7 @@ public abstract class PDEDesklet extends PDEDeskWidget //implements
         // Has to be added to root pane
         root.add( toolBar );
         root.setComponentZOrder( toolBar, 0 );
-        
-        setGlassPane( new GlassPaneDesklet( this ) );
+        root.setGlassPane( new GlassPaneDesklet( this ) );
         
         addAncestorListener( new AncestorListener()
         {

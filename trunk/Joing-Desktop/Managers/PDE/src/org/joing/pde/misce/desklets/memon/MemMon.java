@@ -5,7 +5,6 @@
 
 package org.joing.pde.misce.desklets.memon;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.border.LineBorder;
@@ -34,7 +33,7 @@ public class MemMon extends PDEDesklet
     public void onShow()
     {
         memon = new MemoryMonitor();
-        add( memon, BorderLayout.CENTER );
+        add( memon );
         validate();
     }
     

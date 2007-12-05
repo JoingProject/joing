@@ -15,11 +15,11 @@ import java.awt.event.MouseEvent;
  */
 public class GlassPaneBase extends JPanel implements AWTEventListener
 {
-    private final Container owner;
+    private Container owner;
 
     public GlassPaneBase( Container owner )
     {
-        super( null );
+        super( null );        // null because LayoutManager is not needed
         this.owner = owner;
         setOpaque( false );
         

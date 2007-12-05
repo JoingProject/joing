@@ -6,6 +6,7 @@
 package org.joing.pde.desktop.taskbar.waSwitcher;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputAdapter;
@@ -32,8 +33,6 @@ class Map extends JPanel
     {
         workArea = wa;
         
-        setToolTipText( workArea.getName() );
-        setOpaque( true );
         setBackground( clrUnSelected );
         setInheritsPopupMenu( true );
         
@@ -50,6 +49,13 @@ class Map extends JPanel
         } );
     }
 
+    public void paintComponent( Graphics g )
+    {
+        g.setColor( getBackground() );
+        g.fillRect( 1, 1, getWidth() -2, getHeight() - 2 );
+        g.dispose();
+    }
+    
     public boolean isSelected()
     {
         return getBackground().equals( clrSelected );   // Saving one variable (bSelected)

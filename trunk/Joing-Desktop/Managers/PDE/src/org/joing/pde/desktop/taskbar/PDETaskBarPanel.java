@@ -25,9 +25,9 @@ import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.pane.DeskFrame;
 import org.joing.common.desktopAPI.taskbar.TaskBarListener;
 import org.joing.common.desktopAPI.taskbar.TaskBarPanel;
+import org.joing.pde.PDEUtilities;
 import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.swing.JToolBarHandle;
-import org.joing.pde.swing.PDEContainer;
 
 /**
  * The base class for most part of the widtgets that are shown in the TaskBar.
@@ -182,30 +182,30 @@ public class PDETaskBarPanel
         {   
             itemPreferences = new JMenuItem( "Preferences" );
             itemPreferences.addActionListener( this );
-            itemPreferences.setIcon( DesktopManagerFactory.getDM().getRuntime().getIcon( null, "properties.png", 16, 16 ) );
+            itemPreferences.setIcon( PDEUtilities.getIcon( null, "properties.png", 16, 16 ) );
             add( itemPreferences );
             
             itemAbout = new JMenuItem( "About" );
             itemAbout.addActionListener( this );
-            itemAbout.setIcon( DesktopManagerFactory.getDM().getRuntime().getIcon( null, "info.png", 16, 16 ) );
+            itemAbout.setIcon( PDEUtilities.getIcon( null, "info.png", 16, 16 ) );
             add( itemAbout );
             
             addSeparator();
             
             itemRemove = new JMenuItem( "Remove" );
             itemRemove.addActionListener( this );
-            itemRemove.setIcon( DesktopManagerFactory.getDM().getRuntime().getIcon( null, "remove.png", 16, 16 ) );
+            itemRemove.setIcon( PDEUtilities.getIcon( null, "remove.png", 16, 16 ) );
             add( itemRemove );
             
             itemMove = new JMenuItem( "Move" );
             itemMove.addActionListener( this );
-            itemMove.setIcon( DesktopManagerFactory.getDM().getRuntime().getIcon( null, "move.png", 16, 16 ) );
+            itemMove.setIcon( PDEUtilities.getIcon( null, "move.png", 16, 16 ) );
             itemMove.setEnabled( ! isLocked() );
             add( itemMove );
             
             itemLock = new JMenuItem( "Lock" );
             itemLock.addActionListener( this );
-            itemLock.setIcon( DesktopManagerFactory.getDM().getRuntime().getIcon( null, "lock.png", 16, 16 ) );
+            itemLock.setIcon( PDEUtilities.getIcon( null, "lock.png", 16, 16 ) );
             add( itemLock );
         }
         

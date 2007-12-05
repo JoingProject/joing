@@ -14,13 +14,19 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.util.List;
 import java.util.Vector;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.joing.common.desktopAPI.desktop.Desktop;
 import org.joing.common.desktopAPI.desktop.DesktopListener;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.common.desktopAPI.taskbar.TaskBar;
+import org.joing.pde.desktop.container.PDECanvas;
+import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
 import org.joing.pde.desktop.taskbar.PDETaskBar;
+import org.joing.pde.misce.desklets.NasaPhoto;
+import org.joing.pde.misce.desklets.memon.MemMon;
+import org.joing.pde.swing.EventListenerList;
 
 /**
  *
@@ -34,13 +40,16 @@ public class PDEDesktop extends JPanel implements Desktop
     private JPanel   pnlWorkAreas;   // Where all W.A. are stored using CardLayout
     private WorkArea waActive;
     
+    private EventListenerList listenerList;
+    
     //------------------------------------------------------------------------//
     
     public PDEDesktop()
     {
-        vWorkAreas = new Vector<WorkArea>();
-        vTaskBars  = new Vector<TaskBar>();
-        waActive   = null;
+        vWorkAreas   = new Vector<WorkArea>();
+        vTaskBars    = new Vector<TaskBar>();
+        waActive     = null;
+        listenerList = new EventListenerList();
         
         initGUI();
     }
@@ -97,12 +106,13 @@ public class PDEDesktop extends JPanel implements Desktop
     
     private void createTestWorkArea( WorkArea wa )  // TODO: quitar este metodo
     {
-        /*PDEDeskLauncher pl1 = new PDEDeskLauncher( "Test" );
-        PDEDeskLauncher pl2 = new PDEDeskLauncher( "Notes" );
-                        pl2.setLocation( 0,100 );
+        PDEDeskLauncher dl1 = new PDEDeskLauncher();
+        PDEDeskLauncher dl2 = new PDEDeskLauncher();
+                        dl2.setText( "Test" );
+                        dl2.setLocation( 0,100 );
 
-        wa.add( pl1 );
-        wa.add( pl2 );
+        wa.add( dl1 );
+        wa.add( dl2 );
         
         MemMon memon = new MemMon();
                memon.setBounds( 10,200, memon.getPreferredSize().width, memon.getPreferredSize().height );
@@ -114,10 +124,10 @@ public class PDEDesktop extends JPanel implements Desktop
         
         JLabel lblCanvas = new JLabel( "<html><h2>Soy un canvas.</h2>Y esto es <u>texto <font color=\"#0066CC\">HTML</font></u>.</h3></html>" );
         PDECanvas canvas = new PDECanvas();
-                  canvas.add( lblCanvas, BorderLayout.CENTER );
+                  canvas.add( lblCanvas );
                   canvas.setBounds( 330, 130, 240, 80 );
         wa.add( canvas );
-*/
+
         //---------------------------------------------------------------------
         /*
         JSlider slrTranslucency = new JSlider( JSlider.HORIZONTAL, 0, 100, 0 );
@@ -265,66 +275,51 @@ public class PDEDesktop extends JPanel implements Desktop
 
     public void removeDesktopListener( DesktopListener dl ) 
     {
-        listenerList.add( DesktopListener.class, dl );
+        listenerList.remove( dl );
     }
     
     protected void fireWorkAreaAdded( WorkArea wa )
     {
-        Object[] listeners = listenerList.getListenerList();
+        DesktopListener[] al = listenerList.getListeners( DesktopListener.class );
         
-        // Process the listeners last to first, notifying
-        for( int n = listeners.length - 2; n >= 0; n -= 2 )
-        {
-            if( listeners[n] == DesktopListener.class )
-                ((DesktopListener) listeners[n+1]).workAreaAdded( wa );
-        }
+        // Process the al last to first, notifying
+        for( int n = al.length -1; n >= 0; n-- )
+             al[n].workAreaAdded( wa );
     }
     
     protected void fireWorkAreaRemoved( WorkArea wa )
     {
-        Object[] listeners = listenerList.getListenerList();
+        DesktopListener[] al = listenerList.getListeners( DesktopListener.class );
         
-        // Process the listeners last to first, notifying
-        for( int n = listeners.length - 2; n >= 0; n -= 2 )
-        {
-            if( listeners[n] == DesktopListener.class )
-                ((DesktopListener) listeners[n+1]).workAreaRemoved( wa );
-        }
+        // Process the al last to first, notifying
+        for( int n = al.length -1; n >= 0; n-- )
+             al[n].workAreaRemoved( wa );
     }
     
     protected void fireWorkAreaSelected( WorkArea waPrevious, WorkArea waCurrent )
     {
-        Object[] listeners = listenerList.getListenerList();
+        DesktopListener[] al = listenerList.getListeners( DesktopListener.class );
         
-        // Process the listeners last to first, notifying
-        for( int n = listeners.length - 2; n >= 0; n -= 2 )
-        {
-            if( listeners[n] == DesktopListener.class )
-                ((DesktopListener) listeners[n+1]).workAreaSelected( waPrevious, waCurrent );
-        }
+        // Process the al last to first, notifying
+        for( int n = al.length -1; n >= 0; n-- )
+             al[n].workAreaSelected( waPrevious, waCurrent );
     }
     
     protected void fireTaskBarAdded( TaskBar tb )
     {
-        Object[] listeners = listenerList.getListenerList();
+        DesktopListener[] al = listenerList.getListeners( DesktopListener.class );
         
-        // Process the listeners last to first, notifying
-        for( int n = listeners.length - 2; n >= 0; n -= 2 )
-        {
-            if( listeners[n] == DesktopListener.class )
-                ((DesktopListener) listeners[n+1]).taskBarAdded( tb );
-        }
+        // Process the al last to first, notifying
+        for( int n = al.length -1; n >= 0; n-- )
+             al[n].taskBarAdded( tb );
     }
     
     protected void fireTaskBarRemoved( TaskBar tb )
     {
-        Object[] listeners = listenerList.getListenerList();
+        DesktopListener[] al = listenerList.getListeners( DesktopListener.class );
         
-        // Process the listeners last to first, notifying
-        for( int n = listeners.length - 2; n >= 0; n -= 2 )
-        {
-            if( listeners[n] == DesktopListener.class )
-                ((DesktopListener) listeners[n+1]).taskBarRemoved( tb );
-        }
+        // Process the al last to first, notifying
+        for( int n = al.length -1; n >= 0; n-- )
+             al[n].taskBarRemoved( tb );
     }
 }

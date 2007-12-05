@@ -46,7 +46,12 @@ public class PDECanvas extends JPanel implements DeskCanvas
     
     public void add( DeskComponent dc )
     {
-        root.getContentPane().add( (Component) dc );   
+        add( (Component) dc );
+    }
+    
+    public Component add( Component c )
+    { 
+        return root.getContentPane().add( c );
     }
     
     public void remove( DeskComponent dc )
@@ -86,7 +91,7 @@ public class PDECanvas extends JPanel implements DeskCanvas
     }
     
     // Just to avoid accidental use of them  ---------------------------------------------------------
-    public Component add( Component c )             { throw new IllegalAccessError(DONT_USE_ME); }
+    ///public Component add( Component c )          { throw new IllegalAccessError(DONT_USE_ME); }
     public Component add( Component c, int n )      { throw new IllegalAccessError(DONT_USE_ME); }
     public Component add( String s, Component c )   { throw new IllegalAccessError(DONT_USE_ME); }
     public void add( Component c, Object o )        { throw new IllegalAccessError(DONT_USE_ME); }
@@ -94,18 +99,6 @@ public class PDECanvas extends JPanel implements DeskCanvas
     public void remove( Component c )               { throw new IllegalAccessError(DONT_USE_ME); }
     //------------------------------------------------------------------------------------------------
     
-    //------------------------------------------------------------------------//
-    // METHODS REDIRECTED TO this.root
-    // FIXME: var cómo hacer las cosas sin public galsspane
-    public Component getGlassPane()
-    {
-        return root.getGlassPane();
-    }
-    
-    public void setGlassPane( Component glass )
-    {
-        root.setGlassPane( glass );
-    }
     
     /**
      *

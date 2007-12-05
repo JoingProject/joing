@@ -24,7 +24,7 @@ public class GlassPaneDesklet extends GlassPaneBase
     {
         super( owner );
         desklet = owner;
-        ptMousePosition = new Point();
+        ptMousePosition = new Point(); ///null;
     }
     
     //------------------------------------------------------------------------//
@@ -44,14 +44,19 @@ public class GlassPaneDesklet extends GlassPaneBase
     {
         if( me.getButton() == MouseEvent.BUTTON1 )
             ptMousePosition = me.getPoint();
+//        else
+//            ptMousePosition = null;   // Used also as flag to know if drag was started by left (BUTTON1) click
     }
     
     protected void mouseDragged( MouseEvent me )
     {
-        int x = me.getPoint().x + desklet.getX() - ptMousePosition.x;
-        int y = me.getPoint().y + desklet.getY() - ptMousePosition.y;
+//        if( ptMousePosition != null )
+//        {
+            int x = me.getPoint().x + desklet.getX() - ptMousePosition.x;
+            int y = me.getPoint().y + desklet.getY() - ptMousePosition.y;
 
-        desklet.setLocation( x,y );
+            desklet.setLocation( x,y );
+//        }
     }
     
     protected void mouseEntered( MouseEvent me )
@@ -62,5 +67,5 @@ public class GlassPaneDesklet extends GlassPaneBase
     protected void mouseExited( MouseEvent me )
     {
         desklet.setToolBarVisible( false );
-    }    
+    }
 }

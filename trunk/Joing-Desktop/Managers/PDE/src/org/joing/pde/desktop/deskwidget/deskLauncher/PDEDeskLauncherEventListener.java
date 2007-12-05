@@ -9,13 +9,13 @@
 
 package org.joing.pde.desktop.deskwidget.deskLauncher;
 
-import org.joing.common.desktopAPI.deskwidget.deskLauncher.LauncherEventListener;
+import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncherListener;
 
 /**
  *
  * @author fmorero
  */
-public interface PDEDeskLauncherEventListener extends LauncherEventListener
+public interface PDEDeskLauncherEventListener extends DeskLauncherListener
 {
     public void deletedEvent( PDEDeskLauncher launcher );
     public void toTrashcanEvent( PDEDeskLauncher launcher );

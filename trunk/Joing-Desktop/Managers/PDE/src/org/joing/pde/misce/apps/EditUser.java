@@ -11,6 +11,7 @@ import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.pane.DeskFrame;
 import org.joing.common.dto.user.User;
+import org.joing.pde.PDEUtilities;
 
 /**
  *
@@ -32,10 +33,10 @@ public class EditUser extends JPanel implements DeskComponent
     public void showFrame()
     {
         String    sIcon = "user_"+ (user.isMale() ? "" : "fe") +"male.png";
-        ImageIcon icon  = DesktopManagerFactory.getDM().getRuntime().getIcon( null, sIcon, 20, 20 );
+        ImageIcon icon  = PDEUtilities.getIcon( null, sIcon, 20, 20 );
         
         frame = DesktopManagerFactory.getDM().getRuntime().createFrame();
-        frame.setIcon( icon.getImage() );
+        ///frame.setIcon( icon.getImage() );  FIXME
         frame.add( (DeskComponent) this );
         
         DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea().add( frame );

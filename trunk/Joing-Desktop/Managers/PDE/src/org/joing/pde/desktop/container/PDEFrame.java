@@ -10,6 +10,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
@@ -20,6 +21,7 @@ import javax.swing.event.InternalFrameEvent;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.pane.DeskFrame;
+import org.joing.pde.PDEUtilities;
 
 /**
  * An improved JInternalFrame.
@@ -89,14 +91,15 @@ public class PDEFrame extends JInternalFrame implements DeskFrame
         }
     }
     
-    public void setIcon( Image image )
+    public void setIcon( byte[] image )
     {
-        setFrameIcon( new ImageIcon( image ) );
+        Image img = Toolkit.getDefaultToolkit().createImage( image );
+        setFrameIcon( new ImageIcon( img ) );
     }
     
-    public Image getIcon()
+    public byte[] getIcon()
     {
-        return ((ImageIcon) getFrameIcon()).getImage();
+        return PDEUtilities.icon2ByteArray( (ImageIcon) getFrameIcon() );
     }
     
     /**
