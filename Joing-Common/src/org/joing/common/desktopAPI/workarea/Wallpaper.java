@@ -9,10 +9,6 @@
 
 package org.joing.common.desktopAPI.workarea;
 
-import java.awt.Image;
-import java.io.FileDescriptor;
-import java.net.URL;
-
 /**
  *
  * @author Mario Serrano Leones
@@ -21,8 +17,8 @@ public interface Wallpaper
 {
     public enum Mode { EXPANDED, CENTER, TILES; }
     
-    Image getSource();
-    void  setSource( Image image );
-    Mode  getMode();
-    void  setMode( Mode mode );
+    byte[] getSource();
+    void   setSource( byte[] image );
+    Mode   getMode();
+    void   setMode( Mode mode );
 }

@@ -5,9 +5,6 @@
 
 package org.joing.common.desktopAPI;
 
-import java.awt.Dimension;
-import java.awt.Point;
-
 /**
  * Common interface for all objects that appear in: WorkAreas and TaskBars.
  * <p>
@@ -17,9 +14,11 @@ import java.awt.Point;
  */
 public interface DeskComponent
 {
-    Point getLocation();
-    void  setLocation( Point pt );
+    int  getX();
+    int  getY();
+    void setLocation( int x, int y );
     
-    Dimension getSize();
-    void      setSize( Dimension d );
+    int  getWidth();
+    int  getHeight();
+    void setSize( int width, int height );
 }

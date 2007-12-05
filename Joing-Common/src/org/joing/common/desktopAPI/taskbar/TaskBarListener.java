@@ -9,7 +9,6 @@
 
 package org.joing.common.desktopAPI.taskbar;
 
-import java.util.EventListener;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DeskContainer;
 
@@ -17,7 +16,7 @@ import org.joing.common.desktopAPI.DeskContainer;
  *
  * @author fmorero
  */
-public interface TaskBarListener extends EventListener
+public interface TaskBarListener
 {    
     public void componentAdded( DeskComponent dc );
     public void componentRemoved( DeskComponent dc );

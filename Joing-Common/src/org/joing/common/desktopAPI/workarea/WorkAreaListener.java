@@ -9,14 +9,13 @@
 
 package org.joing.common.desktopAPI.workarea;
 
-import java.util.EventListener;
 import org.joing.common.desktopAPI.DeskComponent;
 
 /**
  *
  * @author Francisco Morero Peyrona
  */
-public interface WorkAreaListener extends EventListener
+public interface WorkAreaListener
 {
     public void componentAdded( DeskComponent comp );
     public void componentRemoved( DeskComponent comp );
