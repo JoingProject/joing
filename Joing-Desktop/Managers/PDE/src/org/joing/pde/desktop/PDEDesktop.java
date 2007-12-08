@@ -25,7 +25,7 @@ import org.joing.pde.desktop.container.PDECanvas;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
 import org.joing.pde.desktop.taskbar.PDETaskBar;
 import org.joing.pde.misce.desklets.NasaPhoto;
-import org.joing.pde.misce.desklets.memon.MemMon;
+import org.joing.pde.misce.apps.memon.MemoryMonitor;
 import org.joing.pde.swing.EventListenerList;
 
 /**
@@ -114,9 +114,7 @@ public class PDEDesktop extends JPanel implements Desktop
         wa.add( dl1 );
         wa.add( dl2 );
         
-        MemMon memon = new MemMon();
-               memon.setBounds( 10,200, memon.getPreferredSize().width, memon.getPreferredSize().height );
-        wa.add( memon );
+        MemoryMonitor.showFrame();
         
         NasaPhoto nasa = new NasaPhoto();
                   nasa.setBounds( 10,350, nasa.getPreferredSize().width, nasa.getPreferredSize().height );

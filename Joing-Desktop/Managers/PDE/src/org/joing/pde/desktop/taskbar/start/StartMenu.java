@@ -25,7 +25,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManagerFactory;
-import org.joing.common.desktopAPI.pane.DeskFrame;
 import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.app.AppEnvironment;
 import org.joing.common.dto.app.AppGroup;
@@ -35,8 +34,6 @@ import org.joing.pde.ColorSchema;
 import org.joing.pde.PDEUtilities;
 import org.joing.pde.swing.JScrollablePopupMenu;
 import org.joing.pde.misce.apps.EditUser;
-import org.joing.pde.misce.apps.ProxyConfig;
-import org.joing.pde.vfs.JoingFileSystemView;
 
 /**
  *
@@ -73,9 +70,9 @@ class StartMenu extends JScrollablePopupMenu
         
         if( user != null )
         {
-            String sIcon = "user_"+ (user.isMale() ? "" : "fe") +"male.png";
+            String sIcon = "user_"+ (user.isMale() ? "" : "fe") +"male";
             
-            item.setIcon( PDEUtilities.getIcon( null, sIcon, ICON_SIZE+5, ICON_SIZE+5 ) );
+            item.setIcon( PDEUtilities.getStandardIcon( sIcon, ICON_SIZE+5, ICON_SIZE+5 ) );
             item.setText( user.getFirstName() +" "+ user.getSecondName() );
 
             item.addActionListener( new ActionListener()
@@ -97,7 +94,7 @@ class StartMenu extends JScrollablePopupMenu
     private void addLock()
     {
         JMenuItem itmLock = new JMenuItem( "Lock session" );
-                  itmLock.setIcon( PDEUtilities.getIcon( this, "images/lock.png", ICON_SIZE, ICON_SIZE ) );
+                  itmLock.setIcon( PDEUtilities.getIcon( this, "images/lock", ICON_SIZE, ICON_SIZE ) );
                   itmLock.addActionListener( new ActionListener()
                   {
                       public void actionPerformed( ActionEvent ae )
@@ -111,7 +108,7 @@ class StartMenu extends JScrollablePopupMenu
     private void addExit()
     {
         JMenuItem itmExit = new JMenuItem( "End session" );
-                  itmExit.setIcon( PDEUtilities.getIcon( this, "images/exit.png", ICON_SIZE, ICON_SIZE ) );
+                  itmExit.setIcon( PDEUtilities.getIcon( this, "images/exit", ICON_SIZE, ICON_SIZE ) );
                   itmExit.addActionListener( new ActionListener()
                   {
                       public void actionPerformed( ActionEvent ae )
@@ -140,12 +137,6 @@ class StartMenu extends JScrollablePopupMenu
                 JMenu menu = new JMenu( group.getName() );
                       menu.setIcon( createItemIcon( group.getIconPNG() ) );
                       
-                if( group.getGroupKey() == AppGroupKey.SYSTEM )
-                {
-                    addPDESystemApps( menu );
-                    bSystemAppsAdded = true;
-                }
-
                 add( menu );
 
                 List<AppDescriptor> appList = group.getApplications();
@@ -170,39 +161,7 @@ class StartMenu extends JScrollablePopupMenu
                     menu.add( itemApp );
                 }
             }
-            
-            if( ! bSystemAppsAdded ) // This almost never will happen because users will have at least one app in System
-            {
-                JMenu menuSys = new JMenu( "System" );
-                addPDESystemApps( menuSys );
-                add( menuSys );
-            }
         }
-    }
-    
-    // Add some apps that are in PDE.jar to System menu
-    private void addPDESystemApps( JMenu menu )
-    {
-        JMenuItem itemProxy = new JMenuItem( "Proxy" );
-                  itemProxy.setIcon( ProxyConfig.getIcon( ICON_SIZE, ICON_SIZE ) );
-                  itemProxy.addActionListener( new ActionListener()
-                  {
-                      public void actionPerformed( ActionEvent ae )
-                      {
-                          (new ProxyConfig()).showFrame();
-                          
-                          JoingFileSystemView jfsv = JoingFileSystemView.getFileSystemView();
-                          
-                          DeskFrame frmFileChooser = DesktopManagerFactory.getDM().getRuntime().createFrame();
-                                    frmFileChooser.setTitle( "Open file" );
-                                    frmFileChooser.add( new FileChooser() );
-                          
-                          DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea().add( frmFileChooser );
-                      }
-                  } );
-        menu.add( itemProxy );
-        
-        // TODO: Añadir SystemMonitor
     }
     
     private ImageIcon createItemIcon( byte[] abImage )

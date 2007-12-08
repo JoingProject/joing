@@ -73,7 +73,7 @@ public final class StartButton extends JLabel implements DeskComponent
     
     private void initGUI()
     {
-        icon = PDEUtilities.getIcon( this, "images/start.png" );
+        icon = PDEUtilities.getIcon( this, "images/start" );
         
         setBorder( new EmptyBorder( 0,2,0,4 ) );
         setIcon( icon );

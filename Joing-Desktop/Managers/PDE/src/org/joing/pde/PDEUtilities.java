@@ -5,36 +5,66 @@
 package org.joing.pde;
 
 import java.applet.Applet;
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JInternalFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.workarea.WorkArea;
+import org.joing.pde.desktop.container.PDEDialog;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.pde.misce.images.ImagesFactory;
 
 /**
- * Extra functions.
- * They are only used internally by PDE but can't be used by portable
- * (cross-desktops) Joing applications.
+ * Extra functions used internally by PDE.
+ * <p>
+ * <b>NOTE: </b>If an application uses these functions, it will not be a portable 
+ * (cross-desktops) Joing application.
  *
  * @author Francisco Morero Peyrona
  */
 public class PDEUtilities
 {
-    public static byte[] image2ByteArray( Image image )
-    {        
-        return null;
-    }
-    
     public static byte[] icon2ByteArray( ImageIcon icon )
     {
-        return image2ByteArray( icon.getImage() );
+        byte[] image = null;
+        
+        try
+        {
+            BufferedImage bufferedImage = new BufferedImage( icon.getIconWidth(),
+                                                             icon.getIconHeight(),
+                                                             BufferedImage.TYPE_INT_ARGB );
+                          bufferedImage.createGraphics().drawImage( icon.getImage(), 0, 0, null );
+                          
+            ByteArrayOutputStream baos = new ByteArrayOutputStream( 1024 * 64 );
+            ImageIO.write( bufferedImage, "png", baos );
+            baos.flush();
+            image = baos.toByteArray();
+            baos.close();
+        }
+        catch( IOException exc )
+        {
+            // Nothing to do
+        }
+        
+        return image;
     }
     
     /**
@@ -52,17 +82,13 @@ public class PDEUtilities
         
         if( sName != null && sName.length() > 0 )
         {
-            if( invoker == null )
-            {
-                url = ImagesFactory.class.getResource( sName );
-            }
+            if( sName.indexOf( ".png" ) == -1 )
+                sName += ".png";
+            
+            if( invoker instanceof Class )
+                url = ((Class) invoker).getResource( sName );
             else
-            {
-                if( invoker instanceof Class )
-                    url = ((Class) invoker).getResource( sName );
-                else
-                    url = invoker.getClass().getResource( sName );
-            }
+                url = invoker.getClass().getResource( sName );
             
             if( url != null )
                 icon = new ImageIcon( url );
@@ -70,7 +96,7 @@ public class PDEUtilities
         
         if( icon == null )
         {
-            url  = ImagesFactory.class.getResource( "no_image.png" );
+            url  = ImagesFactory.class.getResource( "no_image" );
             icon = new ImageIcon( url );
         }
         
@@ -86,9 +112,9 @@ public class PDEUtilities
      * @param sName   Name of file with its extension.
      * @return        The icon or an standard one if teh requested was not found
      */
-    public static ImageIcon getIcon( Object o, String s, int nWidth, int nHeight )
+    public static ImageIcon getIcon( Object invoker, String sName, int nWidth, int nHeight  )
     {
-        ImageIcon icon = getIcon( o, s );
+        ImageIcon icon = getIcon( invoker, sName  );
         
         if( icon.getIconWidth() != nWidth || icon.getIconHeight() != nHeight )
             icon.setImage( icon.getImage().getScaledInstance( nWidth, nHeight, Image.SCALE_SMOOTH ) );
@@ -96,11 +122,20 @@ public class PDEUtilities
         return icon;
     }
     
+    public static ImageIcon getStandardIcon( String sName )
+    {
+        return getIcon( ImagesFactory.class, sName );
+    }
+    
+    public static ImageIcon getStandardIcon( String sName, int nWidth, int nHeight )
+    {
+        return getIcon( ImagesFactory.class, sName, nWidth, nHeight );
+    }
+    
     public static void play( URL urlSound )
     {
         Applet.newAudioClip( urlSound ).play();
     }
-    
     
     /**
      * Creates a custom cursor asuming that the image is under cursor 
@@ -121,28 +156,30 @@ public class PDEUtilities
         return Toolkit.getDefaultToolkit().createCustomCursor( image, pHotSpot, sName );        
     }
     
+    public static boolean showBasicDialog( ImageIcon icon, String sTitle, JComponent content )
+    {
+        BasicDialog dialog = new BasicDialog( icon, sTitle, content );
+        
+        DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea().add( dialog );
+        
+        return dialog.bExitWithAccept;
+    }
+    
     
     /**
-     * Get all objects in dekstop that match passed class,
-     * or an empty <code>Vector</code> one if there is no one selected.
-     * <p>
-     * To select objects of all classes, simply pass <code>Component</code>
+     * Shows an exception in a JDialog.
+     * 
+     * @param exc     Exception to be shown
+     * @param bReport <code>true</code> when error should be reported to TelcoDomo
      */
-    public static <T> List<T> getOfType( Component container, Class<T> clazz )
+    public void showException( Throwable exc, String sTitle )
     {
-        /* TODO: hcaerlo y que sea recursivo
-        ArrayList<Object> list  = new ArrayList<Object>();                
-        Component[]       aComp = getComponents();
-        
-        for( int n = 0; n < aComp.length; n++ )
-        {
-            if( clazz.isInstance( aComp[n] ) )
-                list.add( aComp[n] );
-        }
-        
-        return list;
-        */
-        return null;
+        exc.printStackTrace();   // TODO: quitarlo en la version final 
+                                 //       y hacer una ventana para mostrar exc -->
+        /*
+        JShowException dialog = new JShowException( sTitle, exc );
+                       dialog.setLocationRelativeTo( getDesktop() );
+                       dialog.setVisible( true );*/
     }
     
     //------------------------------------------------------------------------//
@@ -163,5 +200,53 @@ public class PDEUtilities
         }
         
         return null;
+    }
+    
+    //------------------------------------------------------------------------//
+    // INNER CLASS: Basic Dialog
+    //------------------------------------------------------------------------//
+    private static final class BasicDialog extends PDEDialog
+    {
+        private boolean bExitWithAccept = false;
+        
+        private BasicDialog( ImageIcon icon, String sTitle, JComponent content )
+        {
+            super();
+            
+            JButton btnAccept = new JButton( "Accept" );
+                    btnAccept.addActionListener( new ActionListener()
+                    {
+                        public void actionPerformed( ActionEvent e )
+                        {
+                            BasicDialog.this.bExitWithAccept = true;
+                            BasicDialog.this.close();
+                        }
+                    } );
+        
+            JButton btnCancel = new JButton( "Cancel" );
+                    btnCancel.addActionListener( new ActionListener()
+                    {
+                        public void actionPerformed( ActionEvent e )
+                        {
+                            BasicDialog.this.close();
+                        }
+                    } );
+                    
+            JPanel  pnlButtons = new JPanel( new FlowLayout( FlowLayout.TRAILING, 5, 0 ) );
+                    pnlButtons.setBorder( new EmptyBorder( 0, 10, 10, 10 ) );
+                    pnlButtons.add( btnAccept );
+                    pnlButtons.add( btnCancel );
+            JPanel  pnlContent = new JPanel( new BorderLayout() );
+                    pnlContent.add( content   , BorderLayout.CENTER );
+                    pnlContent.add( pnlButtons, BorderLayout.SOUTH  );
+                    
+            getContentPane().add( pnlContent, BorderLayout.CENTER );
+            setDefaultCloseOperation( JInternalFrame.DISPOSE_ON_CLOSE );
+            getRootPane().setDefaultButton( btnAccept );
+            setTitle( (sTitle == null) ? "" : sTitle );
+            
+            if( icon != null )
+                setFrameIcon( icon );
+        }
     }
 }

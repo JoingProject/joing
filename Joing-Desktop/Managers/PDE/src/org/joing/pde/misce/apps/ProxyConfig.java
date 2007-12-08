@@ -7,6 +7,7 @@ package org.joing.pde.misce.apps;
 
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
+import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import org.joing.common.desktopAPI.DeskComponent;
@@ -33,17 +34,14 @@ public class ProxyConfig extends JPanel implements DeskComponent
     
     public void showFrame()
     {
+        URL iconURL = getClass().getResource( "proxy_logo.png" );
+        
         frame = DesktopManagerFactory.getDM().getRuntime().createFrame();
-        frame.setTitle( "Proxy Config" );
-        ///frame.setIcon( getIcon( 20, 20 ).getImage() );  FIXME
+        frame.setTitle( "Proxy Configuration" );
+        frame.setIcon( DesktopManagerFactory.getDM().getRuntime().getImage( iconURL.toString(), 20, 20 ) );
         frame.add( this );
         
         DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea().add( frame );
-    }
-    
-    public static ImageIcon getIcon( int nWidth, int nHeight )
-    {
-        return PDEUtilities.getIcon( ProxyConfig.class, "proxy_logo.png", nWidth, nHeight );
     }
     
     //------------------------------------------------------------------------//

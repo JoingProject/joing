@@ -9,6 +9,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
+import org.joing.common.desktopAPI.Closeable;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.PDEUtilities;
 import org.joing.pde.desktop.deskwidget.PDEDeskWidget;
@@ -37,7 +38,7 @@ import org.joing.pde.desktop.deskwidget.PDEDeskWidget;
  * </ul>
  * @author Francisco Morero Peyrona
  */
-public abstract class PDEDesklet extends PDEDeskWidget //implements 
+public abstract class PDEDesklet extends PDEDeskWidget implements Closeable
 {
     private DeskAppletToolBar toolBar;
     
@@ -64,6 +65,11 @@ public abstract class PDEDesklet extends PDEDeskWidget //implements
     //------------------------------------------------------------------------//
     
     protected void onShow()
+    {
+        // Empty
+    }
+    
+    protected void onHide()
     {
         // Empty
     }
@@ -142,7 +148,7 @@ public abstract class PDEDesklet extends PDEDeskWidget //implements
         {
             public void ancestorAdded(   AncestorEvent ae ) { PDEDesklet.this.onShow(); }
             public void ancestorMoved(   AncestorEvent ae ) {}
-            public void ancestorRemoved( AncestorEvent ae ) { PDEDesklet.this.onClose(); }
+            public void ancestorRemoved( AncestorEvent ae ) { PDEDesklet.this.onHide(); }
         } );
     }
 

@@ -71,9 +71,9 @@ class WorkAreaPopupMenu extends JPopupMenu implements ActionListener
             ImageIcon icon = null;
 
             if( sIconName.equals( "grid" ) )
-                icon = PDEUtilities.getIcon( this, "images/"+ sIconName +".png", 16, 16 );
+                icon = PDEUtilities.getIcon( this, "images/"+ sIconName, 16, 16 );
             else
-                icon = PDEUtilities.getIcon( null, sIconName +".png", 16, 16 );
+                icon = PDEUtilities.getStandardIcon( sIconName, 16, 16 );
 
             item.setIcon( icon );
         }
@@ -103,24 +103,28 @@ class WorkAreaPopupMenu extends JPopupMenu implements ActionListener
     private void createFolder()
     {
         // TODO: hacerlo
-        DesktopManagerFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( "Option not yet implemented" );
     }
     
     private void createLauncher()
     {
         // TODO: hacerlo
-        DesktopManagerFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( "Option not yet implemented" );
     }
     
     private void toggleAlign()
     {
         // TODO: hacerlo
-        DesktopManagerFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( "Option not yet implemented" );
     }
     
     private void editProperties()
     {
-        // TODO: hacerlo
-        DesktopManagerFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
+        WorkAreaProperties panel = new WorkAreaProperties();
+        
+        if( PDEUtilities.showBasicDialog( null, "WorkArea Preferences", panel ) )
+        {
+            // TODO: Actualizarlo y salvarlo a fichero
+        }
     }
 }

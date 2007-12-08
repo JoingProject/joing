@@ -6,22 +6,15 @@
 package org.joing.pde.desktop.container;
 
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Image;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
-import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.pane.DeskFrame;
-import org.joing.pde.PDEUtilities;
 
 /**
  * An improved JInternalFrame.
@@ -36,7 +29,7 @@ import org.joing.pde.PDEUtilities;
  * </ul>
  * @author Francisco Morero Peyrona
  */
-public class PDEFrame extends JInternalFrame implements DeskFrame
+public class PDEFrame extends PDEWindow implements DeskFrame
 {
     private boolean bAlwaysOnTop = false;
     
@@ -48,59 +41,6 @@ public class PDEFrame extends JInternalFrame implements DeskFrame
     }
     
     //------------------------------------------------------------------------//
-    // Container interface
-    
-    public void add( DeskComponent dc )
-    {
-        getContentPane().add( (Component) dc );
-    }
-    
-    public void remove( DeskComponent dc )
-    {
-        getContentPane().remove( (Component) dc );
-    }
-    
-    //------------------------------------------------------------------------//
-    // Closeable interface
-    
-    public void close()
-    {
-        try
-        {
-            setClosed( true );
-        }
-        catch( PropertyVetoException exc )
-        {
-        }
-        
-        dispose();
-    }
-    
-    //------------------------------------------------------------------------//
-    // DeskWindow interface
-    
-    public void setSelected( boolean bSelected )
-    {
-       try
-        {
-           super.setSelected( bSelected );
-        }
-        catch( PropertyVetoException exc )
-        {
-           // Nothing to do
-        }
-    }
-    
-    public void setIcon( byte[] image )
-    {
-        Image img = Toolkit.getDefaultToolkit().createImage( image );
-        setFrameIcon( new ImageIcon( img ) );
-    }
-    
-    public byte[] getIcon()
-    {
-        return PDEUtilities.icon2ByteArray( (ImageIcon) getFrameIcon() );
-    }
     
     /**
      * Redefined from JInternalFrame because I need a different behaviour 
@@ -144,18 +84,6 @@ public class PDEFrame extends JInternalFrame implements DeskFrame
         }
     }    
     
-    public void center()
-    {
-        if( getDesktopPane() != null )
-        {
-            Container cp = getDesktopPane();
-            int       nX = (cp.getSize().width  - getWidth())  / 2;
-            int       nY = (cp.getSize().height - getHeight()) / 2;
-            
-            setLocation( Math.max( nX, 0 ), Math.max( nY, 0 ) );
-        }
-    }
-    
     //------------------------------------------------------------------------//
     // DeskFrame Interface
     
@@ -183,13 +111,17 @@ public class PDEFrame extends JInternalFrame implements DeskFrame
         return this.bAlwaysOnTop;
     }
     
+    /**
+     * Places the frame over all other frames (and below dialogs, obviously).
+     * <p>
+     * This property must be sat before adding the frame to the desktop, otherwise
+     * it has no effect.
+     * 
+     * @param b New value.
+     */
     public void setAlwaysOnTop( boolean b )
-    { // TODO: hacerlo
-        if( b != bAlwaysOnTop )
-        {
-            this.bAlwaysOnTop = b;
-        }
-        throw new UnsupportedOperationException("Not supported yet.");
+    {
+        this.bAlwaysOnTop = b;   // In PDE this property is handled by the WorkArea
     }
     
     //------------------------------------------------------------------------//

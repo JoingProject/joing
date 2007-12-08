@@ -31,6 +31,7 @@ import java.awt.BorderLayout;
 import java.awt.Toolkit;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
+import javax.swing.JRootPane;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.clientAPI.runtime.Bridge2Server;
 import org.joing.common.desktopAPI.DesktopManagerFactory;
@@ -180,7 +181,7 @@ public class PDEManager extends JApplet implements DesktopManager
     
     private void unlock()
     {
-        if( runtime.askForPassword() )
+        if( runtime.askForPasswordDialog() )
         {
             MyGlassPane myGlass = (MyGlassPane) (frame != null ? frame.getGlassPane()
                                                                : getRootPane().getGlassPane());
@@ -193,7 +194,13 @@ public class PDEManager extends JApplet implements DesktopManager
             myGlass.unlock();
         }
     }
-   
+    
+    // Can't name it getRootPane()
+    public JRootPane getTheRootPane()
+    {
+        return frame != null ? frame.getRootPane() : getRootPane();
+    }
+    
     public void setPlatform( Platform platform )
     {
         this.platform = platform;
