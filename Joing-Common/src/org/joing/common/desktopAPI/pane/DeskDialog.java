@@ -20,10 +20,10 @@ package org.joing.common.desktopAPI.pane;
  */
 public interface DeskDialog extends DeskWindow
 {
-    public enum ExitValue { CANCELED, ACCEPTED }
-    
+    /**
+     * Diffrent implementations can built Dialogs as modal or modaless.
+     * 
+     * @return Modal value for the dialog.
+     */
     boolean isModal();
-    void    setModal( boolean  b );
-    
-    ExitValue getExitValue();
 }
