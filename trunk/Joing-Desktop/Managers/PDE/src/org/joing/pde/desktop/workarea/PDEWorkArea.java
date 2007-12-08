@@ -43,12 +43,10 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
 {
     private static final String DONT_USE_ME = "Do not use me";
     
-    private static final Integer LAYER_WALLPAPER     = new Integer(-10 );
-    private static final Integer LAYER_CANVAS        = new Integer(  0 );
-    private static final Integer LAYER_DESKLET       = new Integer( 10 );
-    private static final Integer LAYER_DESK_LAUNCHER = new Integer( 20 );
-    private static final Integer LAYER_APPLICATION   = new Integer( 30 );
-    private static final Integer LAYER_DIALOG        = new Integer( 40 );
+    private static final Integer LAYER_WALLPAPER = new Integer(-10 );
+    private static final Integer LAYER_CANVAS    = new Integer(  0 );
+    private static final Integer LAYER_LAUNCHER  = new Integer( 10 );
+    private static final Integer LAYER_FRAME     = new Integer( 20 );
     
     private Wallpaper wallpaper;
     
@@ -155,7 +153,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             
             removeSelectedComponents( clazz );
         }*/
-        DesktopManagerFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( "Option not yet implemented" );
     }
     
     /**
@@ -175,7 +173,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             Client.getClient().getClipBoard().clear();
             Client.getClient().getClipBoard().add( vSelected );
         }*/
-        DesktopManagerFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( "Option not yet implemented" );
     }
 
     /**
@@ -209,7 +207,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             
             root.setCursor( Cursor.getPredefinedCursor( Cursor.DEFAULT_CURSOR) );
         }*/
-        DesktopManagerFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( "Option not yet implemented" );
     }
 
     /**
@@ -283,7 +281,8 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     //------------------------------------------------------------------------//
     
     private void initGUI()
-    {        
+    {
+        setLayout( null );
         setOpaque( true );
         setBackground( ColorSchema.getInstance().getDesktopBackground() );
         
@@ -332,23 +331,26 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         if(      component instanceof PDEDeskLauncher )  addDeskLauncher( (PDEDeskLauncher) dc );
         else if( component instanceof PDEDesklet      )  addDesklet( (PDEDesklet) component );
         else if( component instanceof PDECanvas       )  super.add( component, LAYER_CANVAS );
-        else if( component instanceof PDEDialog       )  super.add( component, LAYER_DIALOG );
+        else if( component instanceof PDEDialog       )  addDialog( (PDEDialog) component, true );
         else if( component instanceof PDEFrame        )  addFrame( (PDEFrame) component, true );
-        else                                             super.add( component, LAYER_APPLICATION );
+        else                                             super.add( component, LAYER_FRAME  );
         
         moveToFront( (Component) dc );
         fireComponentAdded( dc );
     }
     
-    public void add( DeskWindow dc, boolean bAutoArrange )
+    public void add( DeskWindow window, boolean bAutoArrange  )
     {
-        addFrame( (PDEFrame) dc, bAutoArrange );
+        if( window instanceof PDEDialog )
+            addDialog( (PDEDialog) window, bAutoArrange );
+        else
+            addFrame( (PDEFrame) window, bAutoArrange );
     }
     
     // super is in charge of detecting when the JinternalFrame is closed, so it
-    // can remove the frame from the container. 
+    // can remove the dialog from the container. 
     // As this method overrides the parent one, this one does not need to 
-    // "listen" to the frame events.
+    // "listen" to the dialog events.
     public void remove( DeskComponent dc )
     {
         remove( (Component) dc );
@@ -364,6 +366,17 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     { 
         super.remove( c );
         fireComponentRemoved( (DeskComponent) c );
+    }
+    
+    
+    public void moveToFront( DeskComponent dc )
+    {
+        moveToFront( (Component) dc );
+    }
+
+    public void moveToBack( DeskComponent dc )
+    {
+        moveToBack( (Component) dc );
     }
     
     public Wallpaper getWallpaper()
@@ -451,13 +464,41 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
                 component.setLocation( bounds.x, 0 );      // NEXT: esto es mejorable
         }*/
         
-        super.add( desklet, LAYER_DESKLET );
+        super.add( desklet, LAYER_LAUNCHER );
     }
     
     private void addDeskLauncher( PDEDeskLauncher dl )
     {
         dl.addLauncherListener( deskLauncherListener );
-        super.add( dl, LAYER_DESK_LAUNCHER );
+        super.add( dl, LAYER_LAUNCHER  );
+    }
+    
+    private void addDialog( PDEDialog dialog, boolean bAutoArrange  )
+    {
+        if( bAutoArrange )
+            dialog.pack();
+        
+        // Ensures that dialog is not bigger than WorkArea
+        // (because the same user can run Joing in many different-size devices)
+        Insets    insets = getInsets();
+        Dimension dim    = getSize();
+                  dim.width  -= (insets.left + insets.right);
+                  dim.height -= (insets.top  + insets.bottom);
+                  
+        if( dialog.getWidth() > dim.width )
+            dialog.setSize( dim.width, dialog.getHeight() );
+            
+        if( dialog.getHeight() > dim.height )
+            dialog.setSize( dialog.getWidth(), dim.height );
+               
+        if( bAutoArrange )
+        {
+            dialog.center();
+            dialog.setSelected( true );
+        }
+        
+        // Can't be part of bAutoarrange because DeskFrame interface does not include setVisible(...)
+        dialog.setVisible( true );  // 1st, must be visble, because this is the way to have a parent
     }
     
     private void addFrame( PDEFrame frame, boolean bAutoArrange )
@@ -465,7 +506,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         if( bAutoArrange )
             frame.pack();
         
-        // Ensures that frame is not bigger than WorkArea
+        // Ensures that dialog is not bigger than WorkArea
         // (because the same user can run Joing in many different-size devices)
         Insets    insets = getInsets();
         Dimension dim    = getSize();
@@ -479,14 +520,21 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             frame.setSize( frame.getWidth(), dim.height );
         
         // Add to container
-        super.add( frame, LAYER_APPLICATION );
+        if( frame.isAlwaysOnTop() )
+            super.add( frame, LAYER_FRAME + 1 );
+        else
+            super.add( frame, LAYER_FRAME  );
+        
+        if( bAutoArrange )
+            frame.center();
+                  
+        // Can't be part of bAutoarrange because DeskFrame interface does not include setVisible(...)
+        frame.setVisible( true );  // 1st, must be visble, because this is the way to have a parent
         
         if( bAutoArrange )
         {
-            frame.setVisible( true );  // 1st, must be visble, because this is the way to have a parent
-            frame.center();
             frame.setSelected( true );
-            frame.toFront();
+            moveToFront( (Component) frame );
         }
     }
     

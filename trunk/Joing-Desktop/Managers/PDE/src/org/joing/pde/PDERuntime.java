@@ -7,14 +7,13 @@
  */
 package org.joing.pde;
 
-import java.applet.Applet;
 import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Image;
-import java.awt.Point;
-import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URL;
-import javax.swing.ImageIcon;
+import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
@@ -51,48 +50,107 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
         return new PDECanvas();
     }
     
-    public DeskFrame createFrame()
-    {
-        return new PDEFrame();
-    }
-    
-    public DeskDialog createDialog( DeskFrame owner )
-    {
-        return new PDEDialog( owner );
-    }
-    
-    public DeskDialog createDialog( DeskDialog owner )
-    {
-        return new PDEDialog( owner );
-    }
-    
     public DeskLauncher createLauncher()
     {
         return new PDEDeskLauncher();
     }
     
-    //------------------------------------------------------------------------//
-    // Show exception and messages
-    //------------------------------------------------------------------------//
-    
-    public void showException( Throwable exc, String sTitle )
+    public DeskFrame createFrame()
     {
-        exc.printStackTrace();   // TODO: quitarlo en la version final 
-                                 //       y hacer una ventana para mostrar exc -->
-        /*
-        JShowException dialog = new JShowException( sTitle, exc );
-                       dialog.setLocationRelativeTo( getDesktop() );
-                       dialog.setVisible( true );*/
+        return new PDEFrame();
     }
     
-    public void showMessage( String sMessage )
+    public DeskDialog createDialog()
+    {
+        return new PDEDialog();
+    }
+    
+    //------------------------------------------------------------------------//
+    // Images and icons
+    //------------------------------------------------------------------------//
+    
+    public byte[] getImage( String spec )
+    {
+        return bufferedImage2ByteArray( getBufferedImage( spec ) );
+    }
+
+    public byte[] getStandardImage( String name )
+    {
+        URL url = ImagesFactory.class.getResource( name + ".png" );
+        return getImage( url.toString() );
+    }
+    
+    public byte[] getImage( String spec, int width, int height )
+    {
+        BufferedImage bi  = getBufferedImage( spec );
+        byte[]        ret = null;
+        
+        if( bi.getWidth() != width || bi.getHeight() != height )
+        {
+            Image image = bi.getScaledInstance( width, height, Image.SCALE_SMOOTH );
+            
+        }
+        
+        return bufferedImage2ByteArray( bi );
+    }
+
+    public byte[] getStandardImage( String name, int width, int height )
+    {
+        URL url = ImagesFactory.class.getResource( name + ".png" );
+        return getImage( url.toString(), width, height );
+    }
+    
+    private BufferedImage getBufferedImage( String url )
+    {
+        BufferedImage bi = null;
+        
+        try
+        {
+            bi = ImageIO.read( new URL( url ) );    
+        }
+        catch( Exception exc )
+        {
+            // Nothing to do
+        }
+        
+        return bi;
+    }
+    
+    private byte[] bufferedImage2ByteArray( BufferedImage bi )
+    {
+        byte[] image = null;
+        
+        if( bi != null )
+        {
+            try
+            {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream( 1024 * 64 );
+                ImageIO.write( bi, "png", baos );
+                baos.flush();
+                image = baos.toByteArray();
+                baos.close();
+            }
+            catch( IOException exc )
+            {
+                // Nothing to do
+            }
+        }
+        
+        return image;
+    }
+    
+    //------------------------------------------------------------------------//
+    // Frecuent Dialogs
+    //------------------------------------------------------------------------//
+    
+    public void showMessageDialog( String sMessage )
     {
         WorkArea workArea = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
         
         JOptionPane.showInternalMessageDialog( (Component) workArea, sMessage );
     }
     
-    public void showMessage( String sTitle, String sMessage )
+    public void showMessageDialog( String sTitle, String sMessage )
     {
         WorkArea workArea = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
         
@@ -100,7 +158,7 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
                                                JOptionPane.INFORMATION_MESSAGE );
     }
     
-    public boolean confirmDialog( String sTitle, String sMessage )
+    public boolean showAcceptCancelDialog( String sTitle, String sMessage )
     {
         WorkArea workArea = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
         
@@ -109,7 +167,7 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
                                      JOptionPane.OK_CANCEL_OPTION ) == JOptionPane.OK_OPTION;
     }
     
-    public boolean yesOrNoDialog( String sTitle, String sMessage )
+    public boolean showYesNoDialog( String sTitle, String sMessage )
     {
         WorkArea workArea = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
         
@@ -118,7 +176,7 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
                                      JOptionPane.YES_NO_OPTION ) == JOptionPane.YES_OPTION;
     }
     
-    public boolean askForPassword()
+    public boolean askForPasswordDialog()
     {// TODO: cambiar el JTextField por un JPasswordField
         String sPassword = JOptionPane.showInputDialog( null, "", "Enter password", 
                                                         JOptionPane.QUESTION_MESSAGE );

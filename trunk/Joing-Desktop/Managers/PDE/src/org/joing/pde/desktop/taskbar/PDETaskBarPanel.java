@@ -182,30 +182,30 @@ public class PDETaskBarPanel
         {   
             itemPreferences = new JMenuItem( "Preferences" );
             itemPreferences.addActionListener( this );
-            itemPreferences.setIcon( PDEUtilities.getIcon( null, "properties.png", 16, 16 ) );
+            itemPreferences.setIcon( PDEUtilities.getStandardIcon( "properties", 16, 16 ) );
             add( itemPreferences );
             
             itemAbout = new JMenuItem( "About" );
             itemAbout.addActionListener( this );
-            itemAbout.setIcon( PDEUtilities.getIcon( null, "info.png", 16, 16 ) );
+            itemAbout.setIcon( PDEUtilities.getStandardIcon("info", 16, 16 ) );
             add( itemAbout );
             
             addSeparator();
             
             itemRemove = new JMenuItem( "Remove" );
             itemRemove.addActionListener( this );
-            itemRemove.setIcon( PDEUtilities.getIcon( null, "remove.png", 16, 16 ) );
+            itemRemove.setIcon( PDEUtilities.getStandardIcon( "remove", 16, 16 ) );
             add( itemRemove );
             
             itemMove = new JMenuItem( "Move" );
             itemMove.addActionListener( this );
-            itemMove.setIcon( PDEUtilities.getIcon( null, "move.png", 16, 16 ) );
+            itemMove.setIcon( PDEUtilities.getStandardIcon( "move", 16, 16 ) );
             itemMove.setEnabled( ! isLocked() );
             add( itemMove );
             
             itemLock = new JMenuItem( "Lock" );
             itemLock.addActionListener( this );
-            itemLock.setIcon( PDEUtilities.getIcon( null, "lock.png", 16, 16 ) );
+            itemLock.setIcon( PDEUtilities.getStandardIcon( "lock", 16, 16 ) );
             add( itemLock );
         }
         

@@ -35,8 +35,6 @@ public abstract class PDEDeskWidget extends PDECanvas implements DeskWidget
         // root.setGlassPane( new GlassPaneWidget( this ) );
     }
     
-    public abstract void close();
-    
     //------------------------------------------------------------------------//
     // Following methods from DeskWidget interface already exists in JPanel:
     // getName(), setName(...), getLocation(), setLocation(...), 
@@ -47,5 +45,5 @@ public abstract class PDEDeskWidget extends PDECanvas implements DeskWidget
         
         if( popup != null && ! popup.isVisible() )
             popup.show( this, ptWhere.x, ptWhere.y );
-    }    
+    }
 }

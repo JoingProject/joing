@@ -33,7 +33,7 @@ public class PDEDeskletButton extends JLabel
      */
     PDEDeskletButton( String sImage, String sTipText )
     {
-        init( PDEUtilities.getIcon( this, "images/"+ sImage +".png", 12, 12 ), sTipText );
+        init( PDEUtilities.getIcon( this, "images/"+ sImage, 12, 12 ), sTipText );
     }
     
     public PDEDeskletButton( ImageIcon icon, String sTipText )

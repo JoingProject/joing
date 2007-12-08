@@ -26,9 +26,11 @@ import javax.swing.JPopupMenu;
 import javax.swing.MenuElement;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncherListener;
+import org.joing.common.desktopAPI.pane.DeskDialog;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.pde.desktop.deskwidget.PDEDeskWidget;
@@ -210,7 +212,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     //       llamar al container (WorkArea)
     public void delete()
     {
-        if( DesktopManagerFactory.getDM().getRuntime().confirmDialog( "Delete launcher", 
+        if( DesktopManagerFactory.getDM().getRuntime().showAcceptCancelDialog( "Delete launcher", 
                                                    "Are you sure you want to delete it?\n"+
                                                    "(deleted objects can not be recovered)" ) )
         {
@@ -224,7 +226,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     
     public void toTrashcan()
     {
-        if( DesktopManagerFactory.getDM().getRuntime().confirmDialog( "Send launcher to trashcan", 
+        if( DesktopManagerFactory.getDM().getRuntime().showAcceptCancelDialog( "Send launcher to trashcan", 
                                                    "Are you sure you want to send it to trashcan?" ) )
         {
             
@@ -233,23 +235,18 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
                         
             // TODO: mandarlo a la papelera e implementar el fire
             // fireLauncherToTrashcan( this );
-            DesktopManagerFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
+            DesktopManagerFactory.getDM().getRuntime().showMessageDialog( "Option not yet implemented" );
         }
-    }
-    
-    public void rename()
-    {
-        /*PopupToRename p4t = new PopupToRename( text );
-        Rectangle     rec = text.getBounds();
-        
-        p4t.setPreferredSize( new Dimension( rec.width, rec.height ) );
-        p4t.show( text, rec.x, rec.y-35 );
-        // TODO:  fireLauncherRenamed( this );*/
     }
     
     public void editProperties()
     {
-        // Has to be re-defined by subclasses
+        PDEDeskLauncherPropertiesPanel panel = new PDEDeskLauncherPropertiesPanel();
+        
+        if( PDEUtilities.showBasicDialog( null, "Launcher Properties", panel ) )
+        {
+            // TODO: hacerlo
+        }
     }
     
     /**
@@ -333,7 +330,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
             this.anImage = anImage;
             
             if( anImage == null )
-                imgIcon = PDEUtilities.getIcon( null, "launcher.png" );
+                imgIcon = PDEUtilities.getStandardIcon( "launcher" );
             else
                 imgIcon = new ImageIcon( Toolkit.getDefaultToolkit().createImage( anImage ) );
 
@@ -384,77 +381,6 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
         }
     }
     
-    /* NEXT: Hacerlo así para que pueda editarse el Text sobre le propio componente
-    private final class TextComponent extends JScrollPane
-    {
-        private JTextPane text;
-        
-        private TextComponent()
-        {
-            text = new JTextPane();
-            text.setBorder( null );
-            text.setBackground( ColorSchema.getInstance().getDeskLauncherTextBackground() );
-            text.setText( "No name" );
-            setSelected( false );
-            
-            StyledDocument doc = text.getStyledDocument();
-            //  Set alignment to be centered for all paragraphs
-            MutableAttributeSet standard = new SimpleAttributeSet();
-            StyleConstants.setAlignment( standard, StyleConstants.ALIGN_CENTER );
-            doc.setParagraphAttributes( 0, 0, standard, true );
-            
-            setViewportView( text );
-            setHorizontalScrollBarPolicy( ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER );
-            setVerticalScrollBarPolicy( ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER );
-            setOpaque( false );
-            setBorder( null );
-            getViewport().setOpaque( false );
-        }
-        
-        private String getText()
-        {
-            return text.getText();
-        }
-        
-        private void setText( String sText )
-        {
-            text.setText( sText );
-        }
-        
-        private void setEditable( boolean b )
-        {
-            if( b != text.isEditable() )
-            {
-                if( b )
-                {
-                    text.setEditable( true );
-                    text.selectAll();
-                    text.requestFocusInWindow();
-                }
-                else
-                {
-                    text.setCaretPosition( 0 );
-                    text.setEditable( false );
-                }
-            }
-        }
-        
-        private void setSelected( boolean b )
-        {
-            Color clrFore = b ? ColorSchema.getInstance().getDeskLauncherTextForegroundSelected() :
-                                ColorSchema.getInstance().getDeskLauncherTextForegroundUnSelected();
-                    
-            // TODO: así no funciona -> text.setForeground( Color.white );
-            //       hay que hacerlo como se hace para centrar el texto: usando estilos
-            
-            text.setOpaque( b );
-            text.repaint();
-            
-            if( ! b )
-                text.setEditable( false );    // Just in case it was editing
-        }
-    }
-    */
     //------------------------------------------------------------------------//
     // El popup del DesktopLauncher
     
@@ -467,8 +393,6 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
             add( createMenuItem( "To trashcan", "trashcan"  , "TRASHCAN"   ) );
             add( createMenuItem( "Delete"     , "delete"    , "DELETE"     ) );
             addSeparator();
-            add( createMenuItem( "Rename"     , null        , "RENAME"     ) );
-            addSeparator();
             add( createMenuItem( "Properties" , "properties", "PROPERTIES" ) );
         }
         
@@ -479,7 +403,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
                       item.addActionListener( this );
                       
             if( sIconName != null )
-                item.setIcon( PDEUtilities.getIcon( null, sIconName +".png", 16, 16 ) );
+                item.setIcon( PDEUtilities.getStandardIcon( sIconName, 16, 16 ) );
             
             return item;
         }
@@ -500,7 +424,6 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
             if(      sCommand.equals( "OPEN"       ) )  PDEDeskLauncher.this.launch();
             else if( sCommand.equals( "DELETE"     ) )  PDEDeskLauncher.this.delete();
             else if( sCommand.equals( "TRASHCAN"   ) )  PDEDeskLauncher.this.toTrashcan();
-            else if( sCommand.equals( "RENAME"     ) )  PDEDeskLauncher.this.rename();
             else if( sCommand.equals( "PROPERTIES" ) )  PDEDeskLauncher.this.editProperties();
         }
     }

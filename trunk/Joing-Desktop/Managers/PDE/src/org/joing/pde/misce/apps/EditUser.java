@@ -5,13 +5,11 @@
  */
 package org.joing.pde.misce.apps;
 
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.pane.DeskFrame;
 import org.joing.common.dto.user.User;
-import org.joing.pde.PDEUtilities;
 
 /**
  *
@@ -32,11 +30,11 @@ public class EditUser extends JPanel implements DeskComponent
     
     public void showFrame()
     {
-        String    sIcon = "user_"+ (user.isMale() ? "" : "fe") +"male.png";
-        ImageIcon icon  = PDEUtilities.getIcon( null, sIcon, 20, 20 );
+        String sIcon = "user_"+ (user.isMale() ? "" : "fe") +"male";
         
         frame = DesktopManagerFactory.getDM().getRuntime().createFrame();
-        ///frame.setIcon( icon.getImage() );  FIXME
+        frame.setTitle( "User Information" );
+        frame.setIcon( DesktopManagerFactory.getDM().getRuntime().getStandardImage( sIcon, 20, 20 ) );
         frame.add( (DeskComponent) this );
         
         DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea().add( frame );

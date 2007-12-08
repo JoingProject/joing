@@ -90,7 +90,7 @@ public class NasaPhoto extends PDEDesklet implements Runnable
     
     public void onSetup()
     {
-        DesktopManagerFactory.getDM().getRuntime().showMessage( "Option not yet implemented" );
+        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( "Option not yet implemented" );
         // todo: hacerlo
     }
     
@@ -234,10 +234,13 @@ public class NasaPhoto extends PDEDesklet implements Runnable
     {
         if( image != null )
         {
-            MyScrollPane sp = new MyScrollPane( new JLabel( new ImageIcon( image ) ) );
+            MyScrollPane sp      = new MyScrollPane( new JLabel( new ImageIcon( image ) ) );
+            URL          iconURL = getClass().getResource( "nasa_logo.png" );
+            org.joing.common.desktopAPI.Runtime runtime = DesktopManagerFactory.getDM().getRuntime();
             
-            DeskFrame frame = DesktopManagerFactory.getDM().getRuntime().createFrame();
+            DeskFrame frame = runtime.createFrame();
                       frame.setTitle( "NASA Astronomy Picture" );
+                      frame.setIcon( runtime.getImage( iconURL.toString() ) );
                       frame.add( (DeskComponent) sp );
                       
             DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea().add( frame );
