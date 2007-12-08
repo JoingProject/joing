@@ -27,6 +27,9 @@ public interface WorkArea extends Closeable
     
     void add( DeskWindow dc, boolean bAutoArrange );    
     
+    void moveToFront( DeskComponent dc );
+    void moveToBack( DeskComponent dc );
+    
     Wallpaper getWallpaper();
     void      setWallpaper( Wallpaper wallpaper );
     
