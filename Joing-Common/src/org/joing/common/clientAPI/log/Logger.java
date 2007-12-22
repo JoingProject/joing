@@ -50,6 +50,12 @@ public class Logger {
             this.levels.add(level);
         }
     }
+    
+    public void addLevel(Levels ... levels) {
+        for (Levels level : levels) {
+            addLevel(level);
+        }
+    }
 
     public void removeLevel(Levels level) {
 
