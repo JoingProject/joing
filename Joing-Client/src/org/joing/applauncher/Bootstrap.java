@@ -20,7 +20,6 @@ import java.awt.event.ActionListener;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Map;
-import org.joing.Main;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.clientAPI.jvmm.Platform;
 import org.joing.common.dto.app.AppDescriptor;
@@ -29,7 +28,6 @@ import org.joing.jvmm.RuntimeFactory;
 import org.joing.common.clientAPI.log.Levels;
 import org.joing.common.clientAPI.log.Logger;
 import org.joing.common.clientAPI.log.SimpleLoggerFactory;
-import org.joing.applauncher.StdoutLogListenerImpl;
 import org.joing.common.clientAPI.log.JoingLogger;
 
 /**
@@ -149,6 +147,7 @@ public class Bootstrap {
         
         // Initialization of Logging subsystem.
         logger.addListener(new StdoutLogListenerImpl(true));
+        logger.addLevels(Levels.DEBUG, Levels.DEBUG_JVMM, Levels.DEBUG_DESKTOP);
         
         System.setSecurityManager(new JoingSecurityManager());
         logger.write(Levels.NORMAL, "Join'g Successfully Bootstrapped.");
