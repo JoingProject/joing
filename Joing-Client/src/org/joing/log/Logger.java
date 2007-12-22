@@ -51,7 +51,7 @@ public class Logger {
 
     public void removeLevel(Levels level) {
 
-        // NORMAL level csn be removed.
+        // NORMAL level can't be removed.
         if (level.equals(Levels.NORMAL)) {
             return;
         }
