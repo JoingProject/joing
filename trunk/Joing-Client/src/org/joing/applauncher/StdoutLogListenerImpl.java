@@ -15,17 +15,17 @@ import java.util.Date;
  * 
  * @author Antonio Varela Lizardi <antonio@icon.net.mx>
  */
-public class StdoutListenerImpl implements LogListener {
+public class StdoutLogListenerImpl implements LogListener {
 
     private final SimpleDateFormat dateFormat =
             new SimpleDateFormat("yyyy-MM-dd HH:mm");
     
     private boolean timestamps = false;
 
-    public StdoutListenerImpl() {
+    public StdoutLogListenerImpl() {
     }
 
-    public StdoutListenerImpl(boolean timestamps) {
+    public StdoutLogListenerImpl(boolean timestamps) {
         this.timestamps = timestamps;
     }
     
