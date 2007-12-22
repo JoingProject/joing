@@ -20,11 +20,16 @@ import java.awt.event.ActionListener;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Map;
+import org.joing.Main;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.clientAPI.jvmm.Platform;
 import org.joing.common.dto.app.AppDescriptor;
 import org.joing.jvmm.JoingSecurityManager;
 import org.joing.jvmm.RuntimeFactory;
+import org.joing.common.clientAPI.log.Levels;
+import org.joing.common.clientAPI.log.Logger;
+import org.joing.common.clientAPI.log.SimpleLoggerFactory;
+import org.joing.applauncher.StdoutListenerImpl;
 
 /**
  *
@@ -32,14 +37,16 @@ import org.joing.jvmm.RuntimeFactory;
  */
 public class Bootstrap {
 
+    private static final Logger logger = 
+            SimpleLoggerFactory.getLogger(Main.class);
+    
     public Bootstrap() {
     }
 
     private static void setupTrayIcon() {
 
         if (SystemTray.isSupported() == false) {
-            System.err.println("Tray Icon not supported...");
-            Monitor.log("Tray Icon not supported.");
+            logger.write(Levels.WARNING, "Tray Icon not supported.");
             return;
         }
 
@@ -138,9 +145,13 @@ public class Bootstrap {
      * of fetching a session Id.
      */
     public static void init() {
+        
+        // Initialization of Logging subsystem.
+        logger.addListener(new StdoutListenerImpl(true));
+        
         System.setSecurityManager(new JoingSecurityManager());
-        Monitor.log("Join'g Successfully Bootstrapped.");
-        Monitor.log("Main Thread Id is " + 
+        logger.write(Levels.NORMAL, "Join'g Successfully Bootstrapped.");
+        logger.write(Levels.NORMAL, "Main Thread Id is {0}",  
                 String.valueOf(RuntimeFactory.getPlatform().getMainThreadId()));
 
         setupTrayIcon();
@@ -164,7 +175,7 @@ public class Bootstrap {
                 RuntimeFactory.getPlatform().halt();
             }
         } catch (Exception e) {
-            Monitor.log("Error en start: " + e.getMessage());
+            logger.write(Levels.CRITICAL, "Error en start: {0}", e.getMessage());
         }
     }
     
