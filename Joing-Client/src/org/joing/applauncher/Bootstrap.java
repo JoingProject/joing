@@ -29,7 +29,8 @@ import org.joing.jvmm.RuntimeFactory;
 import org.joing.common.clientAPI.log.Levels;
 import org.joing.common.clientAPI.log.Logger;
 import org.joing.common.clientAPI.log.SimpleLoggerFactory;
-import org.joing.applauncher.StdoutListenerImpl;
+import org.joing.applauncher.StdoutLogListenerImpl;
+import org.joing.common.clientAPI.log.JoingLogger;
 
 /**
  *
@@ -38,7 +39,7 @@ import org.joing.applauncher.StdoutListenerImpl;
 public class Bootstrap {
 
     private static final Logger logger = 
-            SimpleLoggerFactory.getLogger(Main.class);
+            SimpleLoggerFactory.getLogger(JoingLogger.ID);
     
     public Bootstrap() {
     }
@@ -147,7 +148,7 @@ public class Bootstrap {
     public static void init() {
         
         // Initialization of Logging subsystem.
-        logger.addListener(new StdoutListenerImpl(true));
+        logger.addListener(new StdoutLogListenerImpl(true));
         
         System.setSecurityManager(new JoingSecurityManager());
         logger.write(Levels.NORMAL, "Join'g Successfully Bootstrapped.");
