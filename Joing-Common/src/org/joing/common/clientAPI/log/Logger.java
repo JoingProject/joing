@@ -51,7 +51,7 @@ public class Logger {
         }
     }
     
-    public void addLevel(Levels ... levels) {
+    public void addLevels(Levels ... levels) {
         for (Levels level : levels) {
             addLevel(level);
         }
