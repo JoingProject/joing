@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.joing.log;
+package org.joing.applauncher;
 
 import org.joing.common.clientAPI.log.LogListener;
 import org.joing.common.clientAPI.log.Levels;
