@@ -5,6 +5,8 @@
 
 package org.joing.log;
 
+import org.joing.common.clientAPI.log.LogListener;
+import org.joing.common.clientAPI.log.Levels;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -19,6 +21,14 @@ public class StdoutListenerImpl implements LogListener {
             new SimpleDateFormat("yyyy-MM-dd HH:mm");
     
     private boolean timestamps = false;
+
+    public StdoutListenerImpl() {
+    }
+
+    public StdoutListenerImpl(boolean timestamps) {
+        this.timestamps = timestamps;
+    }
+    
     
     /**
      * Concrete Implementation of write.
