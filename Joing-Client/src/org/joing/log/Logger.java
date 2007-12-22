@@ -6,6 +6,7 @@ package org.joing.log;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,6 +22,11 @@ public class Logger {
     private final Object levelsLock = new Object();
     private final List<LogListener> listeners = new ArrayList<LogListener>();
     private final Set<Levels> levels = new HashSet<Levels>();
+
+    public Logger() {
+        levels.addAll(EnumSet.of(Levels.NORMAL, Levels.INFO, Levels.WARNING,
+                Levels.CRITICAL));
+    }
 
     public void addListener(LogListener listener) {
 
@@ -45,6 +51,11 @@ public class Logger {
 
     public void removeLevel(Levels level) {
 
+        // NORMAL level csn be removed.
+        if (level.equals(Levels.NORMAL)) {
+            return;
+        }
+        
         synchronized (levelsLock) {
             this.levels.remove(level);
         }

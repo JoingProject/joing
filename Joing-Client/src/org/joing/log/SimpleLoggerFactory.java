@@ -18,13 +18,13 @@ public class SimpleLoggerFactory {
     private static final Map<Object, Logger> loggers = 
             new HashMap<Object, Logger>();
     
-    public static Logger getLogger(Object id) {
+    public static Logger getLogger(Class owner) {
         
         synchronized (loggers) {
-            Logger logger = loggers.get(id);
+            Logger logger = loggers.get(owner);
             if (logger == null) {
                 logger = new Logger();
-                loggers.put(id, logger);
+                loggers.put(owner, logger);
             }
             
             return logger;
