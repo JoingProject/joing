@@ -93,7 +93,7 @@ public class EventListenerList implements Serializable
         if( clazz.isInstance( listener ) )
             vListeners.add( new Pair( clazz, listener ) );
         else
-            throw new IllegalArgumentException("Listener " + listener + " is not of type " + clazz );
+            throw new IllegalArgumentException( "Listener " + listener + " is not of type " + clazz );
     }
 
     public void remove( Object listener )

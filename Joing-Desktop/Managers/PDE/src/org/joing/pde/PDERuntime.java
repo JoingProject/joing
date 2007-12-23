@@ -14,7 +14,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import javax.imageio.ImageIO;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.desktopAPI.pane.DeskCanvas;
@@ -143,13 +145,6 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
     // Frecuent Dialogs
     //------------------------------------------------------------------------//
     
-    public void showMessageDialog( String sMessage )
-    {
-        WorkArea workArea = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
-        
-        JOptionPane.showInternalMessageDialog( (Component) workArea, sMessage );
-    }
-    
     public void showMessageDialog( String sTitle, String sMessage )
     {
         WorkArea workArea = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
@@ -158,13 +153,9 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
                                                JOptionPane.INFORMATION_MESSAGE );
     }
     
-    public boolean showAcceptCancelDialog( String sTitle, String sMessage )
+    public boolean showAcceptCancelDialog( String sTitle, DeskComponent panel )
     {
-        WorkArea workArea = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
-        
-        return JOptionPane.showInternalConfirmDialog( 
-                                     (Component) workArea, sMessage, sTitle,
-                                     JOptionPane.OK_CANCEL_OPTION ) == JOptionPane.OK_OPTION;
+        return PDEUtilities.showBasicDialog( null, sTitle, (JComponent) panel );
     }
     
     public boolean showYesNoDialog( String sTitle, String sMessage )

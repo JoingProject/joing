@@ -32,6 +32,7 @@ import org.joing.pde.PDEManager;
  * 
  * @author Francisco Morero Peyrona
  */
+// More info at: http://java.sun.com/developer/JDCTechTips/2001/tt1220.html
 public class PDEDialog extends PDEWindow implements DeskDialog
 {
     private JPanel    glassNew;
@@ -42,19 +43,16 @@ public class PDEDialog extends PDEWindow implements DeskDialog
     public PDEDialog()
     {           // resizable, closable, maximizable, minimizable
         super( "", true,      true,     false,       false );
-        
+        super.setVisible( false );
         setDefaultCloseOperation( JInternalFrame.DISPOSE_ON_CLOSE );
         
         addInternalFrameListener( new InternalFrameAdapter()
         {
             public void internalFrameClosed( InternalFrameEvent e )
-            {   // dispose() can't be here because goes into infinite loop
+            {   // dispose() can't be called here because goes into infinite loop
                 clean();
             }
         } );
-        
-        // PDEManager root pane
-        JRootPane root = ((PDEManager) DesktopManagerFactory.getDM()).getTheRootPane();
         
         // Sin esto, los eventos de ratón "atraviesan" el glass
         MouseInputAdapter mia = new MouseInputAdapter() { };
@@ -62,20 +60,11 @@ public class PDEDialog extends PDEWindow implements DeskDialog
         // Create not-opaque glass pane
         glassNew = new JPanel();
         glassNew.setOpaque( false );
-        glassNew.setSize( root.getSize() );////
         glassNew.addMouseListener( mia );
         glassNew.addMouseMotionListener( mia );
         
         // Add modal internal frame to glass pane
-        glassNew.add( this );
-
-        // Change glass pane to our panel in rootPane
-        glassOld = root.getGlassPane();
-        root.setGlassPane( glassNew );
-                  
-        // Show glass pane, then modal dialog
-        glassNew.validate();
-        glassNew.setVisible( true );
+        glassNew.add( this );   
     }
     
     //------------------------------------------------------------------------//
@@ -97,14 +86,40 @@ public class PDEDialog extends PDEWindow implements DeskDialog
     
     //------------------------------------------------------------------------//
     
-    public void setVisible( boolean value )
+    public void setVisible( boolean bVisible )
     {
-        super.setVisible( value );
-        
-        if( value )
-            startModal();
-        else
-            stopModal();
+        if( bVisible != isVisible() )
+        {
+            if( bVisible )
+            {
+                JRootPane root = ((PDEManager) DesktopManagerFactory.getDM()).getTheRootPane();
+
+                // Change glass pane to our panel in rootPane
+                glassOld = root.getGlassPane();
+                root.setGlassPane( glassNew );
+
+                // Show glass pane, then modal dialog
+                glassNew.setSize( root.getSize() );
+                glassNew.validate();
+                glassNew.setVisible( true );
+                
+                // Dialog in PDE are always centered
+                int nX = (glassNew.getWidth()  - getWidth())  / 2;
+                int nY = (glassNew.getHeight() - getHeight()) / 2;
+                setLocation( Math.max( nX, 0 ), Math.max( nY, 0 ) );
+                //------------------------------------------
+                
+                super.setVisible( bVisible  );
+                center();
+                setSelected( true );
+                startModal();
+            }
+            else
+            {
+                super.setVisible( bVisible  );
+                stopModal();
+            }
+        }
     }
     
     //------------------------------------------------------------------------//

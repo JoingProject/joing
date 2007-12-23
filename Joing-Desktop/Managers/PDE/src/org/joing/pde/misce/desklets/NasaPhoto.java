@@ -90,7 +90,7 @@ public class NasaPhoto extends PDEDesklet implements Runnable
     
     public void onSetup()
     {
-        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( "Option not yet implemented" );
+        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( null, "Option not yet implemented" );
         // todo: hacerlo
     }
     

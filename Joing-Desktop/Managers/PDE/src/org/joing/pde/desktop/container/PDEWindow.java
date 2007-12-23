@@ -41,15 +41,14 @@ public class PDEWindow extends JInternalFrame implements DeskWindow
     {
         return PDEUtilities.icon2ByteArray( (ImageIcon) getFrameIcon() );
     }
-
     
     public void center()
     {
         if( getDesktopPane() != null )
         {
             Container cp = getDesktopPane();
-            int       nX = (cp.getSize().width  - getWidth())  / 2;
-            int       nY = (cp.getSize().height - getHeight()) / 2;
+            int       nX = (cp.getWidth()  - getWidth())  / 2;
+            int       nY = (cp.getHeight() - getHeight()) / 2;
             
             setLocation( Math.max( nX, 0 ), Math.max( nY, 0 ) );
         }

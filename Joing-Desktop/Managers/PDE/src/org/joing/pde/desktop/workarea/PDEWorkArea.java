@@ -14,6 +14,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import javax.swing.JDesktopPane;
 import javax.swing.event.MouseInputAdapter;
@@ -43,12 +45,12 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
 {
     private static final String DONT_USE_ME = "Do not use me";
     
-    private static final Integer LAYER_WALLPAPER = new Integer(-10 );
-    private static final Integer LAYER_CANVAS    = new Integer(  0 );
+    private static final Integer LAYER_WALLPAPER = new Integer( 0 );
+    private static final Integer LAYER_CANVAS    = new Integer( 5 );
     private static final Integer LAYER_LAUNCHER  = new Integer( 10 );
     private static final Integer LAYER_FRAME     = new Integer( 20 );
     
-    private Wallpaper wallpaper;
+    private PDEWallpaperComponent pwc;
     
     private Dimension gridDimension = new Dimension( 16,16 );  // Grid size
     private boolean   bSnapToGrid   = true;
@@ -116,7 +118,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     }
         
     //------------------------------------------------------------------------//
-    // WorkAreaPopupMenu issues
+    // PDEWorkAreaPopupMenu issues
     //------------------------------------------------------------------------//
     
     /**
@@ -127,8 +129,8 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     {
         // Has to be created every time because some items can change from ivocation to invocation.
         // And in this way, we also save memory (it exists in memory only while needed).
-        WorkAreaPopupMenu popup = new WorkAreaPopupMenu( this );
-                  popup.show( this, p.x, p.y );
+        PDEWorkAreaPopupMenu popup = new PDEWorkAreaPopupMenu( this, p );
+                          popup.show( this, p.x, p.y );
     }
     
     //------------------------------------------------------------------------//
@@ -153,7 +155,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             
             removeSelectedComponents( clazz );
         }*/
-        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( "Option not yet implemented" );
+        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( null, "Option not yet implemented" );
     }
     
     /**
@@ -173,7 +175,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             Client.getClient().getClipBoard().clear();
             Client.getClient().getClipBoard().add( vSelected );
         }*/
-        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( "Option not yet implemented" );
+        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( null, "Option not yet implemented" );
     }
 
     /**
@@ -207,7 +209,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             
             root.setCursor( Cursor.getPredefinedCursor( Cursor.DEFAULT_CURSOR) );
         }*/
-        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( "Option not yet implemented" );
+        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( null, "Option not yet implemented" );
     }
 
     /**
@@ -288,8 +290,8 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         
         // Add listener for mouse events to: 
         //  · Get the focus
-        //  · To deselectAll()
-        //  · To invoke showPopupMenu(...)
+        //  · deselectAll()
+        //  · Invoke showPopupMenu(...)
         addMouseListener( new MouseInputAdapter()
         {
             public void mousePressed( MouseEvent me )
@@ -320,7 +322,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     public Component add( Component c )             { throw new IllegalAccessError(DONT_USE_ME); }
     public Component add( Component c, int n )      { throw new IllegalAccessError(DONT_USE_ME); }
     public Component add( String s, Component c )   { throw new IllegalAccessError(DONT_USE_ME); }
-    public void add( Component c, Object o )        { throw new IllegalAccessError(DONT_USE_ME); }
+// TODO: Esta se usa por JOptionPane -> Decidir si la admito o no -> public void add( Component c, Object o )        { throw new IllegalAccessError(DONT_USE_ME); }
     public void add( Component c, Object o, int n ) { throw new IllegalAccessError(DONT_USE_ME); }
     //------------------------------------------------------------------------------------------------
     
@@ -381,13 +383,48 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     
     public Wallpaper getWallpaper()
     {
-        return wallpaper;
+        return ((pwc != null) ? pwc.getWallpaper() : null);
     }
 
-    public void setWallpaper( Wallpaper wallpaper )
+    public void setWallpaper( Wallpaper wp )
     {
-        // TODO: hacerlo
-        fireWallpaperChanged( wallpaper );
+        if( pwc != null && pwc.getWallpaper() == wp )
+            return;   // Trying to set the same wallpaper again
+        
+        if( wp == null )
+        {
+            if( pwc != null )
+                remove( pwc );
+            
+            pwc = null;
+        }
+        else
+        {
+            if( pwc == null )
+            {
+                pwc = new PDEWallpaperComponent( wp );
+                super.add( pwc, LAYER_WALLPAPER );
+                
+                // To re-center the image when WorkArea is resized
+                addComponentListener( new ComponentListener() 
+                {
+                    public void componentResized( ComponentEvent ce )
+                    {
+                        PDEWorkArea.this.pwc.setSize( ce.getComponent().getSize() );
+                    }
+                    
+                    public void componentMoved( ComponentEvent e )  {}
+                    public void componentShown( ComponentEvent e )  {}
+                    public void componentHidden( ComponentEvent e ) {}
+                } );
+            }
+            else
+            {
+                pwc.setWallPaper( wp );
+            }
+        }
+        
+        fireWallpaperChanged( wp );
     }
 
     public void addWorkAreaListener( WorkAreaListener wal )
@@ -473,7 +510,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         super.add( dl, LAYER_LAUNCHER  );
     }
     
-    private void addDialog( PDEDialog dialog, boolean bAutoArrange  )
+    private void addDialog( PDEDialog dialog, boolean bAutoArrange )
     {
         if( bAutoArrange )
             dialog.pack();
@@ -490,15 +527,15 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             
         if( dialog.getHeight() > dim.height )
             dialog.setSize( dialog.getWidth(), dim.height );
-               
+        
+        // Can't be part of bAutoarrange because DeskFrame interface does not include setVisible(...)
+        dialog.setVisible( true );  // 1st, must be visble, because this is the way to have a parent
+        
         if( bAutoArrange )
         {
             dialog.center();
             dialog.setSelected( true );
         }
-        
-        // Can't be part of bAutoarrange because DeskFrame interface does not include setVisible(...)
-        dialog.setVisible( true );  // 1st, must be visble, because this is the way to have a parent
     }
     
     private void addFrame( PDEFrame frame, boolean bAutoArrange )

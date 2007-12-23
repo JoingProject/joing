@@ -26,11 +26,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.MenuElement;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncherListener;
-import org.joing.common.desktopAPI.pane.DeskDialog;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.pde.desktop.deskwidget.PDEDeskWidget;
@@ -48,6 +46,8 @@ import org.joing.pde.swing.JRoundPanel;
  */
 public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
 {
+    private DeskLauncher.Type type;
+    
     private String sTarget;
     private String sArguments;
     
@@ -69,15 +69,49 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     }
     
     /**
-     * Nothing to do at this level
+     * To be used internally by PDE
+     * @param icon
      */
-    public void close()
+    public ImageIcon getIcon()
     {
-        // Nothing to do
+        return (ImageIcon) this.icon.getIcon();
+    }
+    
+    /**
+     * To be used internally by PDE
+     * @param icon
+     */
+    public void setIcon( ImageIcon icon )
+    {
+        if( icon == null )
+                icon = PDEUtilities.getStandardIcon( "launcher" );
+        
+        this.icon.setIcon( icon );
     }
     
     //------------------------------------------------------------------------//
     // DeskLauncher interface implementation
+    
+    public Type getType()
+    {
+        return type;
+    }
+    
+    // Package scope
+    void setType( Type type )
+    {
+        this.type = type;
+    }
+    
+    public String getDescription()
+    {
+        return getToolTipText();
+    }
+
+    public void setDescription( String sDescription )
+    {
+        setToolTipText( sDescription );
+    }
     
     public byte[] getImage()
     {
@@ -131,6 +165,14 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
 
     public void setTarget( String sTarget )
     {
+        if( sTarget != null )
+        {
+            sTarget = sTarget.trim();
+            
+            if( sTarget.length() == 0 )
+                sTarget = null;
+        }
+        
         this.sTarget = sTarget;
     }
     
@@ -141,6 +183,14 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
 
     public void setArguments( String sArguments )
     {
+        if( sArguments != null )
+        {
+            sArguments = sArguments.trim();
+            
+            if( sArguments.length() == 0 )
+                sArguments = null;
+        }
+        
         this.sArguments = sArguments;
     }
     
@@ -212,7 +262,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     //       llamar al container (WorkArea)
     public void delete()
     {
-        if( DesktopManagerFactory.getDM().getRuntime().showAcceptCancelDialog( "Delete launcher", 
+        if( DesktopManagerFactory.getDM().getRuntime().showYesNoDialog( "Delete launcher", 
                                                    "Are you sure you want to delete it?\n"+
                                                    "(deleted objects can not be recovered)" ) )
         {
@@ -226,7 +276,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     
     public void toTrashcan()
     {
-        if( DesktopManagerFactory.getDM().getRuntime().showAcceptCancelDialog( "Send launcher to trashcan", 
+        if( DesktopManagerFactory.getDM().getRuntime().showYesNoDialog( "Send launcher to trashcan", 
                                                    "Are you sure you want to send it to trashcan?" ) )
         {
             
@@ -235,18 +285,16 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
                         
             // TODO: mandarlo a la papelera e implementar el fire
             // fireLauncherToTrashcan( this );
-            DesktopManagerFactory.getDM().getRuntime().showMessageDialog( "Option not yet implemented" );
+            DesktopManagerFactory.getDM().getRuntime().showMessageDialog( null, "Option not yet implemented" );
         }
     }
     
     public void editProperties()
     {
-        PDEDeskLauncherPropertiesPanel panel = new PDEDeskLauncherPropertiesPanel();
+        PDEDeskLauncherPropertiesPanel panel = new PDEDeskLauncherPropertiesPanel( this );
         
         if( PDEUtilities.showBasicDialog( null, "Launcher Properties", panel ) )
-        {
-            // TODO: hacerlo
-        }
+            panel.retrieveLauncher();
     }
     
     /**
