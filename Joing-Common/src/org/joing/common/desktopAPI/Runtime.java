@@ -29,12 +29,6 @@ public interface Runtime
     DeskDialog createDialog();
     
     /**
-     * Shows a message in a dialog with title "Information" and an OK button.
-     * 
-     * @param sMessage Message to be shown
-     */
-    void      showMessageDialog( String sMessage );
-    /**
      * Shows a message in a dialog and an OK button.
      * 
      * @param sTitle   Dialog window title (if <code>null</code> or empty string passed, title will be empty)
@@ -48,7 +42,7 @@ public interface Runtime
      * @param sMessage  Message to ask confirmation about
      * @return <code>true</code> if 'OK' button pressed, otherwise ('CANCEL' button or close dialog) return <code>false</code>
      */
-    boolean   showAcceptCancelDialog( String sTitle, String sMessage );
+    boolean   showAcceptCancelDialog( String sTitle, DeskComponent panel );
     /**
      * Shows a confimation modal dialog.
      * 
