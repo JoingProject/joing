@@ -14,6 +14,7 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.util.List;
 import java.util.Vector;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.joing.common.desktopAPI.desktop.Desktop;
@@ -22,8 +23,8 @@ import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.common.desktopAPI.taskbar.TaskBar;
 import org.joing.pde.desktop.container.PDECanvas;
-import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
 import org.joing.pde.desktop.taskbar.PDETaskBar;
+import org.joing.pde.desktop.workarea.PDEWallpaper;
 import org.joing.pde.misce.desklets.NasaPhoto;
 import org.joing.pde.misce.apps.memon.MemoryMonitor;
 import org.joing.pde.swing.EventListenerList;
@@ -68,11 +69,12 @@ public class PDEDesktop extends JPanel implements Desktop
                        
             addTaskBar( tb );
             
-            addWorkArea( new PDEWorkArea() );
-            addWorkArea( new PDEWorkArea() );
+            for( int n = 0; n < 3; n++ )
+                addWorkArea( new PDEWorkArea() );
+            
             setActiveWorkArea( getWorkAreas().get( 0 ) );
             
-            createTestWorkArea( getWorkAreas().get( 0 ) );   // TODO: quitarlo
+            createTestComponents( getWorkAreas().get( 0 ) );   // TODO: quitarlo
         }
         else
         {
@@ -99,24 +101,20 @@ public class PDEDesktop extends JPanel implements Desktop
     
     private void initGUI()
     {
-        setLayout( new BorderLayout() );        
+        setLayout( new BorderLayout() );
         pnlWorkAreas = new JPanel( new CardLayout() );
         add( pnlWorkAreas, BorderLayout.CENTER );
     }
     
-    private void createTestWorkArea( WorkArea wa )  // TODO: quitar este metodo
+    private void createTestComponents( WorkArea wa )  // TODO: quitar este metodo
     {
-        PDEDeskLauncher dl1 = new PDEDeskLauncher();
-        PDEDeskLauncher dl2 = new PDEDeskLauncher();
-                        dl2.setText( "Test" );
-                        dl2.setLocation( 0,100 );
-
-        wa.add( dl1 );
-        wa.add( dl2 );
+        /*PDEWallpaper wp = new PDEWallpaper();
+                     wp.setImage( new ImageIcon( "/home/fmorero/Imágenes/iconos/duke/starwars.png" ) );
+        getWorkAreas().get( 0 ).setWallpaper( wp );*/
         
         MemoryMonitor.showFrame();
         
-        NasaPhoto nasa = new NasaPhoto();
+        /*NasaPhoto nasa = new NasaPhoto();
                   nasa.setBounds( 10,350, nasa.getPreferredSize().width, nasa.getPreferredSize().height );
         wa.add( nasa );
         
@@ -124,8 +122,8 @@ public class PDEDesktop extends JPanel implements Desktop
         PDECanvas canvas = new PDECanvas();
                   canvas.add( lblCanvas );
                   canvas.setBounds( 330, 130, 240, 80 );
-        wa.add( canvas );
-
+        wa.add( canvas );*/
+        
         //---------------------------------------------------------------------
         /*
         JSlider slrTranslucency = new JSlider( JSlider.HORIZONTAL, 0, 100, 0 );

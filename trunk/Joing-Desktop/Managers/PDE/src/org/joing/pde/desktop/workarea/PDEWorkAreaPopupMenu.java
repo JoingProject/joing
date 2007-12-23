@@ -1,5 +1,5 @@
 /*
- * WorkAreaPopupMenu.java
+ * PDEWorkAreaPopupMenu.java
  *
  * Created on 29 de septiembre de 2007, 15:08
  *
@@ -8,6 +8,7 @@
  */
 
 package org.joing.pde.desktop.workarea;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -18,18 +19,24 @@ import javax.swing.JPopupMenu;
 import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.PDEUtilities;
+import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
+import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncherPropertiesPanel;
 
 /**
  * 
  * @author Francisco Morero Peyrona
  */
-class WorkAreaPopupMenu extends JPopupMenu implements ActionListener
+class PDEWorkAreaPopupMenu extends JPopupMenu implements ActionListener
 {
     private WorkArea waParent;
+    private Point    ptWhere;
     
-    WorkAreaPopupMenu( WorkArea waParent )
+    //------------------------------------------------------------------------//
+    
+    PDEWorkAreaPopupMenu( WorkArea waParent, Point ptWhere )
     {
         this.waParent = waParent;
+        this.ptWhere  = ptWhere;
         
         add( createMenuItem( "Create folder"  , "folder"    , "NEW_FOLDER"   ) );
         add( createMenuItem( "Create launcher", "launcher"  , "NEW_LACUNHER" ) );
@@ -37,7 +44,7 @@ class WorkAreaPopupMenu extends JPopupMenu implements ActionListener
         add( createMenuItem( "Align to grid"  , "grid"      , "TOGGLE_ALIGN" ) );
         addSeparator();
         add( createMenuItem( "Properties"     , "properties", "PROPERTIES"   ) );
-
+        
         List<WorkArea> lstWorkAreas = DesktopManagerFactory.getDM().getDesktop().getWorkAreas();
         WorkArea       waActive     = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
         
@@ -87,9 +94,8 @@ class WorkAreaPopupMenu extends JPopupMenu implements ActionListener
         String    sCommand = menuItem.getActionCommand();
         
         if(      sCommand.equals( "SWITCH_WORKAREA" ) ) switchToWorkArea( menuItem );
-        // TODO: implementarlos todos
-        else if( sCommand.equals( "NEW_FOLDER"      ) ) createFolder();
-        else if( sCommand.equals( "NEW_LACUNHER"    ) ) createLauncher();
+        else if( sCommand.equals( "NEW_FOLDER"      ) ) createLauncher( true );
+        else if( sCommand.equals( "NEW_LACUNHER"    ) ) createLauncher( false );
         else if( sCommand.equals( "TOGGLE_ALIGN"    ) ) toggleAlign();
         else if( sCommand.equals( "PROPERTIES"      ) ) editProperties();
     }
@@ -100,27 +106,28 @@ class WorkAreaPopupMenu extends JPopupMenu implements ActionListener
         DesktopManagerFactory.getDM().getDesktop().setActiveWorkArea( waTarget ); 
     }
     
-    private void createFolder()
+    private void createLauncher( boolean bDir )
     {
-        // TODO: hacerlo
-        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( "Option not yet implemented" );
-    }
-    
-    private void createLauncher()
-    {
-        // TODO: hacerlo
-        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( "Option not yet implemented" );
+        PDEDeskLauncherPropertiesPanel panel = new PDEDeskLauncherPropertiesPanel( bDir );
+        
+        if( PDEUtilities.showBasicDialog( null, "Create new Launcher", panel ) )
+        {
+            PDEDeskLauncher launcher = panel.retrieveLauncher();
+                            launcher.setLocation( ptWhere );
+                            
+            DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea().add( launcher );
+        }
     }
     
     private void toggleAlign()
     {
         // TODO: hacerlo
-        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( "Option not yet implemented" );
+        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( null, "Option not yet implemented" );
     }
     
     private void editProperties()
     {
-        WorkAreaProperties panel = new WorkAreaProperties();
+        PDEWorkAreaProperties panel = new PDEWorkAreaProperties();
         
         if( PDEUtilities.showBasicDialog( null, "WorkArea Preferences", panel ) )
         {
