@@ -18,7 +18,7 @@ import org.joing.common.desktopAPI.DeskComponent;
  */
 public interface TaskBar extends Closeable
 {
-    public enum Orientation { TOP, BOTTOM, LEFT, RIGHT, FREE }
+    enum Orientation { TOP, BOTTOM, LEFT, RIGHT, FREE }
     
     void add( TaskBarPanel tbp );
     void add( TaskBarPanel tbp, int x, int y );
