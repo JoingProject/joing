@@ -50,8 +50,8 @@ public class Logger {
             this.levels.add(level);
         }
     }
-    
-    public void addLevels(Levels ... levels) {
+
+    public void addLevels(Levels... levels) {
         for (Levels level : levels) {
             addLevel(level);
         }
@@ -63,7 +63,7 @@ public class Logger {
         if (level.equals(Levels.NORMAL)) {
             return;
         }
-        
+
         synchronized (levelsLock) {
             this.levels.remove(level);
         }
@@ -83,12 +83,9 @@ public class Logger {
 
         synchronized (levelsLock) {
             if (this.levels.contains(level) == false) {
-                return;
+                String s = MessageFormat.format(format, args);
+                fireListeners(level, s);
             }
         }
-
-        String s = MessageFormat.format(format, args);
-        
-        fireListeners(level, s);
     }
 }
