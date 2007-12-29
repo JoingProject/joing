@@ -82,7 +82,7 @@ public class Logger {
     public void write(Levels level, String format, Object... args) {
 
         synchronized (levelsLock) {
-            if (this.levels.contains(level) == false) {
+            if (this.levels.contains(level) == true) {
                 String s = MessageFormat.format(format, args);
                 fireListeners(level, s);
             }
