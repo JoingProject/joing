@@ -139,11 +139,18 @@ public class FileSystemTools
     public static long getUsedSpace( String sAccount )
     {
         long nAmount = 0;
-        java.io.File[] aFile = getUserHome( sAccount ).listFiles();
+        // For some reason we're having a null pointer exception here,
+        // let's do some magical handling.
+        java.io.File userHomeFile = getUserHome(sAccount);
+        java.io.File[] aFile = (userHomeFile == null) ? new java.io.File[] {} :
+                ((userHomeFile.listFiles() == null) ? new java.io.File[] {} : 
+                    userHomeFile.listFiles());
         
         for( int n = 0; n < aFile.length; n++ )
             nAmount += aFile[n].length();
             
+        // TODO: Proposal: In case of an error, like a user account incorrectly
+        // configuted, return -1.
         return nAmount;
     }
     
