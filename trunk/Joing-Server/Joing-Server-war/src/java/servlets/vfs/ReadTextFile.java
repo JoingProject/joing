@@ -6,7 +6,7 @@
 
 package servlets.vfs;
 
-import servlets.JoingServerServletException;
+import org.joing.common.exception.JoingServerServletException;
 import ejb.vfs.FileManagerLocal;
 import java.io.*;
 import javax.ejb.EJB;

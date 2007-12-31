@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.joing.common.dto.session.LoginResult;
 import org.joing.common.exception.JoingServerException;
-import servlets.JoingServerServletException;
+import org.joing.common.exception.JoingServerServletException;
 
 /**
  *

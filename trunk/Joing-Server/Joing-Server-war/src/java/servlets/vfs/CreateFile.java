@@ -9,7 +9,7 @@ package servlets.vfs;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import servlets.JoingServerServletException;
+import org.joing.common.exception.JoingServerServletException;
 import ejb.vfs.FileManagerLocal;
 import javax.ejb.EJB;
 
