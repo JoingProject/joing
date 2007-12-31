@@ -10,7 +10,7 @@
 package ejb;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
@@ -113,11 +113,17 @@ public class Constant
         
         try
         {
-            String cwd = System.getProperty("user.dir");
-            File fileProps = new File(cwd, "joing.properties");
-            FileInputStream in = new FileInputStream( fileProps );
-            props.load(in);
-            in.close();
+//            String cwd = System.getProperty("user.dir");
+//            File fileProps = new File(cwd, "joing.properties");
+//            FileInputStream in = new FileInputStream( fileProps );
+            
+//            props.load(in);
+//            in.close();
+            // TODO: Load configuration from database.
+            ClassLoader classLoader = Constant.class.getClassLoader();
+            InputStream is = classLoader.getResourceAsStream("joing-server.properties");
+            props.load(is);
+            is.close();
         }
         catch (Exception exc)
         {
