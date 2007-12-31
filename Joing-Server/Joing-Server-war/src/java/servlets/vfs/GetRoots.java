@@ -20,7 +20,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.exception.JoingServerException;
-import servlets.JoingServerServletException;
+import org.joing.common.exception.JoingServerServletException;
 
 /**
  *

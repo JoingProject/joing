@@ -7,7 +7,7 @@
 package servlets.vfs;
 
 import org.joing.common.dto.vfs.FileDescriptor;
-import servlets.JoingServerServletException;
+import org.joing.common.exception.JoingServerServletException;
 import ejb.vfs.FileManagerLocal;
 import java.io.IOException;
 import java.io.ObjectInputStream;
