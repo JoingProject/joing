@@ -5,6 +5,7 @@
 
 package org.joing.common.clientAPI.jvmm;
 
+import java.io.OutputStream;
 import java.util.Map;
 import java.util.Properties;
 import org.joing.common.desktopAPI.DesktopManager;
@@ -40,6 +41,8 @@ public interface Platform {
     DesktopManager getDesktopManager();
     void setDesktopManager(DesktopManager desktop);
     
-    void start(int appId) throws ApplicationExecutionException;
+    void start(final int appId) throws ApplicationExecutionException;
+    void start(final int appId, String[] args, OutputStream out, OutputStream err) 
+            throws ApplicationExecutionException;
     
 }
