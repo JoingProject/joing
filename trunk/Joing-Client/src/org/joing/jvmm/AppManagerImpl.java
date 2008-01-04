@@ -6,7 +6,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.joing.jvmm;
 
 import java.util.HashSet;
@@ -24,7 +23,7 @@ public class AppManagerImpl implements AppManager {
     /** Listeners para el Lifecycle. */
     Set<AppListener> appListeners = new HashSet<AppListener>();
     Set<App> apps = new HashSet<App>();
-    
+
     public AppManagerImpl() {
     }
 
@@ -38,13 +37,14 @@ public class AppManagerImpl implements AppManager {
             appListeners.add(listener);
         }
     }
+
     @Override
     public void removeAppListener(AppListener listener) {
         synchronized (appListeners) {
             appListeners.remove(listener);
         }
     }
-    
+
     /**
      * addApp
      * Agrega una aplicación al sistema. Invoca los
@@ -52,18 +52,20 @@ public class AppManagerImpl implements AppManager {
      */
     @Override
     public void addApp(App app) {
-        apps.add(app);
+        synchronized (apps) {
+            apps.add(app);
+        }
         fireAppAdded(app);
     }
-    
-    
+
     @Override
     public void removeApp(App app) {
-        apps.remove(app);
+        synchronized (apps) {
+            apps.remove(app);
+        }
         fireAppRemoved(app);
     }
-    
-    
+
     @Override
     public void fireAppRemoved(App app) {
         final AppListener[] arr = new AppListener[appListeners.size()];
@@ -74,8 +76,7 @@ public class AppManagerImpl implements AppManager {
             arr[i].applicationRemoved(app);
         }
     }
-    
-    
+
     @Override
     public void fireAppAdded(App app) {
         AppListener[] arr = new AppListener[appListeners.size()];

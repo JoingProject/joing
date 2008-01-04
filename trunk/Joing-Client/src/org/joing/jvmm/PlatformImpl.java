@@ -38,8 +38,13 @@ import org.joing.common.clientAPI.jvmm.AppManager;
 import org.joing.common.clientAPI.jvmm.ApplicationExecutionException;
 import org.joing.common.clientAPI.jvmm.JThreadGroup;
 import org.joing.common.clientAPI.jvmm.Platform;
+import org.joing.common.clientAPI.log.JoingLogger;
+import org.joing.common.clientAPI.log.Levels;
+import org.joing.common.clientAPI.log.Logger;
+import org.joing.common.clientAPI.log.SimpleLoggerFactory;
 import org.joing.common.clientAPI.runtime.AppBridge;
 import org.joing.common.clientAPI.runtime.Bridge2Server;
+import org.joing.jvmm.net.URLFormat;
 import org.joing.runtime.bridge2server.Bridge2ServerImpl;
 
 /**
@@ -59,19 +64,22 @@ class PlatformImpl implements Platform {
     private boolean initialized = true;
     private String serverBaseUrl = null;
     private boolean autoHandlingExceptions = true;
+    private final Logger logger = SimpleLoggerFactory.getLogger(JoingLogger.ID);
 
     public PlatformImpl() {
 
         clientProp = new Properties();
 
         // Looks in classpath
-        InputStream is = Main.class.getClassLoader().getResourceAsStream("client.properties");
+        InputStream is =
+                Main.class.getClassLoader().getResourceAsStream("client.properties");
 
         if (is != null) {
             try {
                 clientProp.load(is);
             } catch (IOException ioe) {
-                System.err.println("IOException caught: " + ioe.getMessage());
+                logger.write(Levels.CRITICAL, "IOException: {0}",
+                        ioe.getMessage());
                 // At this point and with this implementation, an error getting
                 // the clientProperties leaves us with no way to know the
                 // servletUrl. We can not go further.
@@ -111,7 +119,6 @@ class PlatformImpl implements Platform {
 //
 //        runtime.init(clientProp);
 //    }
-
     @Override
     public boolean isInitialized() {
         return this.initialized;
@@ -142,10 +149,10 @@ class PlatformImpl implements Platform {
         exc.printStackTrace();
 
     /*  TODO: hacer q JShowException herede de JDesktopDialog y q actue en consecuencia:
-         *  Nota: utilizar getLocalizedMessage()
-        JShowException dialog = new JShowException( sTitle, exc );
-                       dialog.setLocationRelativeTo( getDesktop() );
-                       dialog.setVisible( true );*/
+     *  Nota: utilizar getLocalizedMessage()
+    JShowException dialog = new JShowException( sTitle, exc );
+    dialog.setLocationRelativeTo( getDesktop() );
+    dialog.setVisible( true );*/
     }
 
     /**
@@ -203,7 +210,8 @@ class PlatformImpl implements Platform {
      *
      * @param idApp String con el ID de la Aplicacion.
      * @param mainClass String con el nombre de la Class que contiene el metodo main().
-     * @args String array con los argumentos requeridos por la aplicaci�n.
+     * @param args String array con los argumentos requeridos por la aplicaci�n.
+     * @deprecated Este metodo sirivio para pruebas con WebPcFileServlet.
      */
     public void start(String idApp, String mainClass, String[] args) throws PlatformException {
 
@@ -254,13 +262,13 @@ class PlatformImpl implements Platform {
         }
     }
 
-
     /**
      * Ejecuta los argumentos contenidos en el arreglo.
      * @param id UUID de la aplicacion en el WebPcFileServer.
      * @param argv Arreglo de String con los argumentos para la aplicacion.
      * @param out OutputStream para salida std.
      * @param err OutputStream para stderr
+     * @deprecated Este metodo sirvio para pruebas con WebPcFileServer.
      */
     public void start(final String id, final String[] argv, OutputStream out, OutputStream err) throws Exception {
 
@@ -290,24 +298,23 @@ class PlatformImpl implements Platform {
         appArgs = argv;
         mainClass = mainClassName(sb.toString());
 
+        logger.write(Levels.DEBUG, "main class: {0}", mainClass);
+        logger.write(Levels.DEBUG, "ClassLoader: {0}", classLoader);
 
-        Monitor.log("main class: " + mainClass);
-        Monitor.log("ClassLoader: " + classLoader);
-        //System.out.println("main class: " + mainClass);
-        //System.out.println("ClassLoader: " + classLoader);
         // Declaracion del Thread Disposer
         final Runnable[] runner = new Runnable[1];
         final Thread disposer = new Thread(new Runnable() {
 
-                    public void run() {
-                        Runnable r = runner[0];
-                        runner[0] = null;
-                        System.out.println("diposer running: " + r);
-                        if (r != null) {
-                            r.run();
-                        }
-                    }
-                });
+            public void run() {
+                Runnable r = runner[0];
+                runner[0] = null;
+                logger.write(Levels.DEBUG_JVMM,
+                        "Disposer running: {0}", r);
+                if (r != null) {
+                    r.run();
+                }
+            }
+        });
 
         final ClassLoader finalClassLoader = classLoader;
         final String[] finalArgs = appArgs;
@@ -326,41 +333,41 @@ class PlatformImpl implements Platform {
 
         Thread thread = new Thread(threadGroup, new Runnable() {
 
-                    public void run() {
-                        final sun.awt.AppContext appContext = sun.awt.SunToolkit.createNewAppContext();
-                        // Este es el Thread que eventualmente ejecuta el Disposer
-                        runner[0] = new Runnable() {
+            public void run() {
+                final sun.awt.AppContext appContext = sun.awt.SunToolkit.createNewAppContext();
+                // Este es el Thread que eventualmente ejecuta el Disposer
+                runner[0] = new Runnable() {
 
-                                    public void run() {
-                                        appManager.removeApp(app);
-                                        System.out.println("disposing app context: ");
-                                        appContext.dispose();
-                                    }
-                                };
-                        try {
-                            // invokeAndWait necesita un Runnable como par�metro, aunque
+                    public void run() {
+                        appManager.removeApp(app);
+                        System.out.println("disposing app context: ");
+                        appContext.dispose();
+                    }
+                };
+                try {
+                    // invokeAndWait necesita un Runnable como parametro, aunque
                     // en realidad no lo ejecuta como un Thread. El Runnable se
                     // coloca en el EDT (Event Dispatch Thread) y si el objeto
                     // es Runnable, simplemente invoca el metodo run().
-                            SwingUtilities.invokeAndWait(new Runnable() {
+                    SwingUtilities.invokeAndWait(new Runnable() {
 
-                                        public void run() {
-                                            try {
-                                                Class c = finalClassLoader.loadClass(finalClassName);
-                                                Method main = c.getMethod("main", new Class[]{String[].class});
-                                                //Method main = finalClassLoader.loadClass(finalClassName).getMethod("main", new Class[]{String[].class});
-                                                main.invoke(null, new Object[]{finalArgs});
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                                threadGroup.close(); // aqui se usa el disposer
-                                            }
-                                        }
-                                    });
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        public void run() {
+                            try {
+                                Class c = finalClassLoader.loadClass(finalClassName);
+                                Method main = c.getMethod("main", new Class[]{String[].class});
+                                //Method main = finalClassLoader.loadClass(finalClassName).getMethod("main", new Class[]{String[].class});
+                                main.invoke(null, new Object[]{finalArgs});
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                threadGroup.close(); // aqui se usa el disposer
+                            }
                         }
-                    }
-                });
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         thread.start();
     }
 
@@ -435,8 +442,10 @@ class PlatformImpl implements Platform {
 
     /**
      * Ejecuta los argumentos contenidos en el arreglo.
+     * Este metodo es el que fue utilizado originalmente desde JApplication.
      */
-    public void start(final String[] argv, OutputStream out, OutputStream err) throws Exception {
+    public void start(final String[] argv, OutputStream out, OutputStream err)
+            throws Exception {
 
         String mainClassName = null;
         String[] appArgs = new String[0]; // un array de 1?
@@ -509,15 +518,15 @@ class PlatformImpl implements Platform {
         final Runnable[] runner = new Runnable[1];
         final Thread disposer = new Thread(new Runnable() {
 
-                    public void run() {
-                        Runnable r = runner[0];
-                        runner[0] = null;
-                        System.out.println("diposer running: " + r);
-                        if (r != null) {
-                            r.run();
-                        }
-                    }
-                });
+            public void run() {
+                Runnable r = runner[0];
+                runner[0] = null;
+                System.out.println("diposer running: " + r);
+                if (r != null) {
+                    r.run();
+                }
+            }
+        });
 
         final ClassLoader finalClassLoader = classLoader;
         final String[] finalArgs = appArgs;
@@ -535,46 +544,110 @@ class PlatformImpl implements Platform {
                 new AppImpl(getAppManager(), threadGroup, finalClassName);
         getAppManager().addApp(app);
 
+        // Este thread es quien ejecuta la tarea.
         Thread thread = new Thread(threadGroup, new Runnable() {
 
-                    public void run() {
-                        final sun.awt.AppContext appContext =
-                                sun.awt.SunToolkit.createNewAppContext();
-                        // Este es el Thread que eventualmente ejecuta el Disposer
-                        runner[0] = new Runnable() {
+            public void run() {
+                final sun.awt.AppContext appContext =
+                        sun.awt.SunToolkit.createNewAppContext();
+                // Este es el Thread que eventualmente ejecuta el Disposer
+                // llamemosle DisposerTask
+                Thread disposerTask = new Thread(new Runnable() {
 
-                                    public void run() {
-                                        getAppManager().removeApp(app);
-                                        System.out.println("disposing app context: ");
-                                        appContext.dispose();
-                                    }
-                                };
-                        try {
-                            // invokeAndWait necesita un Runnable como parámetro, aunque
+                    public void run() {
+                        getAppManager().removeApp(app);
+                        System.out.println("disposing app context: ");
+                        appContext.dispose();
+                    }
+                });
+                runner[0] = disposerTask;
+                try {
+                    // invokeAndWait necesita un Runnable como parámetro, aunque
                     // en realidad no lo ejecuta como un Thread. El Runnable se
                     // coloca en el EDT (Event Dispatch Thread) y si el objeto
                     // es Runnable, simplemente invoca el metodo run().
-                            SwingUtilities.invokeAndWait(new Runnable() {
+                    SwingUtilities.invokeAndWait(new Runnable() {
 
-                                        public void run() {
-                                            try {
-                                                Class c = finalClassLoader.loadClass(finalClassName);
-                                                Method main = c.getMethod("main", new Class[]{String[].class});
-                                                //Method main = finalClassLoader.loadClass(finalClassName).getMethod("main", new Class[]{String[].class});
-                                                main.setAccessible(true);
-                                                main.invoke(null, new Object[]{finalArgs});
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                                threadGroup.close(); // aqui se usa el disposer
-                                            }
-                                        }
-                                    });
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        public void run() {
+                            try {
+                                Class c = finalClassLoader.loadClass(finalClassName);
+                                Method main = c.getMethod("main", new Class[]{String[].class});
+                                //Method main = finalClassLoader.loadClass(finalClassName).getMethod("main", new Class[]{String[].class});
+                                main.setAccessible(true);
+                                main.invoke(null, new Object[]{finalArgs});
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                threadGroup.close(); // aqui se usa el disposer
+                            }
                         }
-                    }
-                });
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         thread.start();
+    }
+
+    public void start(final int appId, String[] args, OutputStream out,
+            OutputStream err) throws ApplicationExecutionException {
+
+        AppBridge appBridge = bridge.getAppBridge();
+
+        Application application = appBridge.getApplication(appId);
+        start(application, args, out, err);
+
+    }
+
+    public void start(final Application application, String[] args,
+            OutputStream out, OutputStream err)
+            throws ApplicationExecutionException {
+
+        BridgeClassLoader classLoader = null;
+        Map<Object, ClassLoader> classLdrCache = getClassLoaderCache();
+
+        synchronized (classLdrCache) {
+            BridgeClassLoader loader =
+                    (BridgeClassLoader) classLdrCache.get(application.getExecutable());
+            if (loader == null) {
+                try {
+                    URL url = URLFormat.toURL(application);
+                    loader = new BridgeClassLoader(bridge, new URL[]{url},
+                            Main.class.getClassLoader());
+                    classLdrCache.put(application.getExecutable(), loader);
+                } catch (Exception e) {
+                    throw new ApplicationExecutionException(e.getMessage());
+                }
+            }
+            classLoader = loader;
+        }
+
+        final String finalClassName = getMainClassName(application);
+
+        logger.write(Levels.DEBUG_JVMM, "Main Class: {0}", finalClassName);
+        logger.write(Levels.DEBUG_JVMM, "ClassLoader: {0}", classLoader);
+
+        // Crea un JThreadGroup
+        final JThreadGroup threadGroup = new JThreadGroupImpl(out, err);
+
+        final BridgeClassLoader finalClassLoader = classLoader;
+        final String[] finalArgs =
+                (args == null) ? new String[]{} : args;
+
+        // Crea una Nueva aplicacion "nativa"
+        final AppImpl app =
+                new AppImpl(getAppManager(), threadGroup, finalClassName);
+        getAppManager().addApp(app);
+
+        final ExecutionTask executionTask =
+                new ExecutionTask(finalClassLoader, finalClassName, finalArgs);
+
+        // Este thread es quien ejecuta la tarea.
+        ExecutionThread executionThread =
+                new ExecutionThread(threadGroup, getAppManager(), app, executionTask);
+
+        executionThread.start();
+
     }
 
     @Override
@@ -634,22 +707,10 @@ class PlatformImpl implements Platform {
             argLst.add(tmpDir + fileName + "!/");
             argLst.add(mainClass);
 
-            String[] args = argLst.toArray(new String[]
-              
-            {
-
-
-              
-        }
-
-
-
-    
-
-    );
+            String[] args = argLst.toArray(new String[]{});
 
             start(args, System.out, System.err);
-            
+
         } catch (Exception ioe) {
             throw new ApplicationExecutionException(ioe.getMessage());
         }
@@ -669,6 +730,18 @@ class PlatformImpl implements Platform {
         String mainClass = attributes.getValue("Main-Class");
 
         return mainClass;
+    }
+
+    public String getMainClassName(Application application) {
+
+        try {
+            JarInputStream jis = new JarInputStream(application.getContent());
+            return getMainClassName(jis);
+        } catch (IOException ioe) {
+            logger.write(Levels.CRITICAL, "IOException in getMainClassName: {0}",
+                    ioe.getMessage());
+            return null;
+        }
     }
 
     /**
