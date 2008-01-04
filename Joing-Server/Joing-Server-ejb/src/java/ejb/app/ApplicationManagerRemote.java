@@ -119,4 +119,6 @@ public interface ApplicationManagerRemote
      */
     Application getApplication( String sSessionId, int nAppId )
                 throws JoingServerAppException;
+
+    Application getApplicationByName(String sessionId, String executableName) throws JoingServerAppException;
 }

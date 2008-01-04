@@ -177,6 +177,39 @@ public class ApplicationManagerBean
         return app;
     }
     
+    public Application getApplicationByName(String sessionId, String executableName)
+            throws JoingServerAppException {
+
+        Application app = null;
+        String account = sessionManagerBean.getUserAccount(sessionId);
+
+        if (account == null) {
+            return null;
+        }
+
+        Query q = null;
+        
+        try {
+            
+            q = em.createNamedQuery("ApplicationEntity.findByExecutable");
+            q.setParameter("executable", executableName);
+            ApplicationEntity appEnt = (ApplicationEntity)q.getSingleResult();
+            
+            app = AppDTOs.createApplication(appEnt);
+            
+        } catch (NoResultException nre) {
+            throw new JoingServerAppException(JoingServerException.ACCESS_DB, nre);
+        }
+
+        // Para poder determinar el acceso necesito primero obtener el
+        // id de app., y para ello ocupo obtener la app.
+        if (!hasAccess(account, app.getId())) {
+            throw new JoingServerAppException(JoingServerAppException.INVALID_OWNER);
+        }
+
+        return app;
+    }
+    
     //------------------------------------------------------------------------//
     // PRIVATES
     
@@ -369,4 +402,6 @@ public class ApplicationManagerBean
         return bHasAccess;*/
         return true;
     }
+
+   
 }
