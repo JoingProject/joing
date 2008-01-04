@@ -18,8 +18,11 @@ import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Map;
+import java.util.jar.Attributes;
+import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
+import org.joing.Main;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.clientAPI.jvmm.Platform;
 import org.joing.common.dto.app.AppDescriptor;
@@ -29,6 +32,11 @@ import org.joing.common.clientAPI.log.Levels;
 import org.joing.common.clientAPI.log.Logger;
 import org.joing.common.clientAPI.log.SimpleLoggerFactory;
 import org.joing.common.clientAPI.log.JoingLogger;
+import org.joing.common.clientAPI.runtime.Bridge2Server;
+import org.joing.common.dto.app.Application;
+import org.joing.jvmm.BridgeClassLoader;
+import org.joing.jvmm.net.JoingURLStreamHandlerFactory;
+import org.joing.jvmm.net.URLFormat;
 
 /**
  *
@@ -44,10 +52,15 @@ public class Bootstrap {
 
     private static void setupTrayIcon() {
 
+        // See JavaSE bugid 6438179
         if (SystemTray.isSupported() == false) {
-            logger.write(Levels.WARNING, "Tray Icon not supported.");
+            StringBuilder sb = new StringBuilder();
+            sb.append("Tray Icon not supported. This is a known issue ");
+            sb.append("when running Beryl or Compiz on Linux.");
+            logger.write(Levels.WARNING, sb.toString());
             return;
         }
+        
 
         URL u = Bootstrap.class.getResource("resources/java32.png");
         Image image = Toolkit.getDefaultToolkit().getImage(u);
@@ -77,6 +90,8 @@ public class Bootstrap {
         ActionListener exitListener = new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                // TODO: Replace System.exit with a specific
+                // Joing Shutdown routine.
                 System.exit(0);
             }
         };
@@ -122,12 +137,9 @@ public class Bootstrap {
         TrayIcon trayIcon = new TrayIcon(image, "Java", popup);
                  trayIcon.setImageAutoSize(true);
         
-        try
-        {
+        try {
             SystemTray.getSystemTray().add(trayIcon);    
-        }
-        catch ( Exception exc )
-        {
+        } catch ( Exception exc ) {
             // TODO: hacer algo?
         }
     }
@@ -140,14 +152,24 @@ public class Bootstrap {
      * <li>Initialize the security manager.</li>
      * <li>Determine the Class responible of doing the Login process.</li>
      * </ui>
-     * The Class responsible of the Login must call <code>Bootstrap.go()</code> in the event
-     * of fetching a session Id.
      */
     public static void init() {
         
-        // Initialization of Logging subsystem.
+        // Initialization of Logging subsystem. 
+        // Platform need at least one logger, we need to setup
+        // this first.
         logger.addListener(new StdoutLogListenerImpl(true));
-        logger.addLevels(Levels.DEBUG, Levels.DEBUG_JVMM, Levels.DEBUG_DESKTOP);
+        logger.addLevels(Levels.DEBUG, Levels.DEBUG_JVMM, Levels.DEBUG_DESKTOP,
+                Levels.DEBUG_CACHE);
+        
+        Platform platform = RuntimeFactory.getPlatform();
+        
+        String logFile = platform.getClientProp().getProperty("LogFile", null);
+        if (logFile != null) {
+            logger.addListener(new FileLogListenerImpl(logFile, true));
+        }
+        
+        URL.setURLStreamHandlerFactory(new JoingURLStreamHandlerFactory());
         
         System.setSecurityManager(new JoingSecurityManager());
         logger.write(Levels.NORMAL, "Join'g Successfully Bootstrapped.");
@@ -155,23 +177,27 @@ public class Bootstrap {
                 String.valueOf(RuntimeFactory.getPlatform().getMainThreadId()));
 
         setupTrayIcon();
-        
+              
         // Iniciamos la sesión.
-        try {
+        try {        
             Login login = new Login();
             login.setVisible(true);
 
             if (login.wasSuccessful()) {
-                DesktopManager deskmgr = getDesktopManagerInstance( login.getApplicationDescriptor() );
-                               deskmgr.setPlatform( RuntimeFactory.getPlatform() );
-                RuntimeFactory.getPlatform().setDesktopManager(deskmgr);
+//                platform.start(1, null, System.out, System.err);
+                DesktopManager deskmgr = 
+                        getDesktopManagerInstance( login.getApplicationDescriptor() );
 
+                deskmgr.setPlatform( RuntimeFactory.getPlatform() );
+                platform.setDesktopManager(deskmgr);
+            
                 if (login.fullScreen()) {
                     deskmgr.showInFullScreen();
                 } else {
                     deskmgr.showInFrame();
                 }
             } else {
+                logger.write(Levels.INFO, "Terminated, bad username/password.");
                 RuntimeFactory.getPlatform().halt();
             }
         } catch (Exception e) {
@@ -182,31 +208,69 @@ public class Bootstrap {
 
     // TODO: Obtener el desktop del servidor
     private static DesktopManager getDesktopManagerInstance( AppDescriptor appDesc ) {
+        
         try {
             Platform platform = RuntimeFactory.getPlatform();
-            // TODO: Bajarse del server el DesktopManager descrito en appDesc y lanzarla
-            String desktop = platform.getClientProp().getProperty("DesktopApp");
-            String[] tmp = desktop.split("\\?");
-            desktop = tmp[0];
-            String mainClass = tmp[1];
-            //String serverEjb = platform.getClientProp().getProperty("JoingServerEjb");
-            //String desktopApi = platform.getClientProp().getProperty("DesktopApi");
-            //String joingClient = platform.getClientProp().getProperty("JoingClient");
+            Bridge2Server br = platform.getBridge();
+            // hack
+            if (appDesc == null) {
+                appDesc = new AppDescriptor();
+                appDesc.setId(1);
+            }
             
-            URL[] url = new URL[] {
-                new URL(desktop),
-                //new URL(serverEjb),
-                //new URL(desktopApi),
-                //new URL(joingClient)
-            };
-            URLClassLoader ucl = new URLClassLoader(url, platform.getClass().getClassLoader());
-            Class clazz = ucl.loadClass(mainClass);
+            Application app = br.getAppBridge().getApplication(appDesc.getId());
+            URL url = URLFormat.toURL(app);
+            
+            BridgeClassLoader classLoader = 
+                    new BridgeClassLoader(br, new URL[] {url}, 
+                    Main.class.getClassLoader());
+
+            JarInputStream jis = new JarInputStream(app.getContent());
+            Manifest manifest = jis.getManifest();
+            Attributes attributes = manifest.getMainAttributes();
+            String mainClass = attributes.getValue("Main-Class");
+            
+            Class clazz = classLoader.loadClass(mainClass);
+            platform.getClassLoaderCache().put(app.getExecutable(), classLoader);
             
             return (DesktopManager) clazz.newInstance();
             
         } catch (Exception e) {
+            logger.write(Levels.CRITICAL, 
+                    "Exception Caught while getting the Desktop Instance",
+                    e.getMessage());
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         }
     }
+    
+//    private static DesktopManager getDesktopManagerInstance( AppDescriptor appDesc ) {
+//        try {
+//            
+//            Platform platform = RuntimeFactory.getPlatform();
+//            // TODO: Bajarse del server el DesktopManager descrito en appDesc y lanzarla
+//            String desktop = platform.getClientProp().getProperty("DesktopApp");
+//            String[] tmp = desktop.split("\\?");
+//            desktop = tmp[0];
+//            String mainClass = tmp[1];
+//            //String serverEjb = platform.getClientProp().getProperty("JoingServerEjb");
+//            //String desktopApi = platform.getClientProp().getProperty("DesktopApi");
+//            //String joingClient = platform.getClientProp().getProperty("JoingClient");
+//            
+//            URL[] url = new URL[] {
+//                new URL(desktop),
+//                //new URL(serverEjb),
+//                //new URL(desktopApi),
+//                //new URL(joingClient)
+//            };
+//            URLClassLoader ucl = new URLClassLoader(url, platform.getClass().getClassLoader());
+//            Class clazz = ucl.loadClass(mainClass);
+//            
+//            return (DesktopManager) clazz.newInstance();
+//            
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new RuntimeException(e.getMessage());
+//        }
+//    }    
 }

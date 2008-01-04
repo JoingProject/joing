@@ -86,4 +86,8 @@ public class AppBridgeSocketImpl
     {
         return null;
     }
+
+    public Application getApplicationByName(String executableName) {
+        return null;
+    }
 }

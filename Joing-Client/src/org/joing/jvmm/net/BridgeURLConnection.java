@@ -1,0 +1,98 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.joing.jvmm.net;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import org.joing.common.clientAPI.runtime.Bridge2Server;
+import org.joing.common.dto.app.Application;
+import org.joing.jvmm.BridgeClassLoader;
+
+/**
+ *
+ * @author Antonio Varela Lizardi <antonio@icon.net.mx>
+ */
+public class BridgeURLConnection extends URLConnection {
+
+    private Bridge2Server bridge;
+
+    private BridgeURLConnection(URL url) {
+        super(url);
+    }
+
+    public BridgeURLConnection(URL url, Bridge2Server bridge) {
+        super(url);
+        this.bridge = bridge;
+    }
+
+    @Override
+    public void connect() throws IOException {
+
+        if (this.bridge == null) {
+            throw new IOException("Bridge2Server null.");
+        }
+
+    }
+
+    /**
+     * 
+     * @return InputStream object.
+     * @throws java.io.IOException
+     */
+    @Override
+    public InputStream getInputStream() throws IOException {
+
+        connect();
+
+        Application app = getApplication();
+
+        if (app.getContent() == null) {
+            throw new IOException("Null Data in Application.");
+        }
+
+        String name = url.getRef();
+        if ((name == null) || (name.equals(""))) {
+            return app.getContent();
+        }
+        
+        byte[] b = BridgeClassLoader.findInApp(name, app);
+        
+        if (b == null) {
+            throw new IOException("Data entry not found in Application.");
+        }
+        
+        return new ByteArrayInputStream(b);
+    }
+
+    @Override
+    public Object getContent() throws IOException {
+        return super.getContent();
+    }
+
+    public static Integer getAppId(URL url) throws IOException {
+        String q = url.getQuery();
+        String[] s = q.split("=");
+        if (s.length != 2) {
+            throw new IOException("Malformed Query String.");
+        }
+        return Integer.parseInt(s[1]);
+    }
+
+    public Integer getAppId() throws IOException {
+        return getAppId(this.url);
+    }
+
+    public Application getApplication() {
+        try {
+            Integer i = getAppId();
+            return this.bridge.getAppBridge().getApplication(i);
+        } catch (IOException ioe) {
+            return null;
+        }
+    }
+}
