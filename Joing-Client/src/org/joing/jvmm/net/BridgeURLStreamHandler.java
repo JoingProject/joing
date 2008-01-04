@@ -25,13 +25,6 @@ public class BridgeURLStreamHandler extends URLStreamHandler {
     protected URLConnection openConnection(URL u) throws IOException {
         String s = u.getFile();
 
-        // La aplicacion ya se encuentra en el class loader. Vamos a 
-        // intentar obtenerla del ClassLoader. La otra alternativa
-        // es llamar directamente a Platform.getBridge(), parsear
-        // la URL y obtener por la red. El detalle es que tendriamos
-        // trafico de mas, seria necesario redefinir la manera en como
-        // se cargan las clases.
-
         Bridge2Server bridge = RuntimeFactory.getPlatform().getBridge();
 
         return new BridgeURLConnection(u, bridge);
