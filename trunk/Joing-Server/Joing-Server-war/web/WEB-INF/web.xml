@@ -115,6 +115,10 @@
         <servlet-name>GetRoots</servlet-name>
         <servlet-class>servlets.vfs.GetRoots</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ApplicationServlet</servlet-name>
+        <servlet-class>org.joing.server.servlets.ApplicationServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
         <url-pattern>/servlets/session/Login</url-pattern>
@@ -227,6 +231,10 @@
     <servlet-mapping>
         <servlet-name>GetRoots</servlet-name>
         <url-pattern>/servlets/vfs/GetRoots</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ApplicationServlet</servlet-name>
+        <url-pattern>/servlets/ApplicationServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
