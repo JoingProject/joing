@@ -67,4 +67,27 @@ public class Application extends AppDescriptor implements Serializable
     {
         this.btContent = btContent;      // TODO: hacer copia defensiva
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Application other = (Application) obj;
+        if (this.btContent != other.btContent && (this.btContent == null || !this.btContent.equals(other.btContent))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.btContent != null ? this.btContent.hashCode() : 0);
+        return hash;
+    }
+    
 }

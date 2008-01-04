@@ -34,5 +34,14 @@ public interface AppBridge
     
     AppDescriptor getPreferredForType( String sFileExtension );
     
+    /**
+     * Abstract method to get an application from the Joing Server. The concrete
+     * implementation must handle details about the preferred way to fetch
+     * data from the server.
+     * @param nAppId Application Id.
+     * @return Application instance.
+     */
     Application getApplication( int nAppId );
+    
+    Application getApplicationByName(String executableName);
 }

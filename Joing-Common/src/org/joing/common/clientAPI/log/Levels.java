@@ -22,5 +22,6 @@ public enum Levels {
     CRITICAL,
     DEBUG,
     DEBUG_JVMM,
-    DEBUG_DESKTOP
+    DEBUG_DESKTOP,
+    DEBUG_CACHE
 }
