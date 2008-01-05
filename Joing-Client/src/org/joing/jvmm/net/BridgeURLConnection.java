@@ -57,6 +57,8 @@ public class BridgeURLConnection extends URLConnection {
 
         String name = url.getRef();
         if ((name == null) || (name.equals(""))) {
+            // No reference. We should return the jar's 
+            // content.
             return app.getContent();
         }
         
@@ -74,6 +76,14 @@ public class BridgeURLConnection extends URLConnection {
         return super.getContent();
     }
 
+    /**
+     * Gets the appId of the application pointed by the URL. This method doesn't
+     * fetches anything from the net or the bridge, just extracts the data from
+     * the URL.
+     * @param url URL in bridge2server format.
+     * @return Integer value with the id
+     * @throws java.io.IOException
+     */
     public static Integer getAppId(URL url) throws IOException {
         String q = url.getQuery();
         String[] s = q.split("=");

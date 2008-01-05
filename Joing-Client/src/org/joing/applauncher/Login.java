@@ -16,9 +16,7 @@ import org.joing.common.dto.session.LoginResult;
 import org.joing.common.exception.JoingServerException;
 import org.joing.common.clientAPI.runtime.Bridge2Server;
 import org.joing.common.dto.app.AppDescriptor;
-import org.joing.common.dto.app.AppEnvironment;
-import org.joing.common.dto.app.AppGroup;
-import org.joing.common.dto.app.AppGroupKey;
+import org.joing.common.dto.app.Application;
 import org.joing.jvmm.RuntimeFactory;
 
 /**
@@ -60,27 +58,27 @@ public class Login extends JDialog {
 
         return appDesc;
     }
+    
+    // TODO: Fix this. An application object contains the application data,
+    // we need to store a simpler object.
+    public Integer getDesktopApplicationId() {
+        String desktop = (String)cmbDesktop.getSelectedItem();
+        
+        return (Integer)cmbDesktop.getClientProperty(desktop);
+    }
 
     //------------------------------------------------------------------------//
     private void fillDesktopComboBox() {
-        cmbDesktop.addItem( "PDE - Recordatorio: corregir error" );
-        cmbDesktop.putClientProperty( "PDE - Recordatorio: corregir error", null );
-// TODO: hacer que esto funcione -->
-//En Login::fillDesktopComboBox() (es donde se piden las apps de tipo DESKTOP), se 
-//produce un error. Esto es así porque la sentencia SQL del lado del servidor (en 
-//ApplicationManagerBean::getAvailableForUser()) está incompleta: sólo funciona 
-//bien cuando los parámetros: "AppEnvironment" y "AppGroupKey" son genéricos. 
-//Ver el método ApplicationManagerBean::getQuery(...)
         
-//        AppBridge           bridge     = RuntimeFactory.getPlatform().getBridge().getAppBridge();
-//        List<AppGroup>      lstGroups  = bridge.getAvailableForUser( AppEnvironment.JAVA_ALL, AppGroupKey.DESKTOP );
-//        List<AppDescriptor> lstAppDesc = (List<AppDescriptor>) lstGroups.get( 0 );
-//        
-//        for( AppDescriptor appDesc : lstAppDesc )
-//        {
-//            cmbDesktop.addItem( appDesc.getName() );
-//            cmbDesktop.putClientProperty( appDesc.getName(), appDesc );
-//        }
+        AppBridge           bridge     = RuntimeFactory.getPlatform().getBridge().getAppBridge();
+
+        List<Application> desktops = bridge.getAvailableDesktops();
+        
+        for (Application app : desktops) {
+            cmbDesktop.addItem(app.getName());
+            cmbDesktop.putClientProperty(app.getName(), app.getId());
+        }
+        
     }
 
     /** This method is called from within the constructor to

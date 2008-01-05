@@ -9,8 +9,11 @@
 
 package org.joing.jvmm;
 
-import org.joing.applauncher.Monitor;
 import org.joing.common.clientAPI.jvmm.JThreadGroup;
+import org.joing.common.clientAPI.log.JoingLogger;
+import org.joing.common.clientAPI.log.Levels;
+import org.joing.common.clientAPI.log.Logger;
+import org.joing.common.clientAPI.log.SimpleLoggerFactory;
 
 /**
  *
@@ -18,6 +21,8 @@ import org.joing.common.clientAPI.jvmm.JThreadGroup;
  */
 public class JoingSecurityManager extends SecurityManager {
 
+    private final Logger logger = SimpleLoggerFactory.getLogger(JoingLogger.ID);
+    
     public JoingSecurityManager() {
     }
 
@@ -43,8 +48,9 @@ public class JoingSecurityManager extends SecurityManager {
         }
         
         if(Thread.currentThread().getId() != RuntimeFactory.getPlatform().getMainThreadId()) {
-            Monitor.log("Call to exit() by unauthorized Thread with id " + Thread.currentThread().getId());
-            //throw new RuntimeException("Call to exit() by unauthorized entity.");
+            logger.write(Levels.WARNING, 
+                    "Call to exit() by unauthorized Thread with id {0}", 
+                    Thread.currentThread().getId());
         } 
     }
 

@@ -21,6 +21,7 @@
  */
 package org.joing.runtime.bridge2server;
 
+import java.util.ArrayList;
 import org.joing.common.clientAPI.runtime.AppBridge;
 import java.util.List;
 import org.joing.common.dto.app.AppDescriptor;
@@ -28,7 +29,6 @@ import org.joing.common.dto.app.AppEnvironment;
 import org.joing.common.dto.app.Application;
 import org.joing.common.dto.app.AppGroup;
 import org.joing.common.dto.app.AppGroupKey;
-import org.joing.common.exception.JoingServerAppException;
 import org.joing.common.exception.JoingServerException;
 import org.joing.common.pkt.app.ApplicationReply;
 import org.joing.common.pkt.app.ApplicationRequest;
@@ -41,6 +41,9 @@ import org.joing.common.pkt.app.ApplicationRequest;
 public class AppBridgeServletImpl
         extends BridgeServletBaseImpl
         implements AppBridge {
+
+    ApplicationCache cache =
+            ApplicationCacheFactory.getCache(ApplicationCache.ID);
 
     /**
      * Creates a new instance of AppBridgeServletImpl
@@ -134,8 +137,6 @@ public class AppBridgeServletImpl
     public Application getApplication(int nAppId)
             throws JoingServerException {
         Application application = null;
-        ApplicationCache cache =
-                ApplicationCacheFactory.getCache(ApplicationCache.ID);
 
         application = cache.get(nAppId);
 
@@ -157,15 +158,13 @@ public class AppBridgeServletImpl
             throws JoingServerException {
 
         Application application = null;
-        ApplicationCache cache =
-                ApplicationCacheFactory.getCache(ApplicationCache.ID);
 
         // aqui tenemos el problema. Por lo pronto llevaremos
         // doble cache.
         application = cache.get(executableName);
 
         if (application == null) {
-            Channel channel = new Channel(APP_GET_BY_NAME);
+            Channel channel = new Channel(APP_SERVLET);
             ApplicationRequest req = new ApplicationRequest();
             String sessionId =
                     platform.getBridge().getSessionBridge().getSessionId();
@@ -174,15 +173,13 @@ public class AppBridgeServletImpl
             req.setAccount(account);
             req.setName(executableName);
             req.setSessionId(sessionId);
+            req.setCode(ApplicationRequest.APP_BY_NAME);
 
             channel.write(req);
             ApplicationReply reply = (ApplicationReply) channel.read();
             channel.close();
 
             if (reply.isOk() == false) {
-//                JoingServerAppException jsae = 
-//                        (JoingServerAppException)reply.getReply();
-//                throw new JoingServerException(jsae.getMessage());
                 application = null;
             } else {
                 application = (Application) reply.getReply();
@@ -191,5 +188,32 @@ public class AppBridgeServletImpl
         }
 
         return application;
+    }
+
+    public List<Application> getAvailableDesktops()
+            throws JoingServerException {
+
+        Channel channel = new Channel(APP_SERVLET);
+        ApplicationRequest req = new ApplicationRequest();
+        req.setCode(ApplicationRequest.AVAILABLE_DESKTOPS);
+
+        List<Application> apps = null;
+
+        channel.write(req);
+        ApplicationReply reply = (ApplicationReply) channel.read();
+        channel.close();
+        
+        if (reply.isOk()) {
+            apps = (List<Application>)reply.getReply();
+        } else {
+            apps = new ArrayList<Application>();
+        }
+        
+        for (Application app : apps) {
+            cache.put(app.getId(), app);
+        }
+        
+        return apps;
+
     }
 }

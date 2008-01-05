@@ -22,6 +22,7 @@
 
 package org.joing.runtime.bridge2server;
 
+import java.util.ArrayList;
 import org.joing.common.clientAPI.runtime.AppBridge;
 import java.util.List;
 import org.joing.common.dto.app.AppDescriptor;
@@ -89,5 +90,9 @@ public class AppBridgeSocketImpl
 
     public Application getApplicationByName(String executableName) {
         return null;
+    }
+
+    public List<Application> getAvailableDesktops() {
+        return new ArrayList<Application>();
     }
 }

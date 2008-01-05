@@ -6,7 +6,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.joing.applauncher;
 
 import java.awt.Image;
@@ -17,15 +16,18 @@ import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
+import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 import org.joing.Main;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.clientAPI.jvmm.Platform;
-import org.joing.common.dto.app.AppDescriptor;
 import org.joing.jvmm.JoingSecurityManager;
 import org.joing.jvmm.RuntimeFactory;
 import org.joing.common.clientAPI.log.Levels;
@@ -44,9 +46,9 @@ import org.joing.jvmm.net.URLFormat;
  */
 public class Bootstrap {
 
-    private static final Logger logger = 
+    private static final Logger logger =
             SimpleLoggerFactory.getLogger(JoingLogger.ID);
-    
+
     public Bootstrap() {
     }
 
@@ -60,39 +62,15 @@ public class Bootstrap {
             logger.write(Levels.WARNING, sb.toString());
             return;
         }
-        
+
 
         URL u = Bootstrap.class.getResource("resources/java32.png");
         Image image = Toolkit.getDefaultToolkit().getImage(u);
 
-//        MouseListener mouseListener = new MouseListener() {
-//
-//            public void mouseClicked(MouseEvent e) {
-//                System.out.println("Tray Icon - Mouse clicked!");
-//            }
-//
-//            public void mouseEntered(MouseEvent e) {
-//                System.out.println("Tray Icon - Mouse entered!");
-//            }
-//
-//            public void mouseExited(MouseEvent e) {
-//                System.out.println("Tray Icon - Mouse exited!");
-//            }
-//
-//            public void mousePressed(MouseEvent e) {
-//                System.out.println("Tray Icon - Mouse pressed!");
-//            }
-//
-//            public void mouseReleased(MouseEvent e) {
-//                System.out.println("Tray Icon - Mouse released!");
-//            }
-//        };
         ActionListener exitListener = new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                // TODO: Replace System.exit with a specific
-                // Joing Shutdown routine.
-                System.exit(0);
+                RuntimeFactory.getPlatform().shutdown();
             }
         };
 
@@ -118,7 +96,7 @@ public class Bootstrap {
                 try {
                     data = new byte[amount];
                 } catch (OutOfMemoryError err) {
-//                    System.out.println("Tray Icon - Mouse pressed!");
+
                 }
                 data = null;
                 System.gc();
@@ -135,12 +113,12 @@ public class Bootstrap {
         defaultItem.addActionListener(exitListener);
         popup.add(defaultItem);
         TrayIcon trayIcon = new TrayIcon(image, "Java", popup);
-                 trayIcon.setImageAutoSize(true);
-        
+        trayIcon.setImageAutoSize(true);
+
         try {
-            SystemTray.getSystemTray().add(trayIcon);    
-        } catch ( Exception exc ) {
-            // TODO: hacer algo?
+            SystemTray.getSystemTray().add(trayIcon);
+        } catch (Exception exc) {
+        // TODO: hacer algo?
         }
     }
 
@@ -154,43 +132,64 @@ public class Bootstrap {
      * </ui>
      */
     public static void init() {
-        
+
         // Initialization of Logging subsystem. 
         // Platform need at least one logger, we need to setup
         // this first.
         logger.addListener(new StdoutLogListenerImpl(true));
         logger.addLevels(Levels.DEBUG, Levels.DEBUG_JVMM, Levels.DEBUG_DESKTOP,
                 Levels.DEBUG_CACHE);
-        
+
         Platform platform = RuntimeFactory.getPlatform();
-        
+
         String logFile = platform.getClientProp().getProperty("LogFile", null);
         if (logFile != null) {
             logger.addListener(new FileLogListenerImpl(logFile, true));
         }
-        
+
         URL.setURLStreamHandlerFactory(new JoingURLStreamHandlerFactory());
-        
+
+        // user dir
+        String userHome = System.getProperty("user.home");
+        userHome = userHome + "/.joing/";
+        File f = new File(userHome);
+        if (f.exists() == false) {
+            f.mkdir();
+        }
+        String joingClient = userHome + "joing-client.properties";
+        f = new File(joingClient);
+        Properties joingProperties = new Properties();
+        try {
+            if (f.exists() == true) {
+                FileInputStream fis = new FileInputStream(f);
+                joingProperties.load(fis);
+            }
+        } catch (IOException ioe) {
+            logger.write(Levels.WARNING, 
+                    "Exception caught while loading client properties: {0}",
+                    ioe.getMessage());
+        }
+
         System.setSecurityManager(new JoingSecurityManager());
         logger.write(Levels.NORMAL, "Join'g Successfully Bootstrapped.");
-        logger.write(Levels.NORMAL, "Main Thread Id is {0}",  
+        logger.write(Levels.NORMAL, "Main Thread Id is {0}",
                 String.valueOf(RuntimeFactory.getPlatform().getMainThreadId()));
 
         setupTrayIcon();
-              
+
         // Iniciamos la sesión.
-        try {        
+        try {
             Login login = new Login();
             login.setVisible(true);
 
             if (login.wasSuccessful()) {
 //                platform.start(1, null, System.out, System.err);
-                DesktopManager deskmgr = 
-                        getDesktopManagerInstance( login.getApplicationDescriptor() );
+                DesktopManager deskmgr =
+                        getDesktopManagerInstance(login.getDesktopApplicationId());
 
-                deskmgr.setPlatform( RuntimeFactory.getPlatform() );
+                deskmgr.setPlatform(RuntimeFactory.getPlatform());
                 platform.setDesktopManager(deskmgr);
-            
+
                 if (login.fullScreen()) {
                     deskmgr.showInFullScreen();
                 } else {
@@ -204,46 +203,40 @@ public class Bootstrap {
             logger.write(Levels.CRITICAL, "Error en start: {0}", e.getMessage());
         }
     }
-    
+
 
     // TODO: Obtener el desktop del servidor
-    private static DesktopManager getDesktopManagerInstance( AppDescriptor appDesc ) {
-        
+    private static DesktopManager getDesktopManagerInstance(int appId) {
+
         try {
             Platform platform = RuntimeFactory.getPlatform();
             Bridge2Server br = platform.getBridge();
-            // hack
-            if (appDesc == null) {
-                appDesc = new AppDescriptor();
-                appDesc.setId(1);
-            }
-            
-            Application app = br.getAppBridge().getApplication(appDesc.getId());
+
+            Application app = br.getAppBridge().getApplication(appId);
             URL url = URLFormat.toURL(app);
-            
-            BridgeClassLoader classLoader = 
-                    new BridgeClassLoader(br, new URL[] {url}, 
+
+            BridgeClassLoader classLoader =
+                    new BridgeClassLoader(br, new URL[]{url},
                     Main.class.getClassLoader());
 
             JarInputStream jis = new JarInputStream(app.getContent());
             Manifest manifest = jis.getManifest();
             Attributes attributes = manifest.getMainAttributes();
             String mainClass = attributes.getValue("Main-Class");
-            
+
             Class clazz = classLoader.loadClass(mainClass);
             platform.getClassLoaderCache().put(app.getExecutable(), classLoader);
-            
+
             return (DesktopManager) clazz.newInstance();
-            
+
         } catch (Exception e) {
-            logger.write(Levels.CRITICAL, 
+            logger.write(Levels.CRITICAL,
                     "Exception Caught while getting the Desktop Instance",
                     e.getMessage());
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         }
     }
-    
 //    private static DesktopManager getDesktopManagerInstance( AppDescriptor appDesc ) {
 //        try {
 //            

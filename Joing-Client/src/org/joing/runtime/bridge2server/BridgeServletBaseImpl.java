@@ -57,7 +57,7 @@ public class BridgeServletBaseImpl
     static final String APP_UNINSTALL         = "app/Uninstall";
     static final String APP_GET_PREFERRED     = "app/GetPreferredForType";
     static final String APP_GET_APPLICATION   = "app/GetApplication";
-    static final String APP_GET_BY_NAME = "ApplicationServlet";
+    static final String APP_SERVLET = "ApplicationServlet";
     
     // VFS
     static final String VFS_GET_FILE          = "vfs/GetFile";
