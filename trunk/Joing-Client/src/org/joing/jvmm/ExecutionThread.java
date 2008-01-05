@@ -7,7 +7,6 @@ package org.joing.jvmm;
 import javax.swing.SwingUtilities;
 import org.joing.common.clientAPI.jvmm.App;
 import org.joing.common.clientAPI.jvmm.AppManager;
-import org.joing.common.clientAPI.jvmm.JThreadGroup;
 import org.joing.common.clientAPI.log.JoingLogger;
 import org.joing.common.clientAPI.log.Levels;
 import org.joing.common.clientAPI.log.Logger;
