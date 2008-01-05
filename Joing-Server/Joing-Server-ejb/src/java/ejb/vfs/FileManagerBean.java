@@ -85,7 +85,7 @@ public class FileManagerBean
             if( _file != null )
                 file = FileDTOs.createFileDescriptor( _file );
             else
-                throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS ); 
+                throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
         }
         
         return file;
