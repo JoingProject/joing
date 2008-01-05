@@ -66,6 +66,7 @@ public class FileDescriptor implements Serializable
     private long    size;              // read-only
     
     //---------------------------------------------
+    // Boolean anttributes IDs
     
     private final static int ALTERABLE   =  1;
     private final static int DELETEABLE  =  2;
