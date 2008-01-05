@@ -403,6 +403,8 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             if( pwc == null )
             {
                 pwc = new PDEWallpaperComponent( wp );
+                pwc.setLocation( 0,0 );
+                pwc.setSize( getSize() );
                 super.add( pwc, LAYER_WALLPAPER );
                 
                 // To re-center the image when WorkArea is resized

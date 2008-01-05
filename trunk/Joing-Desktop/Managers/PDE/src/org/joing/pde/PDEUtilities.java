@@ -28,6 +28,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.workarea.WorkArea;
+import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.exception.JoingServerVFSException;
 import org.joing.pde.desktop.container.PDEDialog;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.pde.misce.images.ImagesFactory;
@@ -42,6 +44,46 @@ import org.joing.pde.misce.images.ImagesFactory;
  */
 public class PDEUtilities
 {
+    /**
+     * 
+     * @param sFullPath
+     * @return One of following:
+     *         <ul>
+     *         <li>An instance of <code>java.io.File</code> if file exists in
+     *         local file system 
+     *         <li> An instance of <code>org.joing.common.dto.vfs.FileDescriptor</code> 
+     *              if file exists in remote file system (VFS)
+     *         <li><code>null</code> if file does not exists neither in local or
+     *             remote file systems.
+     *         </ul>
+     */
+    public static Object getFile( String sFullPath )
+    {
+        Object oRet = null;
+        
+        // 1st check local FS
+        java.io.File file = new java.io.File( sFullPath );
+        
+        if( file.exists() )
+        {
+            oRet = file;
+        }
+        else
+        {   // Now check in VFS
+            
+            try
+            {
+                FileDescriptor fdRet = DesktopManagerFactory.getDM().getBridge().getFileBridge().getFile( sFullPath );
+            }
+            catch( JoingServerVFSException exc )
+            {
+                // Nothing to do: oRet is already null
+            }
+        }
+        
+        return oRet;
+    }
+    
     public static byte[] icon2ByteArray( ImageIcon icon )
     {
         byte[] image = null;
