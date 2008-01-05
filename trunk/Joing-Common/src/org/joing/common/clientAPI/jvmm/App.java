@@ -5,13 +5,16 @@
 
 package org.joing.common.clientAPI.jvmm;
 
+import org.joing.common.dto.app.Application;
+
 /**
  *
  * @author Antonio Varela Lizardi <antonio@icon.net.mx>
  */
 public interface App {
 
-    public String getMainClassName();
-    public void destroy();
-    
+    String getMainClassName();
+    void destroy();
+    Application getApplication();
+    JThreadGroup getThreadGroup();
 }
