@@ -44,4 +44,6 @@ public interface AppBridge
     Application getApplication( int nAppId );
     
     Application getApplicationByName(String executableName);
+    
+    List<Application> getAvailableDesktops();
 }
