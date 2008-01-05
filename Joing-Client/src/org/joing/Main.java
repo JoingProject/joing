@@ -37,5 +37,7 @@ public class Main {
 
         Bootstrap.init();
 
+        Bootstrap.mainLoop();
+        
     }
 }

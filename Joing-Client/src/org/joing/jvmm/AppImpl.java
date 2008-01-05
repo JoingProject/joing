@@ -51,4 +51,8 @@ public class AppImpl implements App {
     public Application getApplication() {
         return this.application;
     }
+
+    public JThreadGroup getThreadGroup() {
+        return this.threadGroup;
+    }
 }

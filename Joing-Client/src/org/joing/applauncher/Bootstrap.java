@@ -165,7 +165,7 @@ public class Bootstrap {
                 joingProperties.load(fis);
             }
         } catch (IOException ioe) {
-            logger.write(Levels.WARNING, 
+            logger.write(Levels.WARNING,
                     "Exception caught while loading client properties: {0}",
                     ioe.getMessage());
         }
@@ -237,33 +237,29 @@ public class Bootstrap {
             throw new RuntimeException(e.getMessage());
         }
     }
-//    private static DesktopManager getDesktopManagerInstance( AppDescriptor appDesc ) {
-//        try {
-//            
-//            Platform platform = RuntimeFactory.getPlatform();
-//            // TODO: Bajarse del server el DesktopManager descrito en appDesc y lanzarla
-//            String desktop = platform.getClientProp().getProperty("DesktopApp");
-//            String[] tmp = desktop.split("\\?");
-//            desktop = tmp[0];
-//            String mainClass = tmp[1];
-//            //String serverEjb = platform.getClientProp().getProperty("JoingServerEjb");
-//            //String desktopApi = platform.getClientProp().getProperty("DesktopApi");
-//            //String joingClient = platform.getClientProp().getProperty("JoingClient");
-//            
-//            URL[] url = new URL[] {
-//                new URL(desktop),
-//                //new URL(serverEjb),
-//                //new URL(desktopApi),
-//                //new URL(joingClient)
-//            };
-//            URLClassLoader ucl = new URLClassLoader(url, platform.getClass().getClassLoader());
-//            Class clazz = ucl.loadClass(mainClass);
-//            
-//            return (DesktopManager) clazz.newInstance();
-//            
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new RuntimeException(e.getMessage());
-//        }
-//    }    
+
+    public static void mainLoop() {
+
+        Platform platform = RuntimeFactory.getPlatform();
+        boolean done = false;
+
+        // TODO: Fix this.
+        while (!done) {
+            
+            // We need to find a way to know when to break the
+            // loop. Currently the Security manager is't preventing
+            // the app to terminate via the System.exit() call.
+            DesktopManager desktop = platform.getDesktopManager();
+            if (desktop == null) {
+                done = true;
+                continue;
+            }
+            
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ie) {
+
+            }
+        }
+    }
 }

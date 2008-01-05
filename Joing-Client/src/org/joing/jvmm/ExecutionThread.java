@@ -21,27 +21,24 @@ public class ExecutionThread extends Thread {
 
     private AppManager appManager;
     private App application;
-    private JThreadGroup threadGroup;
     private ExecutionTask executionTask;
     final private Logger logger = SimpleLoggerFactory.getLogger(JoingLogger.ID);
 
-    public ExecutionThread(JThreadGroup threadGroup, AppManager appManager,
+    public ExecutionThread(AppManager appManager,
             App application, ExecutionTask executionTask) {
-        this.threadGroup = threadGroup;
         this.appManager = appManager;
         this.application = application;
         this.executionTask = executionTask;
     }
 
     public void run() {
-        final sun.awt.AppContext appContext =
-                sun.awt.SunToolkit.createNewAppContext();
 
         DisposerTask disposerTask =
-                new DisposerTask(appManager, application, appContext);
+                new DisposerTask(appManager, application);
         DisposerThread disposerThread =
                 new DisposerThread(disposerTask);
-        threadGroup.setDisposer(disposerThread);
+        
+        application.getThreadGroup().setDisposer(disposerThread);
 
         try {
             // invokeAndWait necesita un Runnable como parámetro, aunque
@@ -51,8 +48,13 @@ public class ExecutionThread extends Thread {
             SwingUtilities.invokeAndWait(executionTask);
 
         } catch (Exception e) {
-            threadGroup.close();
-            logger.write(Levels.CRITICAL, "Exception Caught in ExecutionThread: {0}",
+            appManager.removeApp(application);
+            application.getThreadGroup().close();
+            StringBuilder sb = new StringBuilder();
+            sb.append("Exception caught in ExecutionThread for App '{0}; ");
+            sb.append("StackTrace: {1}");
+            logger.write(Levels.CRITICAL, sb.toString(), 
+                    application.getApplication().getName(),
                     dumpStackTrace(e.getStackTrace()));
         }
     }

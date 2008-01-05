@@ -13,7 +13,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 import org.joing.Main;
+import org.joing.common.clientAPI.jvmm.App;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.dto.app.Application;
 import org.joing.common.clientAPI.jvmm.AppManager;
@@ -309,21 +309,23 @@ class PlatformImpl implements Platform {
 
         final BridgeClassLoader finalClassLoader = classLoader;
         final String[] finalArgs =
-                (args == null) ? new String[]{} : args;
+                (args == null) ? new String[] {} : args;
 
         final ExecutionTask executionTask =
                 new ExecutionTask(finalClassLoader, finalClassName, finalArgs);
 
         // Crea una Nueva aplicacion "nativa"
-        final AppImpl app =
+        final App app =
                 new AppImpl(threadGroup, finalClassName, application);
 
         getAppManager().addApp(app);
 
         // Este thread es quien ejecuta la tarea.
         ExecutionThread executionThread =
-                new ExecutionThread(threadGroup, getAppManager(), app, executionTask);
+                new ExecutionThread(getAppManager(), app, executionTask);
 
+        logger.write(Levels.DEBUG_JVMM, 
+                "Starting new ExecutionThread with Id {0}", executionThread.getId());
         executionThread.start();
 
     }
