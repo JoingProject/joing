@@ -13,11 +13,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -29,9 +27,7 @@ import java.util.UUID;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
-import javax.swing.SwingUtilities;
 import org.joing.Main;
-import org.joing.applauncher.Monitor;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.dto.app.Application;
 import org.joing.common.clientAPI.jvmm.AppManager;
@@ -108,17 +104,6 @@ class PlatformImpl implements Platform {
         return clientProp;
     }
 
-    /**
-     * init()
-     * Inicializa la Plataforma WebPC.
-     */
-    // esto ya no es publico.
-//    public void init(Properties clientProp) {
-//
-//        this.clientProp = clientProp;
-//
-//        runtime.init(clientProp);
-//    }
     @Override
     public boolean isInitialized() {
         return this.initialized;
@@ -199,178 +184,6 @@ class PlatformImpl implements Platform {
         return null;
     }
 
-    /**
-     * Regresa el Contexto de Joing.
-    public static AppContext getContext() {
-    return context;
-    }
-    /**
-     * <p>Ejecuta una Aplicacion que reside en el WebPcFileServlet con id idApp.
-     * Si la aplicacion no requiere argumentos, especificar args como null.</p>
-     *
-     * @param idApp String con el ID de la Aplicacion.
-     * @param mainClass String con el nombre de la Class que contiene el metodo main().
-     * @param args String array con los argumentos requeridos por la aplicaci�n.
-     * @deprecated Este metodo sirivio para pruebas con WebPcFileServlet.
-     */
-    public void start(String idApp, String mainClass, String[] args) throws PlatformException {
-
-        //        if (properties == null) {
-//            throw new PlatformException("Platform not Initialized.");
-//        }
-//        String url = properties.getProperty("WebPc.FileServletUrl");
-        String url = context.getFileServerUrl();
-
-        if (url == null) {
-            throw new PlatformException("WebPC FileServlet not Fount in Config.");
-        }
-
-        if (idApp == null) {
-            throw new PlatformException("Must specifiy the Application ID.");
-        }
-
-        if (mainClass == null) {
-            throw new PlatformException("Must specify the name of the Main Class.");
-        }
-
-        StringBuffer sb = new StringBuffer();
-        sb.append(url);
-        sb.append("?id=");
-        sb.append(idApp);
-
-        List<String> tmp = new ArrayList<String>();
-
-        tmp.add("-classpath");
-        tmp.add(sb.toString());
-        tmp.add(mainClass);
-
-        if (args != null) {
-            for (String arg : args) {
-                tmp.add(arg);
-            }
-        }
-
-        String[] a = new String[tmp.size()];
-        tmp.toArray(a);
-
-        try {
-            //Main.start(a, System.out, System.err);
-            start(idApp, a, System.out, System.err);
-
-        } catch (Exception e) {
-            throw new PlatformException(e.getMessage());
-        }
-    }
-
-    /**
-     * Ejecuta los argumentos contenidos en el arreglo.
-     * @param id UUID de la aplicacion en el WebPcFileServer.
-     * @param argv Arreglo de String con los argumentos para la aplicacion.
-     * @param out OutputStream para salida std.
-     * @param err OutputStream para stderr
-     * @deprecated Este metodo sirvio para pruebas con WebPcFileServer.
-     */
-    public void start(final String id, final String[] argv, OutputStream out, OutputStream err) throws Exception {
-
-        String mainClass = null;
-        String[] appArgs = new String[0]; // un array de 1?
-        ClassLoader classLoader = null;
-
-        StringBuffer sb = new StringBuffer();
-        sb.append(context.getFileServerUrl());
-        sb.append("?id=");
-        sb.append(id);
-
-        URL[] urlArray = urlClassPath(sb.toString());
-        URLClassLoader loader;
-
-        synchronized (classLoaderCache) {
-            // Busca el Mapping
-            loader = (URLClassLoader) classLoaderCache.get(urlArray);
-            if (loader == null) {
-                // No existe, crea el ClassLoader y lo guarda.
-                loader = new URLClassLoader(urlArray, Main.class.getClassLoader());
-                classLoaderCache.put(urlArray, loader);
-            }
-        }
-
-        classLoader = loader;
-        appArgs = argv;
-        mainClass = mainClassName(sb.toString());
-
-        logger.write(Levels.DEBUG, "main class: {0}", mainClass);
-        logger.write(Levels.DEBUG, "ClassLoader: {0}", classLoader);
-
-        // Declaracion del Thread Disposer
-        final Runnable[] runner = new Runnable[1];
-        final Thread disposer = new Thread(new Runnable() {
-
-            public void run() {
-                Runnable r = runner[0];
-                runner[0] = null;
-                logger.write(Levels.DEBUG_JVMM,
-                        "Disposer running: {0}", r);
-                if (r != null) {
-                    r.run();
-                }
-            }
-        });
-
-        final ClassLoader finalClassLoader = classLoader;
-        final String[] finalArgs = appArgs;
-
-        // Crea un JThreadGroup
-        final JThreadGroup threadGroup = new JThreadGroupImpl(out, err);
-        // Asigna el Disposer. Supongo que necesita en este momento el Disposer,
-        // y por esa razon se declara antes y de esta manera tan confusa.
-        threadGroup.setDisposer(disposer);
-
-        final String finalClassName = mainClass;
-
-        // Crea una Nueva aplicacion "nativa"
-        final AppImpl app = new AppImpl(appManager, threadGroup, finalClassName);
-        appManager.addApp(app);
-
-        Thread thread = new Thread(threadGroup, new Runnable() {
-
-            public void run() {
-                final sun.awt.AppContext appContext = sun.awt.SunToolkit.createNewAppContext();
-                // Este es el Thread que eventualmente ejecuta el Disposer
-                runner[0] = new Runnable() {
-
-                    public void run() {
-                        appManager.removeApp(app);
-                        System.out.println("disposing app context: ");
-                        appContext.dispose();
-                    }
-                };
-                try {
-                    // invokeAndWait necesita un Runnable como parametro, aunque
-                    // en realidad no lo ejecuta como un Thread. El Runnable se
-                    // coloca en el EDT (Event Dispatch Thread) y si el objeto
-                    // es Runnable, simplemente invoca el metodo run().
-                    SwingUtilities.invokeAndWait(new Runnable() {
-
-                        public void run() {
-                            try {
-                                Class c = finalClassLoader.loadClass(finalClassName);
-                                Method main = c.getMethod("main", new Class[]{String[].class});
-                                //Method main = finalClassLoader.loadClass(finalClassName).getMethod("main", new Class[]{String[].class});
-                                main.invoke(null, new Object[]{finalArgs});
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                threadGroup.close(); // aqui se usa el disposer
-                            }
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        thread.start();
-    }
-
     /*
      * Convierte un String con un ClassPath en un Arreglo de URL
      * para ser usado por el URLClassLoader.
@@ -407,190 +220,10 @@ class PlatformImpl implements Platform {
         return urlArray;
     }
 
-    /**
-     * Obtiene el main class.
-     */
-    private String mainClassName(String jarUrl) throws PlatformException {
 
-        try {
-
-            URL url = new URL("jar", "", jarUrl + "!/");
-            JarURLConnection juc = (JarURLConnection) url.openConnection();
-            Attributes attr = juc.getMainAttributes();
-
-            if (attr == null) {
-                throw new PlatformException("Unable to find Jar Attributes.");
-            }
-
-            String className = attr.getValue(Attributes.Name.MAIN_CLASS);
-
-            if (className == null) {
-                throw new PlatformException("Unable to find Main Class.");
-            }
-
-            url = null;
-            juc = null;
-            attr = null;
-
-            return className;
-        } catch (MalformedURLException mue) {
-            throw new PlatformException(mue.getMessage());
-        } catch (IOException ioe) {
-            throw new PlatformException(ioe.getMessage());
-        }
-    }
-
-    /**
-     * Ejecuta los argumentos contenidos en el arreglo.
-     * Este metodo es el que fue utilizado originalmente desde JApplication.
-     */
-    public void start(final String[] argv, OutputStream out, OutputStream err)
-            throws Exception {
-
-        String mainClassName = null;
-        String[] appArgs = new String[0]; // un array de 1?
-        ClassLoader classLoader = null;
-
-        for (int i = 0; i < argv.length; i++) {
-
-            if (argv[i].equals("-classpath")) {
-                // El argumento fue el string classpath, el siguiente
-                // argumento corresponde a la URL separada por ;
-                String cp = argv[i + 1];
-                // Con el tokenizer divide el classpath en sus elementos.
-                StringTokenizer izer = new StringTokenizer(cp, ";");
-                List<URL> urls = new LinkedList<URL>();
-
-                while (izer.hasMoreTokens()) {
-                    String urlString = izer.nextToken();
-                    URL u;
-                    if (!urlString.startsWith("http:") &&
-                            !urlString.startsWith("file:") &&
-                            !urlString.startsWith("jar:")) {
-                        // Es un archivo ubicado en el disco local
-                        File f = new File(urlString).getCanonicalFile();
-                        u = f.toURI().toURL();
-                    } else {
-                        u = new URL(urlString);
-                    }
-                    urls.add(u);
-                }
-
-                URL[] urlArray = new URL[urls.size()];
-                urls.toArray(urlArray); // convierte en Array
-                URLClassLoader loader;
-
-                // En esta parte se lleva una especie de cache que mapea
-                // un URL[] con un URLClassLoader. Si no se encuentra en el
-                // Map, entonces crear el ClassLoader con el mismo de Main
-                // y agrega el registro al cache.
-                Map<Object, ClassLoader> classLdrCache = getClassLoaderCache();
-                synchronized (classLdrCache) {
-                    // Busca el Mapping
-                    loader = (URLClassLoader) classLdrCache.get(urlArray);
-                    if (loader == null) {
-                        // No existe, crea el ClassLoader y lo guarda.
-                        loader =
-                                new URLClassLoader(urlArray, Main.class.getClassLoader());
-                        classLdrCache.put(urlArray, loader);
-                    }
-                }
-                classLoader = loader;
-                i++; // se brinca el nombre de la Main Class
-            } else if (!argv[i].startsWith("-")) {
-                mainClassName = argv[i];
-                // Copia los argumentos en caso de haberlos.
-                if (i + 1 < argv.length) {
-                    appArgs = new String[argv.length - i + 1];
-                    int k = 0;
-                    for (int j = i + 1; j < argv.length; j++, k++) {
-                        appArgs[k] = argv[j];
-                    }
-                }
-                break;
-            }
-        }
-
-        System.out.println("main class: " + mainClassName);
-        System.out.println("ClassLoader: " + classLoader);
-
-        // Declaracion del Thread Disposer
-        final Runnable[] runner = new Runnable[1];
-        final Thread disposer = new Thread(new Runnable() {
-
-            public void run() {
-                Runnable r = runner[0];
-                runner[0] = null;
-                System.out.println("diposer running: " + r);
-                if (r != null) {
-                    r.run();
-                }
-            }
-        });
-
-        final ClassLoader finalClassLoader = classLoader;
-        final String[] finalArgs = appArgs;
-
-        // Crea un JThreadGroup
-        final JThreadGroup threadGroup = new JThreadGroupImpl(out, err);
-        // Asigna el Disposer. Supongo que necesita en este momento el Disposer,
-        // y por esa razon se declara antes y de esta manera tan confusa.
-        threadGroup.setDisposer(disposer);
-
-        final String finalClassName = mainClassName;
-
-        // Crea una Nueva aplicacion "nativa"
-        final AppImpl app =
-                new AppImpl(getAppManager(), threadGroup, finalClassName);
-        getAppManager().addApp(app);
-
-        // Este thread es quien ejecuta la tarea.
-        Thread thread = new Thread(threadGroup, new Runnable() {
-
-            public void run() {
-                final sun.awt.AppContext appContext =
-                        sun.awt.SunToolkit.createNewAppContext();
-                // Este es el Thread que eventualmente ejecuta el Disposer
-                // llamemosle DisposerTask
-                Thread disposerTask = new Thread(new Runnable() {
-
-                    public void run() {
-                        getAppManager().removeApp(app);
-                        System.out.println("disposing app context: ");
-                        appContext.dispose();
-                    }
-                });
-                runner[0] = disposerTask;
-                try {
-                    // invokeAndWait necesita un Runnable como parámetro, aunque
-                    // en realidad no lo ejecuta como un Thread. El Runnable se
-                    // coloca en el EDT (Event Dispatch Thread) y si el objeto
-                    // es Runnable, simplemente invoca el metodo run().
-                    SwingUtilities.invokeAndWait(new Runnable() {
-
-                        public void run() {
-                            try {
-                                Class c = finalClassLoader.loadClass(finalClassName);
-                                Method main = c.getMethod("main", new Class[]{String[].class});
-                                //Method main = finalClassLoader.loadClass(finalClassName).getMethod("main", new Class[]{String[].class});
-                                main.setAccessible(true);
-                                main.invoke(null, new Object[]{finalArgs});
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                threadGroup.close(); // aqui se usa el disposer
-                            }
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        thread.start();
-    }
-
-    public void start(final int appId, String[] args, OutputStream out,
-            OutputStream err) throws ApplicationExecutionException {
+    public void start(final int appId, final String[] args,
+            final OutputStream out, final OutputStream err)
+            throws ApplicationExecutionException {
 
         AppBridge appBridge = bridge.getAppBridge();
 
@@ -599,27 +232,71 @@ class PlatformImpl implements Platform {
 
     }
 
+    /**
+     * Convenience method for launching applications. Takes fewer arguments.
+     * @param application Application object to Launch.
+     * @param args Arguments, if any
+     * @param out OutputStream object associated to the application
+     * System.out property.
+     * @param err OutputStream object associated to the application's 
+     * System.err property.
+     * @throws org.joing.common.clientAPI.jvmm.ApplicationExecutionException
+     * @see org.joing.jvmm.Platform
+     */
     public void start(final Application application, String[] args,
             OutputStream out, OutputStream err)
+            throws ApplicationExecutionException {
+
+        try {
+            
+            URL url = URLFormat.toURL(application);
+            URL[] classPath = new URL[]{url};
+
+            start(classPath, application, args, out, err);
+
+        } catch (MalformedURLException mue) {
+            throw new ApplicationExecutionException(mue.getMessage());
+        }
+    }
+
+    /**
+     * Base method for starting application. Invokes the BridgeClassLoader
+     * in order to deal with bridge2server style URL format.
+     * @param classPath Array of URL Objects with the class path for loading
+     * classes and resources. Accepts URL's in bridge2server format, along with
+     * the standard ones provided by the JVM implementation (http, file and 
+     * jar).
+     * @param application Application object to be Launched.
+     * @param args Arguments for the application, if any.
+     * @param out Outputstream object associated to the application's System.out
+     * property.
+     * @param err Outputstream object associated to the application's Syste.err
+     * property.
+     * @throws org.joing.common.clientAPI.jvmm.ApplicationExecutionException
+     * @see org.joing.jvmm.net.URLFormat URLFormat
+     * @see org.joing.jvmm.net.URLFormat#toURL URLFormat.toURL()
+     */
+    public void start(final URL[] classPath, final Application application,
+            final String[] args, final OutputStream out, final OutputStream err)
             throws ApplicationExecutionException {
 
         BridgeClassLoader classLoader = null;
         Map<Object, ClassLoader> classLdrCache = getClassLoaderCache();
 
         synchronized (classLdrCache) {
-            BridgeClassLoader loader =
-                    (BridgeClassLoader) classLdrCache.get(application.getExecutable());
-            if (loader == null) {
-                try {
-                    URL url = URLFormat.toURL(application);
-                    loader = new BridgeClassLoader(bridge, new URL[]{url},
+            try {
+                BridgeClassLoader loader =
+                        (BridgeClassLoader) classLdrCache.get(classPath);
+                if (loader == null) {
+                    loader = new BridgeClassLoader(bridge, classPath,
                             Main.class.getClassLoader());
-                    classLdrCache.put(application.getExecutable(), loader);
-                } catch (Exception e) {
-                    throw new ApplicationExecutionException(e.getMessage());
+                    classLdrCache.put(classPath, loader);
+
                 }
+                classLoader = loader;
+            } catch (Exception e) {
+                throw new ApplicationExecutionException(e.getMessage());
             }
-            classLoader = loader;
         }
 
         final String finalClassName = getMainClassName(application);
@@ -634,13 +311,14 @@ class PlatformImpl implements Platform {
         final String[] finalArgs =
                 (args == null) ? new String[]{} : args;
 
-        // Crea una Nueva aplicacion "nativa"
-        final AppImpl app =
-                new AppImpl(getAppManager(), threadGroup, finalClassName);
-        getAppManager().addApp(app);
-
         final ExecutionTask executionTask =
                 new ExecutionTask(finalClassLoader, finalClassName, finalArgs);
+
+        // Crea una Nueva aplicacion "nativa"
+        final AppImpl app =
+                new AppImpl(threadGroup, finalClassName, application);
+
+        getAppManager().addApp(app);
 
         // Este thread es quien ejecuta la tarea.
         ExecutionThread executionThread =
@@ -650,6 +328,14 @@ class PlatformImpl implements Platform {
 
     }
 
+    /**
+     * Utility method to start applications. Fetches the Application from
+     * the server, saving a Jar file locally and executing it from there.
+     * The method has hard coded parameters about the local temp dir.
+     * @param appId
+     * @throws org.joing.common.clientAPI.jvmm.ApplicationExecutionException
+     * @deprecated Will be removed anytime soon,
+     */
     @Override
     public void start(int appId) throws ApplicationExecutionException {
 
@@ -659,9 +345,9 @@ class PlatformImpl implements Platform {
 
         // En caso de error, no tengo idea de que lo está casando.
         if (app == null) {
-            // Platform no deberia interactuar directamente con el GUI
-            Monitor.log("Ocurró un Error al Cargar la Aplicación.");
-            throw new ApplicationExecutionException("Ocurrió un Error al Cargar la Aplicación.");
+            String msg = "Unable to get application from server.";
+            logger.write(Levels.CRITICAL, msg);
+            throw new ApplicationExecutionException(msg);
         }
 
         try {
@@ -670,7 +356,8 @@ class PlatformImpl implements Platform {
             String mainClass = getMainClassName(jis);
 
             if (mainClass != null) {
-                Monitor.log("Main Class found in Manifest: " + mainClass);
+                logger.write(Levels.DEBUG_JVMM, 
+                        "Main Class found in Manifest: {0}", mainClass);
             }
 
             UUID uuid = UUID.randomUUID();
@@ -709,7 +396,7 @@ class PlatformImpl implements Platform {
 
             String[] args = argLst.toArray(new String[]{});
 
-            start(args, System.out, System.err);
+            start(app, args, System.out, System.err);
 
         } catch (Exception ioe) {
             throw new ApplicationExecutionException(ioe.getMessage());

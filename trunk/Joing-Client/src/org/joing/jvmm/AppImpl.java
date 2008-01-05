@@ -10,8 +10,8 @@
 package org.joing.jvmm;
 
 import org.joing.common.clientAPI.jvmm.App;
-import org.joing.common.clientAPI.jvmm.AppManager;
 import org.joing.common.clientAPI.jvmm.JThreadGroup;
+import org.joing.common.dto.app.Application;
 
 /**
  *
@@ -19,15 +19,14 @@ import org.joing.common.clientAPI.jvmm.JThreadGroup;
  */
 public class AppImpl implements App {
 
-    // Todavia no esta claro para que necesita aqui el AppManager
-    private AppManager appManager;
     private String mainClass;
     private JThreadGroup threadGroup;
+    private Application application;
 
-    public AppImpl(AppManager manager, JThreadGroup tg, String className) {
-        appManager = manager;
+    public AppImpl(JThreadGroup tg, String className, Application application) {
         mainClass = className;
         threadGroup = tg;
+        this.application = application;
     }
 
     @Override
@@ -47,5 +46,9 @@ public class AppImpl implements App {
         sb.append("(").append(threadGroup.getName()).append(")");
         sb.append("]");
         return sb.toString();
+    }
+    
+    public Application getApplication() {
+        return this.application;
     }
 }
