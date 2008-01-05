@@ -69,13 +69,24 @@ public class ApplicationServlet extends HttpServlet {
 
         String sessionId = request.getSessionId();
         String name = request.getName();
-
+        int code = request.getCode();
+        Application app = null;
         try {
-
-            Application app =
-                    this.applicationManagerBean.getApplicationByName(sessionId, name);
-            reply.setOk(true);
-            reply.setReply(app);
+            switch (code) {
+                case ApplicationRequest.APP_BY_NAME:
+                    app =applicationManagerBean.getApplicationByName(sessionId, name);
+                    reply.setReply(app);
+                    reply.setOk(true);
+                    break;
+                case ApplicationRequest.AVAILABLE_DESKTOPS:
+                    reply.setReply(applicationManagerBean.getAvailableDesktops());
+                    reply.setOk(true);
+                    break;
+                default:
+                    reply.setOk(false);
+                    reply.setReply(new JoingServerServletException(getClass(), "Unsupported Op Code"));
+                    break;
+            }
 
         } catch (JoingServerAppException jsae) {
             reply.setOk(false);
