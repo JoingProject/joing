@@ -6,10 +6,12 @@
 package org.joing.common.clientAPI.jvmm;
 
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.clientAPI.runtime.Bridge2Server;
+import org.joing.common.dto.app.Application;
 
 /**
  *
@@ -43,6 +45,25 @@ public interface Platform {
     
     void start(final int appId) throws ApplicationExecutionException;
     void start(final int appId, String[] args, OutputStream out, OutputStream err) 
+            throws ApplicationExecutionException;
+    void start(final Application application, String[] args, OutputStream out, 
+            OutputStream err) throws ApplicationExecutionException;
+    /**
+     * Base method for starting application. 
+     * @param classPath Array of URL Objects with the class path for loading
+     * classes and resources. 
+     * @param application Application object to be Launched.
+     * @param args Arguments for the application, if any.
+     * @param out Outputstream object associated to the application's System.out
+     * property.
+     * @param err Outputstream object associated to the application's Syste.err
+     * property.
+     * @throws org.joing.common.clientAPI.jvmm.ApplicationExecutionException
+     * @see org.joing.jvmm.net.URLFormat URLFormat
+     * @see org.joing.jvmm.net.URLFormat#toURL URLFormat.toURL()
+     */
+    void start(final URL[] classPath, final Application application,
+            final String[] args, final OutputStream out, final OutputStream err)
             throws ApplicationExecutionException;
     
 }

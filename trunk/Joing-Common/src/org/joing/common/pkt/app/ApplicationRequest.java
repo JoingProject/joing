@@ -10,6 +10,11 @@ package org.joing.common.pkt.app;
  * @author Antonio Varela Lizardi <antonio@icon.net.mx>
  */
 public class ApplicationRequest implements java.io.Serializable {
+    
+    public static final int APP_BY_NAME = 4;
+    public static final int AVAILABLE_DESKTOPS = 5;
+    
+    private int code;
     private String name;
     private String sessionId;
     private String account;
@@ -38,6 +43,16 @@ public class ApplicationRequest implements java.io.Serializable {
         this.sessionId = sessionId;
     }
 
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    
+    
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
