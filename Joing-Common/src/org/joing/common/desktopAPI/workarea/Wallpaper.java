@@ -17,8 +17,8 @@ public interface Wallpaper
 {
     public enum Mode { EXPANDED, CENTER, TILES; }
     
-    byte[] getSource();
-    void   setSource( byte[] image );
+    String getSource();
+    void   setSource( String sFileName );
     Mode   getMode();
     void   setMode( Mode mode );
 }
