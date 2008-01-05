@@ -10,6 +10,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import javax.swing.ImageIcon;
 import org.joing.common.desktopAPI.workarea.Wallpaper;
+import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.pde.PDEUtilities;
 
 /**
@@ -18,6 +19,7 @@ import org.joing.pde.PDEUtilities;
  */
 public class PDEWallpaper implements Wallpaper
 {
+    private String         sFile;
     private Wallpaper.Mode mode;
     private ImageIcon      image;
     
@@ -27,20 +29,60 @@ public class PDEWallpaper implements Wallpaper
     
     public PDEWallpaper()
     {
-        pcs = new PropertyChangeSupport( this );
+        mode  = Wallpaper.Mode.CENTER;
+        image = null;
+        pcs   = new PropertyChangeSupport( this );
     }
     
     //------------------------------------------------------------------------//
     // Interface implementation
     
-    public byte[] getSource()
+    public String getSource()
     {
-        return PDEUtilities.icon2ByteArray( image );
+        return sFile;
     }
     
-    public void setSource( byte[] image )
+    public void setSource( String sFileName )
     {
-        setImage( new ImageIcon( Toolkit.getDefaultToolkit().createImage( image ) ) );
+        if( (sFile != null && (! sFile.equals( sFileName ))) || 
+            (sFile == null && sFileName == null ) )
+            return;    // Trying to set the same image again
+        
+        if( sFileName != null )
+        {
+            sFileName = sFileName.trim();
+        
+            if( sFileName.length() == 0 )
+                sFileName = null;
+        }
+        
+        String sOldFile = sFile;
+        sFile = sFileName;
+        pcs.firePropertyChange( "source", sOldFile, sFile );
+        
+        if( sFile != null )
+        {
+            Object oFile = PDEUtilities.getFile( sFile );
+            
+            if( oFile != null )
+            {
+                byte[] img = null;
+                
+                if( oFile instanceof java.io.File )
+                {
+                    java.io.File file = (java.io.File) oFile;
+                    // TODO: hacerlo  --> image = ...
+                }
+                else
+                {
+                    FileDescriptor fd = (FileDescriptor) oFile;
+                    // TODO: hacerlo  --> image = ...
+                }
+                
+                if( img != null )
+                    setImage( new ImageIcon( Toolkit.getDefaultToolkit().createImage( img ) ) );
+            }
+        }
     }
     
     public Mode getMode()

@@ -108,9 +108,9 @@ public class PDEDesktop extends JPanel implements Desktop
     
     private void createTestComponents( WorkArea wa )  // TODO: quitar este metodo
     {
-        /*PDEWallpaper wp = new PDEWallpaper();
+        PDEWallpaper wp = new PDEWallpaper();
                      wp.setImage( new ImageIcon( "/home/fmorero/Imágenes/iconos/duke/starwars.png" ) );
-        getWorkAreas().get( 0 ).setWallpaper( wp );*/
+        getWorkAreas().get( 0 ).setWallpaper( wp );
         
         MemoryMonitor.showFrame();
         

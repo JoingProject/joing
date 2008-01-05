@@ -43,7 +43,7 @@ class PDEWallpaperComponent extends JPanel implements PropertyChangeListener
         if( this.wp != null )
         {
             this.wp.addPropertyChangeListener( this );
-            
+            changeMode();
         }
     }
     
@@ -71,11 +71,11 @@ class PDEWallpaperComponent extends JPanel implements PropertyChangeListener
         }
         else if( wp.getMode() == Wallpaper.Mode.EXPANDED )
         {
-            
+            // TODO: hacerlo
         }
         else if( wp.getMode() == Wallpaper.Mode.TILES )
         {
-            
+            // TODO: hacerlo
         }
         
         invalidate();
