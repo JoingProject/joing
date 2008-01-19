@@ -9,6 +9,8 @@
 
 package org.joing.common.desktopAPI;
 
+import java.awt.Image;
+import java.net.URL;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.desktopAPI.pane.DeskCanvas;
 import org.joing.common.desktopAPI.pane.DeskDialog;
@@ -60,28 +62,16 @@ public interface Runtime
     boolean   askForPasswordDialog();
     
     /**
-     * Loads and build an image from a file or over the net.
-     * <p>
-     * File name extension must be provided.
-     * 
-     * @param spec A route to load the icon (in Java it will be an URL)
-     * @return The icon as an byte array.
-     */
-    byte[] getImage( String spec );
-    
-    byte[] getImage( String spec, int width, int height );
-    
-    /**
      * One of the standard icons found by name (without extension).
      * <p>
-     * This method will try its bets to find it by name, but if it was impossible,
+     * This method will try its best to find it by name, but if it was impossible,
      * then will return a default image representing "image not found".<b>
      * Do NOT include the file name extension.
      * 
      * @param name The image name.
-     * @return The image as byte array.
+     * @return The image.
      */
-    byte[] getStandardImage( String name );
+    Image getStandardImage( String name );
     
-    byte[] getStandardImage( String name, int width, int height );
+    Image getStandardImage( String name, int width, int height );
 }

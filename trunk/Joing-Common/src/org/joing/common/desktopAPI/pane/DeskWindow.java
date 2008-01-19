@@ -5,6 +5,7 @@
 
 package org.joing.common.desktopAPI.pane;
 
+import java.awt.Image;
 import org.joing.common.desktopAPI.Selectable;
 
 /**
@@ -20,6 +21,6 @@ public interface DeskWindow extends DeskPane, Selectable
     String getTitle();
     void   setTitle( String sTitle );
     
-    byte[] getIcon();
-    void   setIcon( byte[] image );
+    Image getIcon();
+    void  setIcon( Image image );
 }
