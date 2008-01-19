@@ -21,13 +21,13 @@ public interface DesktopManager
     
     // Exiting
     void lock();
-    void close();
+    void exit();
     
     // References
-    Desktop       getDesktop();
-    Runtime       getRuntime();
-    Bridge2Server getBridge();
+    Desktop  getDesktop();
+    Runtime  getRuntime();
+    Platform getPlatform();
     
     // Called from Client
-    void setPlatform(Platform platform);
+    void setPlatform( Platform platform );
 }

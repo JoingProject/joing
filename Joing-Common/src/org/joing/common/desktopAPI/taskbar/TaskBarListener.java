@@ -20,6 +20,6 @@ public interface TaskBarListener
 {    
     public void componentAdded( DeskComponent dc );
     public void componentRemoved( DeskComponent dc );
-    public void componentAdded( DeskContainer dc );
-    public void componentRemoved( DeskContainer dc );
+    public void containerAdded( DeskContainer dc );
+    public void containerRemoved( DeskContainer dc );
 }

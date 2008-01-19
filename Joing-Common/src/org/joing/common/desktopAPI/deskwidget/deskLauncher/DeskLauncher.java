@@ -9,6 +9,7 @@
 
 package org.joing.common.desktopAPI.deskwidget.deskLauncher; 
 
+import java.awt.Image;
 import org.joing.common.desktopAPI.Selectable;
 import org.joing.common.desktopAPI.deskwidget.DeskWidget;
 
@@ -33,12 +34,12 @@ public interface DeskLauncher extends DeskWidget, Selectable
      * 
      * @return The image or null if the deafult one was used.
      */
-    byte[] getImage();
+    Image getImage();
     /**
      * If image is null or empty, the desktop will asign a default one.
      * @param image
      */
-    void   setImage( byte[] image );
+    void  setImage( Image image );
     
     String getText();
     void   setText( String sText );
