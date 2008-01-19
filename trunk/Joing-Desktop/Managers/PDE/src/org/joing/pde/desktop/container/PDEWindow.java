@@ -8,13 +8,11 @@ package org.joing.pde.desktop.container;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.beans.PropertyVetoException;
 import javax.swing.ImageIcon;
 import javax.swing.JInternalFrame;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.pane.DeskWindow;
-import org.joing.pde.PDEUtilities;
 
 /**
  *
@@ -31,15 +29,22 @@ public class PDEWindow extends JInternalFrame implements DeskWindow
     //------------------------------------------------------------------------//
     // DeskWindow Interface
     
-    public void setIcon( byte[] image )
+    public void setIcon( Image image )
     {
-        Image img = Toolkit.getDefaultToolkit().createImage( image );
-        setFrameIcon( new ImageIcon( img ) );
+        if( image != null )
+        {
+            if( image.getHeight( this ) != 20 || image.getWidth( this ) != 20 )
+                image = image.getScaledInstance( 20, 20, Image.SCALE_SMOOTH );
+
+            setFrameIcon( new ImageIcon( image ) );
+        }
     }
     
-    public byte[] getIcon()
+    public Image getIcon()
     {
-        return PDEUtilities.icon2ByteArray( (ImageIcon) getFrameIcon() );
+        ImageIcon icon = (ImageIcon) getFrameIcon();
+        
+        return (icon == null ? null : icon.getImage());
     }
     
     public void center()

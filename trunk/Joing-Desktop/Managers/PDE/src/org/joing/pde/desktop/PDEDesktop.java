@@ -15,18 +15,14 @@ import java.awt.Component;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.joing.common.desktopAPI.desktop.Desktop;
 import org.joing.common.desktopAPI.desktop.DesktopListener;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.common.desktopAPI.taskbar.TaskBar;
-import org.joing.pde.desktop.container.PDECanvas;
 import org.joing.pde.desktop.taskbar.PDETaskBar;
 import org.joing.pde.desktop.workarea.PDEWallpaper;
-import org.joing.pde.misce.desklets.NasaPhoto;
-import org.joing.pde.misce.apps.memon.MemoryMonitor;
 import org.joing.pde.swing.EventListenerList;
 
 /**
@@ -111,8 +107,6 @@ public class PDEDesktop extends JPanel implements Desktop
         PDEWallpaper wp = new PDEWallpaper();
                      wp.setImage( new ImageIcon( "/home/fmorero/Imágenes/iconos/duke/starwars.png" ) );
         getWorkAreas().get( 0 ).setWallpaper( wp );
-        
-        MemoryMonitor.showFrame();
         
         /*NasaPhoto nasa = new NasaPhoto();
                   nasa.setBounds( 10,350, nasa.getPreferredSize().width, nasa.getPreferredSize().height );

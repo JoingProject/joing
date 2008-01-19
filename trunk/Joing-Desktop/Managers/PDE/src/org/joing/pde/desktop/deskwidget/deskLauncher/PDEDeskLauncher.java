@@ -15,7 +15,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.FilteredImageSource;
@@ -84,7 +83,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     public void setIcon( ImageIcon icon )
     {
         if( icon == null )
-                icon = PDEUtilities.getStandardIcon( "launcher" );
+            icon = PDEUtilities.getStandardIcon( "launcher" );
         
         this.icon.setIcon( icon );
     }
@@ -113,14 +112,14 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
         setToolTipText( sDescription );
     }
     
-    public byte[] getImage()
+    public Image getImage()
     {
         return icon.getImage();
     }
     
-    public void setImage( byte[] anImage )
+    public void setImage( Image image )
     {
-        icon.setImage( anImage );
+        icon.setImage( image );
     }
     
     public String getText()
@@ -352,8 +351,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     
     private final class IconComponent extends JLabel
     {
-        private byte[] anImage;   // Original (basic data type) image to be used
-        private Image  image;     // Image object: used to avoid image corruption (using the filter)
+        private Image image;     // Image object: used to avoid image corruption (using the filter)
         
         private IconComponent()
         {
@@ -363,30 +361,26 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
             setImage( null );
         }
         
-        public byte[] getImage()
+        public Image getImage()
         {
-            return anImage;
+            return image;
         }
         
-        public void setImage( byte[] anImage )
+        public void setImage( Image image )
         {
             ImageIcon imgIcon;
-
-            if( anImage != null && anImage.length == 0 )
-                anImage = null;
-
-            this.anImage = anImage;
             
-            if( anImage == null )
+            this.image = image;
+            
+            if( image == null )
                 imgIcon = PDEUtilities.getStandardIcon( "launcher" );
             else
-                imgIcon = new ImageIcon( Toolkit.getDefaultToolkit().createImage( anImage ) );
+                imgIcon = new ImageIcon( image );
 
             if( imgIcon.getIconWidth() != 48 || imgIcon.getIconHeight() != 48 )
                 imgIcon.setImage( imgIcon.getImage().getScaledInstance( 48, 48, Image.SCALE_SMOOTH ) );
                 
             setIcon( imgIcon );
-            image = imgIcon.getImage();
         }
         
         private void setHighlighted( boolean b )

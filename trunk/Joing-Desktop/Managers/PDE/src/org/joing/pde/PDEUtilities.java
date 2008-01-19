@@ -73,7 +73,7 @@ public class PDEUtilities
             
             try
             {
-                FileDescriptor fdRet = DesktopManagerFactory.getDM().getBridge().getFileBridge().getFile( sFullPath );
+                FileDescriptor fdRet = DesktopManagerFactory.getDM().getPlatform().getBridge().getFileBridge().getFile( sFullPath );
             }
             catch( JoingServerVFSException exc )
             {
