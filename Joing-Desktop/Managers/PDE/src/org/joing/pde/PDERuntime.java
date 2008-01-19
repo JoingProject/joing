@@ -9,11 +9,8 @@ package org.joing.pde;
 
 import java.awt.Component;
 import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.net.URL;
-import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import org.joing.common.desktopAPI.DeskComponent;
@@ -71,72 +68,22 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
     // Images and icons
     //------------------------------------------------------------------------//
     
-    public byte[] getImage( String spec )
-    {
-        return bufferedImage2ByteArray( getBufferedImage( spec ) );
-    }
-
-    public byte[] getStandardImage( String name )
+    public Image getStandardImage( String name )
     {
         URL url = ImagesFactory.class.getResource( name + ".png" );
-        return getImage( url.toString() );
-    }
-    
-    public byte[] getImage( String spec, int width, int height )
-    {
-        BufferedImage bi  = getBufferedImage( spec );
-        byte[]        ret = null;
-        
-        if( bi.getWidth() != width || bi.getHeight() != height )
-        {
-            Image image = bi.getScaledInstance( width, height, Image.SCALE_SMOOTH );
-            
-        }
-        
-        return bufferedImage2ByteArray( bi );
+        return (new ImageIcon( url )).getImage();
     }
 
-    public byte[] getStandardImage( String name, int width, int height )
+    public Image getStandardImage( String name, int width, int height )
     {
-        URL url = ImagesFactory.class.getResource( name + ".png" );
-        return getImage( url.toString(), width, height );
-    }
-    
-    private BufferedImage getBufferedImage( String url )
-    {
-        BufferedImage bi = null;
+        URL       url   = ImagesFactory.class.getResource( name + ".png" );
+        ImageIcon icon  = new ImageIcon( url );
+        Image     image = null;
         
-        try
-        {
-            bi = ImageIO.read( new URL( url ) );    
-        }
-        catch( Exception exc )
-        {
-            // Nothing to do
-        }
-        
-        return bi;
-    }
-    
-    private byte[] bufferedImage2ByteArray( BufferedImage bi )
-    {
-        byte[] image = null;
-        
-        if( bi != null )
-        {
-            try
-            {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream( 1024 * 64 );
-                ImageIO.write( bi, "png", baos );
-                baos.flush();
-                image = baos.toByteArray();
-                baos.close();
-            }
-            catch( IOException exc )
-            {
-                // Nothing to do
-            }
-        }
+        if( icon.getIconWidth() != width || icon.getIconHeight() != height )
+            image = icon.getImage().getScaledInstance( width, height, Image.SCALE_SMOOTH );
+        else
+            image = icon.getImage();
         
         return image;
     }

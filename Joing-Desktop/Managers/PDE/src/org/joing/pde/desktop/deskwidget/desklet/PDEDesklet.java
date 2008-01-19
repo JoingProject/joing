@@ -18,21 +18,20 @@ import org.joing.pde.desktop.deskwidget.PDEDeskWidget;
  * This is the base class to create DeskApplets: (normally) small applications
  * that are shown on the desktop.
  * <p>
- * There are to ways to create a DeskApplet:
+ * There are two ways to create a DeskApplet:
  * <ul>
  * <li>
  * Inheriting from this class. Which allows to use all events.
  * </li>
  * <li>
- * Creating an instance of this class and adding a JPanel to this class:<br>
+ * Creating an instance of this class and inserting the Desklet into a JPanel:<br>
  * <pre>
  * MyPanel myPanel = new MyPanel();
  * PDEDeskApplet deskApplet = new PDEDeskApplet();
  *               deskApplet.add( myPanel );
  *               deskApplet.setBounds( 10,10, myPanel.getPreferredSize().width, 
  *                                            myPanel.getPreferredSize().height );
- * PDERuntime.getRuntime().getDesktopManager().getDesktop().
- *            getActiveWorkArea().add( deskApplet );
+ * DesktopManagerFactory.getDesktopManager().getDesktop().getActiveWorkArea().add( deskApplet );
  * </pre>
  * </li>
  * </ul>
@@ -51,7 +50,7 @@ public abstract class PDEDesklet extends PDEDeskWidget implements Closeable
     {
         Dimension dimMin = toolBar.getMinimumSize();
                   dimMin.width *= 2;
-                  
+        
         return dimMin;
     }
     
@@ -90,8 +89,7 @@ public abstract class PDEDesklet extends PDEDeskWidget implements Closeable
     protected void onClose()
     {
         WorkArea wa = PDEUtilities.findWorkAreaFor( this );
-        
-        wa.remove( this );
+                 wa.remove( this );
         ((Component) wa).repaint( getX(), getY(), getWidth(), getHeight() );
     }
     

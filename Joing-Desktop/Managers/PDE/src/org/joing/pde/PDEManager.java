@@ -32,8 +32,9 @@ import java.awt.Toolkit;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
 import javax.swing.JRootPane;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import org.joing.common.desktopAPI.DesktopManager;
-import org.joing.common.clientAPI.runtime.Bridge2Server;
 import org.joing.common.desktopAPI.DesktopManagerFactory;
 
 /**
@@ -59,10 +60,10 @@ public class PDEManager extends JApplet implements DesktopManager
     
     public PDEManager()
     {
-        runtime  = new PDERuntime();
-        desktop  = new PDEDesktop();
+        runtime = new PDERuntime();
+        desktop = new PDEDesktop();
         getContentPane().add( desktop, BorderLayout.CENTER );
-
+        
         // Continuous layout on frame resize
         Toolkit.getDefaultToolkit().setDynamicLayout( true );
         
@@ -90,15 +91,29 @@ public class PDEManager extends JApplet implements DesktopManager
     {
         try
         {
-            getMainFrame().pack();
-            getMainFrame().setVisible( true );
+            SwingUtilities.invokeLater( new Runnable()
+            {
+                public void run()
+                {
+                    getMainFrame().pack();
+                    getMainFrame().setVisible( true );
 
-            if( Toolkit.getDefaultToolkit().isFrameStateSupported( Frame.MAXIMIZED_BOTH ) )
-                getMainFrame().setExtendedState( Frame.MAXIMIZED_BOTH );
-            else
-                getMainFrame().setSize( Toolkit.getDefaultToolkit().getScreenSize() );
-
-            getDesktop().load();   // Do not move this line !
+                    if( Toolkit.getDefaultToolkit().isFrameStateSupported( Frame.MAXIMIZED_BOTH ) )
+                        getMainFrame().setExtendedState( Frame.MAXIMIZED_BOTH );
+                    else
+                        getMainFrame().setSize( Toolkit.getDefaultToolkit().getScreenSize() );
+                    
+                    SwingWorker sw = new SwingWorker()
+                    {
+                        protected Object doInBackground() throws Exception
+                        {
+                            getDesktop().load();   // Do not move this line !
+                            return null;
+                        }
+                    };
+                    sw.execute();
+                }
+            } );
         }
         catch( Exception exc )
         {
@@ -144,12 +159,12 @@ public class PDEManager extends JApplet implements DesktopManager
         return runtime;
     }
     
-    public Bridge2Server getBridge()
+    public Platform getPlatform()
     {
-        return platform.getBridge();
+        return platform;
     }
     
-    public void close()
+    public void exit()
     {
         getDesktop().close();
 
@@ -219,7 +234,7 @@ public class PDEManager extends JApplet implements DesktopManager
             {
                 public void windowActivated( WindowEvent we )   {}
                 public void windowClosed( WindowEvent we )      {}
-                public void windowClosing( WindowEvent we )     { PDEManager.this.close(); }
+                public void windowClosing( WindowEvent we )     { PDEManager.this.exit(); }
                 public void windowDeactivated( WindowEvent we ) {}
                 public void windowDeiconified( WindowEvent we ) {}
                 public void windowIconified( WindowEvent we )   {}
@@ -300,10 +315,5 @@ public class PDEManager extends JApplet implements DesktopManager
         public void mouseExited( MouseEvent me )   {}
         public void mouseReleased( MouseEvent me ) {}
         public void mousePressed( MouseEvent me )  { PDEManager.this.unlock(); }
-    }
-    
-    public static void main( String[] as )
-    {
-        org.joing.applauncher.Bootstrap.init();
     }
 }

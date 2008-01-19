@@ -17,13 +17,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.common.clientAPI.jvmm.ApplicationExecutionException;
 import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.app.AppEnvironment;
@@ -32,8 +31,8 @@ import org.joing.common.dto.app.AppGroupKey;
 import org.joing.common.dto.user.User;
 import org.joing.pde.ColorSchema;
 import org.joing.pde.PDEUtilities;
-import org.joing.pde.swing.JScrollablePopupMenu;
 import org.joing.pde.misce.apps.EditUser;
+import org.joing.pde.swing.JScrollablePopupMenu;
 
 /**
  *
@@ -41,7 +40,8 @@ import org.joing.pde.misce.apps.EditUser;
  */
 class StartMenu extends JScrollablePopupMenu
 {
-    private final static int ICON_SIZE = 22;
+    private final static int    ICON_SIZE = 22;
+    private final static String KEY_APP_DESCRIPTOR = "JOING_APP_DESCRIPTOR";
     
     StartMenu()
     {
@@ -66,7 +66,7 @@ class StartMenu extends JScrollablePopupMenu
                   item.setBorder( new EmptyBorder( 4,4,4,4 ) );
                   item.setFont( item.getFont().deriveFont( Font.BOLD, item.getFont().getSize() + 4 ) );
 
-        User user = DesktopManagerFactory.getDM().getBridge().getUserBridge().getUser();
+        User user = DesktopManagerFactory.getDM().getPlatform().getBridge().getUserBridge().getUser();
         
         if( user != null )
         {
@@ -113,7 +113,7 @@ class StartMenu extends JScrollablePopupMenu
                   {
                       public void actionPerformed( ActionEvent ae )
                       {
-                          DesktopManagerFactory.getDM().close();
+                          DesktopManagerFactory.getDM().exit();
                       }
                   } );
         add( itmExit );
@@ -121,14 +121,15 @@ class StartMenu extends JScrollablePopupMenu
     
     private void addApplications()
     {
-        final String KEY = "JOING_APP_DESCRIPTOR";
-        
         boolean        bSystemAppsAdded = false;
-        List<AppGroup> lstGroups = DesktopManagerFactory.getDM().getBridge().getAppBridge().
+        List<AppGroup> lstGroups = DesktopManagerFactory.getDM().getPlatform().getBridge().getAppBridge().
                                               getInstalledForUser( AppEnvironment.JAVA_ALL, AppGroupKey.ALL );
-        
+                                              
         if( lstGroups != null )
         {
+            // Having the same instance for all app items saves memory
+            AppMenuItemListener apil = new AppMenuItemListener();
+            
             for( AppGroup group : lstGroups )
             {
                 if( group.getGroupKey() == AppGroupKey.DESKTOP )    // Don't show "Desktops" apps
@@ -146,18 +147,8 @@ class StartMenu extends JScrollablePopupMenu
                     JMenuItem itemApp = new JMenuItem( appDesc.getName() );
                               itemApp.setIcon( createItemIcon( appDesc.getPNGIcon() ) );
                               itemApp.setToolTipText( appDesc.getDescription() );
-                              itemApp.putClientProperty( KEY, appDesc );
-                              itemApp.addActionListener( new ActionListener()
-                              {
-                                  public void actionPerformed( ActionEvent ae )
-                                  {
-                                      JMenuItem item = (JMenuItem) ae.getSource();
-                                      AppDescriptor appDesc = (AppDescriptor) item.getClientProperty( KEY );
-
-                                      // TODO: llamar a lo de Antonio
-                                  }
-                              } );
-
+                              itemApp.putClientProperty( KEY_APP_DESCRIPTOR, appDesc );
+                              itemApp.addActionListener( apil );
                     menu.add( itemApp );
                 }
             }
@@ -179,11 +170,33 @@ class StartMenu extends JScrollablePopupMenu
         return icon;
     }
     
-    private class FileChooser extends JFileChooser implements DeskComponent
+    //------------------------------------------------------------------------//
+    // INNER CLASS: App menu item action listener
+    // To have only one instance for all app items
+    //------------------------------------------------------------------------//
+    private final class AppMenuItemListener implements ActionListener
     {
-        FileChooser()
+        public void actionPerformed( ActionEvent ae )
         {
-            
+            try
+            {
+                JMenuItem item = (JMenuItem) ae.getSource();
+                AppDescriptor appDesc = (AppDescriptor) item.getClientProperty( KEY_APP_DESCRIPTOR );
+
+                DesktopManagerFactory.getDM().getPlatform().start( appDesc.getId() );
+            }
+            catch( ApplicationExecutionException exc )
+            {
+                exc.printStackTrace();   // TODO: Mostrarla por pantalla: showException( ... )
+            }
         }
+    }
+    
+    //------------------------------------------------------------------------//
+    // NOTE: This is just to facilitate PDE development
+    
+    public static void main( String[] asArg )
+    {
+        
     }
 }
