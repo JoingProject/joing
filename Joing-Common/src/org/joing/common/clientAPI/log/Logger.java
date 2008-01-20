@@ -4,6 +4,8 @@
  */
 package org.joing.common.clientAPI.log;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import org.joing.common.clientAPI.log.LogListener;
 import org.joing.common.clientAPI.log.Levels;
 import java.text.MessageFormat;
@@ -87,5 +89,41 @@ public class Logger {
                 fireListeners(level, s);
             }
         }
+    }
+    
+    public void normal(String format, Object... args) {
+        write(Levels.NORMAL, format, args);
+    }
+    
+    public void info(String format, Object... args) {
+        write(Levels.INFO, format, args);
+    }
+    
+    public void warning(String format, Object... args) {
+        write(Levels.WARNING, format, args);
+    }
+    
+    public void critical(String format, Object... args) {
+        write(Levels.CRITICAL, format, args);
+    }
+    
+    public void debug(String format, Object... args) {
+        write(Levels.DEBUG, format, args);
+    }
+    
+    public void debugJVMM(String format, Object... args) {
+        write(Levels.DEBUG_JVMM, format, args);
+    }
+    
+    public void printStackStrace(Exception e) {
+        
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
+        
+        e.printStackTrace(ps);
+        
+        String s = baos.toString();
+        
+        critical(s);
     }
 }
