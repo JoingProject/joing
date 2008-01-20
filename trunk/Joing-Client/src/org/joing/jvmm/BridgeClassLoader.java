@@ -56,15 +56,20 @@ public class BridgeClassLoader extends ClassLoader {
         byte[] b = loadBytes(className);
 
         if (b == null) {
-            sb.append(", Not Found.");
+            sb.append(" - Not Found.");
             logger.write(Levels.DEBUG_JVMM, sb.toString());
             throw new ClassNotFoundException("Unable to find Class" + name);
         }
 
-        sb.append(", Found.");
+        sb.append(" - Found.");
         logger.write(Levels.DEBUG_JVMM, sb.toString());
 
-        return defineClass(name, b, 0, b.length);
+        try {
+            return defineClass(name, b, 0, b.length);
+        } catch (ClassFormatError cfe) {
+            this.logger.debugJVMM("Exception Caught: {0}", cfe.getMessage());
+            throw cfe;
+        }
     }
 
     @Override
@@ -112,6 +117,7 @@ public class BridgeClassLoader extends ClassLoader {
         }
     }
 
+    // TODO: Terminar de implementar este metodo.
     @Override
     protected Enumeration<URL> findResources(String name) throws IOException {
         return super.findResources(name);
@@ -161,23 +167,29 @@ public class BridgeClassLoader extends ClassLoader {
             JarEntry entry = jar.getNextJarEntry();
             if (entry == null) {
                 done = true;
+                jar.closeEntry();
                 continue;
             }
 
             if (entry.isDirectory()) {
+                jar.closeEntry();
                 continue;
             }
 
             if (entry.getName().equals(entryName) == false) {
+                jar.closeEntry();
                 continue;
             }
 
-            int size = new Long(entry.getCompressedSize()).intValue();
+            int size = new Long(entry.getSize()).intValue();
+            int cSize = new Long(entry.getCompressedSize()).intValue();
             b = new byte[size];
             jar.read(b, 0, size);
 
             done = true;
         }
+        
+        jar.close();
 
         return b;
     }
