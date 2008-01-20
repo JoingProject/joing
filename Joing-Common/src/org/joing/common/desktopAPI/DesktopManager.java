@@ -6,12 +6,10 @@
 package org.joing.common.desktopAPI;
 
 import org.joing.common.desktopAPI.desktop.Desktop;
-import org.joing.common.clientAPI.jvmm.Platform;
-import org.joing.common.clientAPI.runtime.Bridge2Server;
 
 /**
  *
- * @author antoniovl
+ * @author Francisco Morero Peyrona
  */
 public interface DesktopManager
 {
@@ -19,15 +17,11 @@ public interface DesktopManager
     void showInFrame();
     void showInFullScreen();
     
-    // Exiting
-    void lock();
-    void exit();
+    // Called from Platform
+    void shutdown();
+    void halt();
     
     // References
-    Desktop  getDesktop();
-    Runtime  getRuntime();
-    Platform getPlatform();
-    
-    // Called from Client
-    void setPlatform( Platform platform );
+    Desktop getDesktop();
+    Runtime getRuntime();
 }
