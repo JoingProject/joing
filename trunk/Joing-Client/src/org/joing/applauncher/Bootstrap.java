@@ -185,8 +185,7 @@ public class Bootstrap {
             if (login.wasSuccessful()) {
                 DesktopManager deskmgr =
                         getDesktopManagerInstance(login.getDesktopApplicationId());
-
-                deskmgr.setPlatform(RuntimeFactory.getPlatform());
+                        
                 platform.setDesktopManager(deskmgr);
 
                 if (login.fullScreen()) {
