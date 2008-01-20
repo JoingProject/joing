@@ -171,8 +171,8 @@ public class Bootstrap {
         }
 
         System.setSecurityManager(new JoingSecurityManager());
-        logger.write(Levels.NORMAL, "Join'g Successfully Bootstrapped.");
-        logger.write(Levels.NORMAL, "Main Thread Id is {0}",
+        logger.normal("Join'g Successfully Bootstrapped.");
+        logger.normal("Main Thread Id is {0}",
                 String.valueOf(RuntimeFactory.getPlatform().getMainThreadId()));
 
         setupTrayIcon();
@@ -183,7 +183,6 @@ public class Bootstrap {
             login.setVisible(true);
 
             if (login.wasSuccessful()) {
-//                platform.start(1, null, System.out, System.err);
                 DesktopManager deskmgr =
                         getDesktopManagerInstance(login.getDesktopApplicationId());
 
@@ -196,11 +195,12 @@ public class Bootstrap {
                     deskmgr.showInFrame();
                 }
             } else {
-                logger.write(Levels.INFO, "Terminated, bad username/password.");
+                logger.info("Terminated, bad username/password.");
                 RuntimeFactory.getPlatform().halt();
             }
         } catch (Exception e) {
-            logger.write(Levels.CRITICAL, "Error en start: {0}", e.getMessage());
+            logger.critical("Error en start: {0}", e.getMessage());
+            logger.printStackStrace(e);
         }
     }
 
@@ -230,10 +230,10 @@ public class Bootstrap {
             return (DesktopManager) clazz.newInstance();
 
         } catch (Exception e) {
-            logger.write(Levels.CRITICAL,
-                    "Exception Caught while getting the Desktop Instance",
+            logger.critical("Exception Caught while getting the Desktop Instance",
                     e.getMessage());
-            e.printStackTrace();
+            logger.printStackStrace(e);
+            
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -250,6 +250,7 @@ public class Bootstrap {
             // loop. Currently the Security manager is't preventing
             // the app to terminate via the System.exit() call.
             DesktopManager desktop = platform.getDesktopManager();
+            
             if (desktop == null) {
                 done = true;
                 continue;
