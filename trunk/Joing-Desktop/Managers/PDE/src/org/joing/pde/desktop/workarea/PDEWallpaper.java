@@ -14,8 +14,9 @@ import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.pde.PDEUtilities;
 
 /**
- *
- * @author fmorero
+ * PDE Implementation of Wallpaper interface.
+ * 
+ * @author Francisco Morero Peyrona
  */
 public class PDEWallpaper implements Wallpaper
 {

@@ -14,12 +14,15 @@ import javax.swing.JPanel;
 import org.joing.common.desktopAPI.workarea.Wallpaper;
 
 /**
- *
- * @author fmorero
+ * A Swing component (JPanel in this case) that uses the Wallpaper interface
+ * implementation (PDEWallPaper in this case) to change its own behaviour.
+ * @author Francisco Morero Peyrona
  */
 class PDEWallpaperComponent extends JPanel implements PropertyChangeListener
 {
     private PDEWallpaper wp;
+    
+    //------------------------------------------------------------------------//
     
     PDEWallpaperComponent()
     {
@@ -28,6 +31,7 @@ class PDEWallpaperComponent extends JPanel implements PropertyChangeListener
     
     PDEWallpaperComponent( Wallpaper wp )
     {
+        setOpaque( false );
         setWallPaper( wp );
     }
     

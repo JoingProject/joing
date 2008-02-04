@@ -20,11 +20,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.desktop.DesktopListener;
 import org.joing.common.desktopAPI.pane.DeskFrame;
 import org.joing.common.desktopAPI.taskbar.TaskBar;
@@ -60,7 +58,7 @@ public class FramesList extends PDETaskBarPanel
         twl  = new TheWindowListener();
         tifl = new TheIntenalFrameListener();
         
-        DesktopManagerFactory.getDM().getDesktop().addDesktopListener( tdl );
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().addDesktopListener( tdl );
         
         setMinimumSize( new Dimension( 80,22 ) );
         setMaximumSize( new Dimension( Integer.MAX_VALUE, Integer.MAX_VALUE ) );
@@ -155,7 +153,7 @@ public class FramesList extends PDETaskBarPanel
     
     private void updateSelected()
     {
-        WorkArea    waActive = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
+        WorkArea    waActive = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
         Component[] aComp    = getComponents();///pnlButtons.getComponents();
         
         for( int n = 0; n < aComp.length; n++ )

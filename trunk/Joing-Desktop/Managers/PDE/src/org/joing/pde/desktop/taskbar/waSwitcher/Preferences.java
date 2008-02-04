@@ -8,7 +8,6 @@ package org.joing.pde.desktop.taskbar.waSwitcher;
 
 import java.util.List;
 import javax.swing.DefaultListModel;
-import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 
 /**
@@ -25,7 +24,7 @@ class Preferences extends javax.swing.JPanel
         DefaultListModel dlm = new DefaultListModel();
         lstNamesWA.setModel( dlm );
         
-        List<WorkArea> lstWorAreas = DesktopManagerFactory.getDM().getDesktop().getWorkAreas();
+        List<WorkArea> lstWorAreas = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getWorkAreas();
         
         spnWA.getModel().setValue( lstWorAreas.size() );
         

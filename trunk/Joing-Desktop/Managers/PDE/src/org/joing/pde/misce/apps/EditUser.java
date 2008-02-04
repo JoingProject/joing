@@ -7,7 +7,6 @@ package org.joing.pde.misce.apps;
 
 import javax.swing.JPanel;
 import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.pane.DeskFrame;
 import org.joing.common.dto.user.User;
 
@@ -25,19 +24,19 @@ public class EditUser extends JPanel implements DeskComponent
     public EditUser()
     {
         initComponents();
-        user = DesktopManagerFactory.getDM().getPlatform().getBridge().getUserBridge().getUser();
+        user = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().getUserBridge().getUser();
     }
     
     public void showFrame()
     {
         String sIcon = "user_"+ (user.isMale() ? "" : "fe") +"male";
         
-        frame = DesktopManagerFactory.getDM().getRuntime().createFrame();
+        frame = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().createFrame();
         frame.setTitle( "User Information" );
-        frame.setIcon( DesktopManagerFactory.getDM().getRuntime().getStandardImage( sIcon, 20, 20 ) );
+        frame.setIcon( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getStandardImage( sIcon, 20, 20 ) );
         frame.add( (DeskComponent) this );
         
-        DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea().add( frame );
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
     }
     
     /** This method is called from within the constructor to

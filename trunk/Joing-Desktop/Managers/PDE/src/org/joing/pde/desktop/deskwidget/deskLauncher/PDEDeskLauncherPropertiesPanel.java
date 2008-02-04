@@ -7,7 +7,6 @@ package org.joing.pde.desktop.deskwidget.deskLauncher;
 
 import javax.swing.ImageIcon;
 import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 
 /**

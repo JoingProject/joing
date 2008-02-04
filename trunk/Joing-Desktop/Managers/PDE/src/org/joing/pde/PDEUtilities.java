@@ -26,7 +26,6 @@ import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.exception.JoingServerVFSException;
@@ -73,7 +72,7 @@ public class PDEUtilities
             
             try
             {
-                FileDescriptor fdRet = DesktopManagerFactory.getDM().getPlatform().getBridge().getFileBridge().getFile( sFullPath );
+                FileDescriptor fdRet = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().getFileBridge().getFile( sFullPath );
             }
             catch( JoingServerVFSException exc )
             {
@@ -202,7 +201,7 @@ public class PDEUtilities
     {
         BasicDialog dialog = new BasicDialog( icon, sTitle, content );
         
-        DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea().add( dialog );
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
         
         return dialog.bExitWithAccept;
     }
@@ -228,7 +227,7 @@ public class PDEUtilities
     
     public static WorkArea findWorkAreaFor( Component comp )
     {
-        List<WorkArea> lstWA = DesktopManagerFactory.getDM().getDesktop().getWorkAreas();
+        List<WorkArea> lstWA = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getWorkAreas();
         
         for( WorkArea wa : lstWA )
         {

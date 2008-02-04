@@ -16,7 +16,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.PDEUtilities;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
@@ -45,8 +44,8 @@ class PDEWorkAreaPopupMenu extends JPopupMenu implements ActionListener
         addSeparator();
         add( createMenuItem( "Properties"     , "properties", "PROPERTIES"   ) );
         
-        List<WorkArea> lstWorkAreas = DesktopManagerFactory.getDM().getDesktop().getWorkAreas();
-        WorkArea       waActive     = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
+        List<WorkArea> lstWorkAreas = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getWorkAreas();
+        WorkArea       waActive     = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
         
         if( lstWorkAreas.size() > 1 )
         {
@@ -103,7 +102,7 @@ class PDEWorkAreaPopupMenu extends JPopupMenu implements ActionListener
     private void switchToWorkArea( JMenuItem item )
     {
         WorkArea waTarget = (WorkArea) item.getClientProperty( "WORK_AREA" );
-        DesktopManagerFactory.getDM().getDesktop().setActiveWorkArea( waTarget ); 
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().setActiveWorkArea( waTarget ); 
     }
     
     private void createLauncher( boolean bDir )
@@ -115,14 +114,14 @@ class PDEWorkAreaPopupMenu extends JPopupMenu implements ActionListener
             PDEDeskLauncher launcher = panel.retrieveLauncher();
                             launcher.setLocation( ptWhere );
                             
-            DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea().add( launcher );
+            org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( launcher );
         }
     }
     
     private void toggleAlign()
     {
         // TODO: hacerlo
-        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( null, "Option not yet implemented" );
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
     }
     
     private void editProperties()

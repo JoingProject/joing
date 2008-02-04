@@ -14,7 +14,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.desktopAPI.pane.DeskCanvas;
 import org.joing.common.desktopAPI.pane.DeskDialog;
@@ -94,7 +93,7 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
     
     public void showMessageDialog( String sTitle, String sMessage )
     {
-        WorkArea workArea = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
+        WorkArea workArea = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
         
         JOptionPane.showInternalMessageDialog( (Component) workArea, sMessage, sTitle,
                                                JOptionPane.INFORMATION_MESSAGE );
@@ -107,7 +106,7 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
     
     public boolean showYesNoDialog( String sTitle, String sMessage )
     {
-        WorkArea workArea = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
+        WorkArea workArea = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
         
         return JOptionPane.showInternalConfirmDialog( 
                                      (Component) workArea, sMessage, sTitle,
