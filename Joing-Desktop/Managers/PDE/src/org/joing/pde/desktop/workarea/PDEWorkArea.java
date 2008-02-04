@@ -20,7 +20,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.JDesktopPane;
 import javax.swing.event.MouseInputAdapter;
 import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.Selectable;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.desktopAPI.pane.DeskWindow;
@@ -155,7 +154,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             
             removeSelectedComponents( clazz );
         }*/
-        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( null, "Option not yet implemented" );
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
     }
     
     /**
@@ -175,7 +174,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             Client.getClient().getClipBoard().clear();
             Client.getClient().getClipBoard().add( vSelected );
         }*/
-        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( null, "Option not yet implemented" );
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
     }
 
     /**
@@ -209,7 +208,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             
             root.setCursor( Cursor.getPredefinedCursor( Cursor.DEFAULT_CURSOR) );
         }*/
-        DesktopManagerFactory.getDM().getRuntime().showMessageDialog( null, "Option not yet implemented" );
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
     }
 
     /**

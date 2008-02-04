@@ -14,7 +14,6 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 import org.joing.common.desktopAPI.desktop.Desktop;
-import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.desktop.DesktopListener;
 import org.joing.common.desktopAPI.taskbar.TaskBar;
 import org.joing.common.desktopAPI.workarea.WorkArea;
@@ -40,7 +39,7 @@ public class WorkAreaSwitcher extends PDEDeskComponent
         setInheritsPopupMenu( true );  // It is also inherited by sub-components
         //setHandleVisible( false );
         
-        Desktop desktop = DesktopManagerFactory.getDM().getDesktop();
+        Desktop desktop = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop();
         
         // Traverse existing workareas: one or more workareas would exist when this component is shown.
         List<WorkArea> lstWorAreas = desktop.getWorkAreas();

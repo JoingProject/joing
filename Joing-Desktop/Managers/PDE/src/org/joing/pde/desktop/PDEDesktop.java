@@ -61,7 +61,7 @@ public class PDEDesktop extends JPanel implements Desktop
         {
             PDETaskBar tb = new PDETaskBar();
                        tb.createDefaultComponents();
-                       /// TODO: probar esto --> tb.setOrientation( TaskBarOrientation.TOP );
+                       // TODO: probar esto --> tb.setOrientation( TaskBarOrientation.TOP );
                        
             addTaskBar( tb );
             
@@ -104,9 +104,13 @@ public class PDEDesktop extends JPanel implements Desktop
     
     private void createTestComponents( WorkArea wa )  // TODO: quitar este metodo
     {
-        PDEWallpaper wp = new PDEWallpaper();
-                     wp.setImage( new ImageIcon( "/home/fmorero/Imágenes/iconos/duke/starwars.png" ) );
-        getWorkAreas().get( 0 ).setWallpaper( wp );
+        PDEWallpaper wp0 = new PDEWallpaper();
+                     wp0.setImage( new ImageIcon( "/home/fmorero/Imágenes/iconos/duke/starwars.png" ) );
+        getWorkAreas().get( 0 ).setWallpaper( wp0 );
+        
+        PDEWallpaper wp1 = new PDEWallpaper();
+                     wp1.setImage( new ImageIcon( "/home/fmorero/Imágenes/reflections.jpg" ) );
+        getWorkAreas().get( 1 ).setWallpaper( wp1 );
         
         /*NasaPhoto nasa = new NasaPhoto();
                   nasa.setBounds( 10,350, nasa.getPreferredSize().width, nasa.getPreferredSize().height );

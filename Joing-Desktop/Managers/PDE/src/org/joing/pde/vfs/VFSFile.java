@@ -32,7 +32,7 @@ import org.joing.common.dto.user.User;
 import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.exception.JoingServerVFSException;
 import org.joing.common.clientAPI.runtime.Bridge2Server;
-import org.joing.common.desktopAPI.DesktopManagerFactory;
+import org.joing.jvmm.RuntimeFactory;
 
 /**
  * This class is needed to build <code>JoingFileSystemView</code>
@@ -90,7 +90,7 @@ public class VFSFile extends File
             throw new IllegalArgumentException( "Name must be absolute (starting with '/')" );
         
         // If fd == null, then file or dir not exists
-        fd = DesktopManagerFactory.getDM().getPlatform().getBridge().getFileBridge().getFile( sFullName );
+        fd = RuntimeFactory.getPlatform().getBridge().getFileBridge().getFile( sFullName );
         
         if( fd == null )  // The file does not exists: it can be created (remember: root always exists)
         {
@@ -100,7 +100,7 @@ public class VFSFile extends File
             String sParent = sFullName.substring( 0, sFullName.lastIndexOf( '/' ) );
             String sHijo   = sFullName.substring( sParent.length() );
             
-            fdParent = DesktopManagerFactory.getDM().getPlatform().getBridge().getFileBridge().getFile( sParent );
+            fdParent = RuntimeFactory.getPlatform().getBridge().getFileBridge().getFile( sParent );
             sChild   = sHijo;
         }
     }
@@ -119,7 +119,7 @@ public class VFSFile extends File
             throw new IllegalArgumentException( "parent must be a directory" );
         
         // If fd == null, then parent and or child not exists
-        fd = DesktopManagerFactory.getDM().getPlatform().getBridge().getFileBridge().getFile( parent.getAbsolutePath() +"/"+ child.trim() );
+        fd = RuntimeFactory.getPlatform().getBridge().getFileBridge().getFile( parent.getAbsolutePath() +"/"+ child.trim() );
         
         if( fd == null )
         {
@@ -164,7 +164,7 @@ public class VFSFile extends File
     public boolean createNewFile() throws JoingServerVFSException
     {
         if( fd == null && fdParent != null && sChild != null )
-            fd = DesktopManagerFactory.getDM().getPlatform().getBridge().getFileBridge().createFile( fdParent.getAbsolutePath(), sChild );
+            fd = RuntimeFactory.getPlatform().getBridge().getFileBridge().createFile( fdParent.getAbsolutePath(), sChild );
         
         return fd != null;
     }
@@ -176,7 +176,7 @@ public class VFSFile extends File
         
         if( exists() )
         {
-            Bridge2Server b2s = DesktopManagerFactory.getDM().getPlatform().getBridge();
+            Bridge2Server b2s = RuntimeFactory.getPlatform().getBridge();
             bSuccess = b2s.getFileBridge().delete( fd.getId() );
         }
         
@@ -261,7 +261,7 @@ public class VFSFile extends File
     public long getFreeSpace() throws JoingServerVFSException
     {
         long          nFree = -1;
-        Bridge2Server b2s   = DesktopManagerFactory.getDM().getPlatform().getBridge();
+        Bridge2Server b2s   = RuntimeFactory.getPlatform().getBridge();
         User          user  = b2s.getUserBridge().getUser();
 
         if( user != null )
@@ -333,7 +333,7 @@ public class VFSFile extends File
     {
         if( nTotalDiskSpace == -1 )
         {
-            Bridge2Server b2s  = DesktopManagerFactory.getDM().getPlatform().getBridge();    
+            Bridge2Server b2s  = RuntimeFactory.getPlatform().getBridge();    
             User          user = b2s.getUserBridge().getUser();
         
             if( user != null )
@@ -648,7 +648,7 @@ public class VFSFile extends File
     public boolean mkdir() throws JoingServerVFSException
     {
         if( fd == null && fdParent != null && sChild != null )
-            fd = DesktopManagerFactory.getDM().getPlatform().getBridge().getFileBridge().createDirectory( fdParent.getAbsolutePath(), sChild );
+            fd = RuntimeFactory.getPlatform().getBridge().getFileBridge().createDirectory( fdParent.getAbsolutePath(), sChild );
         
         return fd != null;
     }
@@ -754,7 +754,7 @@ public class VFSFile extends File
      */
     public boolean updateAttributes() throws JoingServerVFSException
     {
-        FileDescriptor _fd = DesktopManagerFactory.getDM().getPlatform().getBridge().getFileBridge().update( fd );
+        FileDescriptor _fd = RuntimeFactory.getPlatform().getBridge().getFileBridge().update( fd );
         
         return fd.equals( _fd );
     }
@@ -785,7 +785,7 @@ public class VFSFile extends File
         List<FileDescriptor> list = new ArrayList<FileDescriptor>();
         
         if( exists() && fd.isDirectory() )
-            list = DesktopManagerFactory.getDM().getPlatform().getBridge().getFileBridge().getChilds( fd.getId() );
+            list = RuntimeFactory.getPlatform().getBridge().getFileBridge().getChilds( fd.getId() );
         
         return list;
     }

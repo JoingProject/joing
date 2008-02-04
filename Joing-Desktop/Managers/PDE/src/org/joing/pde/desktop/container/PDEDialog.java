@@ -20,7 +20,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.MouseInputAdapter;
-import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.pane.DeskDialog;
 import org.joing.pde.PDEManager;
 
@@ -92,7 +91,7 @@ public class PDEDialog extends PDEWindow implements DeskDialog
         {
             if( bVisible )
             {
-                JRootPane root = ((PDEManager) DesktopManagerFactory.getDM()).getTheRootPane();
+                JRootPane root = ((PDEManager) org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager()).getTheRootPane();
 
                 // Change glass pane to our panel in rootPane
                 glassOld = root.getGlassPane();
@@ -126,7 +125,7 @@ public class PDEDialog extends PDEWindow implements DeskDialog
     
     private void clean()
     {
-        JRootPane root = ((PDEManager) DesktopManagerFactory.getDM()).getTheRootPane();
+        JRootPane root = ((PDEManager) org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager()).getTheRootPane();
                   root.setGlassPane( glassOld );
                   
         stopModal();

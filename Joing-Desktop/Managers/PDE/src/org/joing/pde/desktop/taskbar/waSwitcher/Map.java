@@ -11,11 +11,10 @@ import java.awt.event.MouseEvent;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputAdapter;
 import org.joing.common.desktopAPI.desktop.Desktop;
-import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 
 /**
- * Each one of the small boxes that represente WorkAreas spaces.
+ * Each one of the small boxes representing a WorkArea space.
  * 
  * @author Francisco Morero Peyrona
  */
@@ -42,7 +41,7 @@ class Map extends JPanel
             {
                 if( me.getButton() == MouseEvent.BUTTON1 )
                 {
-                    Desktop desktop = DesktopManagerFactory.getDM().getDesktop();
+                    Desktop desktop = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop();
                             desktop.setActiveWorkArea( Map.this.workArea );
                 }
             }

@@ -14,7 +14,6 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.pane.DeskFrame;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 
@@ -167,8 +166,8 @@ public class FramePopupMenu extends JPopupMenu
                           } );                          
         add( itemCheck );
 
-        List<WorkArea> lstWorkAreas = DesktopManagerFactory.getDM().getDesktop().getWorkAreas();
-        WorkArea       waActive     = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
+        List<WorkArea> lstWorkAreas = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getWorkAreas();
+        WorkArea       waActive     = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
 
         if( lstWorkAreas.size() > 1 )
         {

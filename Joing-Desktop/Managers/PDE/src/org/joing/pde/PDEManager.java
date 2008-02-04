@@ -25,7 +25,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import org.joing.common.clientAPI.jvmm.Platform;
 import org.joing.pde.desktop.PDEDesktop;
 import java.awt.BorderLayout;
 import java.awt.Toolkit;
@@ -35,7 +34,6 @@ import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import org.joing.common.desktopAPI.DesktopManager;
-import org.joing.common.desktopAPI.DesktopManagerFactory;
 
 /**
  * DesktopManager interface implementation.
@@ -51,7 +49,6 @@ import org.joing.common.desktopAPI.DesktopManagerFactory;
  */
 public class PDEManager extends JApplet implements DesktopManager
 {
-    private Platform   platform;
     private PDEDesktop desktop;
     private PDERuntime runtime;
     private JFrame     frame;
@@ -66,11 +63,10 @@ public class PDEManager extends JApplet implements DesktopManager
         
         // Continuous layout on frame resize
         Toolkit.getDefaultToolkit().setDynamicLayout( true );
-        
-        DesktopManagerFactory.init( this );
     }
     
     //------------------------------------------------------------------------//
+    // Methods from JApplet
     
     public void init()
     {
@@ -159,12 +155,11 @@ public class PDEManager extends JApplet implements DesktopManager
         return runtime;
     }
     
-    public Platform getPlatform()
-    {
-        return platform;
-    }
-    
-    public void exit()
+    /**
+     * This method exists to be called from Platform and should <u>never</u> be 
+     * called from the Desktop.
+     */
+    public void shutdown()
     {
         getDesktop().close();
 
@@ -173,14 +168,38 @@ public class PDEManager extends JApplet implements DesktopManager
         //       cada cierto tiempo que todas las Frames están cerradas, y si pasado
         //       un tiempo máximo, las que aún no están cerradas, se cierran a las bravas.
         
+        halt();
+    }
+    
+    /**
+     * This method exists to be called from Platform and should <u>never</u> be 
+     * called from the Desktop.
+     */
+    public void halt()
+    {
         if( frame != null )   // Can't call getFrame(), because this method constructs the frame
             frame.dispose();
         else
             stop();
-        
-        platform.shutdown();
     }
+
+    //------------------------------------------------------------------------//
+    // exit() and lock() methods are called from the "start-menu" in the desktop
     
+    /**
+     * This method is inovked by start-menu item "Exit".<br>
+     * This method simply invokes Platform::shutdown()
+     */
+    public void exit()
+    {
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().shutdown();
+        System.exit( 0 );   // FIXME: quitar esto
+    }
+
+    /**
+     * This method is inovked by start-menu item "Lock".<br>
+     * It makes the desktop black and asks for password when user clicks on it.
+     */
     public void lock()
     {
         Component   previous = (frame != null ? frame.getGlassPane() : getRootPane().getGlassPane());
@@ -215,12 +234,7 @@ public class PDEManager extends JApplet implements DesktopManager
     {
         return frame != null ? frame.getRootPane() : getRootPane();
     }
-    
-    public void setPlatform( Platform platform )
-    {
-        this.platform = platform;
-    }
-        
+       
     //------------------------------------------------------------------------//
     
     private JFrame getMainFrame()
@@ -303,8 +317,8 @@ public class PDEManager extends JApplet implements DesktopManager
             g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, nTranslucent ));
             g2.fillRect( 0,0, getWidth(), getHeight() );
             g2.setColor( Color.white );
-            g2.drawString( "Click to unlock", 15,15 );
-            g2.dispose();         
+            g2.drawString( "Click para to unlock", 15,15 );
+            g2.dispose();
         }
         
         //--------------------------------------------------------------------//
@@ -315,5 +329,13 @@ public class PDEManager extends JApplet implements DesktopManager
         public void mouseExited( MouseEvent me )   {}
         public void mouseReleased( MouseEvent me ) {}
         public void mousePressed( MouseEvent me )  { PDEManager.this.unlock(); }
+    }
+    
+    //------------------------------------------------------------------------//
+    // NOTE: This is just to facilitate PDE development
+    
+    public static void main( String[] asArg )
+    {
+        org.joing.applauncher.Bootstrap.init();
     }
 }

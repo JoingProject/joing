@@ -21,7 +21,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.desktopAPI.pane.DeskFrame;
 import org.joing.common.desktopAPI.taskbar.TaskBarListener;
 import org.joing.common.desktopAPI.taskbar.TaskBarPanel;
@@ -136,7 +135,7 @@ public class PDETaskBarPanel
         DeskComponent prefs = getPreferencesPanel();
         
         if( prefs != null )
-            DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea().add( new TheFrame( (Component) prefs ) );
+            org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( new TheFrame( (Component) prefs ) );
     }
     
     private void onAbout()
@@ -151,11 +150,11 @@ public class PDETaskBarPanel
         }
         
         // Better to use a Frame than a Dialog (modaless: this is the way Gnome does it)
-        DeskFrame frame = DesktopManagerFactory.getDM().getRuntime().createFrame();
+        DeskFrame frame = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().createFrame();
                   frame.setTitle( "About" );
                   frame.add( about );
                   
-        DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea().add( frame );
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
     }
     
     private void onRemove()

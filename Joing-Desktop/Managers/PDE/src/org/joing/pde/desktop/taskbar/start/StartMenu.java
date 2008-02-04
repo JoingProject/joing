@@ -23,13 +23,13 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import org.joing.common.clientAPI.jvmm.ApplicationExecutionException;
-import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.app.AppEnvironment;
 import org.joing.common.dto.app.AppGroup;
 import org.joing.common.dto.app.AppGroupKey;
 import org.joing.common.dto.user.User;
 import org.joing.pde.ColorSchema;
+import org.joing.pde.PDEManager;
 import org.joing.pde.PDEUtilities;
 import org.joing.pde.misce.apps.EditUser;
 import org.joing.pde.swing.JScrollablePopupMenu;
@@ -42,6 +42,8 @@ class StartMenu extends JScrollablePopupMenu
 {
     private final static int    ICON_SIZE = 22;
     private final static String KEY_APP_DESCRIPTOR = "JOING_APP_DESCRIPTOR";
+    
+    //------------------------------------------------------------------------//
     
     StartMenu()
     {
@@ -66,7 +68,7 @@ class StartMenu extends JScrollablePopupMenu
                   item.setBorder( new EmptyBorder( 4,4,4,4 ) );
                   item.setFont( item.getFont().deriveFont( Font.BOLD, item.getFont().getSize() + 4 ) );
 
-        User user = DesktopManagerFactory.getDM().getPlatform().getBridge().getUserBridge().getUser();
+        User user = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().getUserBridge().getUser();
         
         if( user != null )
         {
@@ -99,7 +101,7 @@ class StartMenu extends JScrollablePopupMenu
                   {
                       public void actionPerformed( ActionEvent ae )
                       {
-                          DesktopManagerFactory.getDM().lock();
+                          ((PDEManager) org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager()).lock();
                       }
                   } );
         add( itmLock );
@@ -113,7 +115,7 @@ class StartMenu extends JScrollablePopupMenu
                   {
                       public void actionPerformed( ActionEvent ae )
                       {
-                          DesktopManagerFactory.getDM().exit();
+                          ((PDEManager) org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager()).exit();
                       }
                   } );
         add( itmExit );
@@ -121,8 +123,7 @@ class StartMenu extends JScrollablePopupMenu
     
     private void addApplications()
     {
-        boolean        bSystemAppsAdded = false;
-        List<AppGroup> lstGroups = DesktopManagerFactory.getDM().getPlatform().getBridge().getAppBridge().
+        List<AppGroup> lstGroups = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().getAppBridge().
                                               getInstalledForUser( AppEnvironment.JAVA_ALL, AppGroupKey.ALL );
                                               
         if( lstGroups != null )
@@ -183,20 +184,12 @@ class StartMenu extends JScrollablePopupMenu
                 JMenuItem item = (JMenuItem) ae.getSource();
                 AppDescriptor appDesc = (AppDescriptor) item.getClientProperty( KEY_APP_DESCRIPTOR );
 
-                DesktopManagerFactory.getDM().getPlatform().start( appDesc.getId() );
+                org.joing.jvmm.RuntimeFactory.getPlatform().start( appDesc.getId() );
             }
             catch( ApplicationExecutionException exc )
             {
                 exc.printStackTrace();   // TODO: Mostrarla por pantalla: showException( ... )
             }
         }
-    }
-    
-    //------------------------------------------------------------------------//
-    // NOTE: This is just to facilitate PDE development
-    
-    public static void main( String[] asArg )
-    {
-        
     }
 }

@@ -21,7 +21,6 @@ import javax.swing.JLabel;
 import javax.swing.MenuSelectionManager;
 import javax.swing.border.EmptyBorder;
 import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.DesktopManagerFactory;
 import org.joing.pde.PDEUtilities;
 import org.joing.pde.swing.ImageHighlightFilter;
 

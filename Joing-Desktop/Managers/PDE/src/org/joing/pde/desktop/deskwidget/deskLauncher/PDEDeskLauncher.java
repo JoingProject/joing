@@ -25,7 +25,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.MenuElement;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import org.joing.common.desktopAPI.DesktopManagerFactory;
+import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncherListener;
 import org.joing.common.desktopAPI.workarea.WorkArea;
@@ -261,9 +261,11 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     //       llamar al container (WorkArea)
     public void delete()
     {
-        if( DesktopManagerFactory.getDM().getRuntime().showYesNoDialog( "Delete launcher", 
-                                                   "Are you sure you want to delete it?\n"+
-                                                   "(deleted objects can not be recovered)" ) )
+        DesktopManager dm = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+        
+        if( dm.getRuntime().showYesNoDialog( "Delete launcher", 
+                                             "Are you sure you want to delete it?\n"+
+                                             "(deleted objects can not be recovered)" ) )
         {
             WorkArea workArea = (PDEWorkArea) SwingUtilities.getAncestorOfClass( PDEWorkArea.class, this );
                      // FIXME: hacerlo --> workArea.remove( this );
@@ -275,8 +277,10 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     
     public void toTrashcan()
     {
-        if( DesktopManagerFactory.getDM().getRuntime().showYesNoDialog( "Send launcher to trashcan", 
-                                                   "Are you sure you want to send it to trashcan?" ) )
+        DesktopManager dm = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+        
+        if( dm.getRuntime().showYesNoDialog( "Send launcher to trashcan", 
+                                             "Are you sure you want to send it to trashcan?" ) )
         {
             
             PDEWorkArea workArea = (PDEWorkArea) SwingUtilities.getAncestorOfClass( PDEWorkArea.class, this );
@@ -284,7 +288,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
                         
             // TODO: mandarlo a la papelera e implementar el fire
             // fireLauncherToTrashcan( this );
-            DesktopManagerFactory.getDM().getRuntime().showMessageDialog( null, "Option not yet implemented" );
+            dm.getRuntime().showMessageDialog( null, "Option not yet implemented" );
         }
     }
     
