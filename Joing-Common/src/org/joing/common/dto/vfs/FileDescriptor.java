@@ -24,7 +24,7 @@ package org.joing.common.dto.vfs;
 
 import java.io.Serializable;
 import java.util.Date;
-
+// FIXME: reparsar todos los permisos viendo cuándo se puede o no cambiar algo.
 /**
  * DTO class for FileDescriptor.
  * <p>
@@ -39,7 +39,7 @@ public class FileDescriptor implements Serializable
     private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
     
     // PK --------------------
-    private String  account;           // hidden
+    private String  account;           // hidden   FIXME: No sé qué hacer porque este dato debería ser hidden, pero no tengo modo de asignarlo: quizás el constructor. En cualquier caso, hay que leerlo desde la tabla antes de guardarlo.
     private String  name;              // read-only
     private String  path;              // read-only  (path from root except the file name)
     //------------------------
@@ -65,18 +65,7 @@ public class FileDescriptor implements Serializable
     private String  notes;
     private long    size;              // read-only
     
-    //---------------------------------------------
-    
-    private final static int ALTERABLE   =  1;
-    private final static int DELETEABLE  =  2;
-    private final static int DUPLICABLE  =  3;
-    private final static int EXECUTABLE  =  4;
-    private final static int HIDDEN      =  5;
-    private final static int MODIFIABLE  =  6;
-    private final static int PUBLIC      =  7;
-    private final static int READABLE    =  8;
-    private final static int LOCKED      =  9;
-    private final static int IN_TRASHCAN = 10;
+    //---------------------------------------------//
     
     private String  sFailedToChangeAttributeReason;
             
@@ -97,9 +86,15 @@ public class FileDescriptor implements Serializable
         return name;
     }
     
-    public void setName( String sNewName )
+    public boolean setName( String sNewName )
     {
-        this.name = sNewName;
+        if( canChange() )
+        {
+            this.name = sNewName;
+            return true;
+        }
+        
+        return false;
     }
 
     public String getOwner()
@@ -134,7 +129,13 @@ public class FileDescriptor implements Serializable
 
     public boolean setHidden(boolean isHidden)
     {
-        return changeBooleanAttribute( HIDDEN, isHidden );
+        if( canChange() )
+        {
+            this.isHidden = isHidden;
+            return true;
+        }
+        
+        return false;
     }
 
     public boolean isReadable()
@@ -144,7 +145,13 @@ public class FileDescriptor implements Serializable
 
     public boolean setReadable(boolean isReadable)
     {
-        return changeBooleanAttribute( READABLE, isReadable );
+        if( canChange() )
+        {
+            this.isReadable = isReadable;
+            return true;
+        }
+        
+        return false;
     }
     
     public boolean isModifiable()
@@ -154,7 +161,13 @@ public class FileDescriptor implements Serializable
 
     public boolean setModifiable(boolean isModifiable)
     {
-        return changeBooleanAttribute( MODIFIABLE, isModifiable );
+        if( canChange() )
+        {
+            this.isModifiable = isModifiable;
+            return true;
+        }
+        
+        return false;
     }
 
     public boolean isDeleteable()
@@ -164,7 +177,13 @@ public class FileDescriptor implements Serializable
 
     public boolean setDeleteable(boolean isDeleteable)
     {
-        return changeBooleanAttribute( DELETEABLE, isDeleteable );
+        if( canChange() )
+        {
+            this.isDeleteable = isDeleteable;
+            return true;
+        }
+        
+        return false;
     }
 
     public boolean isExecutable()
@@ -174,7 +193,21 @@ public class FileDescriptor implements Serializable
 
     public boolean setExecutable(boolean isExecutable)
     {
-        return changeBooleanAttribute( EXECUTABLE, isExecutable );
+        boolean bSuccess = canChange();
+        
+        if( bSuccess )
+        {
+            if( ! isDirectory() )
+            {
+                this.isExecutable = isExecutable;
+            }
+            else
+            {
+                sFailedToChangeAttributeReason = "Directories can not be executables.";
+            }
+        }
+        
+        return bSuccess;
     }
 
     public boolean isDuplicable()
@@ -184,7 +217,13 @@ public class FileDescriptor implements Serializable
 
     public boolean setDuplicable(boolean isDuplicable)
     {
-        return changeBooleanAttribute( DUPLICABLE, isDuplicable );
+        if( canChange() )
+        {
+            this.isDuplicable = isDuplicable;
+            return true;
+        }
+        
+        return false;
     }
 
     public boolean isPublic()
@@ -194,7 +233,13 @@ public class FileDescriptor implements Serializable
 
     public boolean setPublic(boolean isPublic)
     {
-        return changeBooleanAttribute( PUBLIC, isPublic );
+        if( canChange() )
+        {
+            this.isPublic = isPublic;
+            return true;
+        }
+        
+        return false;
     }
 
     public boolean isAlterable()
@@ -204,7 +249,13 @@ public class FileDescriptor implements Serializable
     
     public boolean setAlterable(boolean isAlterable)
     {
-        return changeBooleanAttribute( ALTERABLE, isAlterable );
+        if( account.equals( owner ) )
+        {
+            this.isAlterable = isAlterable;
+            return true;
+        }
+        
+        return false;
     }
     
     public boolean isInTrashcan()
@@ -214,7 +265,13 @@ public class FileDescriptor implements Serializable
 
     public boolean setInTrashcan(boolean isInTrashcan)
     {
-        return changeBooleanAttribute( IN_TRASHCAN, isInTrashcan );
+        if( canChange() )
+        {
+            this.isInTrashcan = isInTrashcan;
+            return true;
+        }
+        
+        return false;
     }
 
     public boolean isLocked()
@@ -227,9 +284,39 @@ public class FileDescriptor implements Serializable
         return lockedBy;
     }
     
-    public boolean setLocked(boolean lock)
+    public boolean setLocked( boolean bLock )
     {
-        return changeBooleanAttribute( LOCKED, lock );
+        boolean bSuccess = canChange();
+
+        if( bSuccess )
+        {
+            if( bLock )
+            {
+                if( ! isLocked() || ownsLock() )
+                {
+                    lockedBy = account;
+                    bSuccess = true;
+                }
+                else
+                {
+                    sFailedToChangeAttributeReason = "File is already locked by another user.";
+                }
+            }
+            else
+            {
+                if( ownsLock() )
+                {
+                    lockedBy = null;
+                    bSuccess = true;
+                }
+                else
+                {
+                    sFailedToChangeAttributeReason = "You do not own the lock.";
+                }
+            }
+        }
+
+        return bSuccess;
     }
     
     /**
@@ -262,16 +349,13 @@ public class FileDescriptor implements Serializable
 
     public boolean setNotes( String notes )
     {
-        boolean bSuccess = false;
-        
-        if( account.equals( owner ) )   // TODO: el account tiene que estar en el modo
-                                        //       <name>@<server> o algo así para poder compararlos
+        if( canChange() )
         {
             this.notes = notes;
-            bSuccess = true;
+            return true;
         }
         
-        return bSuccess;
+        return false;
     }
     
     public long getSize()
@@ -370,88 +454,26 @@ public class FileDescriptor implements Serializable
     
     //------------------------------------------------------------------------//
     
-    private boolean changeBooleanAttribute( int nWhich, boolean b)
+    private boolean canChange()
     {
-        boolean bSuccess = false;
+        boolean bSuccess = true;
         
         sFailedToChangeAttributeReason = null;
         
-        if( isAlterable()  ||
-            account.equals( owner ) )   // TODO: el account tiene que estar en el modo
-                                        //       <name>@<server> o algo así para poder compararlos
-        {
-            // TODO: hacerlo
-            switch( nWhich )
-            {
-                case ALTERABLE:
-                break;
-                     
-                case DELETEABLE:
-                break;
-                     
-                case DUPLICABLE:
-                break;
-                     
-                case EXECUTABLE:
-                     if( ! isDirectory() )
-                     {
-                         isExecutable = b;
-                         bSuccess = true;
-                     }
-                     else
-                     {
-                         sFailedToChangeAttributeReason = "Directories can not be executables.";
-                     }
-                break;
-                     
-                case HIDDEN:
-                break;
-                     
-                case MODIFIABLE:
-                break;
-                     
-                case PUBLIC:
-                break;
-                     
-                case READABLE:
-                break;
-                     
-                case LOCKED:
-                     if( b )
-                     {
-                         if( ! isLocked() || ownsLock() )
-                         {
-                             lockedBy = account;
-                             bSuccess = true;
-                         }
-                         else
-                         {
-                             sFailedToChangeAttributeReason = "File is already locked by another user.";
-                         }
-                     }
-                     else
-                     {
-                         if( ownsLock() )
-                         {
-                             lockedBy = null;
-                             bSuccess = true;
-                         }
-                         else
-                         {
-                             sFailedToChangeAttributeReason = "You do not own the lock.";
-                         }
-                     }
-                break;
-                     
-                case IN_TRASHCAN:
-                    isInTrashcan = b;
-                    bSuccess = true;
-                break;
-            }
-        }
-        else
+        if( ! account.equals( owner ) )
         {
             sFailedToChangeAttributeReason = "You have to be the owner of the file.";
+            bSuccess = false;
+        }
+        
+        if( ! isAlterable() )
+        {
+            if( sFailedToChangeAttributeReason != null )
+                sFailedToChangeAttributeReason += "and file is under 'protected status' against changes.";
+            else
+                sFailedToChangeAttributeReason += "File is under 'protected status' against changes.";
+            
+            bSuccess = false;
         }
         
         return bSuccess;
