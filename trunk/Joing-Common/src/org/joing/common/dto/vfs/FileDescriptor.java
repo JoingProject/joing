@@ -39,9 +39,9 @@ public class FileDescriptor implements Serializable
     private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
     
     // PK --------------------
-    private String  account;           // hidden   FIXME: No sé qué hacer porque este dato debería ser hidden, pero no tengo modo de asignarlo: quizás el constructor. En cualquier caso, hay que leerlo desde la tabla antes de guardarlo.
+    private String  account;           // read-only
     private String  name;              // read-only
-    private String  path;              // read-only  (path from root except the file name)
+    private String  path;              // read-only (path from root except the file name)
     //------------------------
     private int     idFile;            // read-only
     private int     idOriginal;        // TODO: no creo que esto vaya así: tendría que estar aquí el original y sobrarían el resto de los campos
@@ -69,11 +69,16 @@ public class FileDescriptor implements Serializable
     
     private String  sFailedToChangeAttributeReason;
             
-    //------------------------------------------------------------------------//    
+    //------------------------------------------------------------------------//
     
     public int getId()
     {
         return this.idFile;
+    }
+    
+    public void setId( int idFile )
+    {
+        this.idFile = idFile;
     }
     
     public int getIdOriginal()
@@ -81,16 +86,21 @@ public class FileDescriptor implements Serializable
         return this.idOriginal;
     }
     
+    public String getAccount()
+    {
+        return account;
+    }
+    
     public String getName()
     {
         return name;
     }
     
-    public boolean setName( String sNewName )
+    public boolean setName( String name )
     {
         if( canChange() )
         {
-            this.name = sNewName;
+            this.name = name;
             return true;
         }
         
@@ -394,6 +404,11 @@ public class FileDescriptor implements Serializable
      */
     public FileDescriptor()
     {
+    }
+   
+    public void setAccount( String account )
+    {
+        this.account = account;
     }
     
     public void setIdFile( int nIdFile )
