@@ -62,6 +62,7 @@ public class GetFile extends HttpServlet
         catch( Exception exc )
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
+            exc.printStackTrace();
             // Makes the exception to be contained into a JoingServerServletException
             JoingServerServletException jsse = new JoingServerServletException( getClass(), exc );
             writer.writeObject( jsse );
