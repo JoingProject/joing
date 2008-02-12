@@ -28,32 +28,22 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "FILES")
 @NamedQueries(
-            {
-        @NamedQuery(name = "FileEntity.findByIdFile", query = "SELECT f FROM FileEntity f WHERE f.idFile = :idFile"),
-        @NamedQuery(name = "FileEntity.findByIdOriginal", query = "SELECT f FROM FileEntity f WHERE f.idOriginal = :idOriginal"),
-        @NamedQuery(name = "FileEntity.findByAccount", query = "SELECT f FROM FileEntity f WHERE f.fileEntityPK.account = :account"),
-        @NamedQuery(name = "FileEntity.findByOwner", query = "SELECT f FROM FileEntity f WHERE f.owner = :owner"),
-        @NamedQuery(name = "FileEntity.findByFilePath", query = "SELECT f FROM FileEntity f WHERE f.fileEntityPK.filePath = :filePath"),
-        @NamedQuery(name = "FileEntity.findByFileName", query = "SELECT f FROM FileEntity f WHERE f.fileEntityPK.fileName = :fileName"),
-        @NamedQuery(name = "FileEntity.findByLockedBy", query = "SELECT f FROM FileEntity f WHERE f.lockedBy = :lockedBy"),
-        @NamedQuery(name = "FileEntity.findByIsDir", query = "SELECT f FROM FileEntity f WHERE f.isDir = :isDir"),
-        @NamedQuery(name = "FileEntity.findByIsHidden", query = "SELECT f FROM FileEntity f WHERE f.isHidden = :isHidden"),
-        @NamedQuery(name = "FileEntity.findByIsPublic", query = "SELECT f FROM FileEntity f WHERE f.isPublic = :isPublic"),
-        @NamedQuery(name = "FileEntity.findByIsReadable", query = "SELECT f FROM FileEntity f WHERE f.isReadable = :isReadable"),
-        @NamedQuery(name = "FileEntity.findByIsModifiable", query = "SELECT f FROM FileEntity f WHERE f.isModifiable = :isModifiable"),
-        @NamedQuery(name = "FileEntity.findByIsDeleteable", query = "SELECT f FROM FileEntity f WHERE f.isDeleteable = :isDeleteable"),
-        @NamedQuery(name = "FileEntity.findByIsExecutable", query = "SELECT f FROM FileEntity f WHERE f.isExecutable = :isExecutable"),
-        @NamedQuery(name = "FileEntity.findByIsDuplicable", query = "SELECT f FROM FileEntity f WHERE f.isDuplicable = :isDuplicable"),
-        @NamedQuery(name = "FileEntity.findByIsAlterable", query = "SELECT f FROM FileEntity f WHERE f.isAlterable = :isAlterable"),
-        @NamedQuery(name = "FileEntity.findByIsInTrashcan", query = "SELECT f FROM FileEntity f WHERE f.isInTrashcan = :isInTrashcan"),
-        @NamedQuery(name = "FileEntity.findByCreated", query = "SELECT f FROM FileEntity f WHERE f.created = :created"),
-        @NamedQuery(name = "FileEntity.findByModified", query = "SELECT f FROM FileEntity f WHERE f.modified = :modified"),
-        @NamedQuery(name = "FileEntity.findByAccessed", query = "SELECT f FROM FileEntity f WHERE f.accessed = :accessed"),
-        @NamedQuery(name = "FileEntity.findByNotes", query = "SELECT f FROM FileEntity f WHERE f.notes = :notes")
-    })
+    {
+        @NamedQuery(name  = "FileEntity.findByPK",
+                    query = "SELECT f FROM FileEntity f"+
+                            " WHERE f.fileEntityPK.account  = :account"+
+                            "   AND f.fileEntityPK.filePath = :path"+
+                            "   AND f.fileEntityPK.fileName = :name"),
+        
+        @NamedQuery(name  = "FileEntity.findByPath",
+                    query = "SELECT f FROM FileEntity f"+
+                            " WHERE f.fileEntityPK.filePath = :path"+
+                            "   AND f.fileEntityPK.account  = :account"+
+                            "   AND f.is_in_trashcan = 0" )
+    } )
+    
 public class FileEntity implements Serializable
 {
-
     /**
      * EmbeddedId primary key field
      */

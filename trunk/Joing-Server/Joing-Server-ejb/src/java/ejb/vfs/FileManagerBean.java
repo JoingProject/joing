@@ -80,12 +80,10 @@ public class FileManagerBean
         
         if( sAccount != null )
         {
-            FileEntity _file = Tools.path2File( em, sAccount, sFullName  );
+            FileEntity _file = Tools.path2File( em, sAccount, sFullName );
             
             if( _file != null )
                 file = FileDTOs.createFileDescriptor( _file );
-            else
-                throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
         }
         
         return file;

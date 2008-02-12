@@ -21,7 +21,6 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class FileEntityPK implements Serializable
 {
-
     @Column(name = "ACCOUNT", nullable = false)
     private String account;
 

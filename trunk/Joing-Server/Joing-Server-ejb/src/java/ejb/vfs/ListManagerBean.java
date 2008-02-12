@@ -65,9 +65,9 @@ public class ListManagerBean
     public List<FileDescriptor> getChilds( String sSessionId, int nFileDirId )
            throws JoingServerVFSException
     {
-        String               sAccount = sessionManagerBean.getUserAccount( sSessionId );
         List<FileDescriptor> files    = null;
-            
+        String               sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        
         if( sAccount != null )
         {
             try
@@ -182,15 +182,12 @@ public class ListManagerBean
     private List<FileDescriptor> _getChilds( String sAccount, Integer nFileDirId )
             throws JoingServerVFSException
     {
-        StringBuilder sbQuery = new StringBuilder( 1024 );
-                          sbQuery.append( "SELECT f FROM FileEntity f" )
-                                 .append( " WHERE f.fileEntityPK.idParent = " ).append( nFileDirId )
-                                 .append( "   AND f.account = '" ).append( sAccount ).append( '\'' )    // Enforces security
-                                 .append( "   AND f.is_in_trashcan = 0" );
         try
         {
-            Query query = em.createQuery( sbQuery.toString() );
-
+            Query query = em.createNamedQuery( "FileEntity.findByPath" );
+                  query.setParameter( "account", sAccount );
+                  query.setParameter( "path"   , ""       );
+                  
             return fromEntity2DTO( (List<FileEntity>) query.getResultList() );
         }
         catch( RuntimeException exc )

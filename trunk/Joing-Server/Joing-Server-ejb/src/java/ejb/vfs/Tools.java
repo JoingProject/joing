@@ -37,8 +37,6 @@ import javax.persistence.Query;
  */
 class Tools
 {
-    private static Query qryFindFile = null;
-    
     /**
      * Obtains the FileEntity instance that represents the file or directory
      * passed as String.
@@ -56,23 +54,16 @@ class Tools
            throws JoingServerVFSException
     {
         FileEntity _file = null;
-                           // Path must start from root
+                              // Path must start from root
         if( sFullName != null && sFullName.trim().charAt( 0 ) == '/' )
         {
             sFullName = sFullName.trim();
 
             try
             {
-                if( qryFindFile == null )
-                {
-                    qryFindFile = em.createQuery( "SELECT f FROM FileEntity f"   +
-                                                  " WHERE f.account  = :account" +
-                                                  "   AND f.fullPath = :fullPath"+
-                                                  "   AND f.fileName = :name" );
-                }
-                
-                String sPath = null;
-                String sName = null;
+                Query  qryFindFile = em.createNamedQuery( "FileEntity.findByPK" );
+                String sPath       = null;
+                String sName       = null;
                 
                 if( sFullName.equals( "/" ) )
                 {
@@ -87,9 +78,9 @@ class Tools
                     sPath = sPath.substring( 0, nIndex );
                 }
                 
-                qryFindFile.setParameter( "account" , sAccount );
-                qryFindFile.setParameter( "fullPath", sPath    );
-                qryFindFile.setParameter( "name"    , sName    );
+                qryFindFile.setParameter( "account", sAccount );
+                qryFindFile.setParameter( "path"   , sPath    );
+                qryFindFile.setParameter( "name"   , sName    );
                 
                 try
                 {
