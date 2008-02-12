@@ -54,8 +54,6 @@ public class VFSFile extends File
     private FileDescriptor fdParent = null;   // Used only to create files and dirs
     private String         sChild   = null;   // Used only to create files and dirs
     
-    
-    
     //------------------------------------------------------------------------//
     
     /**
@@ -86,8 +84,11 @@ public class VFSFile extends File
         
         sFullName = sFullName.trim();
         
-        if( sFullName.charAt( 0 ) != '/' )
-            throw new IllegalArgumentException( "Name must be absolute (starting with '/')" );
+        if( sFullName.length() == 0 )
+            throw new IllegalArgumentException( "Name can not be empty." );
+        
+         if( sFullName.charAt( 0 ) != '/' )
+            throw new IllegalArgumentException( "Name must be absolute (starting with '/')." );
         
         // If fd == null, then file or dir not exists
         fd = RuntimeFactory.getPlatform().getBridge().getFileBridge().getFile( sFullName );
@@ -313,7 +314,12 @@ public class VFSFile extends File
     @Override
     public VFSFile getParentFile() throws JoingServerVFSException
     {
-        return (exists() ? new VFSFile( getParent() ) : null);
+        String sParent = getParent();
+        
+        if( exists() && sParent != null && sParent.length() > 0 )
+            return new VFSFile( getParent() );
+        else
+            return null;
     }
     
     /**
@@ -634,10 +640,12 @@ public class VFSFile extends File
     // By contract has to return null instead of empty array
     public static VFSFile[] listRoots() throws JoingServerVFSException
     {
-        // TODO: leer los roots del Servidor
+//        List<FileDescriptor> lstRoots = RuntimeFactory.getPlatform().getBridge().getFileBridge().getRoots();
+                
+//        return lstRoots.toArray( new VFSFile[0] );  // Collection to array
+        // FIXME: Quitar esto y probar las líneas de arriba
         VFSFile[] afRoot = new VFSFile[1];
         afRoot[0] = new VFSFile( "/" );
-        System.out.println(afRoot[0].getAbsolutePath());
         return afRoot;
     }
 
