@@ -15,15 +15,21 @@ import java.awt.Component;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileSystemView;
+import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.desktop.Desktop;
 import org.joing.common.desktopAPI.desktop.DesktopListener;
+import org.joing.common.desktopAPI.pane.DeskFrame;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.common.desktopAPI.taskbar.TaskBar;
 import org.joing.pde.desktop.taskbar.PDETaskBar;
 import org.joing.pde.desktop.workarea.PDEWallpaper;
 import org.joing.pde.swing.EventListenerList;
+import org.joing.pde.vfs.JoingFileSystemView;
 
 /**
  *
@@ -69,7 +75,6 @@ public class PDEDesktop extends JPanel implements Desktop
                 addWorkArea( new PDEWorkArea() );
             
             setActiveWorkArea( getWorkAreas().get( 0 ) );
-            
             createTestComponents( getWorkAreas().get( 0 ) );   // TODO: quitarlo
         }
         else
@@ -104,14 +109,48 @@ public class PDEDesktop extends JPanel implements Desktop
     
     private void createTestComponents( WorkArea wa )  // TODO: quitar este metodo
     {
-        PDEWallpaper wp0 = new PDEWallpaper();
-                     wp0.setImage( new ImageIcon( "/home/fmorero/Imágenes/iconos/duke/starwars.png" ) );
+        PDEWallpaper wp0 = (PDEWallpaper) getWorkAreas().get( 0 ).getWallpaper();
+        
+        if( wp0 == null )
+            wp0 = new PDEWallpaper();
+        
+        wp0.setImage( new ImageIcon( "/home/fmorero/Imágenes/iconos/duke/starwars.png" ) );
         getWorkAreas().get( 0 ).setWallpaper( wp0 );
         
-        PDEWallpaper wp1 = new PDEWallpaper();
-                     wp1.setImage( new ImageIcon( "/home/fmorero/Imágenes/reflections.jpg" ) );
+        PDEWallpaper wp1 =  (PDEWallpaper) getWorkAreas().get( 1 ).getWallpaper();
+        
+        if( wp1 == null )
+            wp1 = new PDEWallpaper();
+        
+        wp1.setImage( new ImageIcon( "/home/fmorero/Imágenes/reflections.jpg" ) );
         getWorkAreas().get( 1 ).setWallpaper( wp1 );
         
+//        SwingUtilities.invokeLater( new Runnable() 
+//        {
+//            public void run()
+//            {
+//        
+//                DeskFrame frame = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().createFrame();
+//                          frame.setTitle( "User Information" );
+//                          frame.add( (DeskComponent) new MyFileChooser( JoingFileSystemView.getFileSystemView() ) );
+//        
+//                org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
+//            }
+//        } );
+        
+// FIXME: Las dialog funcionan de un modo raro, porque a diferencia de las Frames, hay que hacerles 
+//        el setVisible( true ) y además no se añaden al workarea (esto no es grave) y lo peor es que el
+//        método setVisible( ... ) no forma parte del interface DeskDialog, sino de la clase PDEDialog.
+//        SwingUtilities.invokeLater( new Runnable()
+//        {
+//            public void run()
+//            {
+//                DeskDialog dialog = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().createDialog();
+//                           dialog.setTitle( "Testing File Chosser" );
+//                           dialog.add( (DeskComponent) new EditUser() );
+//                   ///((PDEDialog)dialog).setVisible( true );
+//            }
+//        } );
         /*NasaPhoto nasa = new NasaPhoto();
                   nasa.setBounds( 10,350, nasa.getPreferredSize().width, nasa.getPreferredSize().height );
         wa.add( nasa );
@@ -315,5 +354,15 @@ public class PDEDesktop extends JPanel implements Desktop
         // Process the al last to first, notifying
         for( int n = al.length -1; n >= 0; n-- )
              al[n].taskBarRemoved( tb );
+    }
+    
+    //---------------------------------------------------------------------------------------------------//
+    
+    private final class MyFileChooser extends JFileChooser implements DeskComponent
+    {
+        private MyFileChooser( FileSystemView fsv )
+        {
+            super( fsv );
+        }
     }
 }
