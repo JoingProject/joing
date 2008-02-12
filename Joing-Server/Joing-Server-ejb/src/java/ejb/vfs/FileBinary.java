@@ -21,7 +21,6 @@
  */
 package ejb.vfs;
 
-import ejb.Constant;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 

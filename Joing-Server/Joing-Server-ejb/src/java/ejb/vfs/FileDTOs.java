@@ -9,12 +9,10 @@
 
 package ejb.vfs;
 
-import ejb.Constant;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
 import org.joing.common.dto.vfs.FileBinary;
@@ -76,38 +74,37 @@ class FileDTOs
             nSize = FileSystemTools.getFileSize( fromFileEntity.getFileEntityPK().getAccount(), 
                                                  fromFileEntity.getIdFile() );
         
-        //toFileDescriptor.setAccount      = _file.getFileEntityPK().getAccount();
+        toFileDescriptor.setAccount(    fromFileEntity.getFileEntityPK().getAccount()  );
         toFileDescriptor.setName(       fromFileEntity.getFileEntityPK().getFileName() );
         toFileDescriptor.setPath(       fromFileEntity.getFileEntityPK().getFilePath() );
         
         toFileDescriptor.setIdFile(     fromFileEntity.getIdFile()     );
         toFileDescriptor.setDirectory(  fromFileEntity.getIsDir() != 0 );
-        toFileDescriptor.setIdOriginal( fromFileEntity.getIdOriginal() );
+        toFileDescriptor.setIdOriginal( (fromFileEntity.getIdOriginal() == null ? -1 : fromFileEntity.getIdOriginal()) );
         toFileDescriptor.setOwner(      fromFileEntity.getOwner()      );
         toFileDescriptor.setLockedBy(   fromFileEntity.getLockedBy()   );
-        
-        toFileDescriptor.setHidden(     fromFileEntity.getIsHidden()     != 0 );
-        toFileDescriptor.setPublic(     fromFileEntity.getIsPublic()     != 0 );
-        toFileDescriptor.setReadable(   fromFileEntity.getIsReadable()   != 0 );
-        toFileDescriptor.setModifiable( fromFileEntity.getIsModifiable() != 0 );
-        toFileDescriptor.setDeleteable( fromFileEntity.getIsDeleteable() != 0 );
-        toFileDescriptor.setExecutable( fromFileEntity.getIsExecutable() != 0 );
-        toFileDescriptor.setDuplicable( fromFileEntity.getIsDuplicable() != 0 );
-        toFileDescriptor.setAlterable(  fromFileEntity.getIsAlterable()  != 0 );
-        toFileDescriptor.setInTrashcan( fromFileEntity.getIsInTrashcan() != 0 );
+        toFileDescriptor.setHidden(     fromFileEntity.getIsHidden().intValue()     != 0 );
+        toFileDescriptor.setPublic(     fromFileEntity.getIsPublic().intValue()     != 0 );
+        toFileDescriptor.setReadable(   fromFileEntity.getIsReadable().intValue()   != 0 );
+        toFileDescriptor.setModifiable( fromFileEntity.getIsModifiable().intValue() != 0 );
+        toFileDescriptor.setDeleteable( fromFileEntity.getIsDeleteable().intValue() != 0 );
+        toFileDescriptor.setExecutable( fromFileEntity.getIsExecutable().intValue() != 0 );
+        toFileDescriptor.setDuplicable( fromFileEntity.getIsDuplicable().intValue() != 0 );
+        toFileDescriptor.setAlterable(  fromFileEntity.getIsAlterable().intValue()  != 0 );
+        toFileDescriptor.setInTrashcan( fromFileEntity.getIsInTrashcan().intValue() != 0 );
         
         toFileDescriptor.setCreated(    fromFileEntity.getCreated()  );
         toFileDescriptor.setModified(   fromFileEntity.getModified() );
         toFileDescriptor.setAccessed(   fromFileEntity.getAccessed() );
         toFileDescriptor.setNotes(      fromFileEntity.getNotes()    );
-        toFileDescriptor.setSize( nSize );
+        toFileDescriptor.setSize(       nSize );
     }
     
     static void transfer( FileDescriptor fromFileDescriptor, FileEntity toFileEntity )
     {
         // This field allows to indentify uniquely the File faster than using the PK
         toFileEntity.setIdFile(     fromFileDescriptor.getId() );
-        toFileEntity.setIdOriginal( fromFileDescriptor.getIdOriginal() );
+        toFileEntity.setIdOriginal( (fromFileDescriptor.getIdOriginal() == -1 ? null : fromFileDescriptor.getIdOriginal()) );
         toFileEntity.setOwner(      fromFileDescriptor.getOwner()      );
         toFileEntity.setLockedBy(   fromFileDescriptor.getLockedBy()   );
         toFileEntity.setIsDir( (short)(fromFileDescriptor.isDirectory() ? 1 : 0) );
