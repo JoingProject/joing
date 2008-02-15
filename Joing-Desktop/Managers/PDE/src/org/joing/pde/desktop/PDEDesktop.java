@@ -125,18 +125,18 @@ public class PDEDesktop extends JPanel implements Desktop
         wp1.setImage( new ImageIcon( "/home/fmorero/Imágenes/reflections.jpg" ) );
         getWorkAreas().get( 1 ).setWallpaper( wp1 );
         
-//        SwingUtilities.invokeLater( new Runnable() 
-//        {
-//            public void run()
-//            {
-//        
-//                DeskFrame frame = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().createFrame();
-//                          frame.setTitle( "User Information" );
-//                          frame.add( (DeskComponent) new MyFileChooser( JoingFileSystemView.getFileSystemView() ) );
-//        
-//                org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
-//            }
-//        } );
+        SwingUtilities.invokeLater( new Runnable() 
+        {
+            public void run()
+            {
+        
+                DeskFrame frame = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().createFrame();
+                          frame.setTitle( "User Information" );
+                          frame.add( (DeskComponent) new MyFileChooser( JoingFileSystemView.getFileSystemView() ) );
+        
+                org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
+            }
+        } );
         
 // FIXME: Las dialog funcionan de un modo raro, porque a diferencia de las Frames, hay que hacerles 
 //        el setVisible( true ) y además no se añaden al workarea (esto no es grave) y lo peor es que el
