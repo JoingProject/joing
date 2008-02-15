@@ -10,7 +10,7 @@
 package ejb.app;
 
 import ejb.Constant;
-import ejb.vfs.FileSystemTools;
+import ejb.vfs.NativeFileSystemTools;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -103,7 +103,7 @@ class AppDTOs
             sExec = sExtraPath +"/"+ sExec;
         }
         
-        java.io.File fApp = FileSystemTools.getApplication( sExec );
+        java.io.File fApp = NativeFileSystemTools.getApplication( sExec );
         
         btContent = new byte[ (int) fApp.length() ];
         

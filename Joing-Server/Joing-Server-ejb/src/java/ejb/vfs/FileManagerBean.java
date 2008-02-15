@@ -57,7 +57,7 @@ import org.joing.common.exception.JoingServerVFSException;
  */
 @Stateless
 public class FileManagerBean 
-       implements FileManagerRemote, FileManagerLocal, Serializable
+       implements FileManagerRemote, FileManagerLocal, Serializable 
 {
     private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
     
@@ -80,7 +80,7 @@ public class FileManagerBean
         
         if( sAccount != null )
         {
-            FileEntity _file = Tools.path2File( em, sAccount, sFullName );
+            FileEntity _file = VFSTools.path2File( em, sAccount, sFullName );
             
             if( _file != null )
                 file = FileDTOs.createFileDescriptor( _file );
@@ -90,7 +90,7 @@ public class FileManagerBean
     }
     
     // This method does not need to implement the logic to handle (validate) file 
-    // attributes): the logic (validation) is done by class FileDescriptor.
+    // attributes: the logic (validation) is done by class FileDescriptor.
     // In this way, there is no need to send file attributes from Client to the 
     // Server in order to be validated.
     public FileDescriptor updateFile( String sSessionId, FileDescriptor fileIn )
@@ -103,9 +103,9 @@ public class FileManagerBean
         {
             try
             {
-                if( ! isFileInUserSpace( sAccount, fileIn.getId() ) )
+                if( ! isFileInUserSpace( sAccount, fileIn ) )
                     throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
-                    
+                
                 if( ! fileIn.getOwner().equals( sAccount ) )
                     throw new JoingServerVFSException( JoingServerVFSException.INVALID_OWNER );
                 
@@ -118,7 +118,7 @@ public class FileManagerBean
                 
                 // Attribute name is changed
                 String sNameNew = fileIn.getName();
-                String sNameOld = _file.getFileEntityPK().getFileName();
+                String sNameOld = _file.getFileName();
                 
                 if( (! sNameOld.equals( sNameNew )) && (sNameNew != null) )
                 {
@@ -127,10 +127,10 @@ public class FileManagerBean
                     if( sNameErrors.length() > 0 )
                         throw new JoingServerVFSException( sNameErrors );
 
-                    if( existsName( sAccount, _file.getFileEntityPK().getFilePath(), sNameNew ) )
+                    if( existsName( sAccount, _file.getFilePath(), sNameNew ) )
                         throw new JoingServerVFSException( JoingServerVFSException.FILE_NAME_EXISTS );
                     
-                    _file.getFileEntityPK().setFileName( sNameNew );
+                    _file.setFileName( sNameNew );
                 }
                 
                 _file.setAccessed( new Date() );  // Modified is only when modifiying contents
@@ -179,22 +179,22 @@ public class FileManagerBean
         
         if( sAccount != null )
         {
-            if( ! isFileInUserSpace( sAccount, nFileId ) )
-                throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
-
-            if( ! fileText.isReadable() )
-                throw new JoingServerVFSException( JoingServerVFSException.NOT_READABLE );
-            
             try
             {
                 FileEntity _file = em.find( FileEntity.class, nFileId );
-                
-                if( _file != null )
-                {
-                    _file.setAccessed( new Date() );
-                    em.persist( _file );
-                    fileText = FileDTOs.createFileText( _file );
-                }
+         
+                if( _file == null )
+                    throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
+            
+                if( ! isFileInUserSpace( sAccount, _file ) )
+                    throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
+
+                if( _file.getIsReadable() == 0 )
+                    throw new JoingServerVFSException( JoingServerVFSException.NOT_READABLE );
+
+                _file.setAccessed( new Date() );
+                em.persist( _file );
+                fileText = FileDTOs.createFileText( _file );
             }
             catch( RuntimeException exc )
             {
@@ -224,23 +224,23 @@ public class FileManagerBean
         
         if( sAccount != null )
         {
-            if( ! isFileInUserSpace( sAccount, nFileId ) )
-                throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
-            
-            if( ! fileBinary.isReadable() )
-                throw new JoingServerVFSException( JoingServerVFSException.NOT_READABLE );
-            
             try
             {
                 FileEntity _file = em.find( FileEntity.class, nFileId );
                 
-                if( _file != null )
-                {
-                    _file.setAccessed( new Date() );
-                    em.persist( _file );
+                if( _file == null )
+                    throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
+                
+                if( ! isFileInUserSpace( sAccount, _file ) )
+                    throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
 
-                    fileBinary = FileDTOs.createFileBinary( _file );
-                }
+                if( ! fileBinary.isReadable() )
+                    throw new JoingServerVFSException( JoingServerVFSException.NOT_READABLE );
+                    
+                _file.setAccessed( new Date() );
+                em.persist( _file );
+
+                fileBinary = FileDTOs.createFileBinary( _file );
             }
             catch( RuntimeException exc )
             {
@@ -275,7 +275,7 @@ public class FileManagerBean
         
         if( sAccount != null )
         {
-            if( ! isFileInUserSpace( sAccount, fileText.getId() ) )
+            if( ! isFileInUserSpace( sAccount, fileText ) )
                 throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
             
             if( ! fileText.isModifiable() )
@@ -289,7 +289,7 @@ public class FileManagerBean
             
             try
             {
-                java.io.File       fNative  = FileSystemTools.getFile( sAccount, fileText.getId() );   
+                java.io.File       fNative  = NativeFileSystemTools.getFile( sAccount, fileText.getId() );   
                 BufferedReader     reader   = fileText.getContent();
                 OutputStreamWriter writer   = new OutputStreamWriter( new FileOutputStream( fNative ), "UTF16" );
                 char[]             acBuffer = new char[ 1024*8 ];
@@ -312,7 +312,7 @@ public class FileManagerBean
                            _file.setModified( new Date() );
                 em.persist( _file );
                 fileDesc = FileDTOs.createFileDescriptor( _file );
-                fileDesc.setSize( FileSystemTools.getFileSize( sAccount, fileText.getId() ) );
+                fileDesc.setSize( NativeFileSystemTools.getFileSize( sAccount, fileText.getId() ) );
             }
             catch( RuntimeException exc )
             {
@@ -342,7 +342,7 @@ public class FileManagerBean
         
         if( sAccount != null )
         {
-            if( ! isFileInUserSpace( sAccount, fileBinary.getId() ) )
+            if( ! isFileInUserSpace( sAccount, fileBinary ) )
                 throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
             
             if( ! fileBinary.isModifiable() )
@@ -356,7 +356,7 @@ public class FileManagerBean
             
             try
             {
-                java.io.File     fNative  = FileSystemTools.getFile( sAccount, fileBinary.getId() );   
+                java.io.File     fNative  = NativeFileSystemTools.getFile( sAccount, fileBinary.getId() );   
                 InputStream      reader   = fileBinary.getContent();
                 FileOutputStream writer   = new FileOutputStream( fNative );
                 byte[]           abBuffer = new byte[ 1024*8 ];
@@ -379,7 +379,7 @@ public class FileManagerBean
                            _file.setModified( new Date() );
                 em.persist( _file );
                 fileDesc = FileDTOs.createFileDescriptor( _file );
-                fileDesc.setSize( FileSystemTools.getFileSize( sAccount, fileBinary.getId() ) );
+                fileDesc.setSize( NativeFileSystemTools.getFileSize( sAccount, fileBinary.getId() ) );
             }
             catch( RuntimeException exc )
             {
@@ -457,14 +457,10 @@ public class FileManagerBean
         if( sAccount != null )
         {
             for( int n = 0; n <= anFileId.length; n++ )
-            {
-                int[] anErr = _trashCan( sAccount, anFileId[n], bInTrashCan );
-                
-                for( int x = 0; x < anErr.length; x++ )
-                    fileErrors.add( anErr[x] );
-            }
+                fileErrors.addAll( _trashCan( sAccount, anFileId[n], bInTrashCan ) );
         }
         
+        // From Collection to array
         int[] anFileErrors = new int[ fileErrors.size() ];
         
         for( int n = 0; n < fileErrors.size(); n++ )
@@ -476,13 +472,21 @@ public class FileManagerBean
     public int[] trashcan( String sSessionId, int nFileId, boolean bInTrashCan )
            throws JoingServerVFSException
     {
-        String sAccount  = sessionManagerBean.getUserAccount( sSessionId );
-        int[]  anFileErr = new int[0];
+        String             sAccount   = sessionManagerBean.getUserAccount( sSessionId );
+        ArrayList<Integer> fileErrors = new ArrayList<Integer>();
         
         if( sAccount != null )
-            anFileErr = _trashCan( sAccount, nFileId, bInTrashCan );
+        {
+            fileErrors = _trashCan( sAccount, nFileId, bInTrashCan );
+        }
         
-        return anFileErr;
+        // From Collection to array
+        int[] anFileErrors = new int[ fileErrors.size() ];
+        
+        for( int n = 0; n < fileErrors.size(); n++ )
+            anFileErrors[n] = fileErrors.get( n );
+        
+        return anFileErrors;
     }
     
     public int[] delete( String sSessionId, int[] anFileId )
@@ -494,14 +498,10 @@ public class FileManagerBean
         if( sAccount != null )
         {
             for( int n = 0; n <= anFileId.length; n++ )
-            {
-                int[] anErr = _delete( sAccount, anFileId[n] );
-                
-                for( int x = 0; x < anErr.length; x++ )
-                    fileErrors.add( anErr[x] );
-            }
+                fileErrors.addAll( _delete( sAccount, anFileId[n] ) );
         }
         
+        // From Collection to array
         int[] anFileErrors = new int[ fileErrors.size() ];
         
         for( int n = 0; n < fileErrors.size(); n++ )
@@ -513,62 +513,32 @@ public class FileManagerBean
     public int[] delete( String sSessionId, int nFileId )
            throws JoingServerVFSException
     {
-        String sAccount  = sessionManagerBean.getUserAccount( sSessionId );
-        int[]  anFileErr = new int[0];
+        String             sAccount   = sessionManagerBean.getUserAccount( sSessionId );
+        ArrayList<Integer> fileErrors = new ArrayList<Integer>();
         
         if( sAccount != null )
-            anFileErr = _delete( sAccount, nFileId );
-        
-        return anFileErr;
-    }
-    
-    //------------------------------------------------------------------------//
-    // LOCAL INTERFACE
-    /**
-     * This is a method needed just because I can't find a way to return an 
-     * stream from an EJB method (streams can't be serialized).
-     * See coments inside FileManagerBean class code for more information.
-     * <p>
-     * This is the reason why this method is accesible only from @Local.
-     * 
-     * @param sAccount The user account
-     * @param nFileId The result of invokink <code>File.getId()</code>
-     * @param bToWrite <code>true</code> if the file is going to be used to 
-     *        write and <code>false</code> if will be used to read only.
-     */
-    //java.io.File getNativeFile( String sAccount, int nFileId, boolean bToWrite );
-    /*public java.io.File getNativeFile( String sAccount, int nFileId, boolean bToWrite )
-    {
-        java.io.File fNative = null;
-        
-        if( isOwnerOfFile( sAccount, nFileId ) )
-        {            
-            fNative = FileSystemTools.getFile( sAccount, Integer.toString( nFileId ) );
-            
-            FileEntity _file = em.find( FileEntity.class, nFileId );
-                       _file.setAccessed( new Date() );
-                       
-            if( bToWrite )
-                _file.setModified( new Date() );
-            
-            em.persist( _file );
+        {
+            fileErrors = _delete( sAccount, nFileId );
         }
         
-        return fNative;
-    }*/
+        // From Collection to array
+        int[] anFileErrors = new int[ fileErrors.size() ];
+        
+        for( int n = 0; n < fileErrors.size(); n++ )
+            anFileErrors[n] = fileErrors.get( n );
+        
+        return anFileErrors;
+    }
     
     //------------------------------------------------------------------------//
     // LOCAL INTERFACE
     
     public FileEntity createRootEntity( String sAccount )
     {
-        FileEntityPK _fepk = new FileEntityPK();
-                         _fepk.setAccount( sAccount );
-                         _fepk.setFilePath( "" );         // Can't be null
-                         _fepk.setFileName( "/" );
-                         
         FileEntity _file = new FileEntity();
-                   _file.setFileEntityPK( _fepk );    // This method is protected, and therefore it has to be accessed in the same package
+                   _file.setAccount( sAccount );    // Can't be null
+                   _file.setFilePath( "" );         // Can't be null
+                   _file.setFileName( "/" );
                    _file.setOwner( Constant.getSystemName() );   // It's guaranted that will never be Account.equals( SystemName ). (see: sessionManagerBean.isAccountAvailable)
                    _file.setLockedBy( null );
                    _file.setIsDir(        (short) 1 );
@@ -592,7 +562,8 @@ public class FileManagerBean
  
     // Recursively moves files and directories from and to the trashcan
     // If the file is found it can always been moved to and from trashcan.
-    private int[] _trashCan( String sAccount, int nFileId, boolean bInTrashCan )
+    // Note: This method returns an ArrayList instead of int[] to increase overall speed.
+    private ArrayList<Integer> _trashCan( String sAccount, int nFileId, boolean bInTrashCan )
             throws JoingServerVFSException
     {
         ArrayList<Integer> fileErrors = new ArrayList<Integer>();
@@ -604,26 +575,17 @@ public class FileManagerBean
             if( _file == null )
                 throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
             
-            if( ! _file.getFileEntityPK().getAccount().equals( sAccount ) )   // File is not in user disk space
+            if( ! isFileInUserSpace( sAccount, _file ) )
                 throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
 
-            if( _file.getIsDir() != 0 )   // Is a directory
+            if( _file.getIsDir() != 0 )   // Is a directory: get all _file's childs
             {
-                // Get all childs (those which parent is _file)
-                Query query = em.createNamedQuery( "FileEntity.findByIdParent" );
-                      query.setParameter( "idParent", _file.getIdFile() );
-
-                List<FileEntity> _fChilds = (List<FileEntity>) query.getResultList();
-
+                List<FileEntity> _fChilds = VFSTools.getChilds( em, sAccount, _file );
+                
                 for( FileEntity _f : _fChilds )
-                {
-                    int[] err = _trashCan( sAccount, _f.getIdFile(), bInTrashCan );
-                    
-                    if( err.length > 0 )
-                        fileErrors.add( err[0] );
-                }
+                    fileErrors.addAll( _trashCan( sAccount, _f.getIdFile(), bInTrashCan ) );
             }
-            else      // Is a file
+            else                          // Is a file
             {
                 _file.setIsInTrashcan( (short) (bInTrashCan ? 1 : 0) );
                 em.persist( _file );
@@ -640,16 +602,12 @@ public class FileManagerBean
             throw exc;
         }
         
-        int[] anFileErrors = new int[ fileErrors.size() ];
-        
-        for( int n = 0; n < fileErrors.size(); n++ )
-            anFileErrors[n] = fileErrors.get( n );
-        
-        return anFileErrors;
+        return fileErrors;
     }
  
     // Recursively deletes a file or a directory in DB (not in FS)
-    private int[] _delete( String sAccount, int nFileId )
+    // Note: This method returns an ArrayList instead of int[] to increase overall speed.
+    private ArrayList<Integer> _delete( String sAccount, int nFileId )
     {
         ArrayList<Integer> fileErrors = new ArrayList<Integer>();
         
@@ -660,36 +618,27 @@ public class FileManagerBean
             if( _file == null )
                 throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
             
-            if( ! _file.getFileEntityPK().getAccount().equals( sAccount ) )   // File is not in user disk space
+            if( ! isFileInUserSpace( sAccount, _file ) )
                 throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
 
             if( _file.getIsDeleteable() == 0 )   // Marked as not deleteable (to delete: change the attribute and try again)
                 throw new JoingServerVFSException( JoingServerVFSException.NOT_DELETEABLE );
 
-            if( _file.getIsDir() != 0 )  // Is a directory
+            if( _file.getIsDir() != 0 )  // Is a directory: get all _file's childs
             {
-                // Gets all childs (those which parent is _file)
-                Query query = em.createNamedQuery( "FileEntity.findByIdParent" );
-                      query.setParameter( "idParent", _file.getIdFile() );
-
-                List<FileEntity> _fChilds = (List<FileEntity>) query.getResultList();
-
-                for( FileEntity _f : _fChilds )
-                {
-                    int[] err = _delete( sAccount, _f.getIdFile() );
-                    
-                    if( err.length > 0 )
-                        fileErrors.add( err[0] );
-                }
+                List<FileEntity> _fChilds = VFSTools.getChilds( em, sAccount, _file );
                 
-                // Si borro el dir y algunos fics no se han podido borrar se quedarán en el limbo para siempre
+                for( FileEntity _f : _fChilds )
+                    fileErrors.addAll( _delete( sAccount, _f.getIdFile() ) );
+                
+                // Si borrase el dir y algunos fics no se pudieron borrar, se quedarán en el limbo para siempre
                 if( fileErrors.size() == 0 )
                     em.remove( _file );   // Deletes table row (directories only exist in table FILES not in FS)
             }
             else
             {
                 em.remove( _file );
-                if( ! FileSystemTools.deleteFile( sAccount, _file.getIdFile() ) )
+                if( ! NativeFileSystemTools.deleteFile( sAccount, _file.getIdFile() ) )
                     fileErrors.add( _file.getIdFile() );
             }
         }
@@ -704,12 +653,7 @@ public class FileManagerBean
             throw exc;
         }
         
-        int[] anFileErrors = new int[ fileErrors.size() ];
-        
-        for( int n = 0; n < fileErrors.size(); n++ )
-            anFileErrors[n] = fileErrors.get( n );
-        
-        return anFileErrors;
+        return fileErrors;
     }
     
     // Creates a new entry: either a directory or a file
@@ -722,7 +666,7 @@ public class FileManagerBean
         
         if( sAccount != null )
         {
-            FileEntity _feParent = Tools.path2File( em, sAccount, sPath );
+            FileEntity _feParent = VFSTools.path2File( em, sAccount, sPath );
 
             if( _feParent == null )
                 throw new JoingServerVFSException( JoingServerVFSException.PARENT_DIR_NOT_EXISTS );
@@ -730,7 +674,7 @@ public class FileManagerBean
             if( _feParent.getIsDir() == 0 )
                 throw new JoingServerVFSException( JoingServerVFSException.INVALID_PARENT );
             
-            if( ! _feParent.getFileEntityPK().getAccount().equals( sAccount ) )   // Parent is not user disk-space
+            if( ! _feParent.getAccount().equals( sAccount ) )   // Parent is not user disk-space
                 throw new JoingServerVFSException( JoingServerVFSException.PARENT_DIR_NOT_EXISTS );
             
             String sNameErrors = validateName( sChild );
@@ -751,16 +695,13 @@ public class FileManagerBean
                         
                 em.getTransaction().begin();
 
-                FileEntityPK _fepk = new FileEntityPK();
-                             _fepk.setAccount( sFullAccount );
-                             _fepk.setFilePath( sPath  );
-                             _fepk.setFileName( sChild );
-
                 FileEntity _file = new FileEntity();
+                           _file.setAccount( sFullAccount );
+                           _file.setFilePath( sPath  );
+                           _file.setFileName( sChild );
                            _file.setOwner( sFullAccount );
                            _file.setIsDir( (short) (bIsDir ? 1 : 0) );
                            _file.setLockedBy( null );
-                           _file.setFileEntityPK( _fepk );
                            _file.setIsAlterable(  (short) 1 );
                            _file.setIsDeleteable( (short) 1 );
                            _file.setIsDuplicable( (short) 1 );
@@ -776,7 +717,7 @@ public class FileManagerBean
                 em.persist( _file );
 
                 if( ! bIsDir )  // Files exist in FILES table and in host FS, dirs only in FILES
-                    FileSystemTools.createFile( sAccount, _file.getIdFile() );
+                    NativeFileSystemTools.createFile( sAccount, _file.getIdFile() );
                     
                 // If code arrives to this point, everything was OK: now can commit
                 em.getTransaction().commit();
@@ -808,26 +749,8 @@ public class FileManagerBean
         return file;
     }
     
-    // Returns parent Entity based on its ID, or null if it does not exists.
-    private FileEntity getParentEntity( int nParentId )
-            throws JoingServerVFSException
-    {
-        FileEntity _feParent = null;
-        
-        try
-        {
-            _feParent = em.find( FileEntity.class, nParentId );
-        }
-        catch( RuntimeException exc )
-        {
-            Constant.getLogger().throwing( getClass().getName(), "getParentEntity(...)", exc );
-            throw new JoingServerVFSException( JoingServerException.ACCESS_DB, exc );
-        }
-        
-        return _feParent;
-    }
-    
     // Checks if a file name already exists
+    // Note: a file exists even if it is in the trashcan ('cause it can be moved back)
     private boolean existsName( String sAccount, String sPath, String sName )
             throws JoingServerVFSException
     {
@@ -835,13 +758,7 @@ public class FileManagerBean
         
         try
         {
-            Query query = em.createQuery( "SELECT a FROM ApplicationEntity a"+
-                                          " WHERE a.account  = :account"+
-                                          "   AND a.filePath = :path"+
-                                          "   AND a.fileName = :name" );
-            
-            if( sAccount.indexOf( '@' ) == -1 )
-                sAccount = sAccount +'@'+ Constant.getSystemName();
+            Query query = em.createNamedQuery( "FileEntity.findByPathAndName" );
             
             query.setParameter( "account", sAccount );
             query.setParameter( "path"   , sPath    );
@@ -865,11 +782,28 @@ public class FileManagerBean
     // access to it because the file is stored in his/her disk space.
     // This is just a security meassure against people trying to explode Join'g
     // (by sending random file Ids)
-    private boolean isFileInUserSpace( String sAccount, int nIdFile )
+    private boolean isFileInUserSpace( String sAccount, FileEntity _file )
     {
-        FileEntity _file = em.find( FileEntity.class, nIdFile );
+        if( _file.getAccount().equals( sAccount ) )            // Account got from SessionId and Account from FileEntity match.
+        {
+            FileEntity _fReal = em.find( FileEntity.class, _file.getIdFile() );  // Get the real FileEntity from DB that corresponds to passed _file (by Id)
         
-        return _file.getFileEntityPK().getAccount().equals( sAccount );
+            return _fReal.getAccount().equals( sAccount );     // Compare both accounts  (Note: sAccount was already compared 2 lines above)
+        }
+        
+        return false;
+    }
+    
+    private boolean isFileInUserSpace( String sAccount, FileDescriptor fd )
+    {
+        if( fd.getAccount() != null && fd.getAccount().equals( sAccount ) )   // Account got from SessionId and Account from FileDescriptor match.
+        {
+            FileEntity _fReal = em.find( FileEntity.class, fd.getId() );      // Get the real FileEntity from DB that corresponds to passed _file (by Id)
+        
+            return _fReal.getAccount().equals( sAccount );  // Compare both accounts  (Note: sAccount was already compared 2 lines above)
+        }
+        
+        return false;
     }
     
     // Is this a valid name for a file or directory?

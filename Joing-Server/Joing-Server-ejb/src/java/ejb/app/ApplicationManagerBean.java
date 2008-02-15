@@ -444,7 +444,7 @@ public class ApplicationManagerBean
                 conn.close();
             }
             } catch (SQLException sqle) {
-                
+                sqle.printStackTrace();
             }
         }
     }

@@ -2,7 +2,7 @@
 --     WebPC - SERVER - DATA
 -- ********************************************************************************************************************
 
-insert into locales (IDIOM, COUNTRY)    -- ID_LOCALE = 2
+insert into locales (IDIOM, COUNTRY)  -- ID_LOCALE = 2
      values ('es', 'ES');
 
 -- ------------------------------------------------------------------
@@ -58,13 +58,22 @@ insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, FILE_TYP
      values ('Notes', '0.1', 'accessories', 'Notes.jar', 'txt;ini', 3, '1.5');
 
 insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, ENVIRONMENT, ENVIRON_VER)
-     values ('Calculator', '2.4', 'accessories', 'Calculator.jar', 3, '1.5');
+     values ('BasicCalculator', '2.4', 'accessories', 'BasicCalculator.jar', 3, '1.5');
 
 insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, ENVIRONMENT, ENVIRON_VER)
      values ('Images', '1.1', 'graphics', 'Images.jar', 3, '1.5');
 
 insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, ENVIRONMENT, ENVIRON_VER)
      values ('Tetris', '0.5', 'games', 'Tetris.jar', 3, '1.2');
+
+insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, ENVIRONMENT, ENVIRON_VER)
+     values ('Pacman', '0.5', 'games', 'Pacman.jar', 3, '1.2');
+
+insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, ENVIRONMENT, ENVIRON_VER)
+     values ('ProxyConfig', '0.5', 'system', 'ProxyConfig.jar', 3, '1.5');
+
+insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, ENVIRONMENT, ENVIRON_VER)
+     values ('SystemMonitor', '0.5', 'system', 'SystemMonitor.jar', 3, '1.5');
 
 -- ------------------------------------------------------------------
 
@@ -81,10 +90,10 @@ insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
      values (2, 2, 'Un editor de textos muy simple' );
 
 insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
-     values (3, 1, 'Calculator - Basic and Scientific' );
+     values (3, 1, 'Calculator - Very basic calculator with paper' );
 
 insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
-     values (3, 2, 'Calculadora - Básica y Científica' );
+     values (3, 2, 'Calculadora - Básica con papel' );
 
 insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
      values (4, 1, 'Simple image viewer with support for several graphic formats' );
@@ -98,10 +107,28 @@ insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
 insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
      values (5, 2, 'Tetris: tan divertido como simple' );
 
+insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
+     values (6, 1, 'Pacman: the old good times' );
+
+insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
+     values (6, 2, 'Pacman: como en los viejos tiempos' );
+
+insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
+     values (7, 1, 'ProxyConfig: proxy configuration tool' );
+
+insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
+     values (7, 2, 'ProxyConfig: utilidad para configuración del proxy' );
+
+insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
+     values (8, 1, 'SystemMonitor: system monitor' );
+
+insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
+     values (8, 2, 'SystemMonitor: monitor del systema' );
+
 -- ------------------------------------------------------------------
 
 insert into apps_with_groups (ID_APPLICATION, ID_APP_GROUP)
-     values (1, 99);   -- App 'PDE' belongs to Group 'Desktops'
+     values (1, 99);  -- App 'PDE' belongs to Group 'Desktops'
 
 insert into apps_with_groups (ID_APPLICATION, ID_APP_GROUP)
      values (2, 1);   -- App 'Notes' belongs to Group 'Accessories'
@@ -113,7 +140,16 @@ insert into apps_with_groups (ID_APPLICATION, ID_APP_GROUP)
      values (4, 4);   -- App 'Images' belongs to Group 'Graphics'
 
 insert into apps_with_groups (ID_APPLICATION, ID_APP_GROUP)
-     values (5, 3);   -- App 'Images' belongs to Group 'Games'
+     values (5, 3);   -- App 'Tetris' belongs to Group 'Games'
+
+insert into apps_with_groups (ID_APPLICATION, ID_APP_GROUP)
+     values (6, 3);   -- App 'pacman' belongs to Group 'Games'
+
+insert into apps_with_groups (ID_APPLICATION, ID_APP_GROUP)
+     values (7, 9);   -- App 'ProxyConfig' belongs to Group 'System'
+
+insert into apps_with_groups (ID_APPLICATION, ID_APP_GROUP)
+     values (8, 9);   -- App 'SystemMonitor' belongs to Group 'System'
 
 -- ------------------------------------------------------------------
 
@@ -122,6 +158,21 @@ insert into app_preferred (ID_APPLICATION, FILE_EXTENSION)
 
 insert into app_preferred (ID_APPLICATION, FILE_EXTENSION)
      values (1, 'ini');
+
+insert into app_preferred (ID_APPLICATION, FILE_EXTENSION)
+     values (4, 'png');
+
+insert into app_preferred (ID_APPLICATION, FILE_EXTENSION)
+     values (4, 'gif');
+
+insert into app_preferred (ID_APPLICATION, FILE_EXTENSION)
+     values (4, 'bmp');
+
+insert into app_preferred (ID_APPLICATION, FILE_EXTENSION)
+     values (4, 'jpg');
+
+insert into app_preferred (ID_APPLICATION, FILE_EXTENSION)
+     values (4, 'jpeg');
 
 -- ------------------------------------------------------------------
 
@@ -132,13 +183,22 @@ insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
      values ('peyrona@joing.peyrona.com', 2, 1);
 
 insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.peyrona.com', 3, 0);
+     values ('peyrona@joing.peyrona.com', 3, 1);
 
 insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.peyrona.com', 4, 0);
+     values ('peyrona@joing.peyrona.com', 4, 1);
 
 insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.peyrona.com', 5, 0);
+     values ('peyrona@joing.peyrona.com', 5, 1);
+
+insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
+     values ('peyrona@joing.peyrona.com', 6, 1);
+
+insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
+     values ('peyrona@joing.peyrona.com', 7, 0);
+
+insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
+     values ('peyrona@joing.peyrona.com', 8, 0);
 
 -- ------------------------------------------------------------------
 

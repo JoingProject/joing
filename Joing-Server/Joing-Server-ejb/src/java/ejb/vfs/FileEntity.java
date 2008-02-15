@@ -12,8 +12,8 @@ package ejb.vfs;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -29,32 +29,40 @@ import javax.persistence.TemporalType;
 @Table(name = "FILES")
 @NamedQueries(
     {
-        @NamedQuery(name  = "FileEntity.findByPK",
+        @NamedQuery(name  = "FileEntity.findByPathAndName",
                     query = "SELECT f FROM FileEntity f"+
-                            " WHERE f.fileEntityPK.account  = :account"+
-                            "   AND f.fileEntityPK.filePath = :path"+
-                            "   AND f.fileEntityPK.fileName = :name"),
+                            " WHERE f.account  = :account"+
+                            "   AND f.filePath = :path"+
+                            "   AND f.fileName = :name"),
         
         @NamedQuery(name  = "FileEntity.findByPath",
                     query = "SELECT f FROM FileEntity f"+
-                            " WHERE f.fileEntityPK.filePath = :path"+
-                            "   AND f.fileEntityPK.account  = :account"+
-                            "   AND f.is_in_trashcan = 0" )
+                            " WHERE f.account  = :account"+
+                            "   AND f.filePath = :path" ),
+                            
+        @NamedQuery(name  = "FileEntity.findInTrashcan",
+                    query = "SELECT f FROM FileEntity f"+
+                            " WHERE f.account        = :account"+
+                            "   AND f.is_in_trashcan = 1" )
     } )
     
 public class FileEntity implements Serializable
 {
-    /**
-     * EmbeddedId primary key field
-     */
-    @EmbeddedId
-    protected FileEntityPK fileEntityPK;
-
+    @Id
     @Column(name = "ID_FILE", nullable = false)
     private int idFile;
 
     @Column(name = "ID_ORIGINAL")
     private Integer idOriginal;
+    
+    @Column(name = "ACCOUNT", nullable = false)
+    private String account;
+
+    @Column(name = "FILE_PATH", nullable = false)
+    private String filePath;
+
+    @Column(name = "FILE_NAME")
+    private String fileName;
 
     @Column(name = "OWNER", nullable = false)
     private String owner;
@@ -113,57 +121,6 @@ public class FileEntity implements Serializable
     }
 
     /**
-     * Creates a new instance of FileEntity with the specified values.
-     * @param fileEntityPK the fileEntityPK of the FileEntity
-     */
-    public FileEntity(FileEntityPK fileEntityPK)
-    {
-        this.fileEntityPK = fileEntityPK;
-    }
-
-    /**
-     * Creates a new instance of FileEntity with the specified values.
-     * @param fileEntityPK the fileEntityPK of the FileEntity
-     * @param idFile the idFile of the FileEntity
-     * @param owner the owner of the FileEntity
-     */
-    public FileEntity(FileEntityPK fileEntityPK, int idFile, String owner)
-    {
-        this.fileEntityPK = fileEntityPK;
-        this.idFile = idFile;
-        this.owner = owner;
-    }
-
-    /**
-     * Creates a new instance of FileEntityPK with the specified values.
-     * @param fileName the fileName of the FileEntityPK
-     * @param filePath the filePath of the FileEntityPK
-     * @param account the account of the FileEntityPK
-     */
-    public FileEntity(String fileName, String filePath, String account)
-    {
-        this.fileEntityPK = new FileEntityPK(fileName, filePath, account);
-    }
-
-    /**
-     * Gets the fileEntityPK of this FileEntity.
-     * @return the fileEntityPK
-     */
-    public FileEntityPK getFileEntityPK()
-    {
-        return this.fileEntityPK;
-    }
-
-    /**
-     * Sets the fileEntityPK of this FileEntity to the specified value.
-     * @param fileEntityPK the new fileEntityPK
-     */
-    public void setFileEntityPK(FileEntityPK fileEntityPK)
-    {
-        this.fileEntityPK = fileEntityPK;
-    }
-
-    /**
      * Gets the idFile of this FileEntity.
      * @return the idFile
      */
@@ -171,7 +128,7 @@ public class FileEntity implements Serializable
     {
         return this.idFile;
     }
-
+    
     /**
      * Sets the idFile of this FileEntity to the specified value.
      * @param idFile the new idFile
@@ -197,6 +154,60 @@ public class FileEntity implements Serializable
     public void setIdOriginal(Integer idOriginal)
     {
         this.idOriginal = idOriginal;
+    }
+
+    /**
+     * Gets the account of this FileEntityPK.
+     * @return the account
+     */
+    public String getAccount()
+    {
+        return this.account;
+    }
+
+    /**
+     * Sets the account of this FileEntityPK to the specified value.
+     * @param account the new account
+     */
+    public void setAccount(String account)
+    {
+        this.account = account;
+    }
+
+    /**
+     * Gets the filePath of this FileEntityPK.
+     * @return the filePath
+     */
+    public String getFilePath()
+    {
+        return this.filePath;
+    }
+
+    /**
+     * Sets the filePath of this FileEntityPK to the specified value.
+     * @param filePath the new filePath
+     */
+    public void setFilePath(String filePath)
+    {
+        this.filePath = filePath;
+    }
+
+    /**
+     * Gets the fileName of this FileEntityPK.
+     * @return the fileName
+     */
+    public String getFileName()
+    {
+        return this.fileName;
+    }
+
+    /**
+     * Sets the fileName of this FileEntityPK to the specified value.
+     * @param fileName the new fileName
+     */
+    public void setFileName(String fileName)
+    {
+        this.fileName = fileName;
     }
 
     /**
@@ -495,8 +506,7 @@ public class FileEntity implements Serializable
     @Override
     public int hashCode()
     {
-        int hash = 0;
-        hash += (this.fileEntityPK != null ? this.fileEntityPK.hashCode() : 0);
+        int hash = idFile;
         return hash;
     }
 
@@ -512,12 +522,12 @@ public class FileEntity implements Serializable
     public boolean equals(Object object)
     {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof FileEntity)) {
+        if( !(object instanceof FileEntity) )
             return false;
-        }
+        
         FileEntity other = (FileEntity)object;
-        if (this.fileEntityPK != other.fileEntityPK && (this.fileEntityPK == null || !this.fileEntityPK.equals(other.fileEntityPK))) return false;
-        return true;
+        
+        return idFile == other.getIdFile();
     }
 
     /**
@@ -528,7 +538,6 @@ public class FileEntity implements Serializable
     @Override
     public String toString()
     {
-        return "ejb.vfs.FileEntity[fileEntityPK=" + fileEntityPK + "]";
-    }
-    
+        return "ejb.vfs.FileEntity[name="+ filePath +"/"+ fileName +"account="+ account +"]";
+    }   
 }

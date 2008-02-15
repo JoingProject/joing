@@ -71,18 +71,17 @@ class FileDTOs
         long nSize = 0;
         
         if( fromFileEntity.getIsDir() == 0 )    // Is not a directory
-            nSize = FileSystemTools.getFileSize( fromFileEntity.getFileEntityPK().getAccount(), 
-                                                 fromFileEntity.getIdFile() );
-        
-        toFileDescriptor.setAccount(    fromFileEntity.getFileEntityPK().getAccount()  );
-        toFileDescriptor.setName(       fromFileEntity.getFileEntityPK().getFileName() );
-        toFileDescriptor.setPath(       fromFileEntity.getFileEntityPK().getFilePath() );
+            nSize = NativeFileSystemTools.getFileSize( fromFileEntity.getAccount(), fromFileEntity.getIdFile() );
         
         toFileDescriptor.setIdFile(     fromFileEntity.getIdFile()     );
-        toFileDescriptor.setDirectory(  fromFileEntity.getIsDir() != 0 );
+        toFileDescriptor.setAccount(    fromFileEntity.getAccount()  );
+        toFileDescriptor.setName(       fromFileEntity.getFileName() );
+        toFileDescriptor.setPath(       fromFileEntity.getFilePath() );
         toFileDescriptor.setIdOriginal( (fromFileEntity.getIdOriginal() == null ? -1 : fromFileEntity.getIdOriginal()) );
         toFileDescriptor.setOwner(      fromFileEntity.getOwner()      );
         toFileDescriptor.setLockedBy(   fromFileEntity.getLockedBy()   );
+        
+        toFileDescriptor.setDirectory(  fromFileEntity.getIsDir()                   != 0 );
         toFileDescriptor.setHidden(     fromFileEntity.getIsHidden().intValue()     != 0 );
         toFileDescriptor.setPublic(     fromFileEntity.getIsPublic().intValue()     != 0 );
         toFileDescriptor.setReadable(   fromFileEntity.getIsReadable().intValue()   != 0 );
@@ -102,7 +101,6 @@ class FileDTOs
     
     static void transfer( FileDescriptor fromFileDescriptor, FileEntity toFileEntity )
     {
-        // This field allows to indentify uniquely the File faster than using the PK
         toFileEntity.setIdFile(     fromFileDescriptor.getId() );
         toFileEntity.setIdOriginal( (fromFileDescriptor.getIdOriginal() == -1 ? null : fromFileDescriptor.getIdOriginal()) );
         toFileEntity.setOwner(      fromFileDescriptor.getOwner()      );
@@ -136,7 +134,7 @@ class FileDTOs
     {
         char[] chContent = new char[ (int) fText.getSize() ];
         
-        java.io.File      fNative = FileSystemTools.getFile( fText.getOwner(), fText.getId() );
+        java.io.File      fNative = NativeFileSystemTools.getFile( fText.getOwner(), fText.getId() );
         FileInputStream   fis     = new FileInputStream( fNative );
         InputStreamReader isw     = new InputStreamReader( fis, fText.getEncoding() );
         BufferedReader    br      = new BufferedReader( isw );
@@ -152,7 +150,7 @@ class FileDTOs
     {
         byte[] btContent = new byte[ (int) fBinary.getSize() ];
         
-        java.io.File    fNative = FileSystemTools.getFile( fBinary.getOwner(), fBinary.getId() );
+        java.io.File    fNative = NativeFileSystemTools.getFile( fBinary.getOwner(), fBinary.getId() );
         FileInputStream fis     = new FileInputStream( fNative );
 
         fis.read( btContent, 0, btContent.length );

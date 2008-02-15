@@ -99,8 +99,8 @@ CREATE TABLE APP_PREFERRED(       -- Preferred app to open a file type (denoted 
 -- ********************************************************************************************************************
 
 CREATE TABLE FILES(               -- 'FILE' is an SQL-99 keyword 
-   PRIMARY KEY (ACCOUNT, FILE_PATH, FILE_NAME),
-   ID_FILE         INT GENERATED ALWAYS AS IDENTITY, -- Real file name in real FS
+   PRIMARY KEY (ID_FILE),
+   ID_FILE         INT GENERATED ALWAYS AS IDENTITY, -- Real file name in real (native) FS
    ID_ORIGINAL     INT                    ,  -- In case it is a link: Which file is the original?  
    ACCOUNT         VARCHAR(128)  NOT NULL ,  -- User that has this file or link in his/her disk-space (in the from <account>@<community>.<domain>)
    OWNER           VARCHAR(128)  NOT NULL ,  -- User that owns this file or link (in the from <account>@<joing_name>.<domain>)
