@@ -640,13 +640,9 @@ public class VFSFile extends File
     // By contract has to return null instead of empty array
     public static VFSFile[] listRoots() throws JoingServerVFSException
     {
-//        List<FileDescriptor> lstRoots = RuntimeFactory.getPlatform().getBridge().getFileBridge().getRoots();
-                
-//        return lstRoots.toArray( new VFSFile[0] );  // Collection to array
-        // FIXME: Quitar esto y probar las líneas de arriba
-        VFSFile[] afRoot = new VFSFile[1];
-        afRoot[0] = new VFSFile( "/" );
-        return afRoot;
+        List<FileDescriptor> lstRoots = RuntimeFactory.getPlatform().getBridge().getFileBridge().getRoots();
+        
+        return lstRoots.toArray( new VFSFile[0] );  // Collection to array
     }
 
     /**
