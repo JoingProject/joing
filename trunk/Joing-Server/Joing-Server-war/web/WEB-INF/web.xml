@@ -2,6 +2,7 @@
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <display-name>Join'g</display-name>
     <!-- ******************************************************************* -->
+    <!-- SERVLET NAME -->
     <servlet>
         <servlet-name>Login</servlet-name>
         <servlet-class>servlets.session.Login</servlet-class>
@@ -106,7 +107,6 @@
         <servlet-name>WriteTextFile</servlet-name>
         <servlet-class>servlets.vfs.WriteTextFile</servlet-class>
     </servlet>
-    <!-- ******************************************************************* -->
     <servlet>
         <servlet-name>GetApplication</servlet-name>
         <servlet-class>servlets.app.GetApplication</servlet-class>
@@ -119,6 +119,8 @@
         <servlet-name>ApplicationServlet</servlet-name>
         <servlet-class>org.joing.server.servlets.ApplicationServlet</servlet-class>
     </servlet>
+    <!-- ******************************************************************* -->
+    <!-- SERVLET MAPPING -->
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
         <url-pattern>/servlets/session/Login</url-pattern>
@@ -223,7 +225,6 @@
         <servlet-name>WriteTextFile</servlet-name>
         <url-pattern>/servlets/vfs/WriteTextFile</url-pattern>
     </servlet-mapping>
-    <!-- ******************************************************************* -->
     <servlet-mapping>
         <servlet-name>GetApplication</servlet-name>
         <url-pattern>/servlets/app/GetApplication</url-pattern>
@@ -236,6 +237,7 @@
         <servlet-name>ApplicationServlet</servlet-name>
         <url-pattern>/servlets/ApplicationServlet</url-pattern>
     </servlet-mapping>
+    <!-- ******************************************************************* -->
     <session-config>
         <session-timeout>
             30

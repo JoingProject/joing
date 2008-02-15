@@ -8,6 +8,7 @@ import ejb.app.ApplicationManagerLocal;
 import java.io.*;
 import java.net.*;
 
+import java.util.List;
 import javax.ejb.EJB;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -79,7 +80,8 @@ public class ApplicationServlet extends HttpServlet {
                     reply.setOk(true);
                     break;
                 case ApplicationRequest.AVAILABLE_DESKTOPS:
-                    reply.setReply(applicationManagerBean.getAvailableDesktops());
+                    List<Application> appList = applicationManagerBean.getAvailableDesktops();
+                    reply.setReply(appList);
                     reply.setOk(true);
                     break;
                 default:
