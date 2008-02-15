@@ -128,7 +128,7 @@ public class FileDescriptor implements Serializable
     
     public String getAbsolutePath()
     {
-        // TODO: posiblemente aquí haya que tener en cuenta cosas como si está 
+        // TODO: posiblemente aquí habrá que tener en cuenta cosas como si está 
         //       en la Trashcan o si es un Link a otro fichero
         StringBuilder sb = new StringBuilder( 256 );
                       sb.append( path  );
@@ -136,7 +136,8 @@ public class FileDescriptor implements Serializable
         if( ! path.endsWith( "/" ) )
             sb.append( '/' );
         
-        sb.append( getName() );
+        if( getName() != null )      // root dir does not have a name (name == null)
+            sb.append( getName() );
         
         return sb.toString();
     }

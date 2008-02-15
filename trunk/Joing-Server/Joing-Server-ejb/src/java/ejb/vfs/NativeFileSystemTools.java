@@ -1,5 +1,5 @@
 /*
- * FileSystemTools.java
+ * NativeFileSystemTools.java
  *
  * Created on 3 de junio de 2007, 21:50
  *
@@ -28,15 +28,14 @@ import java.io.IOException;
 /**
  * A class to perform all needed operations with the O.S. File System.
  * This class does not perform any security checking: it assumes that
- * is activity was done by those classes invoking this one.
+ * this activity was done by those classes invoking this one.
  *
- *
- * TODO: Añadirle a esta clas el soporte para Windows.
+ * NEXT: Añadirle a esta clas el soporte para Windows.
  *       (Actualmente sólo funciona con S.O. *nix.)
  *
  * @author Francisco Morero Peyrona
  */
-public class FileSystemTools
+public class NativeFileSystemTools
 {
     /**
      * Cretes all files and dirs related with an account.

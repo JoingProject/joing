@@ -3,7 +3,7 @@
  *
  * Created on 19 de abril de 2007, 14:09
  *
- * To change this template, choose Tools | Template Manager
+ * To change this template, choose VFSTools | Template Manager
  * and open the template in the editor.
  */
 
@@ -52,8 +52,8 @@ public class ListManagerBean
             
         if( sAccount != null )
         {
-            // TODO: mejorarlo buscando en otras comunidades donde esté el user
-            FileEntity _file = Tools.path2File( em, sAccount, "/" );
+            // NEXT: mejorarlo buscando en otras comunidades donde esté el user
+            FileEntity _file = VFSTools.path2File( em, sAccount, "/" );
             
             roots = new ArrayList<FileDescriptor>();
             roots.add( FileDTOs.createFileDescriptor( _file ) );
@@ -65,58 +65,13 @@ public class ListManagerBean
     public List<FileDescriptor> getChilds( String sSessionId, int nFileDirId )
            throws JoingServerVFSException
     {
-        List<FileDescriptor> files    = null;
-        String               sAccount = sessionManagerBean.getUserAccount( sSessionId );
-        
-        if( sAccount != null )
-        {
-            try
-            {
-                if( nFileDirId == 0 )    // Invoking is asking for root ("/")
-                {
-                    Query query = em.createQuery( "SELECT f FROM FileEntity f"+
-                                                  " WHERE f.name = '/'"+
-                                                  "   AND f.account = '"+ sAccount +"'" );
-
-                    nFileDirId = ((FileEntity) query.getSingleResult()).getIdFile();
-
-                    if( nFileDirId > 0 )
-                        files = _getChilds( sAccount, nFileDirId );
-                }
-                else if( nFileDirId > 0 )    // Negative numbers are not accepted
-                {
-                    files = _getChilds( sAccount, nFileDirId );
-                }
-            }
-            catch( Exception exc )
-            {
-                Constant.getLogger().throwing( getClass().getName(), "getChilds(String,int)", exc );
-                throw new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
-            }
-            
-        }
-        
-        return files;
+        return getChilds( sSessionId, (Object) new Integer( nFileDirId ) );
     }
     
     public List<FileDescriptor> getChilds( String sSessionId, String sDirPath )
            throws JoingServerVFSException
     {
-        List<FileDescriptor> files    = null;
-        String               sAccount = sessionManagerBean.getUserAccount( sSessionId );
-
-        if( sAccount != null )
-        {
-            if( sDirPath == null || sDirPath.length() == 0 )
-                sDirPath = "/";
-            
-            FileEntity _file = Tools.path2File( em, sAccount, sDirPath );
-
-            if( _file != null )
-                files = getChilds( sSessionId, _file.getIdFile() );
-        }
-        
-        return files;
+        return getChilds( sSessionId, (Object) sDirPath );
     }
     
     public List<FileDescriptor> getByNotes( String sSessionId, String sSubString )
@@ -129,7 +84,7 @@ public class ListManagerBean
         {
             StringBuilder sbQuery = new StringBuilder( 1024 );
                           sbQuery.append( "SELECT f FROM FileEntity f" )
-                                 .append( " WHERE f.account = '" ).append( sAccount ).append( '\'' )
+                                 .append( " WHERE f.fileEntityPK.account = '" ).append( sAccount ).append( '\'' )
                                  .append( "   AND f.is_system = 0" )
                                  .append( "   AND f.notes _fepk.set '%" ).append( sSubString ).append( "%'" );
             try
@@ -156,14 +111,11 @@ public class ListManagerBean
         
         if( sAccount != null )
         {
-            StringBuilder sbQuery = new StringBuilder( 512 );
-                          sbQuery.append( "SELECT f FROM FileEntity f" )
-                                 .append( " WHERE f.account = '" ).append( sAccount ).append( '\'' )
-                                 .append( "   AND f.is_in_trashcan = 1" );
             try
             {
-                Query query = em.createQuery( sbQuery.toString() );
-
+                Query query = em.createNamedQuery( "FileEntity.findInTrashcan" );
+                      query.setParameter( "account", sAccount );
+                      
                 files = fromEntity2DTO( (List<FileEntity>) query.getResultList() );
             }
             catch( RuntimeException exc )
@@ -179,30 +131,43 @@ public class ListManagerBean
     //------------------------------------------------------------------------//
     // PRIVATES
     
-    private List<FileDescriptor> _getChilds( String sAccount, Integer nFileDirId )
-            throws JoingServerVFSException
-    {
-        try
-        {
-            Query query = em.createNamedQuery( "FileEntity.findByPath" );
-                  query.setParameter( "account", sAccount );
-                  query.setParameter( "path"   , ""       );
-                  
-            return fromEntity2DTO( (List<FileEntity>) query.getResultList() );
-        }
-        catch( RuntimeException exc )
-        {
-            Constant.getLogger().throwing( getClass().getName(), "_getChilds(...)", exc );
-            throw new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
-        }
-    }
-    
     private List<FileDescriptor> fromEntity2DTO( List<FileEntity> fes )
     {
         List<FileDescriptor> files = new ArrayList<FileDescriptor>( fes.size() );
         
         for( FileEntity fe : fes )
             files.add( FileDTOs.createFileDescriptor( fe )  );
+        
+        return files;
+    }
+    
+    private List<FileDescriptor> getChilds( String sSessionId, Object param )
+           throws JoingServerVFSException
+    {
+        List<FileDescriptor> files    = null;
+        String               sAccount = sessionManagerBean.getUserAccount( sSessionId );
+
+        if( sAccount != null )
+        {
+            FileEntity _file = null;
+            
+            if( param instanceof String )
+                _file = VFSTools.path2File( em, sAccount, (String) param );
+            else
+                _file = em.find( FileEntity.class, (Integer) param );
+            
+            if( _file != null )
+            {
+                if( _file.getAccount().equals( sAccount ) )   
+                    files = fromEntity2DTO( VFSTools.getChilds( em, sAccount, _file ) );
+                else
+                    throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );   // File is not in user files space
+            }
+            else
+            {
+                throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );       // File does not exists
+            }
+        }
         
         return files;
     }

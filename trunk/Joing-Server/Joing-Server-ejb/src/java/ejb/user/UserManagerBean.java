@@ -30,7 +30,7 @@ import org.joing.common.exception.JoingServerUserException;
 import org.joing.common.exception.JoingServerSessionException;
 import ejb.session.*;
 import ejb.vfs.FileManagerLocal;
-import ejb.vfs.FileSystemTools;
+import ejb.vfs.NativeFileSystemTools;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -87,7 +87,7 @@ public class UserManagerBean
                 
                 user = UserDTOs.createUser( _user );
                 // Injected (for more info, refer to these methods in User class)
-                user.setUsedSpace( FileSystemTools.getUsedSpace( sAccount ) );
+                user.setUsedSpace( NativeFileSystemTools.getUsedSpace( sAccount ) );
             }
             catch( RuntimeException exc )
             {
@@ -208,7 +208,7 @@ public class UserManagerBean
             em.persist( fileManagerBean.createRootEntity( _user.getAccount() ) );
             
             // Create home directory for user
-            FileSystemTools.createAccount( _user.getAccount() );
+            NativeFileSystemTools.createAccount( _user.getAccount() );
             
             user = UserDTOs.createUser( _user );
 
@@ -252,7 +252,7 @@ public class UserManagerBean
                   query.executeUpdate();
 
             // Removes all files from FS
-            if( ! FileSystemTools.removeAccount( _user.getAccount() ) )
+            if( ! NativeFileSystemTools.removeAccount( _user.getAccount() ) )
                 Constant.getLogger().log( Level.SEVERE, "Can't delete user directory ("+ user.getAccount() +
                                                         "): has to be done manually." );
             

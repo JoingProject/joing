@@ -43,7 +43,7 @@ public interface ListManagerRemote
      * 
      * @param sSessionId The client session ID
      * @return All roots that user has
-     * @trhows if any prerequisite was not satisfied or 
+     * @throws If any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
     List<FileDescriptor> getRoots( String sSessionId )
@@ -52,20 +52,17 @@ public interface ListManagerRemote
     /**
      * Get all files in passed directory ID.
      * <p>
-     * <code>nFileDirId</code> is assumed either to represent a directory or
-     * be <code>null</code>. If it is not, <code>null</code> will be returned.
+     * <code>nDirId</code> is assumed to represent a directory , if it is not or
+     * the <code>nDirId</code> code does not represent a valid directory in the
+     * user file space, an <code>JoingServerVFSException</code> will be thrown.
      * <p>
-     * To get files in root ("/") directory, pass <code>0</code> (zero) as 
-     * <code>nFileDirId</code>.
-     * <p>
-     * Note: this method is preferred (it is much faster) over the other one.
+     * Note: this method is preferred (it is much faster) over the others.
      *
      * @param sSessionId The client session ID
-     * @param nDirId A <code>File.id</code> that belongs to directory entry 
-     *        or <code>0</code> (zero).
+     * @param nDirId A <code>File.id</code> that belongs to directory.
      * @return All files in passed directory ID or <code>null</code> if
      *         sSessionId and/or nFileId are invalid.
-     * @trhows if any prerequisite was not satisfied or 
+     * @throws If any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
     List<FileDescriptor> getChilds( String sSessionId, int nDirId )
@@ -89,7 +86,7 @@ public interface ListManagerRemote
      * @param sDirPath A path (from root) representing a directory entry
      * @return All files in passed directory or <code>null</code> if
      *         sSessionId and/or sDirPath are invalid.
-     * @trhows if any prerequisite was not satisfied or 
+     * @throws if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
     List<FileDescriptor> getChilds( String sSessionId, String sDirPath )
@@ -105,19 +102,19 @@ public interface ListManagerRemote
      *
      * @param sSessionId The client session ID
      * @param sSubString Sub-string to be searched in 'Notes' field
-     * @trhows if any prerequisite was not satisfied or 
+     * @throws If any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
     List<FileDescriptor> getByNotes( String sSessionId, String sSubString )
-            throws JoingServerVFSException;
-    
+            throws JoingServerVFSException; 
+
     /**
      * Return all files in trash can.
      *
      * @param sSessionId The client session ID
      * @return All files in trash can or <code>null</code> if sSessionId is 
      *         invalid.
-     * @trhows if any prerequisite was not satisfied or 
+     * @throws If any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
     List<FileDescriptor> getTrashCan( String sSessionId )

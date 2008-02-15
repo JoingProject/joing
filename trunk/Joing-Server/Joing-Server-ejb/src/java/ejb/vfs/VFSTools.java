@@ -22,6 +22,7 @@
 package ejb.vfs;
 
 import ejb.Constant;
+import java.util.List;
 import org.joing.common.exception.JoingServerException;
 import org.joing.common.exception.JoingServerVFSException;
 import javax.persistence.EntityManager;
@@ -35,7 +36,7 @@ import javax.persistence.Query;
  * 
  * @author Francisco Morero Peyrona
  */
-class Tools
+class VFSTools
 {
     /**
      * Obtains the FileEntity instance that represents the file or directory
@@ -54,14 +55,20 @@ class Tools
            throws JoingServerVFSException
     {
         FileEntity _file = null;
-                              // Path must start from root
-        if( sFullName != null && sFullName.trim().charAt( 0 ) == '/' )
+        
+        if( sFullName != null )
         {
             sFullName = sFullName.trim();
-
+            
+            if( sFullName.length() == 0 )
+                throw new JoingServerVFSException( "Path can't be empty." );
+            
+            if( sFullName.charAt( 0 ) != '/' )
+                throw new JoingServerVFSException( "Path must start from root." );
+            
             try
             {
-                Query  qryFindFile = em.createNamedQuery( "FileEntity.findByPK" );
+                Query  qryFindFile = em.createNamedQuery( "FileEntity.findByPathAndName" );
                 String sPath       = null;
                 String sName       = null;
                 
@@ -95,7 +102,7 @@ class Tools
             {
                 if( ! (exc instanceof JoingServerException) )
                 {
-                    Constant.getLogger().throwing( Tools.class.getName(), "path2File(...)", exc );
+                    Constant.getLogger().throwing( VFSTools.class.getName(), "path2File(...)", exc  );
                     exc = new JoingServerVFSException( JoingServerException.ACCESS_DB, exc );
                 }
                 
@@ -105,59 +112,56 @@ class Tools
         
         return _file;
     }
- 
-    /*
-                     // Assuming that it is a file (it is not a dir)
-                if( (sPath.length() > 1) && (! sPath.endsWith( "/" )) )   // root is a dir and ends with '/' and length() == 1
-                {
-                    int    nIndex   = sPath.lastIndexOf( '/' );
-                    String sFile    = sPath.substring( nIndex + 1 );
-                    String sPathTmp = sPath.substring( 0, nIndex );    // Can't modify sPath because is used later
-
-                    query.setParameter( "account" , sAccount );
-                    query.setParameter( "fullPath", sPathTmp );
-
-                    try
-                    {
-                        FileEntity _dir = (FileEntity) query.getSingleResult();
-
-                        String s = "SELECT f FROM FileEntity f"+
-                                   " WHERE f.account = '"+ sAccount +"'"+
-                                   "   AND f.fileEntityPK.idParent = "+ _dir.getFileEntityPK().getIdParent() +
-                                   "   AND f.name = '"+ sFile +"'";
-
-                        Query q = em.createQuery( s );
-
-                        _file = (FileEntity) q.getSingleResult();
-                    }
-                    catch( NoResultException exc )
-                    {
-                        // Nothing to do
-                    }
-                }
-
-                // Assuming that it is a dir (it is not a file)
-                if( _file == null )
-                {
-                    if( (sPath.length() > 1) && (! sPath.endsWith( "/" )) )
-                        sPath += "/";
-                    
-                    query.setParameter( "account" , sAccount );
-                    query.setParameter( "fullPath", sPath );
-                    
-                    try
-                    {
-                        _file = (FileEntity) query.getSingleResult();
-                    }
-                    catch( NoResultException exc )
-                    {
-                        // Nothing to do
-                    }
-                }
-    */
+    
+    /**
+     * 
+     * @param em
+     * @param sAccount 
+     * @param nFileDirId
+     * @return
+     * @throws org.joing.common.exception.JoingServerVFSException
+     */
+    static List<FileEntity> getChilds( EntityManager em, String sAccount, FileEntity _file )
+            throws JoingServerVFSException
+    {
+        if( _file.getIsDir() == 0 )
+            throw new JoingServerVFSException( "It is not a directory." );
+        
+        try
+        {
+            String sFullName = _file.getFilePath() +"/"+ _file.getFileName();
+            
+            Query query = em.createNamedQuery( "FileEntity.findByPath" );
+                  query.setParameter( "account", sAccount  );
+                  query.setParameter( "path"   , sFullName );
+                  
+            return (List<FileEntity>) query.getResultList();
+        }
+        catch( RuntimeException exc )
+        {
+            Constant.getLogger().throwing( VFSTools.class.getName(), "getChilds(...)", exc );
+            throw new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
+        }
+    }
+    
+    /**
+     * Returns parent Entity based on its ID.
+     * @param em An instance of EntityManager
+     * @param nParentId
+     * @return Returns parent Entity based on its ID, or null if it does not exists.
+     * @throws org.joing.common.exception.JoingServerVFSException
+     */
+    static FileEntity getParentEntity( EntityManager em, int nParentId )
+            throws JoingServerVFSException
+    {
+        FileEntity _feParent = null;
+        
+        return _feParent;
+    }
+    
     //------------------------------------------------------------------------//
     
-    private Tools()
+    private VFSTools()
     {
     }
 }

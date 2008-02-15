@@ -12,7 +12,6 @@ import org.joing.common.exception.JoingServerAppException;
 @Local
 public interface ApplicationManagerLocal extends ApplicationManagerRemote
 {
-
     Application getApplicationByName(String sessionId, String executableName) throws JoingServerAppException;
 
     List<Application> getAvailableDesktops() throws JoingServerAppException;
