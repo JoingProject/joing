@@ -39,7 +39,7 @@ public class GetRoots extends HttpServlet
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException
     {
-    response.setContentType( "application/octet-stream" );
+        response.setContentType( "application/octet-stream" );
         
         ObjectInputStream  reader = new ObjectInputStream(  request.getInputStream()   );
         ObjectOutputStream writer = new ObjectOutputStream( response.getOutputStream() );
