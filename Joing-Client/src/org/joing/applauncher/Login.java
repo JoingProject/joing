@@ -40,7 +40,7 @@ public class Login extends JDialog {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        txtAccount.setText("peyrona");
+        txtAccount.setText("peyrona@joing.peyrona.com");
         txtPassword.setText("admin");
     }
 
