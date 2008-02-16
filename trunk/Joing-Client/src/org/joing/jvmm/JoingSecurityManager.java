@@ -9,6 +9,7 @@
 
 package org.joing.jvmm;
 
+import org.joing.jvmm.RuntimeFactory;
 import org.joing.common.clientAPI.jvmm.JThreadGroup;
 import org.joing.common.clientAPI.log.JoingLogger;
 import org.joing.common.clientAPI.log.Levels;
