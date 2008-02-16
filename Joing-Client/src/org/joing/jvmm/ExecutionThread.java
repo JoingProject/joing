@@ -8,13 +8,12 @@ import javax.swing.SwingUtilities;
 import org.joing.common.clientAPI.jvmm.App;
 import org.joing.common.clientAPI.jvmm.AppManager;
 import org.joing.common.clientAPI.log.JoingLogger;
-import org.joing.common.clientAPI.log.Levels;
 import org.joing.common.clientAPI.log.Logger;
 import org.joing.common.clientAPI.log.SimpleLoggerFactory;
 
 /**
  *
- * @author antoniovl
+ * @author Antonio Varela Lizardi <antonio@icon.net.mx>
  */
 public class ExecutionThread extends Thread {
 
@@ -30,6 +29,7 @@ public class ExecutionThread extends Thread {
         this.executionTask = executionTask;
     }
 
+    @Override
     public void run() {
 
         DisposerTask disposerTask =
@@ -51,18 +51,9 @@ public class ExecutionThread extends Thread {
             application.getThreadGroup().close();
             StringBuilder sb = new StringBuilder();
             sb.append("Exception caught in ExecutionThread for App '{0}; ");
-            sb.append("StackTrace: {1}");
-            logger.write(Levels.CRITICAL, sb.toString(), 
-                    application.getApplication().getName(),
-                    dumpStackTrace(e.getStackTrace()));
+            logger.critical(sb.toString(), application.getApplication().getName());
+            logger.critical("StackTrace will follow.");
+            logger.printStackStrace(e);
         }
-    }
-    
-    private String dumpStackTrace(StackTraceElement[] elements) {
-        StringBuffer sb = new StringBuffer();
-        for (StackTraceElement element : elements) {
-            sb.append(element.toString()).append("\n");
-        }
-        return sb.toString();
     }
 }
