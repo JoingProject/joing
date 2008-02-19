@@ -102,21 +102,9 @@ public class VFSView extends FileSystemView
             VFSFile fVFS = (VFSFile) directory;
             
             if( useFileHiding )
-            {
-                FileFilter filter = new FileFilter()
-                    {
-                        public boolean accept( java.io.File f ) 
-                        {
-                            return ((VFSFile) f).isDirectory();
-                        }
-                    };
-                
-                aFiles = fVFS.listFiles( filter );
-            }
+                aFiles = fVFS.listFiles( new FilterOnlyDirs() );
             else
-            {
                 aFiles = fVFS.listFiles();
-            }
         }
         
         return aFiles;
@@ -255,7 +243,7 @@ public class VFSView extends FileSystemView
                 return true;
         }
         
-        return false;
+        return true;
     }
     
     /**
@@ -269,7 +257,17 @@ public class VFSView extends FileSystemView
     
     //------------------------------------------------------------------------//
     
-    public VFSView()
+    private VFSView()
     {
+    }
+    
+    //------------------------------------------------------------------------//
+    
+    private final class FilterOnlyDirs implements FileFilter
+    {
+        public boolean accept( java.io.File f ) 
+        {
+            return ((VFSFile) f).isDirectory();
+        }
     }
 }

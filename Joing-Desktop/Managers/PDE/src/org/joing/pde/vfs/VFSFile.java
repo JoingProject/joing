@@ -132,7 +132,8 @@ public class VFSFile extends File
     // Used only internally
     private VFSFile( FileDescriptor fd )
     {
-        super( fd.getName() );   // Needed but never used        
+                      // FIXME: cambiarlo y mirar por qué devuelve null en el servidor
+        super( "/" ); ///super( fd.getName() );   // Needed but never used
         this.fd = fd;
     }
     
@@ -199,7 +200,7 @@ public class VFSFile extends File
         {
             VFSFile file = (VFSFile) obj;
             
-            return file.exists() && 
+            return file.exists() &&
                    this.exists() &&
                    file.fd.getId() == this.fd.getId();
         }
@@ -260,7 +261,7 @@ public class VFSFile extends File
      */
     @Override
     public long getFreeSpace() throws JoingServerVFSException
-    {
+    {// TODO: Hay que avriguar un modo de refrescar esto sólo cuando sea necesario
         long          nFree = -1;
         Bridge2Server b2s   = RuntimeFactory.getPlatform().getBridge();
         User          user  = b2s.getUserBridge().getUser();
@@ -640,9 +641,13 @@ public class VFSFile extends File
     // By contract has to return null instead of empty array
     public static VFSFile[] listRoots() throws JoingServerVFSException
     {
-        List<FileDescriptor> lstRoots = RuntimeFactory.getPlatform().getBridge().getFileBridge().getRoots();
+        List<FileDescriptor> lstRoots   = RuntimeFactory.getPlatform().getBridge().getFileBridge().getRoots();
+        VFSFile              vfsRoots[] = new VFSFile[ lstRoots.size() ];
         
-        return lstRoots.toArray( new VFSFile[0] );  // Collection to array
+        for( int n = 0; n < vfsRoots.length; n++ )
+            vfsRoots[n] = new VFSFile( lstRoots.get( n ) );
+        
+        return vfsRoots;
     }
 
     /**
