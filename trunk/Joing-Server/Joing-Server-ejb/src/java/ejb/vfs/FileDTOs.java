@@ -73,13 +73,15 @@ class FileDTOs
         if( fromFileEntity.getIsDir() == 0 )    // Is not a directory
             nSize = NativeFileSystemTools.getFileSize( fromFileEntity.getAccount(), fromFileEntity.getIdFile() );
         
-        toFileDescriptor.setIdFile(     fromFileEntity.getIdFile()     );
+        int nIdOriginal = (fromFileEntity.getIdOriginal() == null) ? -1 : fromFileEntity.getIdOriginal();
+        
+        toFileDescriptor.setIdFile(     fromFileEntity.getIdFile()   );
         toFileDescriptor.setAccount(    fromFileEntity.getAccount()  );
         toFileDescriptor.setName(       fromFileEntity.getFileName() );
         toFileDescriptor.setPath(       fromFileEntity.getFilePath() );
-        toFileDescriptor.setIdOriginal( (fromFileEntity.getIdOriginal() == null ? -1 : fromFileEntity.getIdOriginal()) );
-        toFileDescriptor.setOwner(      fromFileEntity.getOwner()      );
-        toFileDescriptor.setLockedBy(   fromFileEntity.getLockedBy()   );
+        toFileDescriptor.setIdOriginal( nIdOriginal                  );
+        toFileDescriptor.setOwner(      fromFileEntity.getOwner()    );
+        toFileDescriptor.setLockedBy(   fromFileEntity.getLockedBy() );
         
         toFileDescriptor.setDirectory(  fromFileEntity.getIsDir()                   != 0 );
         toFileDescriptor.setHidden(     fromFileEntity.getIsHidden().intValue()     != 0 );
