@@ -90,7 +90,12 @@ public class JoingFileSystemView extends FileSystemView
     @Override
     public java.io.File createFileObject( String path )
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        boolean bInRemote = false;   // FIXME: Averiguar si es local o remoto
+        
+        if( bInRemote )
+            return remote.createFileObject( path );
+        else
+            return local.createFileObject( path );
     }
     
     /**
@@ -99,7 +104,10 @@ public class JoingFileSystemView extends FileSystemView
      */
     public java.io.File createNewFolder( java.io.File dir ) throws IOException
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        if( dir instanceof VFSFile )
+            return remote.createNewFolder( dir );
+        else
+            return local.createNewFolder( dir );
     }
     
     /**
@@ -129,9 +137,12 @@ public class JoingFileSystemView extends FileSystemView
      *                                                  java.io.File directory )
      */
     @Override
-    public VFSFile getParentDirectory( java.io.File directory )
+    public java.io.File getParentDirectory( java.io.File directory )
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        if( directory instanceof VFSFile )
+            return remote.getParentDirectory( directory );
+        else
+            return local.getParentDirectory( directory );
     }
     
     /**
