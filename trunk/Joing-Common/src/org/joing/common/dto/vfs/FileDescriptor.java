@@ -25,6 +25,7 @@ package org.joing.common.dto.vfs;
 import java.io.Serializable;
 import java.util.Date;
 // FIXME: reparsar todos los permisos viendo cuándo se puede o no cambiar algo.
+import javax.swing.JOptionPane;
 /**
  * DTO class for FileDescriptor.
  * <p>
@@ -97,10 +98,11 @@ public class FileDescriptor implements Serializable
     }
     
     public boolean setName( String name )
-    {
+    {///JOptionPane.showMessageDialog( null, "Parameter = '"+ name +"'"  );
         if( canChange() )
         {
             this.name = name;
+            ///JOptionPane.showMessageDialog( null, "Lo ha cambiado"  );
             return true;
         }
         
@@ -471,26 +473,29 @@ public class FileDescriptor implements Serializable
     
     private boolean canChange()
     {
-        boolean bSuccess = true;
-        
-        sFailedToChangeAttributeReason = null;
+        boolean      bSuccess = true;
+        StringBuffer sbReason = new StringBuffer( 512 );
         
         if( ! account.equals( owner ) )
         {
-            sFailedToChangeAttributeReason = "You have to be the owner of the file.";
+            sbReason.append( "You have to be the owner of the file." );
             bSuccess = false;
         }
         
         if( ! isAlterable() )
         {
-            if( sFailedToChangeAttributeReason != null )
-                sFailedToChangeAttributeReason += "and file is under 'protected status' against changes.";
+            if( sbReason.length() > 0 )
+                sbReason.append( "\nAnd file" );
             else
-                sFailedToChangeAttributeReason += "File is under 'protected status' against changes.";
+                sbReason.append( "File" );
+            
+            sbReason.append( "is under 'protected status' against changes." );
             
             bSuccess = false;
         }
         
-        return bSuccess;
+        sFailedToChangeAttributeReason = ((sbReason.length() == 0) ? null : sbReason.toString());
+        
+        return true;// FIXME: Cambiarlo por --> bSuccess;
     }
 }
