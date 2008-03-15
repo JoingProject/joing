@@ -25,6 +25,7 @@ import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+import javax.swing.SwingUtilities;
 import org.joing.Main;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.clientAPI.jvmm.Platform;
@@ -52,14 +53,14 @@ public class Bootstrap {
     public Bootstrap() {
     }
 
-    private static void setupTrayIcon() {
+    public static void setupTrayIcon() {
 
         // See JavaSE bugid 6438179
         if (SystemTray.isSupported() == false) {
             StringBuilder sb = new StringBuilder();
             sb.append("Tray Icon not supported. This is a known issue ");
             sb.append("when running Beryl or Compiz on Linux.");
-            logger.write(Levels.WARNING, sb.toString());
+            logger.warning(sb.toString());
             return;
         }
 
@@ -133,16 +134,31 @@ public class Bootstrap {
      */
     public static void init() {
 
+        Platform platform = RuntimeFactory.getPlatform();
+        Properties clientProps = platform.getClientProp();
+        
         // Initialization of Logging subsystem. 
         // Platform need at least one logger, we need to setup
         // this first.
         logger.addListener(new StdoutLogListenerImpl(true));
-        logger.addLevels(Levels.DEBUG, Levels.DEBUG_JVMM, Levels.DEBUG_DESKTOP,
-                Levels.DEBUG_CACHE);
+        
+        if (Boolean.valueOf(clientProps.getProperty("debug"))) {
+            logger.addLevel(Levels.DEBUG);
+        }
+        if (Boolean.valueOf(clientProps.getProperty("debug.JVMM"))) {
+            logger.addLevel(Levels.DEBUG_JVMM);
+        }
+        if (Boolean.valueOf(clientProps.getProperty("debug.Cache"))) {
+            logger.addLevel(Levels.DEBUG_CACHE);
+        }
+        if (Boolean.valueOf(clientProps.getProperty("debug.Desktop"))) {
+            logger.addLevel(Levels.DEBUG_DESKTOP);
+        }
+        
+//        logger.addLevels(Levels.DEBUG, Levels.DEBUG_JVMM, Levels.DEBUG_DESKTOP,
+//                Levels.DEBUG_CACHE);
 
-        Platform platform = RuntimeFactory.getPlatform();
-
-        String logFile = platform.getClientProp().getProperty("LogFile", null);
+        String logFile = clientProps.getProperty("LogFile", null);
         if (logFile != null) {
             logger.addListener(new FileLogListenerImpl(logFile, true));
         }
@@ -165,17 +181,24 @@ public class Bootstrap {
                 joingProperties.load(fis);
             }
         } catch (IOException ioe) {
-            logger.write(Levels.WARNING,
-                    "Exception caught while loading client properties: {0}",
+            logger.warning("Exception caught while loading client properties: {0}",
                     ioe.getMessage());
         }
 
         System.setSecurityManager(new JoingSecurityManager());
-        logger.normal("Join'g Successfully Bootstrapped.");
-        logger.normal("Main Thread Id is {0}",
+        logger.info("Join'g Successfully Initialized.");
+        logger.info("Main Thread Id is {0}",
                 String.valueOf(RuntimeFactory.getPlatform().getMainThreadId()));
 
+        
         setupTrayIcon();
+              
+    }
+
+
+    public static void loginDialog() {
+
+        Platform platform = RuntimeFactory.getPlatform();
 
         // Iniciamos la sesión.
         try {
@@ -185,7 +208,7 @@ public class Bootstrap {
             if (login.wasSuccessful()) {
                 DesktopManager deskmgr =
                         getDesktopManagerInstance(login.getDesktopApplicationId());
-                        
+
                 platform.setDesktopManager(deskmgr);
 
                 if (login.fullScreen()) {
@@ -195,15 +218,14 @@ public class Bootstrap {
                 }
             } else {
                 logger.info("Terminated, bad username/password.");
-                RuntimeFactory.getPlatform().halt();
+                platform.halt();
             }
         } catch (Exception e) {
             logger.critical("Error en start: {0}", e.getMessage());
             logger.printStackStrace(e);
         }
     }
-
-
+    
     // TODO: Obtener el desktop del servidor
     private static DesktopManager getDesktopManagerInstance(int appId) {
 

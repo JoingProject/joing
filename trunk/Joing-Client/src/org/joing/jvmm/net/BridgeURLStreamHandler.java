@@ -23,11 +23,17 @@ public class BridgeURLStreamHandler extends URLStreamHandler {
 
     @Override
     protected URLConnection openConnection(URL u) throws IOException {
+        
         String s = u.getFile();
+        String proto = u.getProtocol();
+        
+        if (proto.startsWith("bridge2server")) {
+            Bridge2Server bridge = RuntimeFactory.getPlatform().getBridge();
 
-        Bridge2Server bridge = RuntimeFactory.getPlatform().getBridge();
-
-        return new BridgeURLConnection(u, bridge);
+            return new BridgeURLConnection(u, bridge);
+        }
+        
+        return u.openConnection();
     }
 
     @Override

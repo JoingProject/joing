@@ -301,8 +301,8 @@ class PlatformImpl implements Platform {
 
         final String finalClassName = getMainClassName(application);
 
-        logger.write(Levels.DEBUG_JVMM, "Main Class: {0}", finalClassName);
-        logger.write(Levels.DEBUG_JVMM, "ClassLoader: {0}", classLoader);
+        logger.debugJVMM("Main Class: {0}", finalClassName);
+        logger.debugJVMM("ClassLoader: {0}", classLoader);
 
         // Crea un JThreadGroup
         final JThreadGroup threadGroup = new JThreadGroupImpl(out, err);
@@ -324,8 +324,9 @@ class PlatformImpl implements Platform {
         ExecutionThread executionThread =
                 new ExecutionThread(getAppManager(), app, executionTask);
 
-        logger.write(Levels.DEBUG_JVMM, 
-                "Starting new ExecutionThread with Id {0}", executionThread.getId());
+        logger.debugJVMM("Starting new ExecutionThread with Id {0}", 
+                executionThread.getId());
+        
         executionThread.start();
 
     }
@@ -421,6 +422,7 @@ class PlatformImpl implements Platform {
         return mainClass;
     }
 
+    @Override
     public String getMainClassName(Application application) {
 
         try {
@@ -448,4 +450,5 @@ class PlatformImpl implements Platform {
     public void shutdown() {
         halt(); // fix this.
     }
+    
 }

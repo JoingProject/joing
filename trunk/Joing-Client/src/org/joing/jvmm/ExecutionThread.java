@@ -32,8 +32,12 @@ public class ExecutionThread extends Thread {
     @Override
     public void run() {
 
+        sun.awt.AppContext appContext = 
+                sun.awt.SunToolkit.createNewAppContext();
+        
         DisposerTask disposerTask =
-                new DisposerTask(appManager, application);
+                new DisposerTask(appManager, application, appContext);
+        
         DisposerThread disposerThread =
                 new DisposerThread(disposerTask);
         

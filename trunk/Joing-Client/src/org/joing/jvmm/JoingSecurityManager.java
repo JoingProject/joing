@@ -49,19 +49,19 @@ public class JoingSecurityManager extends SecurityManager {
             }
         }
         
-        if(Thread.currentThread().getId() != 
+        if (Thread.currentThread().getId() !=
                 RuntimeFactory.getPlatform().getMainThreadId()) {
-            
+
             StringBuilder sb = new StringBuilder("Call to exit() by ");
             sb.append("unauthorized Thread with id ");
             sb.append(Thread.currentThread().getId());
-            logger.write(Levels.WARNING, sb.toString());
-           
+            logger.warning(sb.toString());
+
             // TODO: Fix this.
-           // uncommenting this will prevent the application to exit.
-           // We must fix the mainLoop() before doing it.
-           // throw new RuntimeException(sb.toString());
-        } 
+            // uncommenting this will prevent the application to exit.
+            // We must fix the mainLoop() before doing it.
+            //throw new SecurityException(sb.toString());
+        }
     }
 
     @Override

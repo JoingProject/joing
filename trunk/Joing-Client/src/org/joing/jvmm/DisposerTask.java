@@ -25,18 +25,18 @@ public class DisposerTask implements Runnable {
     private final Logger logger = 
             SimpleLoggerFactory.getLogger(JoingLogger.ID);
 
-    public DisposerTask(AppManager appManager, App application) {
+    public DisposerTask(AppManager appManager, App application, 
+            sun.awt.AppContext appContext) {
         this.appManager = appManager;
         this.application = application;
-        this.appContext = 
-                sun.awt.SunToolkit.createNewAppContext();
+        this.appContext = appContext;
     }
     
     public void run() {
-        logger.write(Levels.DEBUG, "Removing application '{0}'.",
+        logger.debug("Removing application '{0}'.",
                 application.getMainClassName());
         appManager.removeApp(application);
-        logger.write(Levels.DEBUG, "Disposing AppContext.");
+        logger.debug("Disposing AppContext.");
         appContext.dispose();
     }
 

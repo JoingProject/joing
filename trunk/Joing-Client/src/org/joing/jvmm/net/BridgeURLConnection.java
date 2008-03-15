@@ -12,6 +12,7 @@ import java.net.URLConnection;
 import org.joing.common.clientAPI.runtime.Bridge2Server;
 import org.joing.common.dto.app.Application;
 import org.joing.jvmm.BridgeClassLoader;
+import org.joing.jvmm.JarSearchResult;
 
 /**
  *
@@ -61,14 +62,15 @@ public class BridgeURLConnection extends URLConnection {
             // content.
             return app.getContent();
         }
+
+        JarSearchResult jsr = 
+                BridgeClassLoader.findInJar(name, app.getContent(), false);
         
-        byte[] b = BridgeClassLoader.findInApp(name, app);
-        
-        if (b == null) {
+        if (jsr.isFound() == false) {
             throw new IOException("Data entry not found in Application.");
         }
         
-        return new ByteArrayInputStream(b);
+        return new ByteArrayInputStream(jsr.getBytes());
     }
 
     @Override
