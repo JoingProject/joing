@@ -7,7 +7,6 @@ package org.joing.jvmm;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import org.joing.common.clientAPI.log.JoingLogger;
-import org.joing.common.clientAPI.log.Levels;
 import org.joing.common.clientAPI.log.Logger;
 import org.joing.common.clientAPI.log.SimpleLoggerFactory;
 

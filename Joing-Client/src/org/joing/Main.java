@@ -21,7 +21,25 @@
  */
 package org.joing;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.SwingUtilities;
 import org.joing.applauncher.Bootstrap;
+import org.joing.common.clientAPI.jvmm.ApplicationExecutionException;
+import org.joing.common.clientAPI.jvmm.Platform;
+import org.joing.common.clientAPI.log.JoingLogger;
+import org.joing.common.clientAPI.log.Logger;
+import org.joing.common.clientAPI.log.SimpleLoggerFactory;
+import org.joing.common.dto.app.Application;
+import org.joing.jvmm.RuntimeFactory;
+import org.joing.jvmm.net.BridgeURLConnection;
 
 /**
  *
@@ -33,11 +51,109 @@ public class Main {
     public Main() {
     }
 
-    public static void main(String[] args) {
-
-        Bootstrap.init();
-
-        // Bootstrap.mainLoop();
+    public static void main(final String[] args) {
         
+        Thread initWorker = new Thread(new Runnable() {
+            public void run() {
+                Bootstrap.init();
+            }
+        });
+        initWorker.start();
+
+        boolean noGUI = false;    
+        
+        final List<URL> urls = new ArrayList<URL>();
+        final Logger logger = SimpleLoggerFactory.getLogger(JoingLogger.ID);
+        final Platform platform = RuntimeFactory.getPlatform();
+        
+        for (String arg : args) {
+            if ("-nogui".equals(arg)) {
+                noGUI = true;
+            } else {
+                try {
+                    URL u = new URL(arg);
+                    urls.add(u);
+                } catch (MalformedURLException mue) {
+                    logger.critical("Unable to parse URL: {0}", arg);
+                }
+            }
+        }
+        
+        if (noGUI == false) {
+            // LoginDialog blocks the current thread
+            Thread loginWorker = new Thread(new Runnable() {
+                public void run() {
+                    Bootstrap.loginDialog();
+                }
+            });
+            loginWorker.start();
+        }
+        
+        if ((urls.size() == 0) && (noGUI)) {
+            logger.info("No standalone jars launched, nothing to do.");
+        } else {
+            Thread auxWorker = new Thread(new Runnable() {
+                public void run() {
+            for (URL url : urls) {
+                try {
+                    Application a = applicationFromURL(url);
+                    URL[] classPath = new URL[]{url};
+                    String[] localArgs = new String[]{};
+                    platform.start(classPath, a, localArgs,
+                            System.out, System.err);
+
+                } catch (ApplicationExecutionException aee) {
+                    logger.critical("Unable to launch app: {0}", aee.getMessage());
+                } catch (MalformedURLException mue) {
+                    logger.critical("Unable to parse URL: {0}", mue.getMessage());
+                } catch (IOException ioe) {
+                    logger.critical("IOException: {0}", ioe.getMessage());
+                }
+            }
+                }
+            });
+            auxWorker.start();
+        }
+        
+        //Bootstrap.mainLoop();
+ 
+        
+    }
+    
+    private static Application applicationFromURL(URL url) 
+            throws IOException, MalformedURLException {
+
+        Application app = null;
+        
+        // Construimos una URL
+        URLConnection c = url.openConnection();
+
+        if (c instanceof BridgeURLConnection) {
+            BridgeURLConnection buc = (BridgeURLConnection) c;
+            return buc.getApplication();
+        }
+
+        DataInputStream dis = new DataInputStream(c.getInputStream());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(baos);
+
+        boolean done = false;
+        while (!done) {
+            byte[] b = new byte[8192]; // 8k blocks
+            int r = dis.read(b);
+            if (r == -1) {
+                done = true;
+            } else {
+                dos.write(b);
+            }
+        }
+
+        app = new Application();
+        app.setContents(baos.toByteArray());
+
+        dos.close();
+        dis.close();
+
+        return app;
     }
 }

@@ -10,7 +10,6 @@
 package org.joing.jvmm;
 
 import org.joing.common.clientAPI.log.JoingLogger;
-import org.joing.common.clientAPI.log.Levels;
 import org.joing.common.clientAPI.log.Logger;
 import org.joing.common.clientAPI.log.SimpleLoggerFactory;
 
@@ -31,7 +30,7 @@ public class DisposerThread extends Thread {
 
     @Override
     public void run() {
-        logger.write(Levels.DEBUG_JVMM, "DisposerThread running...");
+        logger.debugJVMM("DisposerThread running...");
         if (disposerTask != null) {
             disposerTask.run();
         }
