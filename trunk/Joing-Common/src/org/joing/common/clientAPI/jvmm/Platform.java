@@ -43,6 +43,7 @@ public interface Platform {
     DesktopManager getDesktopManager();
     void setDesktopManager(DesktopManager desktop);
     
+    String getMainClassName(Application application);
     void start(final int appId) throws ApplicationExecutionException;
     void start(final int appId, String[] args, OutputStream out, OutputStream err) 
             throws ApplicationExecutionException;
