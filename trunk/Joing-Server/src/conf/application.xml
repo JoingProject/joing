@@ -6,7 +6,7 @@
   </module>
   <module>
     <web>
-      <web-uri>Joing-Project-Web.war</web-uri>
+      <web-uri>Joing-Web.war</web-uri>
       <context-root>/web</context-root>
     </web>
   </module>
