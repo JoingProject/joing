@@ -1,19 +1,22 @@
-<%@page contentType="text/html"%>
-<%@page pageEncoding="UTF-8"%>
-<%@taglib prefix="f" uri="http://java.sun.com/jsf/core"%>
-<%@taglib prefix="h" uri="http://java.sun.com/jsf/html"%>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<%@page contentType="text/html"
+%><%@page pageEncoding="UTF-8"
+%><%@taglib prefix="f" uri="http://java.sun.com/jsf/core"
+%><%@taglib prefix="h" uri="http://java.sun.com/jsf/html"
+%><html>
 <head>
-  <title>Join'g</title>
+  <title>Join'g - Your desktop across the net</title>
 <style type="text/css">
 @import url(css/css.css);
 </style>
 </head>
 <body>
+<f:view>
 <div class="top">
   <div class="content_top">
     <div class="content_top_div">
-      <a href="#" onclick="return false;" title="Join'g" class="logo"></a>
+<h:form id="web_navigation">
+	<h:commandLink action="home" title="Join'g home" styleClass="logo"/>
+</h:form>
       <div class="catchphrases">
         <ul>
           <li><h3>Join'g is about ubiquity and communication</h3></li>
@@ -29,29 +32,28 @@
 
     <div class="web_form">
       <div class="web_form_content">
-<f:view>
     <h:form id="new_account">
             <h2>Create an account</h2>
             <div class="field">
-              <label for="user_name">User</label>
+		<h:outputLabel for="user_name" value="User"/>
               <div class="input_text"><span><h:inputText
 		    id="user_name"
 		    value="#{CreateAccount.username}"/></span></div>
             </div>
             <div class="field">
-              <label for="user_name">e-mail</label>
+		<h:outputLabel for="user_email" value="e-mail"/>
               <div class="input_text"><span><h:inputText
 		    id="user_email"
 		    value="#{CreateAccount.email}"/></span></div>
             </div>
             <div class="field">
-              <label for="user_password">Password</label>
+		<h:outputLabel for="user_password" value="Password"/>
               <div class="input_text"><span><h:inputSecret
 		    id="user_password"
 		    value="#{CreateAccount.password}"/></span></div>
             </div>
             <div class="field">
-              <label for="user_confirm_password">Confirm</label>
+		<h:outputLabel for="user_confirm_password" value="Confirm"/>
               <div class="input_text"><span><h:inputSecret
 		    id="user_confirm_password"
 		    value="#{CreateAccount.confirmPassword}"/></span></div>
@@ -75,7 +77,6 @@
 		    styleClass="messages"/>
 
     </h:form>
-</f:view>
           <p style="clear: both;">
             Registered users can launch Join'g
           </p>
@@ -104,5 +105,6 @@
   </div>
 </div>
 <div class="footer_text">Sed nonummy euismod magna. Vestibulum lacinia nisi nec neque. Suspendisse porttitor. </div>
+</f:view>
 </body>
 </html>
