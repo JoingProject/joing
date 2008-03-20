@@ -128,10 +128,12 @@ public class CreateAccount {
 	
 	if(itemName.matches("(?i)[aeiouy].*")) {
 	    detail = String.format(
-		"An %s is needed in order to create a new account", itemName);
+		"You must provide an %s in order to create a new account",
+		itemName);
 	} else {
 	    detail = String.format(
-		"A %s is needed in order to create a new account", itemName);
+		"You must provide a %s in order to create a new account",
+		itemName);
 	}
 	
 	return new FacesMessage(FacesMessage.SEVERITY_ERROR, summary, detail);
