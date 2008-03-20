@@ -11,12 +11,11 @@
 </head>
 <body>
 <f:view>
+<h:form id="joing">
 <div class="top">
   <div class="content_top">
     <div class="content_top_div">
-<h:form id="web_navigation">
 	<h:commandLink action="home" title="Join'g home" styleClass="logo"/>
-</h:form>
       <div class="catchphrases">
         <ul>
           <li><h3>Join'g is about ubiquity and communication</h3></li>
@@ -32,51 +31,49 @@
 
     <div class="web_form">
       <div class="web_form_content">
-    <h:form id="new_account">
-            <h2>Create an account</h2>
-            <div class="field">
-		<h:outputLabel for="user_name" value="User"/>
-              <div class="input_text"><span><h:inputText
-		    id="user_name"
-		    value="#{CreateAccount.username}"/></span></div>
-            </div>
-            <div class="field">
-		<h:outputLabel for="user_email" value="e-mail"/>
-              <div class="input_text"><span><h:inputText
-		    id="user_email"
-		    value="#{CreateAccount.email}"/></span></div>
-            </div>
-            <div class="field">
-		<h:outputLabel for="user_password" value="Password"/>
-              <div class="input_text"><span><h:inputSecret
-		    id="user_password"
-		    value="#{CreateAccount.password}"/></span></div>
-            </div>
-            <div class="field">
-		<h:outputLabel for="user_confirm_password" value="Confirm"/>
-              <div class="input_text"><span><h:inputSecret
-		    id="user_confirm_password"
-		    value="#{CreateAccount.confirmPassword}"/></span></div>
-            </div>
-            <div class="field">
-		<h:commandButton
-		    styleClass="submit"
-		    value="Submit"
-		    action="#{CreateAccount.createNewAccount}"/>
-            </div>
+	<h2>Create an account</h2>
+	<div class="field">
+	    <h:outputLabel for="user_name" value="User"/>
+	  <div class="input_text"><span><h:inputText
+		id="user_name"
+		value="#{CreateAccount.username}"/></span></div>
+	</div>
+	<div class="field">
+	    <h:outputLabel for="user_email" value="e-mail"/>
+	  <div class="input_text"><span><h:inputText
+		id="user_email"
+		value="#{CreateAccount.email}"/></span></div>
+	</div>
+	<div class="field">
+	    <h:outputLabel for="user_password" value="Password"/>
+	  <div class="input_text"><span><h:inputSecret
+		id="user_password"
+		value="#{CreateAccount.password}"/></span></div>
+	</div>
+	<div class="field">
+	    <h:outputLabel for="user_confirm_password" value="Confirm"/>
+	  <div class="input_text"><span><h:inputSecret
+		id="user_confirm_password"
+		value="#{CreateAccount.confirmPassword}"/></span></div>
+	</div>
+	<div class="field">
+	    <h:commandButton
+		styleClass="submit"
+		value="Submit"
+		action="#{CreateAccount.createNewAccount}"/>
+	</div>
 
-		<h:messages
-		    errorClass="error_msg"
-		    infoClass="info_msg"
-		    fatalClass="fatal_msg"
-		    warnClass="warning_msg"
+	<h:messages
+	    errorClass="error_msg"
+	    infoClass="info_msg"
+	    fatalClass="fatal_msg"
+	    warnClass="warning_msg"
 
-		    showSummary="true"
-		    showDetail="false"
+	    showSummary="true"
+	    showDetail="false"
 
-		    styleClass="messages"/>
+	    styleClass="messages"/>
 
-    </h:form>
           <p style="clear: both;">
             Registered users can launch Join'g
           </p>
@@ -105,6 +102,7 @@
   </div>
 </div>
 <div class="footer_text">Sed nonummy euismod magna. Vestibulum lacinia nisi nec neque. Suspendisse porttitor. </div>
+</h:form>
 </f:view>
 </body>
 </html>
