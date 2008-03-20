@@ -3,18 +3,6 @@
     <display-name>Join'g</display-name>
     <!-- ******************************************************************* -->
     <!-- SERVLET NAME -->
-    <context-param>
-        <param-name>com.sun.faces.verifyObjects</param-name>
-        <param-value>false</param-value>
-    </context-param>
-    <context-param>
-        <param-name>com.sun.faces.validateXml</param-name>
-        <param-value>true</param-value>
-    </context-param>
-    <context-param>
-        <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
-        <param-value>server</param-value>
-    </context-param>
     <servlet>
         <servlet-name>Login</servlet-name>
         <servlet-class>servlets.session.Login</servlet-class>
@@ -133,11 +121,6 @@
     </servlet>
     <!-- ******************************************************************* -->
     <!-- SERVLET MAPPING -->
-    <servlet>
-        <servlet-name>FacesServlet</servlet-name>
-        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
         <url-pattern>/servlets/session/Login</url-pattern>
@@ -255,16 +238,12 @@
         <url-pattern>/servlets/ApplicationServlet</url-pattern>
     </servlet-mapping>
     <!-- ******************************************************************* -->
-    <servlet-mapping>
-        <servlet-name>FacesServlet</servlet-name>
-        <url-pattern>*.html</url-pattern>
-    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
         </welcome-file-list>
     </web-app>
