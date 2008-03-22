@@ -89,9 +89,9 @@
 	<h1><span><span>Welcome to Join'g</span></span></h1>
       
 	<p>
-	    Join'g is an ultra lightweight remote desktop and application
-	    launcher where your applications and files seamlessly live in a
-	    remote server.
+	    Join'g is an open source ultra lightweight remote desktop and
+	    application launcher where your applications and files seamlessly
+	    live in a remote server.
 	</p>
 
 	<p>
@@ -101,11 +101,11 @@
 	    Join'g is about ubiquity, it takes advantage of the
 	    <a href="http://java.sun.com" target="java">java technology</a>
 	    multi platform features, making it possible to access Join'g client
-	    using most computer operating systems and many other devices such as
+	    from most computer operating systems and many other devices such as
 	    palm PCs and even cell phones. Your data and applications will live
-	    a remote server, they will be available from any device or any place
-	    you connect from. You will no longer need to carry your files in a
-	    data storage device.
+	    inside a remote server, they will be available from any device or
+	    any place you connect from. You will no longer need to carry your
+	    files in a data storage device.
 	</p>
 
 	<p>
@@ -121,8 +121,17 @@
 	    <a href="http://www.java.com/" target="java">Java Virtual Machine</a>
 	    and an internet connection.</p>
 
-	<p>You can download Join'g and join us at
-	    <a href="https://joing.dev.java.net" target="joing">Join'g project page</a></p>
+	<p>
+	    You can create your own private (or public) Join'g server.
+	    You only need to download it at the
+	    <a ref="https://joing.dev.java.net" target="joing">Join'g project page</a>.
+	</p>
+
+	<p>
+	    If you wish to help us help us develop Join'g and it's applications,
+	    you can join us at the
+	    <a href="https://joing.dev.java.net" target="joing">Join'g project page</a>
+	</p>
 
      </div>
 
