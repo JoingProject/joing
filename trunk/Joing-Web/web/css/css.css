@@ -5,7 +5,7 @@
 body {
   margin: 0px;
   padding: 0px;
-  font-size: 12px;
+  font-size: 14px;
 }
 h1, h1 span, h1 span span {
   display: block;
@@ -118,6 +118,11 @@ p {
 .web_content {
   margin-right: 300px;
   padding: 0px 10px 10px 20px;
+}
+.web_content img.diagram {
+    display: block;
+    float: right;
+    margin: 5px 0px 15px 15px;
 }
 .web_form {
   margin-right: 10px;
@@ -250,6 +255,7 @@ div.input_text span input {
 }
 
 .footer_text {
+  text-align: center;
   color: #8D8D8D;
   font-size: 10px;
   margin-left: 30px;
@@ -281,6 +287,7 @@ div.input_text span input {
   background-position: top left;
   padding-left: 20px;
   margin-bottom: 3px;
+  font-size: 12px;
 }
 
 a {

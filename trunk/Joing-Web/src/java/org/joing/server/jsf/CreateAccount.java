@@ -7,7 +7,7 @@ import javax.ejb.EJBException;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import org.joing.common.Constant;
-import org.joing.common.exception.JoingServerUserException;
+import org.joing.common.exception.JoingServerException;
 
 /**
  *
@@ -87,7 +87,7 @@ public class CreateAccount {
 		ctx.getViewRoot().getLocale(),
 		0);
 
-	} catch(JoingServerUserException ex) {
+	} catch(JoingServerException ex) {
 
 	    ok = false;
 	    
