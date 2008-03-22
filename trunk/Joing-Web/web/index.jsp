@@ -122,9 +122,9 @@
 	    and an internet connection.</p>
 
 	<p>
-	    You can create your own private (or public) Join'g server.
-	    You only need to download it at the
-	    <a ref="https://joing.dev.java.net" target="joing">Join'g project page</a>.
+	    You can create your own private (or public) Join'g server, you will
+	    need the server software available at
+	    <a href="https://joing.dev.java.net" target="joing" title="Join'g project page">Join'g project page</a>.
 	</p>
 
 	<p>
