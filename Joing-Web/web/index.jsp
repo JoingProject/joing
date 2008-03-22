@@ -2,20 +2,19 @@
 %><%@page pageEncoding="UTF-8"
 %><%@taglib prefix="f" uri="http://java.sun.com/jsf/core"
 %><%@taglib prefix="h" uri="http://java.sun.com/jsf/html"
-%><html>
+%><f:view><html>
 <head>
   <title>Join'g - Your desktop across the net</title>
 <style type="text/css">
-@import url(css/css.css);
+@import url(<h:outputText value="#{Util.path['css/css.css']}"/>);
 </style>
 </head>
 <body>
-<f:view>
 <h:form id="joing">
 <div class="top">
   <div class="content_top">
     <div class="content_top_div">
-	<h:commandLink action="home" title="Join'g home" styleClass="logo"/>
+	<a href="<h:outputText value="#{Util.path['/']}"/>" title="Join'g home" class="logo"></a>
       <div class="catchphrases">
         <ul>
           <li><h3>Join'g is about ubiquity and communication</h3></li>
@@ -86,10 +85,45 @@
     </div>
 
     <div class="web_content">
-      <h1><span><span>Welcome to Join'g</span></span></h1>
-      <p>Cras bibendum. Aenean purus enim, cursus ac, scelerisque sed, tempor in, lorem. Pellentesque metus enim, tempus sed, rutrum sit amet, egestas id, lacus. Sed auctor hendrerit nisi. Quisque nulla justo, commodo vel, lacinia a, nonummy vel, eros. Maecenas quam risus, cursus et, fringilla vel, viverra eu, mauris. Mauris aliquet arcu ut nunc. Morbi sit amet orci sit amet dolor sagittis mollis. Donec volutpat faucibus nulla. Donec et eros. In ipsum sem, commodo sit amet, pellentesque quis, eleifend id, nulla. Duis at nisi. Sed varius elementum sem. Curabitur nibh nisl, scelerisque non, cursus sit amet, tincidunt in, orci. Fusce diam felis, rhoncus non, blandit et, tincidunt vitae, massa.</p>
-      <p>Ut ac nunc in nunc sodales consequat. In cursus tortor vel sem. Fusce nec massa in tellus vehicula venenatis. Sed dignissim eleifend magna. Aliquam lacinia, massa non auctor pharetra, ante orci semper lacus, in pulvinar arcu velit non est. Ut ipsum dui, fermentum ut, dictum ut, tristique euismod, nulla. Aliquam justo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas nonummy metus quis odio. Quisque metus ligula, bibendum vel, lacinia a, aliquam et, urna. Ut vel arcu.</p>
-      <p>Donec in nunc. Curabitur blandit augue nec metus. Nam congue purus et turpis ultrices viverra. In et tellus. Integer euismod feugiat velit. Sed ultricies molestie turpis. Sed condimentum. Duis at ligula. Fusce aliquet augue sit amet elit. Sed diam. Phasellus risus eros, dignissim a, aliquam vitae, tempus non, ipsum. Ut pretium posuere orci. Duis condimentum purus vitae nulla.</p>
+
+	<h1><span><span>Welcome to Join'g</span></span></h1>
+      
+	<p>
+	    Join'g is an ultra lightweight remote desktop and application
+	    launcher where your applications and files seamlessly live in a
+	    remote server.
+	</p>
+
+	<p>
+	    <img src="<h:outputText value="#{Util.path['img/diagram.png']}"/>"
+		class="diagram" title="Access Join'g from anywhere"/>
+
+	    Join'g is about ubiquity, it takes advantage of the
+	    <a href="http://java.sun.com" target="java">java technology</a>
+	    multi platform features, making it possible to access Join'g client
+	    using most computer operating systems and many other devices such as
+	    palm PCs and even cell phones. Your data and applications will live
+	    a remote server, they will be available from any device or any place
+	    you connect from. You will no longer need to carry your files in a
+	    data storage device.
+	</p>
+
+	<p>
+	    Join'g needs no client set up. It's client is accessible through
+	    <a href="http://java.sun.com/products/javawebstart/" target="java">Java Web Start</a>,
+	    no client software install nor update is needed. Client-server
+	    communication is performed through the HTTP and the secure HTTP
+	    protocols, you can use Join'g from behind a firewall without any
+	    special configuration.
+	</p>
+
+	<p>All you need to run a Join'g client is a
+	    <a href="http://www.java.com/" target="java">Java Virtual Machine</a>
+	    and an internet connection.</p>
+
+	<p>You can download Join'g and join us at
+	    <a href="https://joing.dev.java.net" target="joing">Join'g project page</a></p>
+
      </div>
 
   <br style="clear: both;"/>&nbsp;
@@ -101,8 +135,8 @@
     </div>
   </div>
 </div>
-<div class="footer_text">Sed nonummy euismod magna. Vestibulum lacinia nisi nec neque. Suspendisse porttitor. </div>
+<div class="footer_text">&copy; 2008 Join'g project</div>
 </h:form>
-</f:view>
 </body>
 </html>
+</f:view>
