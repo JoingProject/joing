@@ -98,7 +98,7 @@
 	    <img src="<h:outputText value="#{Util.path['img/diagram.png']}"/>"
 		class="diagram" title="Access Join'g from anywhere"/>
 
-	    Join'g is about ubiquity, it takes advantage of the
+	    Join'g is about ubiquity, it takes full advantage of the
 	    <a href="http://java.sun.com" target="java">java technology</a>
 	    multi platform features, making it possible to access Join'g client
 	    from most computer operating systems and many other devices such as
