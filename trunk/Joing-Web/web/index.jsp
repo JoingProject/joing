@@ -87,7 +87,7 @@
     <div class="web_content">
 
 	<h1><span><span>Welcome to Join'g</span></span></h1>
-      
+
 	<p>
 	    Join'g is an open source ultra lightweight remote desktop and
 	    application launcher where your applications and files seamlessly
