@@ -25,7 +25,6 @@ import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
-import javax.swing.SwingUtilities;
 import org.joing.Main;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.clientAPI.jvmm.Platform;

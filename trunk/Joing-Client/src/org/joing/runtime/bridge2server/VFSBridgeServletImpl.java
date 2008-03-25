@@ -69,7 +69,7 @@ public class VFSBridgeServletImpl
         Channel channel = new Channel( VFS_CREATE_DIR );
                 channel.write( platform.getBridge().getSessionBridge().getSessionId() );
                 channel.write( sPath );
-                channel.write( sDirName  );
+                channel.write( sDirName );
         file = (FileDescriptor) channel.read();
                 channel.close();
         
