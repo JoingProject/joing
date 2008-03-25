@@ -38,6 +38,22 @@ public class PDEFrame extends PDEWindow implements DeskFrame
     public PDEFrame()
     {           // resizable, closable, maximizable, minimizable
         super( "", true, true, true, true );
+        
+        setDefaultCloseOperation( JInternalFrame.DISPOSE_ON_CLOSE );
+        
+        /* TODO: hacer que funcione
+        JComponent pane = ((BasicInternalFrameUI) getUI()).getNorthPane();
+        
+        pane.addMouseListener( new MouseAdapter()
+        {// TODO: hacer que click con el btn izq sobre el icono de la barra de título abra el popup
+            
+            // Note: In this context, isPopupTrigger() does not work
+            public void mousePressed( MouseEvent me )
+            {
+                if( me.getButton() == MouseEvent.BUTTON2 || me.getButton() == MouseEvent.BUTTON3 )
+                    showPopupMenu( me.getPoint() );
+            }
+        } );*/
     }
     
     //------------------------------------------------------------------------//
@@ -122,6 +138,7 @@ public class PDEFrame extends PDEWindow implements DeskFrame
     public void setAlwaysOnTop( boolean b )
     {
         this.bAlwaysOnTop = b;   // In PDE this property is handled by the WorkArea
+        // TODO: Hay que lanzar un ChangedProperyEvent y hacer que el WorkArea lo escuche para que la quite del top
     }
     
     //------------------------------------------------------------------------//
@@ -186,24 +203,6 @@ public class PDEFrame extends PDEWindow implements DeskFrame
         {
             // Nothing to do
         }
-    }
-    
-    private void init()
-    {
-        setDefaultCloseOperation( JInternalFrame.DISPOSE_ON_CLOSE );
-        
-        JComponent pane = ((BasicInternalFrameUI) getUI()).getNorthPane();
-        
-        pane.addMouseListener( new MouseAdapter()
-        {// TODO: hacer que click con el btn izq sobre el icono de la barra de título abra el popup
-            
-            // Note: In this context, isPopupTrigger() does not work
-            public void mousePressed( MouseEvent me )
-            {
-                if( me.getButton() == MouseEvent.BUTTON2 || me.getButton() == MouseEvent.BUTTON3 )
-                    showPopupMenu( me.getPoint() );
-            }
-        } );
     }
     
     private void showPopupMenu( Point p )

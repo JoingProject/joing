@@ -337,5 +337,6 @@ public class PDEManager extends JApplet implements DesktopManager
     public static void main( String[] asArg )
     {
         org.joing.applauncher.Bootstrap.init();
+        org.joing.applauncher.Bootstrap.loginDialog();
     }
 }

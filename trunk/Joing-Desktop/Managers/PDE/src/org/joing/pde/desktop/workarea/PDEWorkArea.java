@@ -18,6 +18,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import javax.swing.JDesktopPane;
+import javax.swing.JInternalFrame;
 import javax.swing.event.MouseInputAdapter;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.Selectable;
@@ -32,6 +33,7 @@ import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
 import org.joing.pde.desktop.deskwidget.desklet.PDEDesklet;
 import org.joing.pde.ColorSchema;
+import org.joing.pde.desktop.container.PDEWindow;
 import org.joing.pde.swing.EventListenerList;
 
 /**
@@ -48,6 +50,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     private static final Integer LAYER_CANVAS    = new Integer( 5 );
     private static final Integer LAYER_LAUNCHER  = new Integer( 10 );
     private static final Integer LAYER_FRAME     = new Integer( 20 );
+    private static final Integer LAYER_DIALOG    = new Integer( 30 );
     
     private PDEWallpaperComponent pwc;
     
@@ -369,7 +372,6 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         fireComponentRemoved( (DeskComponent) c );
     }
     
-    
     public void moveToFront( DeskComponent dc )
     {
         moveToFront( (Component) dc );
@@ -516,27 +518,21 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         if( bAutoArrange )
             dialog.pack();
         
-        // Ensures that dialog is not bigger than WorkArea
-        // (because the same user can run Joing in many different-size devices)
-        Insets    insets = getInsets();
-        Dimension dim    = getSize();
-                  dim.width  -= (insets.left + insets.right);
-                  dim.height -= (insets.top  + insets.bottom);
-                  
-        if( dialog.getWidth() > dim.width )
-            dialog.setSize( dim.width, dialog.getHeight() );
-            
-        if( dialog.getHeight() > dim.height )
-            dialog.setSize( dialog.getWidth(), dim.height );
+        adjustWindowBounds( dialog );
         
-        // Can't be part of bAutoarrange because DeskFrame interface does not include setVisible(...)
-        dialog.setVisible( true );  // 1st, must be visble, because this is the way to have a parent
+        super.add( dialog, LAYER_DIALOG );
+        
+        // 1st, must be visble, because this is the way to have a parent
+        dialog.setVisible( true );   // DeskFrame interface does not include setVisible(...)
         
         if( bAutoArrange )
         {
             dialog.center();
             dialog.setSelected( true );
+            moveToFront( (Component) dialog );
         }
+        
+        dialog.startModal();
     }
     
     private void addFrame( PDEFrame frame, boolean bAutoArrange )
@@ -544,18 +540,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         if( bAutoArrange )
             frame.pack();
         
-        // Ensures that dialog is not bigger than WorkArea
-        // (because the same user can run Joing in many different-size devices)
-        Insets    insets = getInsets();
-        Dimension dim    = getSize();
-                  dim.width  -= (insets.left + insets.right);
-                  dim.height -= (insets.top  + insets.bottom);
-                  
-        if( frame.getWidth() > dim.width )
-            frame.setSize( dim.width, frame.getHeight() );
-            
-        if( frame.getHeight() > dim.height )
-            frame.setSize( frame.getWidth(), dim.height );
+        adjustWindowBounds( frame );
         
         // Add to container
         if( frame.isAlwaysOnTop() )
@@ -566,7 +551,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         if( bAutoArrange )
             frame.center();
                   
-        // Can't be part of bAutoarrange because DeskFrame interface does not include setVisible(...)
+        // DeskFrame interface does not include setVisible(...)
         frame.setVisible( true );  // 1st, must be visble, because this is the way to have a parent
         
         if( bAutoArrange )
@@ -574,6 +559,22 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             frame.setSelected( true );
             moveToFront( (Component) frame );
         }
+    }
+    
+    // Ensures that passed dialog of frame is not bigger than WorkArea
+    // (the same user can run Joing in many different-size devices)
+    private void adjustWindowBounds( PDEWindow window )
+    {
+        Insets    insets = getInsets();
+        Dimension dim    = getSize();
+                  dim.width  -= (insets.left + insets.right);
+                  dim.height -= (insets.top  + insets.bottom);
+                  
+        if( window.getWidth() > dim.width )
+            window.setSize( dim.width, window.getHeight() );
+            
+        if( window.getHeight() > dim.height )
+            window.setSize( window.getWidth(), dim.height );
     }
     
     //------------------------------------------------------------------------//

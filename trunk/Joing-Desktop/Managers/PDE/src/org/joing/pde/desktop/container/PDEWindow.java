@@ -16,7 +16,7 @@ import org.joing.common.desktopAPI.pane.DeskWindow;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 public class PDEWindow extends JInternalFrame implements DeskWindow
 {
@@ -49,14 +49,21 @@ public class PDEWindow extends JInternalFrame implements DeskWindow
     
     public void center()
     {
-        if( getDesktopPane() != null )
-        {
-            Container cp = getDesktopPane();
-            int       nX = (cp.getWidth()  - getWidth())  / 2;
-            int       nY = (cp.getHeight() - getHeight()) / 2;
-            
-            setLocation( Math.max( nX, 0 ), Math.max( nY, 0 ) );
-        }
+        Container parent = getParent();   // Perhaps there is another parent sat (not DesktopPane).
+        
+        if( parent == null )
+            parent = getDesktopPane();
+        
+        if( parent != null )
+            center( parent );
+    }
+    
+    public void setLocationRelativeTo( DeskComponent parent )
+    {
+        if( parent == null )
+            center();
+        else
+            center( (Component) parent );
     }
     
     public void setSelected( boolean bSelected )
@@ -98,5 +105,16 @@ public class PDEWindow extends JInternalFrame implements DeskWindow
         }
         
         dispose();
+    }
+    
+    //------------------------------------------------------------------------//
+    
+    private void center( Component parent )
+    {
+        int nX = (parent.getWidth()  - getWidth())  / 2;
+        int nY = (parent.getHeight() - getHeight()) / 2;
+        
+        setLocation( parent.getX() + Math.max( nX, 0 ),
+                     parent.getY() + Math.max( nY, 0 ) );
     }
 }

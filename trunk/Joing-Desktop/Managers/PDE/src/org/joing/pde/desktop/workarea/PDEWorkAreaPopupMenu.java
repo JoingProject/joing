@@ -126,7 +126,7 @@ class PDEWorkAreaPopupMenu extends JPopupMenu implements ActionListener
     
     private void editProperties()
     {
-        PDEWorkAreaProperties panel = new PDEWorkAreaProperties();
+        PDEWorkAreaProperties panel = new PDEWorkAreaProperties( waParent );
         
         if( PDEUtilities.showBasicDialog( null, "WorkArea Preferences", panel ) )
         {

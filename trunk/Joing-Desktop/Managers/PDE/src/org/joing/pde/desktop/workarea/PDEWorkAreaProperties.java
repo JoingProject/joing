@@ -9,9 +9,9 @@ import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.border.LineBorder;
+import org.joing.common.desktopAPI.workarea.WorkArea;
 
 /**
  *
@@ -19,9 +19,13 @@ import javax.swing.border.LineBorder;
  */
 public class PDEWorkAreaProperties extends javax.swing.JPanel
 {
+    private WorkArea waParent;
+    
     /** Creates new form PDEWorkAreaProperties */
-    public PDEWorkAreaProperties()
+    public PDEWorkAreaProperties( WorkArea waParent )
     {
+        this.waParent = waParent;
+        
         initComponents();
         
         // Cambio las JLabel por mis GradientLabel
@@ -36,8 +40,9 @@ public class PDEWorkAreaProperties extends javax.swing.JPanel
     //------------------------------------------------------------------------//
     
     private void initValues()
-    {   // TODO: leerlo de donde sea (fichero o el propio WorkArea)
+    {   // TODO: leer los valores iniciales del workarea (porque el fichero es manejado desde la clase que invoca a esta)
         chkColorGradient.setSelected( false );
+        radGradientHorizontal.setSelected( true );
         chkColorGradientActionPerformed( null );
     }
 
@@ -81,15 +86,6 @@ public class PDEWorkAreaProperties extends javax.swing.JPanel
                 g2d.fillRect( 1, 1, getWidth()-2, getHeight()-2 );   // Has 1 pixel border
             }
         }
-    }
-    
-    public static void main( String[] as )
-    {
-        JFrame frame = new JFrame();
-        frame.add( new PDEWorkAreaProperties()  );
-        frame.pack();
-        frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-        frame.setVisible( true );
     }
 
     /** This method is called from within the constructor to
@@ -176,7 +172,19 @@ public class PDEWorkAreaProperties extends javax.swing.JPanel
 
         lblColorFrom.setText("From");
 
+        btnColorFrom.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnColorActionPerformed(evt);
+            }
+        });
+
         lblColorTo.setText("To");
+
+        btnColorTo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnColorActionPerformed(evt);
+            }
+        });
 
         chkColorGradient.setText("Gradient");
         chkColorGradient.addActionListener(new java.awt.event.ActionListener() {
@@ -293,7 +301,7 @@ public class PDEWorkAreaProperties extends javax.swing.JPanel
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtName, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE))
                     .addComponent(pnlImage, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnlColor, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE))
+                    .addComponent(pnlColor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -330,6 +338,13 @@ public class PDEWorkAreaProperties extends javax.swing.JPanel
         radGradientTopLeftToBottomRight.setEnabled( bSelected );
         radGradientTopRightToBottomLeft.setEnabled( bSelected );
     }//GEN-LAST:event_chkColorGradientActionPerformed
+
+    private void btnColorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnColorActionPerformed
+// TODO: Hacerlo
+//        JColorChooser color = new JColorChooser();
+//        
+//        ((JButton) evt.getSource()).setBackground( ... );
+    }//GEN-LAST:event_btnColorActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnColorFrom;
