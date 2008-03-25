@@ -25,7 +25,6 @@ package org.joing.common.dto.vfs;
 import java.io.Serializable;
 import java.util.Date;
 // FIXME: reparsar todos los permisos viendo cuándo se puede o no cambiar algo.
-import javax.swing.JOptionPane;
 /**
  * DTO class for FileDescriptor.
  * <p>
@@ -68,7 +67,7 @@ public class FileDescriptor implements Serializable
     
     //---------------------------------------------//
     
-    private String  sFailedToChangeAttributeReason;
+    private String  sFailedToChangeAttributeReason = null;
             
     //------------------------------------------------------------------------//
     
@@ -91,18 +90,31 @@ public class FileDescriptor implements Serializable
     {
         return account;
     }
+    /**
+     * Return all except the file name.
+     * 
+     * @return All except the file name.
+     */
+    public String getParent()
+    {
+        return path;
+    }
     
+    /**
+     * Just the name of the file or directory (it does not include the path).
+     * 
+     * @return Just the name of the file or directory.
+     */
     public String getName()
     {
         return name;
     }
     
     public boolean setName( String name )
-    {///JOptionPane.showMessageDialog( null, "Parameter = '"+ name +"'"  );
+    {
         if( canChange() )
         {
-            this.name = name;
-            ///JOptionPane.showMessageDialog( null, "Lo ha cambiado"  );
+            this.name = name.trim();
             return true;
         }
         
@@ -119,19 +131,36 @@ public class FileDescriptor implements Serializable
         return isDir;
     }
     
+    /**
+     * Return the path from root, including file name.
+     * 
+     * @return Path from root, including file name.
+     */
     public String getAbsolutePath()
     {
         // TODO: posiblemente aquí haya que tener en cuenta cosas como si está 
         //       en la Trashcan o si es un Link a otro fichero
-        StringBuilder sb = new StringBuilder( 256 );
-                      sb.append( path  );
         
-        if( ! path.endsWith( "/" ) )
-            sb.append( '/' );
+        String sName = getName();   // Can't be null and is already trimmed
+        String sPath = null;
         
-        sb.append( getName() );
+        if( sName.equals( "/" ) )
+        {
+            sPath = sName;
+        }
+        else
+        {
+            StringBuffer sb = new StringBuffer( 256 );
+                         sb.append( path  );
+
+            if( ! path.endsWith( "/" ) )
+                sb.append( '/' );
+
+            sb.append( sName );
+            sPath = sb.toString();
+        }
         
-        return sb.toString();
+        return sPath;
     }
 
     public boolean isHidden()
@@ -210,13 +239,9 @@ public class FileDescriptor implements Serializable
         if( bSuccess )
         {
             if( ! isDirectory() )
-            {
                 this.isExecutable = isExecutable;
-            }
             else
-            {
                 sFailedToChangeAttributeReason = "Directories can not be executables.";
-            }
         }
         
         return bSuccess;
@@ -363,7 +388,7 @@ public class FileDescriptor implements Serializable
     {
         if( canChange() )
         {
-            this.notes = notes;
+            this.notes = ((notes == null) ? "" : notes);
             return true;
         }
         
@@ -430,7 +455,7 @@ public class FileDescriptor implements Serializable
     
     public void setPath( String sPath )
     {
-        this.path = sPath;
+        this.path = ((sPath == null) ? "" : sPath.trim());
     }
     
     public void setOwner( String sOwner )
@@ -438,24 +463,24 @@ public class FileDescriptor implements Serializable
         this.owner = sOwner;
     }
     
-    public void setLockedBy( String sSetLockedBy )
+    public void setLockedBy( String sLockedBy )
     {
-        this.lockedBy = sSetLockedBy;
+        this.lockedBy = sLockedBy;
     }
     
     public void setCreated( Date date )
     {
-        this.created = date;
+        this.created = ((date == null) ? new Date( 0 ) : date);
     }
     
     public void setModified( Date date )
     {
-        this.modified = date;
+        this.modified = ((date == null) ? new Date( 0 ) : date);
     }
     
     public void setAccessed( Date date )
     {
-        this.accessed = date;
+        this.accessed = ((date == null) ? new Date( 0 ) : date);
     }
     
     /**
@@ -466,7 +491,7 @@ public class FileDescriptor implements Serializable
     public void setSize( long size )
     {
         if( ! isDirectory() )
-            this.size = size;
+            this.size = ((size < 0) ? 0 : size);
     }
     
     //------------------------------------------------------------------------//
@@ -478,18 +503,18 @@ public class FileDescriptor implements Serializable
         
         if( ! account.equals( owner ) )
         {
-            sbReason.append( "You have to be the owner of the file." );
+            sbReason.append( "You have to be the owner of the file" );
             bSuccess = false;
         }
         
         if( ! isAlterable() )
         {
             if( sbReason.length() > 0 )
-                sbReason.append( "\nAnd file" );
+                sbReason.append( "\nand file" );
             else
                 sbReason.append( "File" );
             
-            sbReason.append( "is under 'protected status' against changes." );
+            sbReason.append( " is under 'protected status' against changes." );
             
             bSuccess = false;
         }

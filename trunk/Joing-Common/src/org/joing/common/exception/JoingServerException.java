@@ -50,7 +50,6 @@ public class JoingServerException extends RuntimeException
         super( message, cause );
     }
     
-    @Override
     public String getLocalizedMessage()
     {
         return (sLocalizedMessage == null ? getMessage() : sLocalizedMessage);
