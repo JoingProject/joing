@@ -31,7 +31,7 @@ import org.joing.common.exception.JoingServerVFSException;
  */
 @Stateless
 public class ListManagerBean 
-       implements ListManagerRemote, ListManagerLocal, Serializable
+       implements ListManagerLocal, Serializable
 {
     private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
     

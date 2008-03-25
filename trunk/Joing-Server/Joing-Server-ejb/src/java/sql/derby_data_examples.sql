@@ -6,13 +6,9 @@ insert into locales (IDIOM, COUNTRY)  -- ID_LOCALE = 2
      values ('es', 'ES');
 
 -- ------------------------------------------------------------------
--- There is no problem about the same person being twice: peyrona has to profiles, 
--- one as admin and annother as simple user.
 
 insert into users (ACCOUNT, PASSWORD, EMAIL, FIRST_NAME, SECOND_NAME, ID_LOCALE, IS_MALE, QUOTA)
-     values('peyrona@joing.peyrona.com','admin','peyrona@gmail.com', 'Francisco','Morero Peyrona', 2, 1, 0);
-
--- ------------------------------------------------------------------
+     values('peyrona@joing.org','admin','peyrona@gmail.com', 'Francisco','Morero Peyrona', 1, 1, 0);
 
 -- For inf about ID_APP_GROUP, refer to -> org.joing.common.dto.app.AppGroup.java
 
@@ -177,49 +173,49 @@ insert into app_preferred (ID_APPLICATION, FILE_EXTENSION)
 -- ------------------------------------------------------------------
 
 insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.peyrona.com', 1, 1);
+     values ('peyrona@joing.org', 1, 1);
  
 insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.peyrona.com', 2, 1);
+     values ('peyrona@joing.org', 2, 1);
 
 insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.peyrona.com', 3, 1);
+     values ('peyrona@joing.org', 3, 1);
 
 insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.peyrona.com', 4, 1);
+     values ('peyrona@joing.org', 4, 1);
 
 insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.peyrona.com', 5, 1);
+     values ('peyrona@joing.org', 5, 1);
 
 insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.peyrona.com', 6, 1);
+     values ('peyrona@joing.org', 6, 1);
 
 insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.peyrona.com', 7, 0);
+     values ('peyrona@joing.org', 7, 0);
 
 insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.peyrona.com', 8, 0);
+     values ('peyrona@joing.org', 8, 0);
 
 -- ------------------------------------------------------------------
 
 insert into files ( ID_ORIGINAL, ACCOUNT, OWNER, FILE_NAME, FILE_PATH, LOCKED_BY, 
                     IS_DIR, IS_HIDDEN, IS_PUBLIC, IS_READABLE, IS_MODIFIABLE, IS_DELETEABLE, 
                     IS_EXECUTABLE, IS_DUPLICABLE, IS_ALTERABLE, IS_IN_TRASHCAN, NOTES )
-           values ( NULL, 'peyrona@joing.peyrona.com', 'system@joing.peyrona.com', '/', '', NULL, 
+           values ( NULL, 'peyrona@joing.org', 'system@joing.org', '/', '', NULL, 
                     1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 
                    'Root & Home Directory');
 
 insert into files ( ID_ORIGINAL, ACCOUNT, OWNER, FILE_NAME, FILE_PATH, LOCKED_BY, 
                     IS_DIR, IS_HIDDEN, IS_PUBLIC, IS_READABLE, IS_MODIFIABLE, IS_DELETEABLE, 
                     IS_EXECUTABLE, IS_DUPLICABLE, IS_ALTERABLE, IS_IN_TRASHCAN, NOTES )
-           values ( NULL, 'peyrona@joing.peyrona.com', 'system@joing.peyrona.com', 'Desktop', '/', NULL,
+           values ( NULL, 'peyrona@joing.org', 'system@joing.org', 'Desktop', '/', NULL,
                     1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 
                    'The desktop');
 
 insert into files ( ID_ORIGINAL, ACCOUNT, OWNER, FILE_NAME, FILE_PATH, LOCKED_BY, 
                     IS_DIR, IS_HIDDEN, IS_PUBLIC, IS_READABLE, IS_MODIFIABLE, IS_DELETEABLE, 
                     IS_EXECUTABLE, IS_DUPLICABLE, IS_ALTERABLE, IS_IN_TRASHCAN, NOTES )
-           values ( NULL, 'peyrona@joing.peyrona.com', 'peyrona@joing.peyrona.com', 'The very 1st file', '/', NULL, 
+           values ( NULL, 'peyrona@joing.org', 'peyrona@joing.org', 'The very 1st file', '/', NULL, 
                     0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 
                    'The very first file (not dir). Originaly stored in root dir');
 

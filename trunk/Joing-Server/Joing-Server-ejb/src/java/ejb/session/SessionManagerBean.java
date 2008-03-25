@@ -31,7 +31,7 @@ import javax.persistence.EntityManager;
  */
 @Stateless
 public class SessionManagerBean
-       implements SessionManagerRemote, SessionManagerLocal, Serializable
+       implements SessionManagerLocal, Serializable
 {
     private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
     

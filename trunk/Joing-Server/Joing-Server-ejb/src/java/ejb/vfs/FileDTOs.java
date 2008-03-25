@@ -107,8 +107,8 @@ class FileDTOs
         toFileEntity.setIdOriginal( (fromFileDescriptor.getIdOriginal() == -1 ? null : fromFileDescriptor.getIdOriginal()) );
         toFileEntity.setOwner(      fromFileDescriptor.getOwner()      );
         toFileEntity.setLockedBy(   fromFileDescriptor.getLockedBy()   );
-        toFileEntity.setIsDir( (short)(fromFileDescriptor.isDirectory() ? 1 : 0) );
         
+        toFileEntity.setIsDir(        (short)(fromFileDescriptor.isDirectory()  ? 1 : 0) );
         toFileEntity.setIsHidden(     (short)(fromFileDescriptor.isHidden()     ? 1 : 0) );
         toFileEntity.setIsPublic(     (short)(fromFileDescriptor.isPublic()     ? 1 : 0) );
         toFileEntity.setIsReadable(   (short)(fromFileDescriptor.isReadable()   ? 1 : 0) );

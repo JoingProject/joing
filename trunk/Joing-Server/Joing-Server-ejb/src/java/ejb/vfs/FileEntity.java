@@ -13,6 +13,8 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -48,8 +50,11 @@ import javax.persistence.TemporalType;
     
 public class FileEntity implements Serializable
 {
+    // Note: Can't use GenerationType.AUTO with TopLink and Derby because 
+    //       TopLink tries SEQUENCE, and Derby does not support it.     
     @Id
-    @Column(name = "ID_FILE", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID_FILE")
     private int idFile;
 
     @Column(name = "ID_ORIGINAL")
@@ -78,7 +83,7 @@ public class FileEntity implements Serializable
 
     @Column(name = "IS_PUBLIC")
     private Short isPublic;
-
+    
     @Column(name = "IS_READABLE")
     private Short isReadable;
 
@@ -308,7 +313,7 @@ public class FileEntity implements Serializable
     {
         return this.isReadable;
     }
-
+    
     /**
      * Sets the isReadable of this FileEntity to the specified value.
      * @param isReadable the new isReadable
@@ -538,6 +543,11 @@ public class FileEntity implements Serializable
     @Override
     public String toString()
     {
-        return "ejb.vfs.FileEntity[name="+ filePath +"/"+ fileName +"account="+ account +"]";
+        String sFilePath = filePath;
+        
+        if( (! filePath.equals( "/" )) && (! fileName.endsWith( "/" )) )
+            sFilePath += "/";
+        
+        return "ejb.vfs.FileEntity[name="+ sFilePath + fileName +", account="+ account +"]";
     }   
 }
