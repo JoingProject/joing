@@ -23,7 +23,6 @@ package ejb.vfs;
 
 import ejb.Constant;
 import java.util.List;
-import org.joing.common.exception.JoingServerException;
 import org.joing.common.exception.JoingServerVFSException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -38,13 +37,23 @@ import javax.persistence.Query;
  */
 class VFSTools
 {
+    private final static String sROOT = "/";     // 4 speed
+    
+    // Note: a file exists even if it is in the trashcan ('cause it can be moved back)
+    static boolean existsName( EntityManager em, String sAccount, String sPath, String sName )
+    {
+        String sFullName = sPath + (sPath.equals( sROOT ) ? "" : sROOT) + sName;
+        
+        return( path2File( em, sAccount, sFullName ) != null );
+    }
+    
     /**
      * Obtains the FileEntity instance that represents the file or directory
      * passed as String.
      *
      * @param sAccount An Account representing the owner of the file ro dir.
-     * @param sPath Path starting at root ("/") and ending with the file or dir
-     *        name.
+     * @param sFullname Full file (or dir) name starting at root ("/") and 
+     *        ending with the file (or dir) name.
      * @return An instance of class <code>FileEntity</code> that represents the 
      *         file or directory denoted by passed path or <code>null</code> if 
      *         the path does not corresponds with an existing file.
@@ -54,63 +63,78 @@ class VFSTools
     static FileEntity path2File( EntityManager em, String sAccount, String sFullName )
            throws JoingServerVFSException
     {
-        FileEntity _file = null;
         
-        if( sFullName != null )
+        FileEntity _file = null;
+        String     sPath = null;
+        String     sName = null;
+        
+        if( sFullName == null )
+            throw new NullPointerException( "File name can't be null." );
+        
+        sFullName = sFullName.trim();
+        
+        if( sFullName.length() == 0 )
+            sFullName = sROOT;
+        
+        if( sFullName.charAt( 0 ) != '/' )
+            throw new IllegalArgumentException( "File name must start from root '/'." );
+        
+        if( sFullName.equals( sROOT ) )
         {
-            sFullName = sFullName.trim();
-            
-            if( sFullName.length() == 0 )
-                throw new JoingServerVFSException( "Path can't be empty." );
-            
-            if( sFullName.charAt( 0 ) != '/' )
-                throw new JoingServerVFSException( "Path must start from root." );
-            
-            try
+            sPath = "";
+            sName = sFullName;
+        }
+        else
+        {
+            int nIndex = sFullName.lastIndexOf( '/' ) + 1;
+
+            if( nIndex > 0 && nIndex < sFullName.length() )
             {
-                Query  qryFindFile = em.createNamedQuery( "FileEntity.findByPathAndName" );
-                String sPath       = null;
-                String sName       = null;
-                
-                if( sFullName.equals( "/" ) )
-                {
-                    sPath = "";
-                    sName = sFullName;
-                }
-                else
-                {
-                    int nIndex = sFullName.lastIndexOf( '/' );
-                     
-                    sName = sFullName.substring( nIndex + 1 );
-                    sPath = sPath.substring( 0, nIndex );
-                }
-                
-                qryFindFile.setParameter( "account", sAccount );
-                qryFindFile.setParameter( "path"   , sPath    );
-                qryFindFile.setParameter( "name"   , sName    );
-                
-                try
-                {
-                    _file = (FileEntity) qryFindFile.getSingleResult();
-                }
-                catch( NoResultException exc )
-                {
-                    // Nothing to do
-                }
-            }
-            catch( RuntimeException exc )
-            {
-                if( ! (exc instanceof JoingServerException) )
-                {
-                    Constant.getLogger().throwing( VFSTools.class.getName(), "path2File(...)", exc  );
-                    exc = new JoingServerVFSException( JoingServerException.ACCESS_DB, exc );
-                }
-                
-                throw exc;
+                sPath = sFullName.substring( 0, nIndex );
+                sName = sFullName.substring( nIndex );
             }
         }
         
-        return _file;
+        // If sPath != '/' and ends with '/' then removes last '/'
+        if( sPath.length() > 1 && sPath.endsWith( sROOT ) )
+            sPath = sPath.substring( 0, sPath.length() - 1 );
+        
+        if( sName == null )
+            throw new JoingServerVFSException( "File name can't be null." );
+        
+        sName = sName.trim();
+        
+        if( sName.length() == 0 )
+            throw new JoingServerVFSException( "File name can't be empty." );
+        
+        if( sPath.length() > 0 )    // sName is not root (we are not talking about root)
+        {
+            // Name can't have '/' (leading or trailing)
+            if( sName.startsWith( sROOT ) )
+                sName = sName.substring( 1 );
+                
+            if( sName.endsWith( sROOT ) )
+                sName = sName.substring( 0, sName.length() - 2 );
+        }
+        
+        if( sName.length() == 0 )
+            throw new JoingServerVFSException( "File name can't be empty." );
+        
+        Query qryFindFile = em.createNamedQuery( "FileEntity.findByPathAndName" );
+              qryFindFile.setParameter( "account", sAccount );
+              qryFindFile.setParameter( "path"   , sPath    );
+              qryFindFile.setParameter( "name"   , sName    );
+
+        try
+        {
+            _file = (FileEntity) qryFindFile.getSingleResult();
+        }
+        catch( NoResultException exc )
+        {
+            // Nothing to do
+        }
+        
+        return( _file );
     }
     
     /**
@@ -125,15 +149,13 @@ class VFSTools
             throws JoingServerVFSException
     {
         if( _file.getIsDir() == 0 )
-            throw new JoingServerVFSException( "It is not a directory." );
+            throw new JoingServerVFSException( "Passed file is not a directory." );
         
         try
         {
-            String sFullName = _file.getFilePath() +"/"+ _file.getFileName();
-            
             Query query = em.createNamedQuery( "FileEntity.findByPath" );
-                  query.setParameter( "account", sAccount  );
-                  query.setParameter( "path"   , sFullName );
+                  query.setParameter( "account", sAccount );
+                  query.setParameter( "path"   , getAbsolutePath( _file ) );
                   
             return (List<FileEntity>) query.getResultList();
         }
@@ -145,18 +167,33 @@ class VFSTools
     }
     
     /**
-     * Returns parent Entity based on its ID.
-     * @param em An instance of EntityManager
-     * @param nParentId
-     * @return Returns parent Entity based on its ID, or null if it does not exists.
-     * @throws org.joing.common.exception.JoingServerVFSException
+     * Return the path from root, including file name.
+     * 
+     * @return Path from root, including file name.
      */
-    static FileEntity getParentEntity( EntityManager em, int nParentId )
-            throws JoingServerVFSException
+    static String getAbsolutePath( FileEntity fe )
     {
-        FileEntity _feParent = null;
+        // TODO: posiblemente aquí haya que tener en cuenta cosas como si está 
+        //       en la Trashcan o si es un Link a otro fichero
         
-        return _feParent;
+        String        sName = fe.getFileName();   // Can't be null and is already trimmed
+        StringBuilder sb    = new StringBuilder( 256 );
+        
+        if( sName.equals( sROOT ) )
+        {
+            sb.append( sName );
+        }
+        else
+        {
+            sb.append( fe.getFilePath() );
+                          
+            if( ! fe.getFilePath().endsWith( sROOT ) )
+                sb.append( '/' );
+
+            sb.append( sName );
+        }
+        
+        return sb.toString();
     }
     
     //------------------------------------------------------------------------//

@@ -45,7 +45,7 @@ import org.joing.common.exception.JoingServerException;
  */
 @Stateless
 public class ApplicationManagerBean
-        implements ApplicationManagerRemote, ApplicationManagerLocal, Serializable {
+        implements ApplicationManagerLocal, Serializable {
 
     private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
     private static final int APPS_ALL = 0;

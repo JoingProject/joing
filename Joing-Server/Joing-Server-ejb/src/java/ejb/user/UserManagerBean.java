@@ -53,7 +53,7 @@ import javax.persistence.Query;
  */
 @Stateless
 public class UserManagerBean
-    implements UserManagerRemote, UserManagerLocal, Serializable
+    implements UserManagerLocal, Serializable
 {
     private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
     
@@ -170,17 +170,17 @@ public class UserManagerBean
         User user = null;
         
         if( ! isValidAccount( sAccount ) )
-            new JoingServerUserException( JoingServerUserException.INVALID_ACCOUNT );
+            throw new JoingServerUserException( JoingServerUserException.INVALID_ACCOUNT );
         
         if( ! isValidPassword( sPassword ) )
-            new JoingServerUserException( JoingServerUserException.INVALID_PASSWORD );
+            throw new JoingServerUserException( JoingServerUserException.INVALID_PASSWORD );
         
         sAccount = sAccount +"@"+ Constant.getSystemName();
         
         // By checking here the availability, we ensure that all
         // operations will be made in same transaction.
         if( ! sessionManagerBean.isAccountAvailable( sAccount ) )
-            new JoingServerUserException( JoingServerSessionException.LOGIN_EXISTS );
+            throw new JoingServerUserException( JoingServerSessionException.LOGIN_EXISTS );
             
         try
         {
@@ -230,7 +230,10 @@ public class UserManagerBean
         finally 
         {
             if( em.getTransaction().isActive() )
+            {
                 em.getTransaction().rollback();
+                // FIXME: Deshacer lo hecho en: NativeFileSystemTools.createAccount( _user.getAccount() );
+            }
         }
         
         return user;
@@ -272,6 +275,9 @@ public class UserManagerBean
     
     //------------------------------------------------------------------------//
     
+    // This method checks only that the chars in passed account name are valid.
+    // And SessionManagerBean.isAccountAvailable( sAccount ) checks that the 
+    // account is available (including System.account()).
     private boolean isValidAccount( String s )
     {
         boolean bValid = false;
