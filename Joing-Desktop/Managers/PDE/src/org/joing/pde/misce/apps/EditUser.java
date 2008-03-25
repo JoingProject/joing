@@ -34,7 +34,7 @@ public class EditUser extends JPanel implements DeskComponent
         frame = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().createFrame();
         frame.setTitle( "User Information" );
         frame.setIcon( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getStandardImage( sIcon, 20, 20 ) );
-        frame.add( (DeskComponent) this );
+        frame.add( this );
         
         org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
     }

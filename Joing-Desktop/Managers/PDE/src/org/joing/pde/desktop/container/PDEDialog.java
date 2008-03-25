@@ -8,62 +8,49 @@
 
 package org.joing.pde.desktop.container;
 
-import java.awt.AWTEvent;
-import java.awt.ActiveEvent;
 import java.awt.Component;
-import java.awt.EventQueue;
-import java.awt.MenuComponent;
+import java.awt.Container;
+import java.awt.KeyboardFocusManager;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
-import javax.swing.JRootPane;
-import javax.swing.SwingUtilities;
+import javax.swing.JOptionPane;
+import javax.swing.PopupFactory;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.MouseInputAdapter;
+import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.pane.DeskDialog;
-import org.joing.pde.PDEManager;
 
 /**
- * Instances of this class can't be added to the Desktop, because this class uses
- * a trick to be modal (they add themselves to the top-level-component 
- * RootPane-GlassPane).<br>
- * Remember: do not add instances of this class to anyplace.
+ * 
+ * 
+ * Note: this class uses two undocumented methods in java.awt.Container class to 
+ * start/stop modal state.
  * 
  * @author Francisco Morero Peyrona
  */
-// More info at: http://java.sun.com/developer/JDCTechTips/2001/tt1220.html
 public class PDEDialog extends PDEWindow implements DeskDialog
 {
-    private JPanel    glassNew;
-    private Component glassOld;
+    private Component focusOwner;
     
     //------------------------------------------------------------------------//
     
     public PDEDialog()
     {           // resizable, closable, maximizable, minimizable
         super( "", true,      true,     false,       false );
-        super.setVisible( false );
+        
         setDefaultCloseOperation( JInternalFrame.DISPOSE_ON_CLOSE );
         
         addInternalFrameListener( new InternalFrameAdapter()
         {
-            public void internalFrameClosed( InternalFrameEvent e )
+            public void internalFrameClosing( InternalFrameEvent e )
             {   // dispose() can't be called here because goes into infinite loop
-                clean();
+                goModal( false );
             }
         } );
-        
-        // Sin esto, los eventos de ratón "atraviesan" el glass
-        MouseInputAdapter mia = new MouseInputAdapter() { };
-        
-        // Create not-opaque glass pane
-        glassNew = new JPanel();
-        glassNew.setOpaque( false );
-        glassNew.addMouseListener( mia );
-        glassNew.addMouseMotionListener( mia );
-        
-        // Add modal internal frame to glass pane
-        glassNew.add( this );   
     }
     
     //------------------------------------------------------------------------//
@@ -75,95 +62,135 @@ public class PDEDialog extends PDEWindow implements DeskDialog
     }
     
     //------------------------------------------------------------------------//
+    // Container interface
+    
+    public void add( DeskComponent dc )
+    {
+        // FIXME: Al menos con el JoingFileChooser no funciona el HeavyWeightPopup
+        //        Se puede mirar su uso en JOptionPane
+        // PopupFactory.forceHeavyWeightPopupKey == "__force_heavy_weight_popup__"
+        // But I have to use the String because the variuable has package scope
+        ((JComponent) dc).putClientProperty( "__force_heavy_weight_popup__", Boolean.TRUE );
+        
+        getContentPane().add( (Component) dc );
+    }
+    
+    //------------------------------------------------------------------------//
     // Closeable interface
     
     public void close()
     {
-        clean();
+        setVisible( false );
         dispose(); // dispose() can't be at the InternalFrameAdapter because goes into infinite loop
     }
     
     //------------------------------------------------------------------------//
+    // Special methods used by PDE only (could be not needed in other implementations)
     
-    public void setVisible( boolean bVisible )
+    public void startModal()
     {
-        if( bVisible != isVisible() )
+        focusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+        
+        // Since all input will be blocked until this dialog is dismissed,
+        // make sure its parent containers are visible first (this component
+        // is tested below).  This is necessary for JApplets, because
+        // because an applet normally isn't made visible until after its
+        // start() method returns -- if this method is called from start(),
+        // the applet will appear to hang while an invisible modal frame
+        // waits for input.
+	if( isVisible() && (! isShowing()) )
         {
-            if( bVisible )
+            Container parent = getParent();
+            
+            while( parent != null )
             {
-                JRootPane root = ((PDEManager) org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager()).getTheRootPane();
-
-                // Change glass pane to our panel in rootPane
-                glassOld = root.getGlassPane();
-                root.setGlassPane( glassNew );
-
-                // Show glass pane, then modal dialog
-                glassNew.setSize( root.getSize() );
-                glassNew.validate();
-                glassNew.setVisible( true );
+                if( parent.isVisible() == false )
+                    parent.setVisible( true );
                 
-                // Dialog in PDE are always centered
-                int nX = (glassNew.getWidth()  - getWidth())  / 2;
-                int nY = (glassNew.getHeight() - getHeight()) / 2;
-                setLocation( Math.max( nX, 0 ), Math.max( nY, 0 ) );
-                //------------------------------------------
-                
-                super.setVisible( bVisible  );
-                center();
-                setSelected( true );
-                startModal();
-            }
-            else
-            {
-                super.setVisible( bVisible  );
-                stopModal();
+                parent = parent.getParent();
             }
         }
+        
+        goModal( true );
+    }
+    
+    public void stopModal()
+    {
+        goModal( false );
+        
+        if( getParent() instanceof JInternalFrame )
+        {
+            try
+            {
+                ((JInternalFrame) getParent()).setSelected( true );
+            }
+            catch( java.beans.PropertyVetoException e )
+            {
+            }
+        }
+        
+        if( focusOwner != null && focusOwner.isShowing() )
+            focusOwner.requestFocus();
     }
     
     //------------------------------------------------------------------------//
     
-    private void clean()
-    {
-        JRootPane root = ((PDEManager) org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager()).getTheRootPane();
-                  root.setGlassPane( glassOld );
-                  
-        stopModal();
-    }
-    
-    private synchronized void startModal()
+    // Use reflection to get Container.startLWModal.
+    private synchronized void goModal( boolean bModal )
     {
         try
         {
-            if( SwingUtilities.isEventDispatchThread() )
-            {
-                EventQueue theQueue = getToolkit().getSystemEventQueue();
-                
-                while( isVisible() )
-                {
-                    AWTEvent event  = theQueue.getNextEvent();
-                    Object   source = event.getSource();
-                    
-                         if( event instanceof ActiveEvent )     ((ActiveEvent) event).dispatch();
-                    else if( source instanceof Component )      ((Component) source).dispatchEvent( event );
-                    else if( source instanceof MenuComponent )  ((MenuComponent) source).dispatchEvent( event );
-                    else System.err.println( "Unable to dispatch: " + event );
-                }
-            }
-            else
-            {
-                while( isVisible() )
-                    wait();
-            }
+            String sPrefix = (bModal ? "start" : "stop" );
+            
+            Object obj = AccessController.doPrivileged( new ModalPrivilegedAction( Container.class, sPrefix + "LWModal" ) );
+            
+            if( obj != null )
+                ((Method) obj).invoke( this, (Object[]) null );
         }
-        catch( InterruptedException ignored )
+        catch( IllegalAccessException ex )
         {
-            // Nothing to do
+        }
+        catch( IllegalArgumentException ex )
+        {
+        }
+        catch( InvocationTargetException ex )
+        {
         }
     }
-
-    private synchronized void stopModal()
+    
+    //------------------------------------------------------------------------//
+    // INNER CLASS
+    //------------------------------------------------------------------------//
+    
+    private static final class ModalPrivilegedAction implements PrivilegedAction
     {
-        notifyAll();
+        private Class clazz;
+        private String methodName;
+
+        public ModalPrivilegedAction( Class clazz, String methodName )
+        {
+            this.clazz = clazz;
+            this.methodName = methodName;
+        }
+
+        public Object run()
+        {
+            Method method = null;
+            
+            try
+            {
+                method = clazz.getDeclaredMethod( methodName, (Class[]) null );
+            }
+            catch( NoSuchMethodException ex )
+            {
+            }
+            
+            if( method != null )
+            {
+                method.setAccessible( true );
+            }
+            
+            return method;
+        }
     }
 }

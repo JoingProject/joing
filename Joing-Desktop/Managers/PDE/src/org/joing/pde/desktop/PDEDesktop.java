@@ -15,21 +15,21 @@ import java.awt.Component;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-import javax.swing.filechooser.FileSystemView;
-import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.desktopAPI.desktop.Desktop;
 import org.joing.common.desktopAPI.desktop.DesktopListener;
-import org.joing.common.desktopAPI.pane.DeskFrame;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.common.desktopAPI.taskbar.TaskBar;
+import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.taskbar.PDETaskBar;
 import org.joing.pde.desktop.workarea.PDEWallpaper;
 import org.joing.pde.swing.EventListenerList;
-import org.joing.pde.vfs.JoingFileSystemView;
+import org.joing.runtime.vfs.JoingFileChooser;
+import org.joing.runtime.vfs.JoingFileSystemView;
 
 /**
  *
@@ -75,7 +75,7 @@ public class PDEDesktop extends JPanel implements Desktop
                 addWorkArea( new PDEWorkArea() );
             
             setActiveWorkArea( getWorkAreas().get( 0 ) );
-            createTestComponents( getWorkAreas().get( 0 ) );   // TODO: quitarlo
+            ///createTestComponents( getWorkAreas().get( 0 ) );   // TODO: quitarlo
         }
         else
         {
@@ -107,7 +107,7 @@ public class PDEDesktop extends JPanel implements Desktop
         add( pnlWorkAreas, BorderLayout.CENTER );
     }
     
-    private void createTestComponents( WorkArea wa )  // TODO: quitar este metodo
+    private void createTestComponents( WorkArea wa )  // FIXME: quitar este metodo
     {
         PDEWallpaper wp0 = (PDEWallpaper) getWorkAreas().get( 0 ).getWallpaper();
         
@@ -129,18 +129,33 @@ public class PDEDesktop extends JPanel implements Desktop
         {
             public void run()
             {
-        
-                DeskFrame frame = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().createFrame();
-                          frame.setTitle( "User Information" );
-                          frame.add( (DeskComponent) new MyFileChooser( JoingFileSystemView.getFileSystemView() ) );
-        
-                org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
+                DesktopManager dm = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+                
+                PDEFrame frame = (PDEFrame) dm.getRuntime().createFrame();
+                         frame.setTitle( "Frame" );
+                         frame.add( new JTextArea( "Soy un Frame" ) );
+                         // FIXME: Si pongo esto ya no se ve --> frame.setBounds( 100,100,400,300);
+                dm.getDesktop().getActiveWorkArea().add( frame );
+                
+                JoingFileChooser jfc = new JoingFileChooser( JoingFileSystemView.getFileSystemView() );
+                int nSelection = jfc.showDialog( null, "Zarva" );
+                
+//                if( nSelection == JoingFileChooser.APPROVE_OPTION )
+//                    dm.getRuntime().showMessageDialog( "Result", "Approved" );
+//                else
+//                    dm.getRuntime().showMessageDialog( "Result", "Canceled" );
             }
         } );
+
         
-// FIXME: Las dialog funcionan de un modo raro, porque a diferencia de las Frames, hay que hacerles 
-//        el setVisible( true ) y además no se añaden al workarea (esto no es grave) y lo peor es que el
-//        método setVisible( ... ) no forma parte del interface DeskDialog, sino de la clase PDEDialog.
+//        SwingUtilities.invokeLater( new Runnable() 
+//        {
+//            public void run()
+//            {
+//                new org.joing.notes.Notes();
+//            }
+//        } );
+
 //        SwingUtilities.invokeLater( new Runnable()
 //        {
 //            public void run()
@@ -148,7 +163,8 @@ public class PDEDesktop extends JPanel implements Desktop
 //                DeskDialog dialog = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().createDialog();
 //                           dialog.setTitle( "Testing File Chosser" );
 //                           dialog.add( (DeskComponent) new EditUser() );
-//                   ///((PDEDialog)dialog).setVisible( true );
+//                org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
+//                
 //            }
 //        } );
         /*NasaPhoto nasa = new NasaPhoto();
@@ -354,15 +370,5 @@ public class PDEDesktop extends JPanel implements Desktop
         // Process the al last to first, notifying
         for( int n = al.length -1; n >= 0; n-- )
              al[n].taskBarRemoved( tb );
-    }
-    
-    //---------------------------------------------------------------------------------------------------//
-    
-    private final class MyFileChooser extends JFileChooser implements DeskComponent
-    {
-        private MyFileChooser( FileSystemView fsv )
-        {
-            super( fsv );
-        }
     }
 }

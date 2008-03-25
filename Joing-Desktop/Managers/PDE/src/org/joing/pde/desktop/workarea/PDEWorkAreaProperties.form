@@ -30,7 +30,7 @@
                       <Component id="txtName" pref="304" max="32767" attributes="0"/>
                   </Group>
                   <Component id="pnlImage" alignment="1" max="32767" attributes="1"/>
-                  <Component id="pnlColor" alignment="0" pref="355" max="32767" attributes="0"/>
+                  <Component id="pnlColor" alignment="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -197,6 +197,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="btnColorFrom">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnColorActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="lblColorTo">
           <Properties>
@@ -204,6 +207,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="btnColorTo">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnColorActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JCheckBox" name="chkColorGradient">
           <Properties>
