@@ -50,6 +50,9 @@ public class SessionManagerBean
         {
             try
             {
+                // Lower case is not accepted in UserManager::isValidAccount(...)
+                sAccount = sAccount.toLowerCase();
+                
                 if( sAccount.indexOf( '@' ) == -1 )
                     sAccount = sAccount +"@"+ Constant.getSystemName();
                 
