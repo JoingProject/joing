@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<ui:composition 
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+    <div class="web_form">
+    
+    <div class="web_form_content">
+	<h:form id="start_create_account" rendered="#{not CreateAccount.creatingAccount}">
+	<h2>Create an account</h2>
+	
+	<div class="field">
+	  <h:outputLabel for="user_name" value="User"/>
+	  <div class="input_text"><span><h:inputText
+		id="user_name"
+		value="#{CreateAccount.username}"/></span></div>
+	</div>
+	<div class="field">
+	  <h:outputLabel for="user_email" value="e-mail"/>
+	  <div class="input_text"><span><h:inputText
+		id="user_email"
+		value="#{CreateAccount.email}"/></span></div>
+	</div>
+	<div class="field">
+	    <h:commandButton
+		styleClass="submit"
+		value="Create"
+		action="#{CreateAccount.newAccountForm}"/>
+	</div>
+	</h:form>
+	<h:form id="continue_create_account"
+	    rendered="#{CreateAccount.creatingAccount and not CreateAccount.accountCreated}">
+	<h2>Create an account</h2>
+	<div class="field">
+	    <h:commandButton
+		styleClass="submit"
+		value="Continue"
+		action="#{CreateAccount.newAccountForm}"/>
+	</div>
+	</h:form>
+          <p style="clear: both;">
+            Registered users can launch Join'g
+          </p>
+          <div>
+            <input type="button" class="web_start" value="Start" onclick="alert('Start Join\'g');"/>
+            <br style="clear: both;"/><h:outputText value="&amp;nbsp;" escape="false"/>
+          </div>
+       </div>
+      <div class="web_form_end"></div>
+    </div>
+</ui:composition>

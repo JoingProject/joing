@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- =========== FULL CONFIGURATION FILE ================================== -->
+
+<faces-config version="1.2" 
+    xmlns="http://java.sun.com/xml/ns/javaee" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+    <application>
+	<!-- tell JSF to use Facelets -->
+	<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>
+    </application>
+
+	
+    <managed-bean>
+	<managed-bean-name>CreateAccount</managed-bean-name>
+	<managed-bean-class>org.joing.server.jsf.CreateAccount</managed-bean-class>
+	<managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+	<managed-bean-name>Util</managed-bean-name>
+	<managed-bean-class>org.joing.server.jsf.Util</managed-bean-class>
+	<managed-bean-scope>application</managed-bean-scope>
+    </managed-bean>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>createaccount</from-outcome>
+            <to-view-id>/account/create.html</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>home</from-outcome>
+            <to-view-id>/index.html</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>/account/create.html</from-view-id>
+        <navigation-case>
+            <from-outcome>success</from-outcome>
+            <to-view-id>/account/success.html</to-view-id>
+	    <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>error</from-outcome>
+            <to-view-id>/account/create.html</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+
+</faces-config>
