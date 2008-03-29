@@ -273,12 +273,10 @@ public class UserManagerBean
         }
     }
     
-    //------------------------------------------------------------------------//
-    
     // This method checks only that the chars in passed account name are valid.
     // And SessionManagerBean.isAccountAvailable( sAccount ) checks that the 
     // account is available (including System.account()).
-    private boolean isValidAccount( String s )
+    public boolean isValidAccount( String s )
     {
         boolean bValid = false;
         
@@ -292,8 +290,7 @@ public class UserManagerBean
             {
                 bValid = (ac[n] >= 48 && ac[n] <=  57) ||   // Is number
                          (ac[n] >= 97 && ac[n] <= 122) ||   // Is LowerCase
-                          ac[n] == '-'                 || 
-                          ac[n] == '_'                 || 
+                          ac[n] == '_'                 ||
                           ac[n] == '.';
                 
                 if( ! bValid )
@@ -304,12 +301,14 @@ public class UserManagerBean
         return bValid;
     }
     
-    private boolean isValidPassword( String s )
+    public boolean isValidPassword( String s )
     {
         return (s != null              && 
                 s.length() >= nMIN_LEN && 
                 s.length() <= nMAX_LEN );
     }
+    
+    //------------------------------------------------------------------------//
     
     private LocaleEntity findLocale( Locale locale )
             throws JoingServerUserException
