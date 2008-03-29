@@ -17,6 +17,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -27,13 +28,20 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import org.joing.pde.desktop.PDEDesktop;
 import java.awt.BorderLayout;
+import java.awt.Dialog;
 import java.awt.Toolkit;
+import java.util.Hashtable;
+import javax.swing.ImageIcon;
 import javax.swing.JApplet;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JProgressBar;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import org.joing.common.desktopAPI.DesktopManager;
+import org.joing.pde.misce.images.ImagesFactory;
 
 /**
  * DesktopManager interface implementation.
@@ -52,6 +60,8 @@ public class PDEManager extends JApplet implements DesktopManager
     private PDEDesktop desktop;
     private PDERuntime runtime;
     private JFrame     frame;
+    
+    private Hashtable<Integer, JDialog> htDialogs;
     
     //------------------------------------------------------------------------//
     
@@ -182,7 +192,52 @@ public class PDEManager extends JApplet implements DesktopManager
         else
             stop();
     }
-
+    
+    public int startServerTradeInfo( String sMessage, Image icon )
+    {
+        JDialog      dlgSeverTrade = new JDialog( frame, "Working with Join'g Server" );
+        JLabel       lblMessage    = new JLabel();
+        JLabel       lblIcon       = new JLabel();
+        JProgressBar progress      = new JProgressBar();
+        
+        if( sMessage == null )
+            sMessage = "Working with Join'g Server";
+        
+        if( htDialogs == null )   // Lazily creates the Hashtable
+            htDialogs = new Hashtable<Integer, JDialog>();
+        
+        htDialogs.put( htDialogs.size() + 1, dlgSeverTrade );
+        
+        lblMessage.setText( sMessage );
+        lblMessage.setHorizontalTextPosition( JLabel.CENTER );
+        
+        lblIcon.setIcon( (icon == null) ? PDEUtilities.getStandardIcon( ImagesFactory.Icon.CONN_SERVER ) :
+                                          new ImageIcon( icon ) );
+        
+        dlgSeverTrade.setModalityType( Dialog.ModalityType.APPLICATION_MODAL );
+        dlgSeverTrade.setDefaultCloseOperation( JDialog.DISPOSE_ON_CLOSE );
+        dlgSeverTrade.setUndecorated( true );
+        dlgSeverTrade.getRootPane().setWindowDecorationStyle( JRootPane.PLAIN_DIALOG );
+        dlgSeverTrade.add( lblMessage, BorderLayout.CENTER );
+        dlgSeverTrade.add( lblIcon   , BorderLayout.WEST   );
+        dlgSeverTrade.add( progress  , BorderLayout.SOUTH  );
+        dlgSeverTrade.setVisible( true );
+        
+        return htDialogs.size();
+    }
+    
+    public void stopServerTradeInfo( int nHandle )
+    {
+        Dialog dlgSeverTrade = htDialogs.get( nHandle );
+        
+        if( dlgSeverTrade != null )
+        {
+            htDialogs.remove( nHandle );
+            dlgSeverTrade.setVisible( false );
+            dlgSeverTrade.dispose();
+        }
+    }
+    
     //------------------------------------------------------------------------//
     // exit() and lock() methods are called from the "start-menu" in the desktop
     

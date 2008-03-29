@@ -163,14 +163,14 @@ public class PDEUtilities
         return icon;
     }
     
-    public static ImageIcon getStandardIcon( String sName )
+    public static ImageIcon getStandardIcon( ImagesFactory.Icon icon )
     {
-        return getIcon( ImagesFactory.class, sName );
+        return getIcon( ImagesFactory.class, icon.getName() );
     }
     
-    public static ImageIcon getStandardIcon( String sName, int nWidth, int nHeight )
+    public static ImageIcon getStandardIcon( ImagesFactory.Icon icon, int nWidth, int nHeight )
     {
-        return getIcon( ImagesFactory.class, sName, nWidth, nHeight );
+        return getIcon( ImagesFactory.class, icon.getName(), nWidth, nHeight );
     }
     
     public static void play( URL urlSound )
