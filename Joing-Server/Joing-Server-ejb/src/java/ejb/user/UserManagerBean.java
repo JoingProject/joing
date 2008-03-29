@@ -175,7 +175,7 @@ public class UserManagerBean
         if( ! isValidPassword( sPassword ) )
             throw new JoingServerUserException( JoingServerUserException.INVALID_PASSWORD );
         
-        sAccount = sAccount +"@"+ Constant.getSystemName();
+        sAccount = sessionManagerBean.composeAccount( sAccount );
         
         // By checking here the availability, we ensure that all
         // operations will be made in same transaction.

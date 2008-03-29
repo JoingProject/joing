@@ -50,16 +50,9 @@ public class SessionManagerBean
         {
             try
             {
-                // Lower case is not accepted in UserManager::isValidAccount(...)
-                sAccount = sAccount.toLowerCase();
-                
-                if( sAccount.indexOf( '@' ) == -1 )
-                    sAccount = sAccount +"@"+ Constant.getSystemName();
-                
-                UserEntity _user = em.find( UserEntity.class, sAccount );
+                UserEntity _user = em.find( UserEntity.class, composeAccount( sAccount ) );
 
-                // TODO: la password tiene que estar encriptada en la DB,
-                //       por lo que aquí habría que des-encriptarla
+                // NEXT: la password tiene que estar encriptada en la DB,
                 if( _user != null )
                 {
                     result.setAccountValid( true );
@@ -161,6 +154,17 @@ public class SessionManagerBean
         }
         
         return bValid;
+    }
+    
+    public String composeAccount( String sAccount )
+    {
+        // Lower case is not accepted in UserManager::isValidAccount(...)
+        sAccount = sAccount.trim().toLowerCase();
+        
+        if( sAccount.indexOf( '@' ) == -1 )
+            sAccount = sAccount +"@"+ Constant.getSystemName();
+        
+        return sAccount;
     }
     
     //------------------------------------------------------------------------//
