@@ -5,119 +5,119 @@
     <!-- SERVLET NAME -->
     <servlet>
         <servlet-name>Login</servlet-name>
-        <servlet-class>servlets.session.Login</servlet-class>
+        <servlet-class>org.joing.server.servlets.session.Login</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ReadTextFile</servlet-name>
-        <servlet-class>servlets.vfs.ReadTextFile</servlet-class>
+        <servlet-class>org.joing.server.servlets.vfs.ReadTextFile</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ReadBinaryFile</servlet-name>
-        <servlet-class>servlets.vfs.ReadBinaryFile</servlet-class>
+        <servlet-class>org.joing.server.servlets.vfs.ReadBinaryFile</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GetUser</servlet-name>
-        <servlet-class>servlets.user.GetUser</servlet-class>
+        <servlet-class>org.joing.server.servlets.user.GetUser</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Logout</servlet-name>
-        <servlet-class>servlets.session.Logout</servlet-class>
+        <servlet-class>org.joing.server.servlets.session.Logout</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GetAvailableLocales</servlet-name>
-        <servlet-class>servlets.user.GetAvailableLocales</servlet-class>
+        <servlet-class>org.joing.server.servlets.user.GetAvailableLocales</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GetAvailableForUser</servlet-name>
-        <servlet-class>servlets.app.GetAvailableForUser</servlet-class>
+        <servlet-class>org.joing.server.servlets.app.GetAvailableForUser</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>UpdateUser</servlet-name>
-        <servlet-class>servlets.user.UpdateUser</servlet-class>
+        <servlet-class>org.joing.server.servlets.user.UpdateUser</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GetNotInstalledForUser</servlet-name>
-        <servlet-class>servlets.app.GetNotInstalledForUser</servlet-class>
+        <servlet-class>org.joing.server.servlets.app.GetNotInstalledForUser</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GetInstalledForUser</servlet-name>
-        <servlet-class>servlets.app.GetInstalledForUser</servlet-class>
+        <servlet-class>org.joing.server.servlets.app.GetInstalledForUser</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Install</servlet-name>
-        <servlet-class>servlets.app.Install</servlet-class>
+        <servlet-class>org.joing.server.servlets.app.Install</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Uninstall</servlet-name>
-        <servlet-class>servlets.app.Uninstall</servlet-class>
+        <servlet-class>org.joing.server.servlets.app.Uninstall</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GetPreferredForType</servlet-name>
-        <servlet-class>servlets.app.GetPreferredForType</servlet-class>
+        <servlet-class>org.joing.server.servlets.app.GetPreferredForType</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GetChilds</servlet-name>
-        <servlet-class>servlets.vfs.GetChilds</servlet-class>
+        <servlet-class>org.joing.server.servlets.vfs.GetChilds</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GetByNotes</servlet-name>
-        <servlet-class>servlets.vfs.GetByNotes</servlet-class>
+        <servlet-class>org.joing.server.servlets.vfs.GetByNotes</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GetTrashCan</servlet-name>
-        <servlet-class>servlets.vfs.GetTrashcan</servlet-class>
+        <servlet-class>org.joing.server.servlets.vfs.GetTrashcan</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GetFile</servlet-name>
-        <servlet-class>servlets.vfs.GetFile</servlet-class>
+        <servlet-class>org.joing.server.servlets.vfs.GetFile</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>UpdateFile</servlet-name>
-        <servlet-class>servlets.vfs.UpdateFile</servlet-class>
+        <servlet-class>org.joing.server.servlets.vfs.UpdateFile</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>CreateDirectory</servlet-name>
-        <servlet-class>servlets.vfs.CreateDirectory</servlet-class>
+        <servlet-class>org.joing.server.servlets.vfs.CreateDirectory</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>CreateFile</servlet-name>
-        <servlet-class>servlets.vfs.CreateFile</servlet-class>
+        <servlet-class>org.joing.server.servlets.vfs.CreateFile</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Copy</servlet-name>
-        <servlet-class>servlets.vfs.Copy</servlet-class>
+        <servlet-class>org.joing.server.servlets.vfs.Copy</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Move</servlet-name>
-        <servlet-class>servlets.vfs.Move</servlet-class>
+        <servlet-class>org.joing.server.servlets.vfs.Move</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Trashcan</servlet-name>
-        <servlet-class>servlets.vfs.Trashcan</servlet-class>
+        <servlet-class>org.joing.server.servlets.vfs.Trashcan</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Delete</servlet-name>
-        <servlet-class>servlets.vfs.Delete</servlet-class>
+        <servlet-class>org.joing.server.servlets.vfs.Delete</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>WriteBinaryFile</servlet-name>
-        <servlet-class>servlets.vfs.WriteBinaryFile</servlet-class>
+        <servlet-class>org.joing.server.servlets.vfs.WriteBinaryFile</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>WriteTextFile</servlet-name>
-        <servlet-class>servlets.vfs.WriteTextFile</servlet-class>
+        <servlet-class>org.joing.server.servlets.vfs.WriteTextFile</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GetApplication</servlet-name>
-        <servlet-class>servlets.app.GetApplication</servlet-class>
+        <servlet-class>org.joing.server.servlets.app.GetApplication</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GetRoots</servlet-name>
-        <servlet-class>servlets.vfs.GetRoots</servlet-class>
+        <servlet-class>org.joing.server.servlets.vfs.GetRoots</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ApplicationServlet</servlet-name>
-        <servlet-class>org.joing.server.servlets.ApplicationServlet</servlet-class>
+        <servlet-class>org.joing.server.servlets.app.ApplicationServlet</servlet-class>
     </servlet>
     <!-- ******************************************************************* -->
     <!-- SERVLET MAPPING -->
