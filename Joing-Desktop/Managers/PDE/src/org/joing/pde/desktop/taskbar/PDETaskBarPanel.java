@@ -26,6 +26,7 @@ import org.joing.common.desktopAPI.taskbar.TaskBarListener;
 import org.joing.common.desktopAPI.taskbar.TaskBarPanel;
 import org.joing.pde.PDEUtilities;
 import org.joing.pde.desktop.container.PDEFrame;
+import org.joing.pde.misce.images.ImagesFactory;
 import org.joing.pde.swing.JToolBarHandle;
 
 /**
@@ -181,30 +182,30 @@ public class PDETaskBarPanel
         {   
             itemPreferences = new JMenuItem( "Preferences" );
             itemPreferences.addActionListener( this );
-            itemPreferences.setIcon( PDEUtilities.getStandardIcon( "properties", 16, 16 ) );
+            itemPreferences.setIcon( PDEUtilities.getStandardIcon( ImagesFactory.Icon.PROPERTIES, 16, 16 ) );
             add( itemPreferences );
             
             itemAbout = new JMenuItem( "About" );
             itemAbout.addActionListener( this );
-            itemAbout.setIcon( PDEUtilities.getStandardIcon("info", 16, 16 ) );
+            itemAbout.setIcon( PDEUtilities.getStandardIcon( ImagesFactory.Icon.INFO, 16, 16 ) );
             add( itemAbout );
             
             addSeparator();
             
             itemRemove = new JMenuItem( "Remove" );
             itemRemove.addActionListener( this );
-            itemRemove.setIcon( PDEUtilities.getStandardIcon( "remove", 16, 16 ) );
+            itemRemove.setIcon( PDEUtilities.getStandardIcon( ImagesFactory.Icon.REMOVE, 16, 16 ) );
             add( itemRemove );
             
             itemMove = new JMenuItem( "Move" );
             itemMove.addActionListener( this );
-            itemMove.setIcon( PDEUtilities.getStandardIcon( "move", 16, 16 ) );
+            itemMove.setIcon( PDEUtilities.getStandardIcon( ImagesFactory.Icon.MOVE, 16, 16 ) );
             itemMove.setEnabled( ! isLocked() );
             add( itemMove );
             
             itemLock = new JMenuItem( "Lock" );
             itemLock.addActionListener( this );
-            itemLock.setIcon( PDEUtilities.getStandardIcon( "lock", 16, 16 ) );
+            itemLock.setIcon( PDEUtilities.getStandardIcon( ImagesFactory.Icon.LOCK, 16, 16 ) );
             add( itemLock );
         }
         

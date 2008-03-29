@@ -32,6 +32,7 @@ import org.joing.pde.ColorSchema;
 import org.joing.pde.PDEManager;
 import org.joing.pde.PDEUtilities;
 import org.joing.pde.misce.apps.EditUser;
+import org.joing.pde.misce.images.ImagesFactory;
 import org.joing.pde.swing.JScrollablePopupMenu;
 
 /**
@@ -72,9 +73,10 @@ class StartMenu extends JScrollablePopupMenu
         
         if( user != null )
         {
-            String sIcon = "user_"+ (user.isMale() ? "" : "fe") +"male";
+            ImagesFactory.Icon icon = user.isMale() ? ImagesFactory.Icon.USER_MALE : 
+                                                      ImagesFactory.Icon.USER_FEMALE;
             
-            item.setIcon( PDEUtilities.getStandardIcon( sIcon, ICON_SIZE+5, ICON_SIZE+5 ) );
+            item.setIcon( PDEUtilities.getStandardIcon( icon, ICON_SIZE+5, ICON_SIZE+5 ) );
             item.setText( user.getFirstName() +" "+ user.getSecondName() );
 
             item.addActionListener( new ActionListener()

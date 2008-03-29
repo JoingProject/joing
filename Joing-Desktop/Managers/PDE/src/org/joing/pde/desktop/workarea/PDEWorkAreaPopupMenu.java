@@ -20,6 +20,7 @@ import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.PDEUtilities;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncherPropertiesPanel;
+import org.joing.pde.misce.images.ImagesFactory;
 
 /**
  * 
@@ -79,7 +80,7 @@ class PDEWorkAreaPopupMenu extends JPopupMenu implements ActionListener
             if( sIconName.equals( "grid" ) )
                 icon = PDEUtilities.getIcon( this, "images/"+ sIconName, 16, 16 );
             else
-                icon = PDEUtilities.getStandardIcon( sIconName, 16, 16 );
+                icon = PDEUtilities.getStandardIcon( ImagesFactory.getIcon( sIconName ), 16, 16 );
 
             item.setIcon( icon );
         }

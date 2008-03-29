@@ -33,6 +33,7 @@ import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.pde.desktop.deskwidget.PDEDeskWidget;
 import org.joing.pde.ColorSchema;
 import org.joing.pde.PDEUtilities;
+import org.joing.pde.misce.images.ImagesFactory;
 import org.joing.pde.swing.EventListenerList;
 import org.joing.pde.swing.ImageHighlightFilter;
 import org.joing.pde.swing.JRoundLabel;
@@ -83,7 +84,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     public void setIcon( ImageIcon icon )
     {
         if( icon == null )
-            icon = PDEUtilities.getStandardIcon( "launcher" );
+            icon = PDEUtilities.getStandardIcon( ImagesFactory.Icon.LAUNCHER );
         
         this.icon.setIcon( icon );
     }
@@ -377,7 +378,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
             this.image = image;
             
             if( image == null )
-                imgIcon = PDEUtilities.getStandardIcon( "launcher" );
+                imgIcon = PDEUtilities.getStandardIcon( ImagesFactory.Icon.LAUNCHER );
             else
                 imgIcon = new ImageIcon( image );
 
@@ -434,22 +435,22 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     {
         private ThisPopupMenu()
         {
-            add( createMenuItem( "Open"       , "launcher"  , "OPEN"       ) );
+            add( createMenuItem( "Open"       , ImagesFactory.Icon.LAUNCHER  , "OPEN"       ) );
             addSeparator();
-            add( createMenuItem( "To trashcan", "trashcan"  , "TRASHCAN"   ) );
-            add( createMenuItem( "Delete"     , "delete"    , "DELETE"     ) );
+            add( createMenuItem( "To trashcan", ImagesFactory.Icon.TRASHCAN  , "TRASHCAN"   ) );
+            add( createMenuItem( "Delete"     , ImagesFactory.Icon.DELETE    , "DELETE"     ) );
             addSeparator();
-            add( createMenuItem( "Properties" , "properties", "PROPERTIES" ) );
+            add( createMenuItem( "Properties" , ImagesFactory.Icon.PROPERTIES, "PROPERTIES" ) );
         }
         
-        private JMenuItem createMenuItem( String sText, String sIconName, String sCommand )
+        private JMenuItem createMenuItem( String sText, ImagesFactory.Icon icon, String sCommand )
         {
             JMenuItem item = new JMenuItem( sText );
                       item.setActionCommand( sCommand );
                       item.addActionListener( this );
                       
-            if( sIconName != null )
-                item.setIcon( PDEUtilities.getStandardIcon( sIconName, 16, 16 ) );
+            if( icon != null )
+                item.setIcon( PDEUtilities.getStandardIcon( icon, 16, 16 ) );
             
             return item;
         }
