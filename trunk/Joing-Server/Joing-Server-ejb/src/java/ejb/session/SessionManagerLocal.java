@@ -37,4 +37,13 @@ public interface SessionManagerLocal extends SessionManagerRemote
      */
     String getUserAccount( String sSessionId )
            throws JoingServerSessionException;
+    
+    /**
+     * If passed account is "einstein", on system "joing.peyrona.com", this 
+     * method will return "einsteis@joing.peyrona.com".
+     * 
+     * @param sAccount Account to be composed.
+     * @return The account plus the system name.
+     */
+    String composeAccount( String sAccount );
 }

@@ -49,31 +49,61 @@ public class Constant
     
     //------------------------------------------------------------------------//
     
+    /**
+     * 
+     * @return
+     */
     public static String getVersion()
     {
         return sVersion;
     }
     
+    /**
+     * Return Join'g system name: name given by Join'g provider.
+     * For example: joing.peyrona.com
+     * 
+     * @return Return Join'g system name: name given by Join'g provider.
+     */
     public static String getSystemName()
     {
         return sSysName;
     }
     
+    /**
+     * Return "system@" + getSystemName().
+     * 
+     * @return "system@" + getSystemName()
+     */
     public static String getSystemAccount()
     {
         return "system@" + getSystemName();
     }
     
+    /**
+     * Base directory for Join'g: users file spaces and applications.
+     * 
+     * @return Base directory for Join'g.
+     */
     public static File getBaseDir()
     {
         return fBaseDir;
     }
     
+    /**
+     * Users directory inside Join'g base direcotry.
+     * 
+     * @return Users directory inside Join'g base direcotry.
+     */
     public static File getUserDir()
     {
         return fUserDir;
     }
     
+    /**
+     * Applications directory inside Join'g base direcotry.
+     * 
+     * @return Applications directory inside Join'g base direcotry.
+     */
     public static File getAppDir()
     {
         return fAppDir;
@@ -95,7 +125,7 @@ public class Constant
     
     public static Logger getLogger()
     {
-        return Logger.getLogger("joing");
+        return Logger.getLogger( "joing" );
     }
     
     /**
@@ -110,6 +140,7 @@ public class Constant
     
     //------------------------------------------------------------------------//
     
+    // Create default Properties
     private static void init()
     {
         long nTimeOut = 12 * 60 * 60 * 1000; // Default == 12 hrs
@@ -119,16 +150,9 @@ public class Constant
         
         try
         {
-//            String cwd = System.getProperty("user.dir");
-//            File fileProps = new File(cwd, "joing.properties");
-//            FileInputStream in = new FileInputStream( fileProps );
-            
-//            props.load(in);
-//            in.close();
-            // TODO: Load configuration from database.
             ClassLoader classLoader = Constant.class.getClassLoader();
             InputStream is = classLoader.getResourceAsStream("joing-server.properties");
-            props.load(is);
+            props.load( is );
             is.close();
         }
         catch( Exception exc )
