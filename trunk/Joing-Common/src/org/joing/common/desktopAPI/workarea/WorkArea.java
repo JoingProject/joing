@@ -30,6 +30,9 @@ public interface WorkArea extends Closeable
     void moveToFront( DeskComponent dc );
     void moveToBack( DeskComponent dc );
     
+    int  getWidth();
+    int  getHeight();
+    
     Wallpaper getWallpaper();
     void      setWallpaper( Wallpaper wallpaper );
     
