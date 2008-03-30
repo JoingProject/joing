@@ -81,7 +81,7 @@ public class PDEDesktop extends JPanel implements Desktop
                 addWorkArea( new PDEWorkArea() );
             
             setActiveWorkArea( getWorkAreas().get( 0 ) );
-            createTestComponents( getWorkAreas().get( 0 ) );   // TODO: quitarlo
+            //createTestComponents( getWorkAreas().get( 0 ) );   // TODO: quitarlo
         }
         else
         {
