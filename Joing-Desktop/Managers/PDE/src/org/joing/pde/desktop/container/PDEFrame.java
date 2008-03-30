@@ -7,13 +7,9 @@ package org.joing.pde.desktop.container;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
-import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.event.InternalFrameEvent;
-import javax.swing.plaf.basic.BasicInternalFrameUI;
 import org.joing.common.desktopAPI.pane.DeskFrame;
 
 /**
@@ -147,7 +143,7 @@ public class PDEFrame extends PDEWindow implements DeskFrame
     public void setTranslucency( int nPercent )
     {
         nPercent = (nPercent < 0 ? 0 : nPercent > 100 ? 100 : nPercent);
-        nPercent = 255 * nPercent / 100;    // Pasa de [0 a 100] a [0 a 255]
+        nPercent = (255 * nPercent) / 100;    // Moves from range [0 a 100] to range [0 a 255]
         
         setOpaque( nPercent == 0 );
         
@@ -157,7 +153,7 @@ public class PDEFrame extends PDEWindow implements DeskFrame
             getContentPane().setBackground( new Color( clr.getRed(), clr.getGreen(), clr.getBlue(), 255 - nPercent ) );
         }
         
-        repaint();
+        repaint();  // Needed
     }
     
     //------------------------------------------------------------------------//

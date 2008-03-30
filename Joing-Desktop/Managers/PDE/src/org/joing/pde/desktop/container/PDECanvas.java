@@ -32,10 +32,10 @@ public class PDECanvas extends JPanel implements DeskCanvas
     
     protected JRootPane root;
     
+    //------------------------------------------------------------------------//
+    
     public PDECanvas()
     {
-        setOpaque( false );
-        
         root = new JRootPane();
         ((JPanel) root.getContentPane()).setOpaque( false );
 
@@ -99,21 +99,16 @@ public class PDECanvas extends JPanel implements DeskCanvas
     public void remove( Component c )               { throw new IllegalAccessError(DONT_USE_ME); }
     //------------------------------------------------------------------------------------------------
     
-    
     /**
      *
      */
     public void setTranslucency( int nPercent )
     {
+        Color clr = getBackground();
+        
         nPercent = (nPercent < 0 ? 0 : nPercent > 100 ? 100 : nPercent);
-        nPercent = 255 * nPercent / 100;    // Pasarlo de 0 a 100 a 0 a 255
+        nPercent = (255 * nPercent) / 100;    // Moves from range [0 a 100] to range [0 a 255]
         
-        setOpaque( nPercent == 0 );
-        
-        if( nPercent > 0 )
-        {
-            Color clr = getBackground();
-            setBackground( new Color( clr.getRed(), clr.getGreen(), clr.getBlue(), 255 - nPercent ) );
-        }
+        setBackground( new Color( clr.getRed(), clr.getGreen(), clr.getBlue(), 255 - nPercent ) );
     }
 }

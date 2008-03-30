@@ -40,7 +40,12 @@ import javax.swing.JProgressBar;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.plaf.BorderUIResource.EmptyBorderUIResource;
 import org.joing.common.desktopAPI.DesktopManager;
+import org.joing.pde.desktop.container.PDECanvas;
 import org.joing.pde.misce.images.ImagesFactory;
 
 /**
@@ -61,7 +66,7 @@ public class PDEManager extends JApplet implements DesktopManager
     private PDERuntime runtime;
     private JFrame     frame;
     
-    private Hashtable<Integer, JDialog> htDialogs;
+    private Hashtable<Integer, PDECanvas> htAccess2Server;
     
     //------------------------------------------------------------------------//
     
@@ -194,47 +199,25 @@ public class PDEManager extends JApplet implements DesktopManager
     }
     
     public int startServerTradeInfo( String sMessage, Image icon )
-    {
-        JDialog      dlgSeverTrade = new JDialog( frame, "Working with Join'g Server" );
-        JLabel       lblMessage    = new JLabel();
-        JLabel       lblIcon       = new JLabel();
-        JProgressBar progress      = new JProgressBar();
+    {   
+        ConnServerInfoPanel cnvSeverTrade = new ConnServerInfoPanel( sMessage, icon );
         
-        if( sMessage == null )
-            sMessage = "Working with Join'g Server";
+        if( htAccess2Server == null )   // Lazily creates the Hashtable
+            htAccess2Server = new Hashtable<Integer, PDECanvas>();
         
-        if( htDialogs == null )   // Lazily creates the Hashtable
-            htDialogs = new Hashtable<Integer, JDialog>();
+        htAccess2Server.put( htAccess2Server.size() + 1, cnvSeverTrade );
         
-        htDialogs.put( htDialogs.size() + 1, dlgSeverTrade );
+        getDesktop().getActiveWorkArea().add( cnvSeverTrade );
         
-        lblMessage.setText( sMessage );
-        lblMessage.setHorizontalTextPosition( JLabel.CENTER );
-        
-        lblIcon.setIcon( (icon == null) ? PDEUtilities.getStandardIcon( ImagesFactory.Icon.CONN_SERVER ) :
-                                          new ImageIcon( icon ) );
-        
-        dlgSeverTrade.setModalityType( Dialog.ModalityType.APPLICATION_MODAL );
-        dlgSeverTrade.setDefaultCloseOperation( JDialog.DISPOSE_ON_CLOSE );
-        dlgSeverTrade.setUndecorated( true );
-        dlgSeverTrade.getRootPane().setWindowDecorationStyle( JRootPane.PLAIN_DIALOG );
-        dlgSeverTrade.add( lblMessage, BorderLayout.CENTER );
-        dlgSeverTrade.add( lblIcon   , BorderLayout.WEST   );
-        dlgSeverTrade.add( progress  , BorderLayout.SOUTH  );
-        dlgSeverTrade.setVisible( true );
-        
-        return htDialogs.size();
+        return htAccess2Server.size();
     }
     
     public void stopServerTradeInfo( int nHandle )
     {
-        Dialog dlgSeverTrade = htDialogs.get( nHandle );
-        
-        if( dlgSeverTrade != null )
+        if( htAccess2Server != null && htAccess2Server.contains( nHandle ) )
         {
-            htDialogs.remove( nHandle );
-            dlgSeverTrade.setVisible( false );
-            dlgSeverTrade.dispose();
+            htAccess2Server.get( nHandle ).close();
+            htAccess2Server.remove( nHandle );
         }
     }
     
