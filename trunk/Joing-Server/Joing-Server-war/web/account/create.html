@@ -6,41 +6,88 @@
     
     <h1><span><span>Create an account</span></span></h1>
     
+    <p>In order to create a new Join'g account we need to gather some data
+	about you, please, fill all the fields in the form and press Create when
+	you are done</p>
+
     <h:form id="create_account">
+    <div class="paragraph">
 
-<dl class="form">
+    <dl class="form">
 
-    <dt><h:outputLabel for="user_acount" value="Account"/></dt>
-    <dd><h:inputText id="user_account" value="#{CreateAccount.username}"/>
-	<h:commandButton value="Test" action="#{CreateAccount.testUsername}" styleClass="test_user_name"/></dd>
+	<dt><h:outputLabel for="user_acount" value="Account"/></dt>
+	<dd><h:inputText
+		id="user_account"
+		value="#{CreateAccount.username}"
+		size="20"
+		maxlength="32"
+		styleClass="create_user_account"/></dd>
 
-    <dt><h:outputLabel for="user_first_name" value="First Name"/></dt>
-    <dd><h:inputText id="user_first_name" value="#{CreateAccount.firstName}"/></dd>
+	<dt><h:outputLabel for="user_first_name" value="First Name"/></dt>
+	<dd><h:inputText
+		id="user_first_name"
+		value="#{CreateAccount.firstName}"
+		size="32"
+		maxlength="48"
+		styleClass="create_user_first_name"/></dd>
 
-    <dt><h:outputLabel for="user_second_name" value="Last Name"/></dt>
-    <dd><h:inputText id="user_second_name" value="#{CreateAccount.secondName}"/></dd>
+	<dt><h:outputLabel for="user_second_name" value="Last Name"/></dt>
+	<dd><h:inputText
+		id="user_second_name"
+		value="#{CreateAccount.secondName}"
+		size="32"
+		maxlength="48"
+		styleClass="create_user_second_name"/></dd>
 
-    <dt><h:outputLabel for="user_gender" value="Gender"/></dt>
-    <dd><h:selectOneRadio id="user_gender" value="#{CreateAccount.male}">
-	    <f:selectItem itemLabel="Female" itemValue="false"/>
-	    <f:selectItem itemLabel="Male" itemValue="true"/>
-	</h:selectOneRadio></dd>
+	<dt><h:outputLabel for="user_gender" value="Gender"/></dt>
+	<dd><h:selectOneRadio
+		    id="user_gender"
+		    value="#{CreateAccount.male}"
+		    styleClass="create_user_gender">
+		<f:selectItem itemLabel="Female" itemValue="false"/>
+		<f:selectItem itemLabel="Male" itemValue="true"/>
+	    </h:selectOneRadio></dd>
 
-    <dt><h:outputLabel for="user_email" value="e-mail"/></dt>
-    <dd><h:inputText id="user_email" value="#{CreateAccount.email}"/></dd>
+	<dt><h:outputLabel for="user_email" value="e-mail"/></dt>
+	<dd><h:inputText
+	    id="user_email"
+	    value="#{CreateAccount.email}"
+	    size="32"
+	    maxlength="64"
+	    styleClass="create_user_email"/></dd>
 
-    <dt><h:outputLabel for="user_password" value="Password"/></dt>
-    <dd><h:inputSecret id="user_password" value="#{CreateAccount.password}"/></dd>
+	<dt><h:outputLabel for="user_password" value="Password"/></dt>
+	<dd><h:inputSecret
+	    id="user_password"
+	    value="#{CreateAccount.password}"
+	    size="20"
+	    maxlength="32"
+	    styleClass="create_user_password"/></dd>
 
-    <dt><h:outputLabel for="user_confirm_password" value="Confirm password"/></dt>
-    <dd><h:inputSecret id="user_confirm_password" value="#{CreateAccount.confirmPassword}"/></dd>
-</dl>
+	<dt><h:outputLabel for="user_confirm_password" value="Confirm password"/></dt>
+	<dd><h:inputSecret
+	    id="user_confirm_password"
+	    value="#{CreateAccount.confirmPassword}"
+	    size="20"
+	    maxlength="32"
+	    styleClass="create_user_confirm_password"/></dd>
+	 
+	 <dt><h:outputLabel for="user_account_quota" value="Quota"/></dt>
+	 <dd><h:inputText
+	    id="user_account_quota"
+	    value="#{CreateAccount.quota}"
+	    size="4"
+	    maxlengt="6"
+	    readonly="true"
+	    styleClass="create_user_quota"/></dd>
+    </dl>
 
-<br style="clear:both"/>
+    <br style="clear:both"/>
 
-<h:commandButton styleClass="submit_new_account" value="Submit" action="#{CreateAccount.createAccount}"/>
-    
-</h:form>
+    <h:commandButton
+	styleClass="create_user_create"
+	value="Create"
+	action="#{CreateAccount.createAccount}"/>
 
     <h:messages
 	errorClass="error_msg"
@@ -52,6 +99,18 @@
 	showDetail="true"
 
 	styleClass="messages"/>
+ </div>
+</h:form>
 
+<script type="text/javascript">
+//<![CDATA[
+onload = function() {
+    var focusel = document.getElementById('create_account:user_account');
+    if(focusel) {
+	focusel.focus();
+    }
+ }
+//]]>
+</script>
 
 </ui:composition>

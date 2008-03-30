@@ -6,35 +6,27 @@
     <div class="web_form">
     
     <div class="web_form_content">
-	<h:form id="start_create_account" rendered="#{not CreateAccount.creatingAccount}">
+	<h:form id="start_create_account">
 	<h2>Create an account</h2>
 	
 	<div class="field">
 	  <h:outputLabel for="user_name" value="User"/>
 	  <div class="input_text"><span><h:inputText
 		id="user_name"
-		value="#{CreateAccount.username}"/></span></div>
+		value="#{CreateAccount.newUsername}"
+		maxlength="32"/></span></div>
 	</div>
 	<div class="field">
 	  <h:outputLabel for="user_email" value="e-mail"/>
 	  <div class="input_text"><span><h:inputText
 		id="user_email"
-		value="#{CreateAccount.email}"/></span></div>
+		maxlength="64"
+		value="#{CreateAccount.newEmail}"/></span></div>
 	</div>
 	<div class="field">
 	    <h:commandButton
 		styleClass="submit"
 		value="Create"
-		action="#{CreateAccount.newAccountForm}"/>
-	</div>
-	</h:form>
-	<h:form id="continue_create_account"
-	    rendered="#{CreateAccount.creatingAccount and not CreateAccount.accountCreated}">
-	<h2>Create an account</h2>
-	<div class="field">
-	    <h:commandButton
-		styleClass="submit"
-		value="Continue"
 		action="#{CreateAccount.newAccountForm}"/>
 	</div>
 	</h:form>

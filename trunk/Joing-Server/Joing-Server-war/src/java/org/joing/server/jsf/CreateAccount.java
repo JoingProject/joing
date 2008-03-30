@@ -8,6 +8,7 @@ import javax.ejb.EJBException;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import org.joing.common.Constant;
+import org.joing.common.dto.user.User;
 import org.joing.common.exception.JoingServerException;
 
 /**
@@ -15,10 +16,11 @@ import org.joing.common.exception.JoingServerException;
  * @author Fernando José Ortigosa
  */
 public class CreateAccount {
-    
-    private boolean creatingAccount = false;
-    private boolean accountCreated = false;
 
+    private String newUsername = null;
+
+    private String newEmail = null;
+    
     private String username = null;
     private String password = null;
     private String email = null;
@@ -26,11 +28,13 @@ public class CreateAccount {
     private String firstName = null;
     private String secondName = null;
     private Boolean male = null;
-
+    
+    //TODO make it configurable
+    final private Integer quota = Integer.valueOf(10);
 
     private @EJB UserManagerLocal userManager;
     private @EJB SessionManagerLocal sessionManager;
-
+ 
     private boolean testEmpty(FacesContext ctx, String var, String name) {
 	
 	boolean empty = var == null || var.trim().length() == 0;
@@ -71,14 +75,12 @@ public class CreateAccount {
 		"underscores (low line)"));
 	}
 	
-//TODO The account name is calculated the same as in other methods, it could be
-// safer to calculate it in one method instead and call it from everywhere where
-// you need a full account name from a simple account name.
-
-	String account = getAccount(name);
+	String account = sessionManager.composeAccount(name);
 	
 	if(ok && !sessionManager.isAccountAvailable(account)) {
 
+	    ok = false;
+	    
 	    ctx.addMessage(null, new FacesMessage(
 		FacesMessage.SEVERITY_ERROR,
 		"Account name not available",
@@ -90,14 +92,10 @@ public class CreateAccount {
 	return ok;
     }
     
-    private String getAccount(String name) {
-	return name + "@" + Constant.getSystemName();
+    public String getAccount() {
+	return sessionManager.composeAccount(username);
     }
     
-    public String getAccount() {
-	return getAccount(username);
-    }
-
     private boolean testPassword(FacesContext ctx, String password) {
 	
 	boolean ok = !testEmpty(ctx, password, "password");
@@ -124,13 +122,13 @@ public class CreateAccount {
 	boolean missing = testEmpty(ctx, email, "email address");
 	missing = testEmpty(ctx, firstName, "first name") || missing;
 	missing = testEmpty(ctx, secondName, "second name") || missing;
-	missing = testEmpty(ctx, password, "password") || missing;
 	missing = testEmpty(ctx, male, "gender") || missing;
+	missing = testEmpty(ctx, password, "password") || missing;
 	missing = testEmpty(ctx, confirmPassword, "password confirmation") || missing;;
 		
 	boolean ok = !missing;
 	
-	ok = ok && testUsername(ctx, username);
+	ok = testUsername(ctx, username) && ok;
 	
 
 	if(ok && !password.equals(confirmPassword)) {
@@ -147,51 +145,28 @@ public class CreateAccount {
 	return ok;
     }
     
-    public String testUsername() {
-	testUsername(FacesContext.getCurrentInstance(), username);
-	return null;
-    }
-    
     public String newAccountForm() {
 	
 	FacesContext ctx = FacesContext.getCurrentInstance();
+	
+	username = newUsername;
+	email = newEmail;
 
+	newUsername = null;
+	newEmail = null;
+
+	password = null;
+	confirmPassword = null;
+	firstName = null;
+	secondName = null;
+	male = null;
+	
 	testUsername(ctx, username);
 	testEmpty(ctx, email, "email address");
-	
-	creatingAccount = true;
 	
 	return "createaccount";
     }
     
-    public boolean isCreatingAccount() {
-	return creatingAccount;
-    }
-    
-    public boolean isAccountCreated() {
-	return accountCreated;
-    }
-    
-    public String reset() {
-	
-	confirmPassword = null;
-	email = null;
-	firstName = null;
-	male = null;
-	password = null;
-	secondName = null;
-	username = null;
-	
-	creatingAccount = false;
-	accountCreated = false;
-	
-	return "home";
-    }
-    
-/*
-    Avisar de que se está en pruebas y que las cuentas se purgarán  cuando
-    dejen de estar en pruebas
-*/
     /**
      * <p>This method is invoked by the JSF framework (from the create-account 
      * form in index.jsp.</p>
@@ -210,14 +185,22 @@ public class CreateAccount {
 	    ok = false;
 	    
 	    try {
-		userManager.createUser(username, password, email, firstName,
-		    secondName, male.booleanValue(), ctx.getViewRoot().getLocale(),
+		User user =  userManager.createUser(username, password, email,
+			firstName, secondName, male.booleanValue(),
+			ctx.getViewRoot().getLocale(),
 		    10);// 10 Megas (ponerlo en la web sólo para informar)
 		
-		ok = true;
+		ok = user != null;
 		
-		reset();
-
+		if(user == null) {
+		    ctx.addMessage(null, new FacesMessage(
+			    FacesMessage.SEVERITY_ERROR,
+			    "Unable to create user",
+			    "The server was unable to create the user account "+
+			    "you applied for"));
+  
+		}
+		
 	    } catch(JoingServerException ex) {
 
 		ctx.addMessage(null, new FacesMessage(
@@ -246,18 +229,10 @@ public class CreateAccount {
     private FacesMessage messageErrorMissing(String itemName) {
 	
 	String summary = "Missing " + itemName;
-	String detail = null;
-	
-	if(itemName.matches("(?i)[aeiouy].*")) {
-	    detail = String.format(
-		"You must provide an %s in order to create a new account",
-		itemName);
-	} else {
-	    detail = String.format(
-		"You must provide a %s in order to create a new account",
-		itemName);
-	}
-	
+	String detail = String.format(
+	    "You need to enter a valid %s in order to create a new account",
+	    itemName);
+
 	return new FacesMessage(FacesMessage.SEVERITY_ERROR, summary, detail);
 
     }
@@ -317,5 +292,24 @@ public class CreateAccount {
     public Boolean getMale() {
 	return this.male;
     }
+ 
+    public String getNewEmail() {
+	return newEmail;
+    }
+
+    public void setNewEmail(String newEmail) {
+	this.newEmail = newEmail;
+    }
+
+    public String getNewUsername() {
+	return newUsername;
+    }
+
+    public void setNewUsername(String newUsername) {
+	this.newUsername = newUsername;
+    }
     
+    public Integer getQuota() {
+	return quota;
+    }
 }

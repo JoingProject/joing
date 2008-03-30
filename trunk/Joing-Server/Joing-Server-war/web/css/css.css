@@ -45,7 +45,7 @@ h3 {
 strong {
   color: #1E375E;
 }
-p {
+p, div.paragraph {
   margin-left: 20px;
   margin-right: 10px;
 }
@@ -120,6 +120,7 @@ p {
 .web_content {
   margin-right: 300px;
   padding: 0px 10px 10px 20px;
+  min-height: 350px;
 }
 .web_content img.diagram {
     display: block;
@@ -143,7 +144,7 @@ p {
   padding-right: 30px;
 }
 .web_form form {
-  margin: 0px 0px 10px 0px;
+  margin: 0px 0px 20px 0px;
   padding: 0px;
 }
 .web_form h2 {
@@ -152,7 +153,8 @@ p {
   font-size: 18px;
   font-weight: normal;
   padding: 0px;
-  margin: 0px 0px 10px 0px;
+  margin: 0px 0px 20px 0px;
+
 }
 .web_form p {
   display: block;
@@ -160,7 +162,7 @@ p {
   padding: 5px 0px 5px 7px;
 }
 .web_form .field {
-  height: 25px;
+  height: 30px;
 }
 .web_form label {
   display: block;
@@ -237,12 +239,12 @@ div.input_text span input {
   background-image: url('../img/border_bottom.png');
   background-repeat: repeat-x;
   background-position: bottom;
-  height: 30px;
+  height: 50px;
   
 }
 
 .content_bottom {
-  height: 30px;
+  height: 50px;
   background-image: url('../img/bottom_left_corner.png');
   background-position: bottom left;
   background-repeat: no-repeat;
@@ -250,41 +252,40 @@ div.input_text span input {
 }
 
 .content_bottom_div {
-  height: 30px;
+  height: 50px;
   background-image: url('../img/bottom_right_corner.png');
   background-position: bottom right;
   background-repeat: no-repeat;
 }
 
 .footer_text {
-  text-align: center;
-  color: #8D8D8D;
+  color: #7D7D7D;
   font-size: 10px;
   margin-left: 30px;
   margin-top: -50px;
   line-height: 30px;
 }
 
-.web_form .messages {
+.messages {
   list-style-type: none;
   margin: 0px;
   padding: 15px 0px 20px 5px;
 }
 
-.web_form .messages .error_msg {
+.messages .error_msg {
   background-image: url('../img/msg_error.png');
 }
-.web_form .messages .info_msg {
+.messages .info_msg {
   background-image: url('../img/msg_info.png');
 }
-.web_form .messages .fatal_msg {
+.messages .fatal_msg {
   background-image: url('../img/msg_fatal.png');
 }
-.web_form .messages .warning_msg {
+.messages .warning_msg {
   background-image: url('../img/msg_info.png');
 }
 
-.web_form .messages li {
+.messages li {
   background-repeat: no-repeat;
   background-position: top left;
   padding-left: 20px;
@@ -300,20 +301,38 @@ dl.form { }
 
 dl.form dt {
     float: left;
-    width: 170px;
+    width: 150px;
 }
 
 dl.form dt, dl.form dd {
     margin-bottom: 5px;
 }
 
-dl.form dd input {
+.create_user_test_name, .create_user_create {
+    margin-left: 10px;
+    border: none;
+    background: url('../img/button_white_background.png');
+    background-color: none;
+    background-repeat: no-repeat;
+    background-position: top left;
+    width: 102px;
+    height: 29px;
+    color: #FFFFFF;
+}
+.create_user_gender {}
+.create_user_confirm_password,
+    .create_user_password,
+    .create_user_email,
+    .create_user_second_name,
+    .create_user_first_name,
+    .create_user_account,
+    .create_user_quota {
+
     border: 1px solid #6F94BC;
+    padding: 1px 3px 1px 5px;
+
 }
 
-dl.form dd .test_user_name, .submit_new_account {
-    margin-left: 10px;
-    background-color: #6F94BC;
-    color: #FFFFFF;
-    border: 1px solid #6F94BC;
+.create_user_quota {
+    text-align: right;
 }

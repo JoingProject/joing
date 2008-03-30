@@ -8,18 +8,28 @@ import javax.faces.context.FacesContext;
 
 /**
  *
- * @author Fernando
+ *  <p>Utilities for use from the JavaserverFaces templates.</p>
+ * 
+ * @author Fernando Ortigosa
  */
 public class Util {
 
+    /**
+     * <p>Many utilities will need the use of a "dummy" map mplementation, so
+     * we can use the JSF "map trick" to "invoke" methods.</p>
+     * 
+     * <p>This map implementation overrides all methods but the get one, in
+     * order to have a base class for easily creating map tricks</p>
+     * 
+     */
     private static abstract class DummyMap<K,V> implements Map<K, V> {
-
-	public int size() {
-	    throw new UnsupportedOperationException("Not supported yet.");
-	}
 
 	public boolean isEmpty() {
 	    return false;
+	}
+
+	public int size() {
+	    throw new UnsupportedOperationException();
 	}
 
 	public boolean containsKey(Object key) {
@@ -27,39 +37,44 @@ public class Util {
 	}
 
 	public boolean containsValue(Object value) {
-	    throw new UnsupportedOperationException("Not supported yet.");
+	    throw new UnsupportedOperationException();
 	}
 
 	public V put(K key, V value) {
-	    throw new UnsupportedOperationException("Not supported yet.");
+	    throw new UnsupportedOperationException();
 	}
 
 	public V remove(Object key) {
-	    throw new UnsupportedOperationException("Not supported yet.");
+	    throw new UnsupportedOperationException();
 	}
 
 	public void putAll(Map<? extends K, ? extends V> m) {
-	    throw new UnsupportedOperationException("Not supported yet.");
+	    throw new UnsupportedOperationException();
 	}
 
 	public void clear() {
-	    throw new UnsupportedOperationException("Not supported yet.");
+	    throw new UnsupportedOperationException();
 	}
 
 	public Set<K> keySet() {
-	    throw new UnsupportedOperationException("Not supported yet.");
+	    throw new UnsupportedOperationException();
 	}
 
 	public Collection<V> values() {
-	    throw new UnsupportedOperationException("Not supported yet.");
+	    throw new UnsupportedOperationException();
 	}
 
 	public Set<Entry<K, V>> entrySet() {
-	    throw new UnsupportedOperationException("Not supported yet.");
+	    throw new UnsupportedOperationException();
 	}
 	
     }
     
+    /**
+     * <p>Map implementation where the get method returns the received
+     * path as a server relative path, it's made by pre-pending the
+     * request context to the path.</p>
+     */
     private static class PathMap extends DummyMap<String, String> {
 
 	public String get(Object key) {
@@ -84,6 +99,10 @@ public class Util {
     }
     
     private Map<String, String> path = new PathMap();
+
+    /**
+     * Returns an utility map which calculates server relative paths.
+     */
     public Map<String, String> getPath() {
 	return path;
     }
