@@ -14,10 +14,16 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.desktopAPI.desktop.Desktop;
 import org.joing.common.desktopAPI.desktop.DesktopListener;
@@ -75,7 +81,7 @@ public class PDEDesktop extends JPanel implements Desktop
                 addWorkArea( new PDEWorkArea() );
             
             setActiveWorkArea( getWorkAreas().get( 0 ) );
-            ///createTestComponents( getWorkAreas().get( 0 ) );   // TODO: quitarlo
+            createTestComponents( getWorkAreas().get( 0 ) );   // TODO: quitarlo
         }
         else
         {
@@ -130,15 +136,32 @@ public class PDEDesktop extends JPanel implements Desktop
             public void run()
             {
                 DesktopManager dm = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+             
+                try
+                {
+                    int n = dm.startServerTradeInfo( null, null );
+                    //Thread.sleep( 2000 );
+                    //dm.stopServerTradeInfo( n );
+}
+                catch( Exception ex )
+                {
+                    Logger.getLogger( PDEDesktop.class.getName() ).log( Level.SEVERE, null, ex );
+                }
                 
-                PDEFrame frame = (PDEFrame) dm.getRuntime().createFrame();
-                         frame.setTitle( "Frame" );
-                         frame.add( new JTextArea( "Soy un Frame" ) );
-                         // FIXME: Si pongo esto ya no se ve --> frame.setBounds( 100,100,400,300);
+                /*PDEFrame frame = (PDEFrame) dm.getRuntime().createFrame();
+                frame.setTitle( "Frame" );
+                frame.add( new JTextArea( "Soy un Frame" ) );
+
                 dm.getDesktop().getActiveWorkArea().add( frame );
-                
+
                 JoingFileChooser jfc = new JoingFileChooser( JoingFileSystemView.getFileSystemView() );
-                int nSelection = jfc.showDialog( null, "Zarva" );
+                int nSelection = jfc.showDialog( null, "Zarva" );*/
+
+//                if( nSelection == JoingFileChooser.APPROVE_OPTION )
+//                    dm.getRuntime().showMessageDialog( "Result", "Approved" );
+//                else
+//                    dm.getRuntime().showMessageDialog( "Result", "Canceled" );
+                
                 
 //                if( nSelection == JoingFileChooser.APPROVE_OPTION )
 //                    dm.getRuntime().showMessageDialog( "Result", "Approved" );
@@ -178,7 +201,7 @@ public class PDEDesktop extends JPanel implements Desktop
         wa.add( canvas );*/
         
         //---------------------------------------------------------------------
-        /*
+       
         JSlider slrTranslucency = new JSlider( JSlider.HORIZONTAL, 0, 100, 0 );
                 slrTranslucency.setMajorTickSpacing( 10 );
                 slrTranslucency.setPaintLabels( true );
@@ -194,15 +217,12 @@ public class PDEDesktop extends JPanel implements Desktop
                     }
                 } );
                     
-        PDEFrame frm = new PDEFrame( "Example Join'g Frame" );
+        PDEFrame frm = new PDEFrame();
+                 frm.setTitle( "Example Join'g Frame" );
                  frm.add( new JLabel( "Translucency" ), BorderLayout.NORTH );
                  frm.add( slrTranslucency, BorderLayout.SOUTH );
                  frm.setBounds( 150, 50, 300, 200 );
-                 frm.setAutoArrange( false );
-                 frm.setVisible( true );
                  wa.add( frm );
-                 frm.setSelected( true );
-         */
     }
     
     //------------------------------------------------------------------------//

@@ -13,6 +13,8 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,6 +23,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.Timer;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import org.joing.common.desktopAPI.DeskComponent;
@@ -37,6 +42,8 @@ public class ClockDigital extends JPanel implements DeskComponent
     private DateFormat       dfDate;
     private JLabel           lblTime;
     private JLabel           lblDate;
+    private CompoundBorder   borderOn;
+    private EmptyBorder      borderOff;
     private boolean          bShowDate;
     private boolean          bShowSecs;
     private boolean          b24Format;
@@ -54,7 +61,11 @@ public class ClockDigital extends JPanel implements DeskComponent
         lblDate.setHorizontalAlignment( JLabel.CENTER );
         lblDate.setFont( getFont().deriveFont( Font.PLAIN, nFONT_SIZE ) );
         
+        borderOn  = new CompoundBorder( new LineBorder( getForeground() ), new EmptyBorder( 1,2,1,2 ) );
+        borderOff = new EmptyBorder( 2,3,2,3 );  // To make borderOn shown softer
+        
         setLayout( new BorderLayout() );
+        setBorder( borderOff );
         add( lblTime, BorderLayout.CENTER );
         add( lblDate, BorderLayout.SOUTH  );
         
@@ -76,6 +87,19 @@ public class ClockDigital extends JPanel implements DeskComponent
             public void ancestorAdded(   AncestorEvent ae ) { ClockDigital.this.timer.start(); }
             public void ancestorMoved(   AncestorEvent ae ) {}
             public void ancestorRemoved( AncestorEvent ae ) { ClockDigital.this.timer.stop(); }
+        } );
+        
+        addMouseListener( new MouseAdapter()
+        {
+            public void mouseEntered( MouseEvent me )
+            {
+                ClockDigital.this.setBorder( ClockDigital.this.borderOn );
+            }
+            
+            public void mouseExited( MouseEvent me )
+            {
+                ClockDigital.this.setBorder( ClockDigital.this.borderOff );
+            }
         } );
     }
     
