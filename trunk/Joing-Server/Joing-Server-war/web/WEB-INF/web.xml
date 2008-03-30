@@ -8,6 +8,10 @@
         <param-value>false</param-value>
     </context-param>
     <context-param>
+	<param-name>com.sun.faces.enableRestoreView11Compatibility</param-name>
+	<param-value>true</param-value>
+    </context-param>
+    <context-param>
         <param-name>com.sun.faces.validateXml</param-name>
         <param-value>false</param-value>
     </context-param>
@@ -281,10 +285,14 @@
         </welcome-file-list>
     <error-page>
         <error-code>500</error-code>
-        <location>/index.html</location>
+        <location>/redir.htm</location>
+    </error-page>
+    <error-page>
+	<exception-type>javax.faces.application.ViewExpiredException</exception-type>
+	<location>/redir.htm</location>
     </error-page>
     <error-page>
         <error-code>404</error-code>
-        <location>/index.html</location>
+        <location>/redir.htm</location>
     </error-page>
     </web-app>
