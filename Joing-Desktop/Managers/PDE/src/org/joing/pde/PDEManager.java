@@ -17,7 +17,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -28,25 +27,12 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import org.joing.pde.desktop.PDEDesktop;
 import java.awt.BorderLayout;
-import java.awt.Dialog;
 import java.awt.Toolkit;
-import java.util.Hashtable;
-import javax.swing.ImageIcon;
 import javax.swing.JApplet;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
-import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.plaf.BorderUIResource.EmptyBorderUIResource;
 import org.joing.common.desktopAPI.DesktopManager;
-import org.joing.pde.desktop.container.PDECanvas;
-import org.joing.pde.misce.images.ImagesFactory;
 
 /**
  * DesktopManager interface implementation.
@@ -65,8 +51,6 @@ public class PDEManager extends JApplet implements DesktopManager
     private PDEDesktop desktop;
     private PDERuntime runtime;
     private JFrame     frame;
-    
-    private Hashtable<Integer, PDECanvas> htAccess2Server;
     
     //------------------------------------------------------------------------//
     
@@ -147,7 +131,15 @@ public class PDEManager extends JApplet implements DesktopManager
 
                 gs.setFullScreenWindow( frame );
 
-                getDesktop().load();   // Do not move this line !
+                SwingWorker sw = new SwingWorker()
+                {
+                    protected Object doInBackground() throws Exception
+                    {
+                        getDesktop().load();   // Do not move this line !
+                        return null;
+                    }
+                };
+                sw.execute();
             }
             else
             {
@@ -198,29 +190,6 @@ public class PDEManager extends JApplet implements DesktopManager
             stop();
     }
     
-    public int startServerTradeInfo( String sMessage, Image icon )
-    {   
-        ConnServerInfoPanel cnvSeverTrade = new ConnServerInfoPanel( sMessage, icon );
-        
-        if( htAccess2Server == null )   // Lazily creates the Hashtable
-            htAccess2Server = new Hashtable<Integer, PDECanvas>();
-        
-        htAccess2Server.put( htAccess2Server.size() + 1, cnvSeverTrade );
-        
-        getDesktop().getActiveWorkArea().add( cnvSeverTrade );
-        
-        return htAccess2Server.size();
-    }
-    
-    public void stopServerTradeInfo( int nHandle )
-    {
-        if( htAccess2Server != null && htAccess2Server.contains( nHandle ) )
-        {
-            htAccess2Server.get( nHandle ).close();
-            htAccess2Server.remove( nHandle );
-        }
-    }
-    
     //------------------------------------------------------------------------//
     // exit() and lock() methods are called from the "start-menu" in the desktop
     
@@ -267,12 +236,6 @@ public class PDEManager extends JApplet implements DesktopManager
         }
     }
     
-    // Can't name it getRootPane()
-    public JRootPane getTheRootPane()
-    {
-        return frame != null ? frame.getRootPane() : getRootPane();
-    }
-       
     //------------------------------------------------------------------------//
     
     private JFrame getMainFrame()
@@ -355,7 +318,7 @@ public class PDEManager extends JApplet implements DesktopManager
             g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, nTranslucent ));
             g2.fillRect( 0,0, getWidth(), getHeight() );
             g2.setColor( Color.white );
-            g2.drawString( "Click para to unlock", 15,15 );
+            g2.drawString( "Click to unlock", 15,15 );
             g2.dispose();
         }
         

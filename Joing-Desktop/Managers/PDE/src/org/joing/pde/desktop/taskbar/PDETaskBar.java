@@ -134,8 +134,7 @@ public class PDETaskBar extends JPanel implements TaskBar
 
     public void close()
     {
-        // FIXME
-        throw new UnsupportedOperationException( "Not supported yet." );
+        // FIXME: hacerlo
     }
     
     // Just to avoid accidental use of them  ---------------------------------------------------------

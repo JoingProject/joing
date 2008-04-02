@@ -15,10 +15,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
-import javax.swing.JOptionPane;
-import javax.swing.PopupFactory;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import org.joing.common.desktopAPI.DeskComponent;
@@ -68,20 +67,14 @@ public class PDEDialog extends PDEWindow implements DeskDialog
     {
         // FIXME: Al menos con el JoingFileChooser no funciona el HeavyWeightPopup
         //        Se puede mirar su uso en JOptionPane
+        
         // PopupFactory.forceHeavyWeightPopupKey == "__force_heavy_weight_popup__"
         // But I have to use the String because the variuable has package scope
-        ((JComponent) dc).putClientProperty( "__force_heavy_weight_popup__", Boolean.TRUE );
+        //putClientProperty( "__force_heavy_weight_popup__", Boolean.TRUE );
+        putClientProperty( "__force_heavy_weight_popup__", Boolean.TRUE );
+        changesComboPopup2Heavy( (Component) dc );
         
         getContentPane().add( (Component) dc );
-    }
-    
-    //------------------------------------------------------------------------//
-    // Closeable interface
-    
-    public void close()
-    {
-        setVisible( false );
-        dispose(); // dispose() can't be at the InternalFrameAdapter because goes into infinite loop
     }
     
     //------------------------------------------------------------------------//
@@ -155,6 +148,23 @@ public class PDEDialog extends PDEWindow implements DeskDialog
         }
         catch( InvocationTargetException ex )
         {
+        }
+    }
+ 
+    // Recursevely changes it
+    private void changesComboPopup2Heavy( Component c )
+    {
+        if( c instanceof JComboBox )
+        {
+            ((JComboBox) c).setLightWeightPopupEnabled( false );
+            ((JComponent) c).putClientProperty( "__force_heavy_weight_popup__", Boolean.TRUE );
+        }
+        else if( c instanceof Container )
+        {
+            Component[] ao = ((Container) c).getComponents();
+            
+            for( int n = 0; n < ao.length; n++ )
+                changesComboPopup2Heavy( ao[n] );
         }
     }
     

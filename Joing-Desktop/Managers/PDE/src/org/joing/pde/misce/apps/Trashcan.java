@@ -7,7 +7,7 @@ package org.joing.pde.misce.apps;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 public class Trashcan
 {

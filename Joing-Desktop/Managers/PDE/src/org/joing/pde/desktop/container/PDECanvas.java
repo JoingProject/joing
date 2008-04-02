@@ -13,10 +13,11 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
 import org.joing.common.desktopAPI.Closeable;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.pane.DeskCanvas;
+import org.joing.common.desktopAPI.workarea.WorkArea;
+import org.joing.pde.PDEUtilities;
 
 /**
  * A JPanel placed over the background image (if any) and below all other
@@ -30,33 +31,22 @@ public class PDECanvas extends JPanel implements DeskCanvas
 {
     private static final String DONT_USE_ME = "Do not use me";
     
-    protected JRootPane root;
-    
     //------------------------------------------------------------------------//
     
     public PDECanvas()
     {
-        root = new JRootPane();
-        ((JPanel) root.getContentPane()).setOpaque( false );
-
-        // Añado el root pane a este JPanel
-        super.setLayout( new BorderLayout() );
-        super.add( root, BorderLayout.CENTER );
+        setOpaque( false );
+        setLayout( new BorderLayout() );
     }
     
     public void add( DeskComponent dc )
     {
-        add( (Component) dc );
-    }
-    
-    public Component add( Component c )
-    { 
-        return root.getContentPane().add( c );
+        super.add( (Component) dc );
     }
     
     public void remove( DeskComponent dc )
     {
-        root.getContentPane().remove( (Component) dc );
+        super.remove( (Component) dc );
     }
     
     /**
@@ -73,25 +63,24 @@ public class PDECanvas extends JPanel implements DeskCanvas
     }
     
     public void close()
-    {
+    {// TODO: Comprobar que se hace el detach del WorkArea
+        setVisible( false );
+        
+        // Detach from container WorkArea
+        WorkArea wa = PDEUtilities.findWorkAreaFor( this );
+        
+        if( wa != null )
+            wa.remove( this );
+        
+        // Recursively closes all its childs
         close( (Container) this );
     }
     
-    private void close( Container c )
-    {
-        Component aComp[] = root.getContentPane().getComponents();
-        
-        for( int n = 0; n < aComp.length; n++ )
-        {
-            if( aComp[n] instanceof Container )
-                close( (Container) aComp[n] );
-            else if( aComp[n] instanceof Closeable )
-                ((Closeable) aComp[n]).close();
-        }
-    }
-    
     // Just to avoid accidental use of them  ---------------------------------------------------------
-    ///public Component add( Component c )          { throw new IllegalAccessError(DONT_USE_ME); }
+    // NEXT: Tengo que permitir este metjod porque no he fabricado una clase asï:
+    //       PDEDesckComponent extends JComponent implements DesckComponent
+    //       Para que todo fuese bonito, habría que hacer igual con las demás.
+    ///public Component add( Component c )             { throw new IllegalAccessError(DONT_USE_ME); }
     public Component add( Component c, int n )      { throw new IllegalAccessError(DONT_USE_ME); }
     public Component add( String s, Component c )   { throw new IllegalAccessError(DONT_USE_ME); }
     public void add( Component c, Object o )        { throw new IllegalAccessError(DONT_USE_ME); }
@@ -110,5 +99,21 @@ public class PDECanvas extends JPanel implements DeskCanvas
         nPercent = (255 * nPercent) / 100;    // Moves from range [0 a 100] to range [0 a 255]
         
         setBackground( new Color( clr.getRed(), clr.getGreen(), clr.getBlue(), 255 - nPercent ) );
+    }
+    
+    //------------------------------------------------------------------------//
+    
+    // Recursively closes all its childs
+    private void close( Container c )
+    {
+        Component aComp[] = c.getComponents();
+        
+        for( int n = 0; n < aComp.length; n++ )
+        {
+            if( aComp[n] instanceof Container )
+                close( (Container) aComp[n] );
+            else if( aComp[n] instanceof Closeable )
+                ((Closeable) aComp[n]).close();
+        }
     }
 }

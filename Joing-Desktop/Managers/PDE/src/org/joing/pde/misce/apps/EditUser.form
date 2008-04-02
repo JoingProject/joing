@@ -328,22 +328,6 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="lblEmailJoing" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
-                              <Component id="txtEmailJoing" pref="279" max="32767" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="lblEmailAnother" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="lblWebPage" alignment="0" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="txtWebPage" alignment="0" pref="274" max="32767" attributes="0"/>
-                                  <Component id="txtEmailAnother" alignment="0" pref="274" max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
                               <Component id="lblIM1" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="txtIM1" pref="254" max="32767" attributes="0"/>
@@ -376,6 +360,19 @@
                                   <Component id="txtType1" alignment="0" pref="89" max="32767" attributes="1"/>
                                   <Component id="txtType2" alignment="0" max="32767" attributes="1"/>
                                   <Component id="txtType3" alignment="0" max="32767" attributes="1"/>
+                              </Group>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="lblEmailAnother" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lblWebPage" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="lblEmailJoing" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="txtEmailJoing" alignment="0" pref="274" max="32767" attributes="0"/>
+                                  <Component id="txtWebPage" alignment="0" pref="274" max="32767" attributes="0"/>
+                                  <Component id="txtEmailAnother" alignment="0" pref="274" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>

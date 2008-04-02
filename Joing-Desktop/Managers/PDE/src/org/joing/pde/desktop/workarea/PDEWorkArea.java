@@ -18,7 +18,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import javax.swing.JDesktopPane;
-import javax.swing.JInternalFrame;
 import javax.swing.event.MouseInputAdapter;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.Selectable;
@@ -324,7 +323,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     public Component add( Component c )             { throw new IllegalAccessError(DONT_USE_ME); }
     public Component add( Component c, int n )      { throw new IllegalAccessError(DONT_USE_ME); }
     public Component add( String s, Component c )   { throw new IllegalAccessError(DONT_USE_ME); }
-// TODO: Esta se usa por JOptionPane -> Decidir si la admito o no -> public void add( Component c, Object o )        { throw new IllegalAccessError(DONT_USE_ME); }
+    //FIXME: quiatrlo --> public void add( Component c, Object o )        { throw new IllegalAccessError(DONT_USE_ME); } // This is the one used by JOptionPane
     public void add( Component c, Object o, int n ) { throw new IllegalAccessError(DONT_USE_ME); }
     //------------------------------------------------------------------------------------------------
     

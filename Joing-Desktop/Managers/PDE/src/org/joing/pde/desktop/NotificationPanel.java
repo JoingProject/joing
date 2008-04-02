@@ -3,8 +3,9 @@
  * and open the template in the editor.
  */
 
-package org.joing.pde;
+package org.joing.pde.desktop;
 
+import org.joing.pde.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Image;
@@ -14,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.container.PDECanvas;
 import org.joing.pde.misce.images.ImagesFactory;
@@ -26,27 +28,31 @@ import org.joing.pde.misce.images.ImagesFactory;
  * 
  * @author Francisco Morero Peyrona.
  */
-class ConnServerInfoPanel extends PDECanvas
+class NotificationPanel extends PDECanvas
 {
-    public ConnServerInfoPanel()
+    public NotificationPanel()
     {
         this( null );
     }
     
-    public ConnServerInfoPanel( String sMessage )
+    public NotificationPanel( String sMessage )
     {
         this( sMessage, null );
     }
     
-    public ConnServerInfoPanel( String sMessage, Image icon )
+    public NotificationPanel( String sMessage, Image icon )
     {
-        JLabel       lblMessage = new JLabel();
-        JLabel       lblIcon    = new JLabel();
-        JProgressBar progress   = new JProgressBar();
-        JPanel       panel      = new JPanel( new BorderLayout( 8,6 ) );
+        this( sMessage, icon, false );
+    }
+    
+    public NotificationPanel( String sMessage, Image icon, boolean bShowAnimation )
+    {
+        JLabel lblMessage = new JLabel();
+        JLabel lblIcon    = new JLabel();
+        JPanel panel      = new JPanel( new BorderLayout( 8,6 ) );
         
         if( sMessage == null )
-            sMessage = "Accessing Join'g Server";
+            sMessage = "Operation in progress";
         
         lblMessage.setText( sMessage );
         lblMessage.setHorizontalTextPosition( JLabel.CENTER );
@@ -54,13 +60,17 @@ class ConnServerInfoPanel extends PDECanvas
         lblIcon.setIcon( (icon == null) ? PDEUtilities.getStandardIcon( ImagesFactory.Icon.CONN_SERVER ) :
                                           new ImageIcon( icon ) );
         
-        progress.setIndeterminate( true );
-        
         panel.setOpaque( false );
         panel.setBorder( new EmptyBorder( 3,5,3,5 ) );
         panel.add( lblMessage, BorderLayout.CENTER );
         panel.add( lblIcon   , BorderLayout.WEST   );
-        panel.add( progress  , BorderLayout.SOUTH  );
+        
+        if( bShowAnimation )
+        {
+            JProgressBar progress = new JProgressBar();
+                         progress.setIndeterminate( true );
+            panel.add( progress, BorderLayout.SOUTH  );    
+        }
         
         setTranslucency( 12 );
         setBorder( new LineBorder( Color.darkGray, 2 ) );
@@ -68,14 +78,19 @@ class ConnServerInfoPanel extends PDECanvas
         add( panel );
     }
     
+    public void animate()
+    {
+        // TODO: Hacer la animación
+    }
+    
     //------------------------------------------------------------------------//
-    // TODO: Hacer la animación
+    
     // Calculates size and postion
     private void setBounds()
     {
         WorkArea wa = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
         
-        setSize( 205, 70 );    // TODO: Buscar su tamaño, en lugar de 180,70
+        setSize( 205, 70 );    // FIXME: Buscar su tamaño, en lugar de 180,70
         setLocation( wa.getWidth() - getWidth(), wa.getHeight() - getHeight() - 5 );   // NEXT: no sé por qué tengo que hace rel -5
     }
 }
