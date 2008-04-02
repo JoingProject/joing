@@ -1,0 +1,76 @@
+<ui:composition
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    template="/WEB-INF/templates/template.html">
+
+<ui:define name="title">Confirm account data</ui:define>
+
+<ui:define name="content">
+    <p>Please, make sure the data we have just gathered is right and press
+    "Confirm" to finish creating your account or "Modify" if you find any
+    wrong data.</p>
+
+    <div class="paragraph">
+
+    <dl class="form">
+	<dt>Account</dt>	<dd>#{CreateAccountForm.account}</dd>
+	<dt>First Name</dt>	<dd>#{CreateAccountForm.firstName}</dd>
+	<dt>Last Name</dt>	<dd>#{CreateAccountForm.secondName}</dd>
+	<dt>Gender</dt>		<dd>#{CreateAccountForm.male ? 'Male' : 'Female'}</dd>
+	<dt>e-mail</dt>		<dd>#{CreateAccountForm.email}</dd>
+	<dt>Password</dt>	<dd onmouseover="PasswordDisplay.hover();" onmouseout="PasswordDisplay.leave();">
+				    <div id="password_hover"><span class="password_hover">Move your mouse here to display</span></div>
+				    <div class="hidden" id="password_content">#{CreateAccountForm.password}</div>
+				</dd>
+	<dt>Quota</dt>		<dd>#{CreateAccountForm.quota}</dd>
+    </dl>
+
+    <br style="clear:both"/>
+
+    <h:form id="confirm_create_account">
+
+	<h:commandButton
+	    styleClass="create_user_confirm"
+	    value="Confirm"
+	    action="#{CreateAccountForm.createAccount}"/>
+
+	<h:commandButton
+	    styleClass="create_user_modify"
+	    value="Modify"
+	    action="modify"/>
+
+	<h:commandButton
+	    styleClass="create_user_cancel"
+	    value="Cancel"
+	    action="home"/>
+    </h:form>
+ </div>
+<script type="text/javascript">
+//<![CDATA[
+var PasswordDisplay = {
+    hovering: false,
+    oldclass: '',
+    el:function(id){return document.getElementById(id);},
+    setclass: function(id,className){this.el(id).className=className;},
+    show:function(id){this.setclass(id, '');},
+    hide:function(id){this.setclass(id, 'hidden');},
+
+    hover:function(){
+	if(this.hovering) {
+	    return;
+	}
+	this.hovering=true;
+	this.hide('password_hover');
+	this.show('password_content'); },
+    leave:function(){
+	this.hovering=false;
+	this.hide('password_content');
+	this.show('password_hover');
+     }
+};
+//]]>
+</script>
+</ui:define>
+
+</ui:composition>

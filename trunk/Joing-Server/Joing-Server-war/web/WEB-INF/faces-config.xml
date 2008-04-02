@@ -15,7 +15,12 @@
 	
     <managed-bean>
 	<managed-bean-name>CreateAccount</managed-bean-name>
-	<managed-bean-class>org.joing.server.jsf.CreateAccount</managed-bean-class>
+	<managed-bean-class>org.joing.server.jsf.account.CreateAccount</managed-bean-class>
+	<managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+	<managed-bean-name>CreateAccountForm</managed-bean-name>
+	<managed-bean-class>org.joing.server.jsf.account.CreateAccountForm</managed-bean-class>
 	<managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
@@ -30,6 +35,7 @@
         <navigation-case>
             <from-outcome>createaccount</from-outcome>
             <to-view-id>/account/create.html</to-view-id>
+	    <redirect/>
         </navigation-case>
         <navigation-case>
             <from-outcome>home</from-outcome>
@@ -42,8 +48,7 @@
         <from-view-id>/account/create.html</from-view-id>
         <navigation-case>
             <from-outcome>success</from-outcome>
-            <to-view-id>/account/success.html</to-view-id>
-	    <redirect/>
+            <to-view-id>/account/confirm.html</to-view-id>
         </navigation-case>
         <navigation-case>
             <from-outcome>error</from-outcome>
@@ -51,4 +56,21 @@
         </navigation-case>
     </navigation-rule>
 
+    <navigation-rule>
+        <from-view-id>/account/confirm.html</from-view-id>
+        <navigation-case>
+            <from-outcome>success</from-outcome>
+            <to-view-id>/account/success.html</to-view-id>
+	    <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>error</from-outcome>
+            <to-view-id>/account/create.html</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>modify</from-outcome>
+            <to-view-id>/account/create.html</to-view-id>
+	    <redirect/>
+        </navigation-case>
+    </navigation-rule>
 </faces-config>

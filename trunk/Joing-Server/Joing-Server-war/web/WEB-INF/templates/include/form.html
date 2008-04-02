@@ -13,7 +13,7 @@
 	  <h:outputLabel for="user_name" value="User"/>
 	  <div class="input_text"><span><h:inputText
 		id="user_name"
-		value="#{CreateAccount.newUsername}"
+		value="#{CreateAccount.account}"
 		maxlength="32"/></span></div>
 	</div>
 	<div class="field">
@@ -21,13 +21,13 @@
 	  <div class="input_text"><span><h:inputText
 		id="user_email"
 		maxlength="64"
-		value="#{CreateAccount.newEmail}"/></span></div>
+		value="#{CreateAccount.email}"/></span></div>
 	</div>
 	<div class="field">
 	    <h:commandButton
 		styleClass="submit"
 		value="Create"
-		action="#{CreateAccount.newAccountForm}"/>
+		action="#{CreateAccount.gotoForm}"/>
 	</div>
 	</h:form>
           <p style="clear: both;">

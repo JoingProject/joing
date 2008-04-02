@@ -285,14 +285,14 @@
         </welcome-file-list>
     <error-page>
         <error-code>500</error-code>
-        <location>/redir.htm</location>
+        <location>/redir.html</location>
     </error-page>
     <error-page>
 	<exception-type>javax.faces.application.ViewExpiredException</exception-type>
-	<location>/redir.htm</location>
+	<location>/redir.html</location>
     </error-page>
     <error-page>
         <error-code>404</error-code>
-        <location>/redir.htm</location>
+        <location>/redir.html</location>
     </error-page>
     </web-app>
