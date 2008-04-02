@@ -13,6 +13,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JInternalFrame;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.pane.DeskWindow;
+import org.joing.common.desktopAPI.workarea.WorkArea;
+import org.joing.pde.PDEUtilities;
 
 /**
  *
@@ -52,7 +54,7 @@ public class PDEWindow extends JInternalFrame implements DeskWindow
         Container parent = getParent();   // Perhaps there is another parent sat (not DesktopPane).
         
         if( parent == null )
-            parent = getDesktopPane();
+            parent = (Container) PDEUtilities.findWorkAreaFor( this );
         
         if( parent != null )
             center( parent );
@@ -95,7 +97,16 @@ public class PDEWindow extends JInternalFrame implements DeskWindow
     // Closeable interface
     
     public void close()
-    {
+    {// TODO: Comprobar que se hace el detach del WorkArea
+        setVisible( false );
+        
+        // Detach from container WorkArea
+        WorkArea wa = PDEUtilities.findWorkAreaFor( this );
+        
+        if( wa != null )
+            wa.remove( this );
+     
+        // setClosed(...) could call dispose()
         try
         {
             setClosed( true );
@@ -104,6 +115,7 @@ public class PDEWindow extends JInternalFrame implements DeskWindow
         {
         }
         
+        // Releases all resources
         dispose();
     }
     

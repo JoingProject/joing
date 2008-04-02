@@ -118,7 +118,7 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
         String sPassword = JOptionPane.showInputDialog( null, "", "Enter password", 
                                                         JOptionPane.QUESTION_MESSAGE );
         
-        // TODO: comprobar la password (mandarla al servidor y que él si es válide)
+        // TODO: comprobar la password (mandarla al servidor y que él compruebe si es válida)
         return sPassword != null && sPassword.trim().length() > 0;
     }
 }

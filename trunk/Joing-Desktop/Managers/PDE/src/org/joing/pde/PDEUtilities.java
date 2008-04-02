@@ -26,6 +26,7 @@ import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.exception.JoingServerVFSException;
@@ -225,13 +226,13 @@ public class PDEUtilities
     
     //------------------------------------------------------------------------//
     
-    public static WorkArea findWorkAreaFor( Component comp )
+    public static WorkArea findWorkAreaFor( DeskComponent comp )
     {
         List<WorkArea> lstWA = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getWorkAreas();
         
         for( WorkArea wa : lstWA )
         {
-            Component[] ac  = ((PDEWorkArea) wa).getComponents();
+            Component[] ac = ((PDEWorkArea) wa).getComponents();
             
             for( int n = 0; n < ac.length; n++ )
             {

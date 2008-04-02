@@ -347,7 +347,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
                    (int) getPreferredSize().getWidth(), 
                    (int) getPreferredSize().getHeight() );
         add( pnlAll );
-        root.setGlassPane( new GlassPaneDeskLauncher( this ) );
+        //////////root.setGlassPane( new GlassPaneDeskLauncher( this ) );
     }
 
     //------------------------------------------------------------------------//

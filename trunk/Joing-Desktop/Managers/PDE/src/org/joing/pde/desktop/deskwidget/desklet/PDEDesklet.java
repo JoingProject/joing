@@ -38,7 +38,7 @@ import org.joing.pde.desktop.deskwidget.PDEDeskWidget;
  * @author Francisco Morero Peyrona
  */
 public abstract class PDEDesklet extends PDEDeskWidget implements Closeable
-{
+{// TODO: Esta clase y el interface que la representa hay que planteárselos enteritos
     private DeskAppletToolBar toolBar;
     
     public PDEDesklet()
@@ -138,9 +138,9 @@ public abstract class PDEDesklet extends PDEDeskWidget implements Closeable
         toolBar.setVisible( false );
         
         // Has to be added to root pane
-        root.add( toolBar );
-        root.setComponentZOrder( toolBar, 0 );
-        root.setGlassPane( new GlassPaneDesklet( this ) );
+        add( toolBar );
+        setComponentZOrder( toolBar, 0 );
+        ///////setGlassPane( new GlassPaneDesklet( this ) );
         
         addAncestorListener( new AncestorListener()
         {
