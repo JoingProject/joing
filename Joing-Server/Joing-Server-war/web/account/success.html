@@ -4,22 +4,23 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     template="/WEB-INF/templates/template.html">
     
-    <h1><span><span>Account created</span></span></h1>
+<ui:define name="title">Account created</ui:define>
 
-    <p>Congratulations! Your Join'g account has been successfully created.</p>
+<ui:define name="content">
+    <p>Congratulations! You have just successfully created a new Join'g account.</p>
     
-    <p>Now you can start using Join'g by pressing the start button on this web
-	page. Make sure you have an installed 
+    <p>You can start using Join'g by pressing the "Start" button on this web page.
+	Make sure you have a
 	<a href="http://www.java.com/" target="java">Java Virtual Machine</a>
-	in order for Join'g to be run.</p>
+	properly installed in order for Join'g to be run.</p>
     
-    <p>The Join'g account you have just created has a linked e-mail account
-	#{CreateAccount.account}</p>
+    <p>#{CreateAccountForm.joingAccount} has also been created.</p>
 
-    <p>Join'g is currently under development. All account data will get
-	get wiped (and any data you have stored will be lost) once the server
+    <p>Join'g is currently under development. All account data will get wiped
+	(and any data you have stored will be lost) once the server
 	enters production status.</p>
 
-    <p><strong>Thanks for using Join'g</strong></p>
+    <p style="margin-top: 50px;"><strong>Thank you for using Join'g</strong></p>
+</ui:define>
 
 </ui:composition>

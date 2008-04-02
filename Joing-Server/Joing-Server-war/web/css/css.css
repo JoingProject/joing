@@ -216,6 +216,7 @@ div.input_text span input {
   width: 102px;
   height: 29px;
   margin-top: 5px;
+  cursor: pointer;
 }
 .web_form .web_start {
   background-image: url('../img/web_start_btn.png');
@@ -310,7 +311,11 @@ dl.form dt, dl.form dd {
     margin-bottom: 5px;
 }
 
-.create_user_test_name, .create_user_create {
+.create_user_cancel
+    , .create_user_create
+    , .create_user_confirm
+    , .create_user_modify {
+
     margin-left: 10px;
     border: none;
     background: url('../img/button_white_background.png');
@@ -320,6 +325,7 @@ dl.form dt, dl.form dd {
     width: 102px;
     height: 29px;
     color: #FFFFFF;
+    cursor: pointer;
 }
 .create_user_gender {}
 .create_user_confirm_password,
@@ -334,7 +340,15 @@ dl.form dt, dl.form dd {
     padding: 1px 3px 1px 5px;
 
 }
-
 .create_user_quota {
     text-align: right;
+}
+
+.hidden {
+    display: none;
+}
+.password_hover {
+	color: #FFFFFF;
+	background-color: #6F94BC;
+	padding: 1px 4px 1px 4px;
 }

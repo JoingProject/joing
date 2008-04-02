@@ -4,8 +4,9 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     template="/WEB-INF/templates/template.html">
 
-<h1><span><span>Welcome to Join'g</span></span></h1>
+<ui:define name="title">Welcome to Join'g</ui:define>
 
+<ui:define name="content">
 <p>
     Join'g is an open source ultra lightweight remote desktop and
     application launcher where your applications and files seamlessly
@@ -53,5 +54,5 @@ and an internet connection.</p>
     you can join us at the
     <a href="https://joing.dev.java.net" target="joing">Join'g project page</a>
 </p>
-
+</ui:define>
 </ui:composition>

@@ -1,4 +1,4 @@
-package org.joing.server.jsf;
+package org.joing.server.jsf.account;
 
 import ejb.session.SessionManagerLocal;
 import ejb.user.UserManagerLocal;
@@ -10,18 +10,15 @@ import javax.faces.context.FacesContext;
 import org.joing.common.Constant;
 import org.joing.common.dto.user.User;
 import org.joing.common.exception.JoingServerException;
+import org.joing.server.jsf.ManagedBean;
 
 /**
  *
  * @author Fernando José Ortigosa
  */
-public class CreateAccount {
+public class CreateAccountForm extends ManagedBean {
 
-    private String newUsername = null;
-
-    private String newEmail = null;
-    
-    private String username = null;
+    private String account = null;
     private String password = null;
     private String email = null;
     private String confirmPassword = null;
@@ -34,6 +31,11 @@ public class CreateAccount {
 
     private @EJB UserManagerLocal userManager;
     private @EJB SessionManagerLocal sessionManager;
+ 
+/*
+    final private SessionManagerLocal sessionManager = new SessionManagerMock();
+    final private UserManagerLocal userManager = new UserManagerMock();
+*/
  
     private boolean testEmpty(FacesContext ctx, String var, String name) {
 	
@@ -57,7 +59,7 @@ public class CreateAccount {
 	return empty;
     }
     
-    private boolean testUsername(FacesContext ctx, String name) {
+    private boolean testAccount(FacesContext ctx, String name) {
 	
 	boolean ok = !testEmpty(ctx, name, "account name");
 	
@@ -75,9 +77,7 @@ public class CreateAccount {
 		"underscores (low line)"));
 	}
 	
-	String account = sessionManager.composeAccount(name);
-	
-	if(ok && !sessionManager.isAccountAvailable(account)) {
+	if(ok && !sessionManager.isAccountAvailable(getJoingAccount())) {
 
 	    ok = false;
 	    
@@ -92,8 +92,8 @@ public class CreateAccount {
 	return ok;
     }
     
-    public String getAccount() {
-	return sessionManager.composeAccount(username);
+    public String getJoingAccount() {
+	return sessionManager.composeAccount(account);
     }
     
     private boolean testPassword(FacesContext ctx, String password) {
@@ -128,7 +128,7 @@ public class CreateAccount {
 		
 	boolean ok = !missing;
 	
-	ok = testUsername(ctx, username) && ok;
+	ok = testAccount(ctx, account) && ok;
 	
 
 	if(ok && !password.equals(confirmPassword)) {
@@ -145,26 +145,12 @@ public class CreateAccount {
 	return ok;
     }
     
-    public String newAccountForm() {
-	
+    public String testInput() {
+
 	FacesContext ctx = FacesContext.getCurrentInstance();
 	
-	username = newUsername;
-	email = newEmail;
+	return inputDataIsValid(ctx) ? "success": "error";
 
-	newUsername = null;
-	newEmail = null;
-
-	password = null;
-	confirmPassword = null;
-	firstName = null;
-	secondName = null;
-	male = null;
-	
-	testUsername(ctx, username);
-	testEmpty(ctx, email, "email address");
-	
-	return "createaccount";
     }
     
     /**
@@ -185,7 +171,7 @@ public class CreateAccount {
 	    ok = false;
 	    
 	    try {
-		User user =  userManager.createUser(username, password, email,
+		User user =  userManager.createUser(account, password, email,
 			firstName, secondName, male.booleanValue(),
 			ctx.getViewRoot().getLocale(),
 		    10);// 10 Megas (ponerlo en la web sólo para informar)
@@ -229,20 +215,25 @@ public class CreateAccount {
     private FacesMessage messageErrorMissing(String itemName) {
 	
 	String summary = "Missing " + itemName;
-	String detail = String.format(
-	    "You need to enter a valid %s in order to create a new account",
-	    itemName);
+	
+	String template = "A %s is needed in order to create a new account";
+	
+	if(itemName.substring(0, 1).matches("(?i)[aeiou]")) {
+	    template = "An %s is needed in order to create a new account";
+	}
+
+	String detail = String.format(template, itemName);
 
 	return new FacesMessage(FacesMessage.SEVERITY_ERROR, summary, detail);
 
     }
     
-    public void setUsername(String username) {
-	this.username = username;
+    public void setAccount(String account) {
+	this.account = account;
     }
 
-    public String getUsername() {
-	return username;
+    public String getAccount() {
+	return account;
     }
 
     public void setPassword(String password) {
@@ -291,22 +282,6 @@ public class CreateAccount {
     
     public Boolean getMale() {
 	return this.male;
-    }
- 
-    public String getNewEmail() {
-	return newEmail;
-    }
-
-    public void setNewEmail(String newEmail) {
-	this.newEmail = newEmail;
-    }
-
-    public String getNewUsername() {
-	return newUsername;
-    }
-
-    public void setNewUsername(String newUsername) {
-	this.newUsername = newUsername;
     }
     
     public Integer getQuota() {

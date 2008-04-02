@@ -6,7 +6,8 @@
     xmlns:ui="http://java.sun.com/jsf/facelets">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
-    <title>Join'g - Your desktop across the net</title>
+    <ui:insert name="meta"/>
+    <title><ui:insert name="page_title">Join'g - Your desktop across the net</ui:insert></title>
     
     <link rel="stylesheet" type="text/css" href="#{Util.path['css/css.css']}" media="screen" />
 
@@ -17,7 +18,8 @@
   <div class="content_middle">
     <ui:include src="/WEB-INF/templates/include/form.html"/>
     <div class="web_content">
-	<ui:insert/>
+	<h1><span><span><ui:insert name="title">Welcome to Join'g</ui:insert></span></span></h1>
+	<ui:insert name="content"/>
      </div>
     <br style="clear: both;"/><h:outputText value="&amp;nbsp;" escape="false"/>
   </div>
