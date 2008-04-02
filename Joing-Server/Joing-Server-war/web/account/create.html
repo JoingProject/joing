@@ -1,0 +1,120 @@
+<ui:composition
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    template="/WEB-INF/templates/template.html">
+    
+<ui:define name="title">Create a new account</ui:define>
+
+<ui:define name="content">
+    
+    <p>In order to create a new Join'g account we need to gather some data
+	about you, please, fill all the fields in the form and press Create when
+	you are done</p>
+
+    <h:form id="create_account">
+    <div class="paragraph">
+
+    <dl class="form">
+
+	<dt><h:outputLabel for="user_account" value="Account"/></dt>
+	<dd><h:inputText
+		id="user_account"
+		value="#{CreateAccountForm.account}"
+		size="20"
+		maxlength="32"
+		styleClass="create_user_account"/></dd>
+
+	<dt><h:outputLabel for="user_first_name" value="First Name"/></dt>
+	<dd><h:inputText
+		id="user_first_name"
+		value="#{CreateAccountForm.firstName}"
+		size="32"
+		maxlength="48"
+		styleClass="create_user_first_name"/></dd>
+
+	<dt><h:outputLabel for="user_second_name" value="Last Name"/></dt>
+	<dd><h:inputText
+		id="user_second_name"
+		value="#{CreateAccountForm.secondName}"
+		size="32"
+		maxlength="48"
+		styleClass="create_user_second_name"/></dd>
+
+	<dt><h:outputLabel for="user_gender" value="Gender"/></dt>
+	<dd><h:selectOneRadio
+		    id="user_gender"
+		    value="#{CreateAccountForm.male}"
+		    styleClass="create_user_gender">
+		<f:selectItem itemLabel="Female" itemValue="false"/>
+		<f:selectItem itemLabel="Male" itemValue="true"/>
+	    </h:selectOneRadio></dd>
+
+	<dt><h:outputLabel for="user_email" value="e-mail"/></dt>
+	<dd><h:inputText
+	    id="user_email"
+	    value="#{CreateAccountForm.email}"
+	    size="32"
+	    maxlength="64"
+	    styleClass="create_user_email"/></dd>
+
+	<dt><h:outputLabel for="user_password" value="Password"/></dt>
+	<dd><h:inputSecret
+	    id="user_password"
+	    value="#{CreateAccountForm.password}"
+	    size="20"
+	    maxlength="32"
+	    styleClass="create_user_password"/></dd>
+
+	<dt><h:outputLabel for="user_confirm_password" value="Confirm password"/></dt>
+	<dd><h:inputSecret
+	    id="user_confirm_password"
+	    value="#{CreateAccountForm.confirmPassword}"
+	    size="20"
+	    maxlength="32"
+	    styleClass="create_user_confirm_password"/></dd>
+	 
+	 <dt><h:outputLabel for="user_account_quota" value="Quota"/></dt>
+	 <dd><h:inputText
+	    id="user_account_quota"
+	    value="#{CreateAccountForm.quota}"
+	    size="4"
+	    maxlengt="6"
+	    readonly="true"
+	    styleClass="create_user_quota"/></dd>
+    </dl>
+
+    <br style="clear:both"/>
+
+    <h:commandButton
+	styleClass="create_user_create"
+	value="Create"
+	action="#{CreateAccountForm.testInput}"/>
+
+    <h:messages
+	errorClass="error_msg"
+	infoClass="info_msg"
+	fatalClass="fatal_msg"
+	warnClass="warning_msg"
+
+	showSummary="false"
+	showDetail="true"
+
+	styleClass="messages"/>
+ </div>
+</h:form>
+
+<script type="text/javascript">
+//<![CDATA[
+onload = function() {
+    var focusel = document.getElementById('create_account:user_account');
+    if(focusel) {
+	focusel.focus();
+    }
+ }
+//]]>
+</script>
+
+</ui:define>
+
+</ui:composition>
