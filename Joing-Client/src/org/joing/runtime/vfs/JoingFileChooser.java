@@ -9,6 +9,7 @@ import java.awt.Component;
 import java.awt.HeadlessException;
 import java.io.File;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileSystemView;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManager;
@@ -125,7 +126,6 @@ public class JoingFileChooser extends JFileChooser implements DeskComponent
 	dialog.setLocationRelativeTo( (DeskComponent) parent );
                   
         dm.getDesktop().getActiveWorkArea().add( dialog );
-        
 	returnValue = ERROR_OPTION;
 	rescanCurrentDirectory();
         
