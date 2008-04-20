@@ -53,13 +53,6 @@ public interface Runtime
      * @return <code>true</code> if 'YES' button pressed, otherwise ('NO' button or close dialog) return <code>false</code>
      */
     boolean   showYesNoDialog( String sTitle, String sMessage );
-    /**
-     * Asks for password and validates it agains the server.<br>
-     * (For security reasons, the password is not stored locally, not even in 
-     * memory).
-     * @return <code>true</code> if password is correct.
-     */
-    boolean   askForPasswordDialog();
     
     /**
      * One of the standard icons found by name (without extension).

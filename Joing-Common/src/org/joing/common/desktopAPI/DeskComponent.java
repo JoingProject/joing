@@ -25,5 +25,6 @@ public interface DeskComponent
     
     int  getWidth();
     int  getHeight();
+    
     void setSize( int width, int height );
 }

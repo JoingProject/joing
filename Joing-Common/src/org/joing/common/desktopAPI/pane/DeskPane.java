@@ -5,6 +5,7 @@
 
 package org.joing.common.desktopAPI.pane;
 
+import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DeskContainer;
 
 /**
@@ -15,4 +16,5 @@ import org.joing.common.desktopAPI.DeskContainer;
 public interface DeskPane extends DeskContainer
 {
     void center();
+    void setLocationRelativeTo( DeskComponent parent );
 }
