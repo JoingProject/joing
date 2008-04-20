@@ -13,7 +13,6 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Image;
-import java.beans.XMLEncoder;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -33,9 +32,11 @@ import javax.swing.event.ChangeListener;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.desktopAPI.desktop.Desktop;
 import org.joing.common.desktopAPI.desktop.DesktopListener;
+import org.joing.common.desktopAPI.pane.DeskDialog;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.common.desktopAPI.taskbar.TaskBar;
@@ -44,6 +45,7 @@ import org.joing.pde.desktop.container.PDECanvas;
 import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.taskbar.PDETaskBar;
 import org.joing.pde.desktop.workarea.PDEWallpaper;
+import org.joing.pde.misce.apps.EditUser;
 import org.joing.pde.swing.EventListenerList;
 import org.joing.runtime.vfs.JoingFileChooser;
 import org.xml.sax.SAXException;
@@ -81,12 +83,12 @@ public class PDEDesktop extends JPanel implements Desktop
     
     public void load()
     {
-        FileText ftStatus = null;
+        FileText ftSavedStatus = null;
         
-        if( ftStatus == null )
+        if( ftSavedStatus == null )
             createDefaultDesktop();
         else
-            processPreferences( ftStatus.getContent() );
+            processSavedStatus( ftSavedStatus.getContent() );
         
         setActiveWorkArea( getWorkAreas().get( 0 ) );
     }
@@ -107,7 +109,7 @@ public class PDEDesktop extends JPanel implements Desktop
         //createTestComponents( getWorkAreas().get( 0 ) );   // TODO: quitarlo
     }
     
-    private void processPreferences( BufferedReader in )
+    private void processSavedStatus( BufferedReader in )
     {
         try
         {
@@ -146,29 +148,22 @@ public class PDEDesktop extends JPanel implements Desktop
     
     public void close()
     { // Info at: http://java.sun.com/products/jfc/tsc/articles/persistence4/index.html
-        FileOutputStream os = null;
-        try
-        {
-            os = new FileOutputStream( "/home/fmorero/Escritorio/joing_status.xml" );
-            XMLEncoder encoder = new XMLEncoder( os );
-            encoder.writeObject( this );
-            encoder.close();
-        }
-        catch( FileNotFoundException ex )
-        {
-            Logger.getLogger( PDEDesktop.class.getName() ).log( Level.SEVERE, null, ex );
-        }
-        finally
-        {
-            try
-            {
-                os.close();
-            }
-            catch( IOException ex )
-            {
-                Logger.getLogger( PDEDesktop.class.getName() ).log( Level.SEVERE, null, ex );
-            }
-        }
+//        FileOutputStream os = null;
+//        try
+//        {
+//            os = new FileOutputStream( "/home/fmorero/Escritorio/joing_status.xml" );
+//            XMLEncoder encoder = new XMLEncoder( os );
+//            encoder.writeObject( this );
+//            encoder.close();
+//        }
+//        catch( FileNotFoundException exc )
+//        {
+//            Logger.getLogger( PDEDesktop.class.getName() ).log( Level.SEVERE, null, exc );
+//        }
+//        finally
+//        {
+//            try{ os.close(); } catch( IOException ex ) { }
+//        }
         
         for( TaskBar tb : vTaskBars )
         {
@@ -226,7 +221,7 @@ public class PDEDesktop extends JPanel implements Desktop
     
     public void setActiveWorkArea( WorkArea wa )
     {
-        if( vWorkAreas.contains( wa ) && (waActive != wa) )
+        if( (waActive != wa) && vWorkAreas.contains( wa ) )
         {
             WorkArea waOld = waActive;
             
@@ -408,16 +403,10 @@ public class PDEDesktop extends JPanel implements Desktop
                 JoingFileChooser jfc = new JoingFileChooser();
                 int nSelection = jfc.showDialog( null, "Zarva" );
                 
-//                if( nSelection == JoingFileChooser.APPROVE_OPTION )
-//                    dm.getRuntime().showMessageDialog( "Result", "Approved" );
-//                else
-//                    dm.getRuntime().showMessageDialog( "Result", "Canceled" );
-                
-                
-//                if( nSelection == JoingFileChooser.APPROVE_OPTION )
-//                    dm.getRuntime().showMessageDialog( "Result", "Approved" );
-//                else
-//                    dm.getRuntime().showMessageDialog( "Result", "Canceled" );
+                if( nSelection == JoingFileChooser.APPROVE_OPTION )
+                    dm.getRuntime().showMessageDialog( "Result", "Approved" );
+                else
+                    dm.getRuntime().showMessageDialog( "Result", "Canceled" );
             }
         } );
 
@@ -427,18 +416,6 @@ public class PDEDesktop extends JPanel implements Desktop
 //            public void run()
 //            {
 //                new org.joing.notes.Notes();
-//            }
-//        } );
-
-//        SwingUtilities.invokeLater( new Runnable()
-//        {
-//            public void run()
-//            {
-//                DeskDialog dialog = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().createDialog();
-//                           dialog.setTitle( "Testing File Chosser" );
-//                           dialog.add( (DeskComponent) new EditUser() );
-//                org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
-//                
 //            }
 //        } );
         /*NasaPhoto nasa = new NasaPhoto();

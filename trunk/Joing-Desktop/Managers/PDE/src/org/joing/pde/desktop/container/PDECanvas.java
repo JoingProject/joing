@@ -54,12 +54,20 @@ public class PDECanvas extends JPanel implements DeskCanvas
      */
     public void center()
     {
-        Dimension size1 = getParent().getSize();
-        Dimension size2 = getPreferredSize();
-        int nX = (size1.width  - size2.width)  / 2;
-        int nY = (size1.height - size2.height) / 2;
-        
-        setBounds( Math.max( nX, 0 ), Math.max( nY, 0 ), size2.width, size2.height );
+        setLocationRelativeTo( (DeskComponent) getParent() );
+    }
+    
+    public void setLocationRelativeTo( DeskComponent parent )
+    {
+        if( parent != null )
+        {
+            Dimension size1 = ((Component) parent).getSize();
+            Dimension size2 = getPreferredSize();
+            int nX = (size1.width  - size2.width)  / 2;
+            int nY = (size1.height - size2.height) / 2;
+            
+            setBounds( Math.max( nX, 0 ), Math.max( nY, 0 ), size2.width, size2.height );
+        }
     }
     
     public void close()

@@ -14,17 +14,29 @@ import java.awt.image.RGBImageFilter;
 
 /**
  *
- * @author Framcisco Morero Peyrona
+ * @author Francisco Morero Peyrona
  */
 public class ImageHighlightFilter extends RGBImageFilter
 {
     private boolean brighter;
-    private int percent;
-
+    private int     amount;
+    
+    //------------------------------------------------------------------------//
+    
+    /**
+     * Filter to apply to images.
+     * 
+     * @param brighter  true to highlight and false to de-highlight.
+     * @param percent   Percent to highlight or de-highlight.
+     */
     public ImageHighlightFilter( boolean brighter, int percent )
     {
-        this.brighter = brighter;     // false == Oscurecer,  true == abrillantar
-        this.percent  = percent;      // Porcentaje de oscurecimiento o abrillantamiento
+        if( percent > 100 ) percent = 100;
+        if( percent <   0 ) percent =   0;
+        
+        this.brighter = brighter;
+        this.amount   = 100 - percent;
+        
         canFilterIndexColorModel = true;
     }
 
@@ -36,23 +48,24 @@ public class ImageHighlightFilter extends RGBImageFilter
 
         if( brighter )
         {
-            r = (255 - ((255 - r) * (100 - percent) / 100));
-            g = (255 - ((255 - g) * (100 - percent) / 100));
-            b = (255 - ((255 - b) * (100 - percent) / 100));
+            r = 255 - (((255 - r) * amount) / 100);
+            g = 255 - (((255 - g) * amount) / 100);
+            b = 255 - (((255 - b) * amount) / 100);
         }
         else
         {
-            r = (r * (100 - percent) / 100);
-            g = (g * (100 - percent) / 100);
-            b = (b * (100 - percent) / 100);
+            r = (r * amount) / 100;
+            g = (g * amount) / 100;
+            b = (b * amount) / 100;
         }
-        
-        if( r < 0 )    r = 0;
-        if( r > 255 )  r = 255;
-        if( g < 0 )    g = 0;
-        if( g > 255 )  g = 255;
-        if( b < 0 )    b = 0;
-        if( b > 255 )  b = 255;
+// TODO: Revisar esto, pero creo que como he añadido en el contructor el control
+//       del paramaetro percent para que no salga de marge, esto ya no hace falta.
+//        if( r < 0 )    r = 0;
+//        if( r > 255 )  r = 255;
+//        if( g < 0 )    g = 0;
+//        if( g > 255 )  g = 255;
+//        if( b < 0 )    b = 0;
+//        if( b > 255 )  b = 255;
         
         return (rgb & 0xff000000) | (r << 16) | (g << 8) | (b << 0);
     }

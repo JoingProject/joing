@@ -94,31 +94,22 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
     public void showMessageDialog( String sTitle, String sMessage )
     {
         WorkArea workArea = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
-        
-        JOptionPane.showInternalMessageDialog( (Component) workArea, sMessage, sTitle,
+        // TODO: Can't use showInternalMessageDialog(...) because bug ID = 6178755
+        JOptionPane.showMessageDialog( (Component) workArea, sMessage, sTitle,
                                                JOptionPane.INFORMATION_MESSAGE );
     }
     
     public boolean showAcceptCancelDialog( String sTitle, DeskComponent panel )
     {
-        return PDEUtilities.showBasicDialog( null, sTitle, (JComponent) panel );
+        return PDEUtilities.showBasicDialog( sTitle, (JComponent) panel );
     }
     
     public boolean showYesNoDialog( String sTitle, String sMessage )
     {
         WorkArea workArea = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
-        
-        return JOptionPane.showInternalConfirmDialog( 
+        // TODO: Can't use showInternalMessageDialog(...) because bug ID = 6178755
+        return JOptionPane.showConfirmDialog( 
                                      (Component) workArea, sMessage, sTitle,
                                      JOptionPane.YES_NO_OPTION ) == JOptionPane.YES_OPTION;
-    }
-    
-    public boolean askForPasswordDialog()
-    {// TODO: cambiar el JTextField por un JPasswordField
-        String sPassword = JOptionPane.showInputDialog( null, "", "Enter password", 
-                                                        JOptionPane.QUESTION_MESSAGE );
-        
-        // TODO: comprobar la password (mandarla al servidor y que él compruebe si es válida)
-        return sPassword != null && sPassword.trim().length() > 0;
     }
 }

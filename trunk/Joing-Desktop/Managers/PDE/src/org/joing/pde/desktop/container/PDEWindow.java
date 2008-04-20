@@ -57,7 +57,7 @@ public class PDEWindow extends JInternalFrame implements DeskWindow
             parent = (Container) PDEUtilities.findWorkAreaFor( this );
         
         if( parent != null )
-            center( parent );
+            center( (Component) parent );
     }
     
     public void setLocationRelativeTo( DeskComponent parent )

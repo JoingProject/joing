@@ -9,18 +9,13 @@
 package org.joing.pde.desktop.container;
 
 import java.awt.Component;
-import java.awt.Container;
-import java.awt.KeyboardFocusManager;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
+import java.awt.Dialog.ModalityType;
+import java.awt.Image;
+import java.util.List;
+import javax.swing.JDialog;
 import javax.swing.JInternalFrame;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.desktopAPI.pane.DeskDialog;
 
 /**
@@ -31,176 +26,66 @@ import org.joing.common.desktopAPI.pane.DeskDialog;
  * 
  * @author Francisco Morero Peyrona
  */
-public class PDEDialog extends PDEWindow implements DeskDialog
+public class PDEDialog extends JDialog implements DeskDialog
 {
-    private Component focusOwner;
-    
-    //------------------------------------------------------------------------//
-    
     public PDEDialog()
-    {           // resizable, closable, maximizable, minimizable
-        super( "", true,      true,     false,       false );
-        
+    {
+        setModalityType( ModalityType.APPLICATION_MODAL );
         setDefaultCloseOperation( JInternalFrame.DISPOSE_ON_CLOSE );
-        
-        addInternalFrameListener( new InternalFrameAdapter()
-        {
-            public void internalFrameClosing( InternalFrameEvent e )
-            {   // dispose() can't be called here because goes into infinite loop
-                goModal( false );
-            }
-        } );
     }
-    
-    //------------------------------------------------------------------------//
-    // DeskDialog Interface Implementation
     
     public boolean isModal()
     {
         return true;
     }
     
-    //------------------------------------------------------------------------//
-    // Container interface
-    
     public void add( DeskComponent dc )
-    {
-        // FIXME: Al menos con el JoingFileChooser no funciona el HeavyWeightPopup
-        //        Se puede mirar su uso en JOptionPane
-        
-        // PopupFactory.forceHeavyWeightPopupKey == "__force_heavy_weight_popup__"
-        // But I have to use the String because the variuable has package scope
-        //putClientProperty( "__force_heavy_weight_popup__", Boolean.TRUE );
-        putClientProperty( "__force_heavy_weight_popup__", Boolean.TRUE );
-        changesComboPopup2Heavy( (Component) dc );
-        
+    {        
         getContentPane().add( (Component) dc );
     }
     
-    //------------------------------------------------------------------------//
-    // Special methods used by PDE only (could be not needed in other implementations)
-    
-    public void startModal()
+    public Image getIcon()
     {
-        focusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+        List<Image> images = getIconImages();
         
-        // Since all input will be blocked until this dialog is dismissed,
-        // make sure its parent containers are visible first (this component
-        // is tested below).  This is necessary for JApplets, because
-        // because an applet normally isn't made visible until after its
-        // start() method returns -- if this method is called from start(),
-        // the applet will appear to hang while an invisible modal frame
-        // waits for input.
-	if( isVisible() && (! isShowing()) )
-        {
-            Container parent = getParent();
-            
-            while( parent != null )
-            {
-                if( parent.isVisible() == false )
-                    parent.setVisible( true );
-                
-                parent = parent.getParent();
-            }
-        }
-        
-        goModal( true );
+        if( images == null || images.size() == 0 )
+            return null;
+        else
+            return images.get( 0 );
     }
     
-    public void stopModal()
+    public void setIcon( Image image )
     {
-        goModal( false );
-        
-        if( getParent() instanceof JInternalFrame )
-        {
-            try
-            {
-                ((JInternalFrame) getParent()).setSelected( true );
-            }
-            catch( java.beans.PropertyVetoException e )
-            {
-            }
-        }
-        
-        if( focusOwner != null && focusOwner.isShowing() )
-            focusOwner.requestFocus();
+        super.setIconImage( image );
     }
     
-    //------------------------------------------------------------------------//
-    
-    // Use reflection to get Container.startLWModal.
-    private synchronized void goModal( boolean bModal )
+    public void setLocationRelativeTo( DeskComponent parent )
     {
-        try
-        {
-            String sPrefix = (bModal ? "start" : "stop" );
-            
-            Object obj = AccessController.doPrivileged( new ModalPrivilegedAction( Container.class, sPrefix + "LWModal" ) );
-            
-            if( obj != null )
-                ((Method) obj).invoke( this, (Object[]) null );
-        }
-        catch( IllegalAccessException ex )
-        {
-        }
-        catch( IllegalArgumentException ex )
-        {
-        }
-        catch( InvocationTargetException ex )
-        {
-        }
-    }
- 
-    // Recursevely changes it
-    private void changesComboPopup2Heavy( Component c )
-    {
-        if( c instanceof JComboBox )
-        {
-            ((JComboBox) c).setLightWeightPopupEnabled( false );
-            ((JComponent) c).putClientProperty( "__force_heavy_weight_popup__", Boolean.TRUE );
-        }
-        else if( c instanceof Container )
-        {
-            Component[] ao = ((Container) c).getComponents();
-            
-            for( int n = 0; n < ao.length; n++ )
-                changesComboPopup2Heavy( ao[n] );
-        }
+        super.setLocationRelativeTo( (Component) parent );
     }
     
-    //------------------------------------------------------------------------//
-    // INNER CLASS
-    //------------------------------------------------------------------------//
-    
-    private static final class ModalPrivilegedAction implements PrivilegedAction
+    public void center()
     {
-        private Class clazz;
-        private String methodName;
+        super.setLocationRelativeTo( null );
+    }
+    
+    public void remove( DeskComponent dc )
+    {
+        getContentPane().remove( (Component) dc );
+    }
 
-        public ModalPrivilegedAction( Class clazz, String methodName )
-        {
-            this.clazz = clazz;
-            this.methodName = methodName;
-        }
+    public void close()
+    {
+        setVisible( false );
+    }
 
-        public Object run()
-        {
-            Method method = null;
-            
-            try
-            {
-                method = clazz.getDeclaredMethod( methodName, (Class[]) null );
-            }
-            catch( NoSuchMethodException ex )
-            {
-            }
-            
-            if( method != null )
-            {
-                method.setAccessible( true );
-            }
-            
-            return method;
-        }
+    public boolean isSelected()
+    {
+        return super.isVisible();
+    }
+
+    public void setSelected( boolean bStatus )
+    {
+        // Nothing to do: a modal JDialog is selected when it is made visible.
     }
 }

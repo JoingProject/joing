@@ -45,11 +45,11 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
 {
     private static final String DONT_USE_ME = "Do not use me";
     
-    private static final Integer LAYER_WALLPAPER = new Integer( 0 );
-    private static final Integer LAYER_CANVAS    = new Integer( 5 );
-    private static final Integer LAYER_LAUNCHER  = new Integer( 10 );
-    private static final Integer LAYER_FRAME     = new Integer( 20 );
-    private static final Integer LAYER_DIALOG    = new Integer( 30 );
+    private static final Integer LAYER_DIALOG    = JDesktopPane.MODAL_LAYER;
+    private static final Integer LAYER_FRAME     = LAYER_DIALOG - 10;
+    private static final Integer LAYER_LAUNCHER  = LAYER_DIALOG - 20;
+    private static final Integer LAYER_CANVAS    = LAYER_DIALOG - 30;
+    private static final Integer LAYER_WALLPAPER = LAYER_DIALOG - 40;
     
     private PDEWallpaperComponent pwc;
     
@@ -504,14 +504,31 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         }*/
         
         super.add( desklet, LAYER_LAUNCHER );
+        validate();
     }
     
     private void addDeskLauncher( PDEDeskLauncher dl )
     {
         dl.addLauncherListener( deskLauncherListener );
         super.add( dl, LAYER_LAUNCHER  );
+        validate();
     }
     
+    //------------------------------------------------------------------------//
+    // FIXME: Estoy usando JDialog enlugar de JInternalframe hasta que solucione 
+    //        el problema con LWModal
+    // Este método es el que uso para probar PDEDialog cuando hereda de JDialog
+    private void addDialog( PDEDialog dialog, boolean bAutoArrange )
+    {
+        if( bAutoArrange )
+        {
+            dialog.pack();
+            dialog.center();
+        }
+        
+        dialog.setVisible( true );
+    }
+    /* Esta es la que usaba cuando PDEDialog hereda de PDEWindow
     private void addDialog( PDEDialog dialog, boolean bAutoArrange )
     {
         if( bAutoArrange )
@@ -521,6 +538,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         
         super.add( dialog, LAYER_DIALOG );
         
+        validate();  // Validate before make it visible
         // 1st, must be visble, because this is the way to have a parent
         dialog.setVisible( true );   // DeskFrame interface does not include setVisible(...)
         
@@ -533,6 +551,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         
         dialog.startModal();
     }
+    --------------------------------------------------------------------------*/
     
     private void addFrame( PDEFrame frame, boolean bAutoArrange )
     {
@@ -549,7 +568,8 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         
         if( bAutoArrange )
             frame.center();
-                  
+        
+        validate();  // Validate before make it visible
         // DeskFrame interface does not include setVisible(...)
         frame.setVisible( true );  // 1st, must be visble, because this is the way to have a parent
         
@@ -560,7 +580,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         }
     }
     
-    // Ensures that passed dialog of frame is not bigger than WorkArea
+    // Ensures that passed dialog or frame is not bigger than WorkArea
     // (the same user can run Joing in many different-size devices)
     private void adjustWindowBounds( PDEWindow window )
     {

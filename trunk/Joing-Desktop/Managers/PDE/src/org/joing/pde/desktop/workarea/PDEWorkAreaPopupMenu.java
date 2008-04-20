@@ -110,7 +110,7 @@ class PDEWorkAreaPopupMenu extends JPopupMenu implements ActionListener
     {
         PDEDeskLauncherPropertiesPanel panel = new PDEDeskLauncherPropertiesPanel( bDir );
         
-        if( PDEUtilities.showBasicDialog( null, "Create new Launcher", panel ) )
+        if( PDEUtilities.showBasicDialog( "Create new Launcher", panel ) )
         {
             PDEDeskLauncher launcher = panel.retrieveLauncher();
                             launcher.setLocation( ptWhere );
@@ -129,7 +129,7 @@ class PDEWorkAreaPopupMenu extends JPopupMenu implements ActionListener
     {
         PDEWorkAreaProperties panel = new PDEWorkAreaProperties( waParent );
         
-        if( PDEUtilities.showBasicDialog( null, "WorkArea Preferences", panel ) )
+        if( PDEUtilities.showBasicDialog( "WorkArea Preferences", panel ) )
         {
             // TODO: Actualizarlo y salvarlo a fichero
         }

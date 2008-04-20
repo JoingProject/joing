@@ -297,7 +297,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     {
         PDEDeskLauncherPropertiesPanel panel = new PDEDeskLauncherPropertiesPanel( this );
         
-        if( PDEUtilities.showBasicDialog( null, "Launcher Properties", panel ) )
+        if( PDEUtilities.showBasicDialog( "Launcher Properties", panel ) )
             panel.retrieveLauncher();
     }
     

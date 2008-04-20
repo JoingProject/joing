@@ -27,12 +27,17 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import org.joing.pde.desktop.PDEDesktop;
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Toolkit;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import org.joing.common.clientAPI.runtime.Bridge2Server;
 import org.joing.common.desktopAPI.DesktopManager;
+import org.joing.jvmm.RuntimeFactory;
 
 /**
  * DesktopManager interface implementation.
@@ -98,15 +103,7 @@ public class PDEManager extends JApplet implements DesktopManager
                     else
                         getMainFrame().setSize( Toolkit.getDefaultToolkit().getScreenSize() );
                     
-                    SwingWorker sw = new SwingWorker()
-                    {
-                        protected Object doInBackground() throws Exception
-                        {
-                            getDesktop().load();   // Do not move this line !
-                            return null;
-                        }
-                    };
-                    sw.execute();
+                    loadSavedStatus();
                 }
             } );
         }
@@ -128,18 +125,9 @@ public class PDEManager extends JApplet implements DesktopManager
                 getMainFrame().setUndecorated( true );
                 getMainFrame().setResizable( false );
                 getMainFrame().pack();
-
+                
                 gs.setFullScreenWindow( frame );
-
-                SwingWorker sw = new SwingWorker()
-                {
-                    protected Object doInBackground() throws Exception
-                    {
-                        getDesktop().load();   // Do not move this line !
-                        return null;
-                    }
-                };
-                sw.execute();
+                loadSavedStatus();
             }
             else
             {
@@ -209,8 +197,9 @@ public class PDEManager extends JApplet implements DesktopManager
      */
     public void lock()
     {
-        Component   previous = (frame != null ? frame.getGlassPane() : getRootPane().getGlassPane());
-        MyGlassPane myGlass  = new MyGlassPane( previous );
+        Component   previous = (frame != null ? frame.getGlassPane() 
+                                              : getRootPane().getGlassPane());
+        MyGlassPane myGlass  = new MyGlassPane( previous, new AskForPassword() );
         
         if( frame != null )
             frame.setGlassPane( myGlass );
@@ -220,29 +209,26 @@ public class PDEManager extends JApplet implements DesktopManager
         myGlass.lock();
     }
     
-    private void unlock()
+    public void unlock()
     {
-        if( runtime.askForPasswordDialog() )
-        {
-            MyGlassPane myGlass = (MyGlassPane) (frame != null ? frame.getGlassPane()
-                                                               : getRootPane().getGlassPane());
-            
-            if( frame != null )
-                frame.setGlassPane( myGlass.getPreviousGlassPane() );
-            else
-                getRootPane().setGlassPane( myGlass.getPreviousGlassPane() );
-            
-            myGlass.unlock();
-        }
+        MyGlassPane myGlass = (MyGlassPane) (frame != null ? frame.getGlassPane()
+                                                           : getRootPane().getGlassPane());
+
+        myGlass.unlock();
+        
+        if( frame != null )
+            frame.setGlassPane( myGlass.getPreviousGlassPane() );
+        else
+            getRootPane().setGlassPane( myGlass.getPreviousGlassPane() );
     }
-    
+        
     //------------------------------------------------------------------------//
     
     private JFrame getMainFrame()
     {
         if( frame == null )
         {
-            frame = new JFrame( "Joing :: PDE" );
+            frame = new JFrame( "Join'g :: PDE" );
             frame.setDefaultCloseOperation( JFrame.DO_NOTHING_ON_CLOSE );
             frame.setContentPane( getContentPane() );
             frame.addWindowListener( new WindowListener()
@@ -260,6 +246,70 @@ public class PDEManager extends JApplet implements DesktopManager
         return frame;
     }
     
+    private void loadSavedStatus()
+    {
+        SwingWorker sw = new SwingWorker()
+        {
+            protected Object doInBackground() throws Exception
+            {
+                getDesktop().load();   // Do not move this line !
+                return null;
+            }
+        };
+        sw.execute();
+    }
+    
+    //------------------------------------------------------------------------//
+    // INNER CLASS: AskForPassword
+    //------------------------------------------------------------------------//
+    private final class AskForPassword extends JPanel implements Runnable
+    {
+        public void run()
+        {
+            String sPassword = JOptionPane.showInputDialog( null, "", "Enter password", JOptionPane.QUESTION_MESSAGE );
+        
+            if( sPassword != null && sPassword.trim().length() > 0 )
+            {
+                JRootPane root = (frame != null ? frame.getRootPane() : getRootPane());
+                Cursor    cursor = root.getCursor();
+                
+                root.setCursor( new Cursor( Cursor.WAIT_CURSOR ) );
+                
+                sPassword = sPassword.trim();
+                
+                try
+                {
+                    Bridge2Server b2s = RuntimeFactory.getPlatform().getBridge();
+                    boolean       bOk = sPassword.length() > 0; // TODO: implementar un servicio en el servidor para comprobar la password
+
+                    if( bOk )
+                        unlock();
+                }
+                catch( Exception exc )
+                {
+                    // TODO: Informar que por falta de comunicación con el servidor no se puede comprobar la password
+                    //       y que el sistema tiene que seguir bloqueado.
+                }
+                finally
+                {
+                    root.setCursor( cursor );
+                }
+            }
+//            JLabel  lblPicture = new JLabel( PDEUtilities.getStandardIcon( ImagesFactory.Icon.USER_MALE, 48, 48 ) );
+//                    lblPicture.setBorder( new EmptyBorder( 8,8,8,8 ) );
+//            JLabel  lblText = new JLabel( "Enter your password" );
+//            JButton btnAccept = new JButton( "Unlock" );
+//            JButton btnCancel = new JButton( "Lock" );
+//            
+//            txtPassword.setColumns( 32 );
+//            
+//            add( lblPicture , BorderLayout.WEST   );
+//            add( lblText    , BorderLayout.NORTH  );
+//            add( txtPassword, BorderLayout.CENTER );
+            
+        }
+    }
+    
     //------------------------------------------------------------------------//
     // INNER CLASS: MyGlassPane. Used to lock the screen.
     // This GlasPane is not based on GlassPaneBase because in this way is more
@@ -273,11 +323,14 @@ public class PDEManager extends JApplet implements DesktopManager
         private Timer     timer;
         private float     nTranslucent; 
         private Component previousGlassPane;
+        private Runnable  callbackOnEvent;     // Object to be invoked on event:
+                                               // Is Runnable just to avoid the creation of a new interface
         
-        private MyGlassPane( Component previousGlassPane )
+        private MyGlassPane( Component previousGlassPane, Runnable callbackOnEvent )
         {
             this.previousGlassPane = previousGlassPane;
-            this.timer = new Timer( 60, this );
+            this.timer             = new Timer( 60, this );
+            this.callbackOnEvent   = callbackOnEvent;
         }
         
         private synchronized void lock()
@@ -313,7 +366,7 @@ public class PDEManager extends JApplet implements DesktopManager
         protected void paintComponent( Graphics g )
         {
             Graphics2D g2 = (Graphics2D) g;
-
+            
             g2.setColor( Color.black );
             g2.setComposite( AlphaComposite.getInstance( AlphaComposite.SRC_OVER, nTranslucent ));
             g2.fillRect( 0,0, getWidth(), getHeight() );
@@ -329,7 +382,7 @@ public class PDEManager extends JApplet implements DesktopManager
         public void mouseEntered( MouseEvent me )  {}
         public void mouseExited( MouseEvent me )   {}
         public void mouseReleased( MouseEvent me ) {}
-        public void mousePressed( MouseEvent me )  { PDEManager.this.unlock(); }
+        public void mousePressed( MouseEvent me )  { callbackOnEvent.run(); }
     }
     
     //------------------------------------------------------------------------//
