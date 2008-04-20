@@ -184,8 +184,6 @@ public class UserManagerBean
             
         try
         {
-            em.getTransaction().begin();
-
             LocaleEntity _local = findLocale( locale );
             
             if( _local == null )
@@ -211,9 +209,6 @@ public class UserManagerBean
             NativeFileSystemTools.createAccount( _user.getAccount() );
             
             user = UserDTOs.createUser( _user );
-
-            // When code arrives to this point, everything was OK: now can commit
-            em.getTransaction().commit();
         }
         catch( RuntimeException exc )
         {
@@ -226,15 +221,6 @@ public class UserManagerBean
             Constant.getLogger().throwing( getClass().getName(), "createUser(...)", exc );
             throw new JoingServerUserException( JoingServerException.ACCESS_NFS );
         }
-
-        finally 
-        {
-            if( em.getTransaction().isActive() )
-            {
-                em.getTransaction().rollback();
-                // FIXME: Deshacer lo hecho en: NativeFileSystemTools.createAccount( _user.getAccount() );
-            }
-        }
         
         return user;
     }
@@ -244,8 +230,6 @@ public class UserManagerBean
     {
         try
         {
-            em.getTransaction().begin();
-     
             // Removes user from USERS table
             UserEntity _user = UserDTOs.createUserEntity( user );
             em.remove( _user );
@@ -258,18 +242,11 @@ public class UserManagerBean
             if( ! NativeFileSystemTools.removeAccount( _user.getAccount() ) )
                 Constant.getLogger().log( Level.SEVERE, "Can't delete user directory ("+ user.getAccount() +
                                                         "): has to be done manually." );
-            
-            em.getTransaction().commit();
         }
         catch( RuntimeException exc )
         {
             Constant.getLogger().throwing( getClass().getName(), "removeUser(...)", exc );
             throw new JoingServerUserException( JoingServerException.ACCESS_DB, exc );
-        }
-        finally 
-        {
-            if( em.getTransaction().isActive() )
-                em.getTransaction().rollback();
         }
     }
     
