@@ -9,7 +9,6 @@ import java.awt.Component;
 import java.awt.HeadlessException;
 import java.io.File;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileSystemView;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManager;
@@ -108,11 +107,11 @@ public class JoingFileChooser extends JFileChooser implements DeskComponent
     public int showDialog( Component parent, String approveButtonText )
            throws HeadlessException
     {
-        DesktopManager   dm           = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
-        String           sDialogTitle = getDialogTitle();
+        DesktopManager   dm     = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+        String           sTitle = getDialogTitle();
         
-        if( sDialogTitle == null )
-            sDialogTitle = getUI().getDialogTitle( this );
+        if( sTitle == null )
+            sTitle = getUI().getDialogTitle( this );
         
         if( approveButtonText != null )
         {
@@ -121,7 +120,7 @@ public class JoingFileChooser extends JFileChooser implements DeskComponent
 	}
         
         dialog = dm.getRuntime().createDialog();
-        dialog.setTitle( sDialogTitle );
+        dialog.setTitle( sTitle );
         dialog.add( this );
 	dialog.setLocationRelativeTo( (DeskComponent) parent );
                   
