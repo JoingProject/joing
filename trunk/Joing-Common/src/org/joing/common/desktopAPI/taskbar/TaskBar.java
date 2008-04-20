@@ -27,6 +27,9 @@ public interface TaskBar extends Closeable
     void remove( TaskBarPanel tbp );
     void remove( DeskComponent dc );
     
+    int  getWidth();
+    int  getHeight();
+    
     TaskBarPanel getSysTray();
     
     boolean isAutoHide();

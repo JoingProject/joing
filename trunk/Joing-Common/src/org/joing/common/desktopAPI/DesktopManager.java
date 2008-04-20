@@ -24,4 +24,8 @@ public interface DesktopManager
     // References
     Desktop getDesktop();
     Runtime getRuntime();
+    
+    // Locking & unlocking
+    void lock();
+    void unlock();
 }
