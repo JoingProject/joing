@@ -720,8 +720,6 @@ public class FileManagerBean
                 // Owner of parent directory is System => Do not inherit parent properties
                 boolean bOwnerIsSystem = Constant.getSystemAccount().equals( _feParent.getOwner() ) ;
                 
-                // FIXME: da un error de transacciones --> em.getTransaction().begin();
-                
                 // When the EntityManager persists the entity, it first create a new record,
                 // and the record has the values defined in "DEFAULT" clause in "CREATE TABLE",
                 // but after that EntityManager overwrited these values because it copies all
@@ -756,9 +754,6 @@ public class FileManagerBean
                 if( ! bIsDir )  // Files exist in FILES table and in host FS, dirs only in FILES
                     NativeFileSystemTools.createFile( sAccount, _file.getIdFile() );
                     
-                // If code arrives to this point, everything was OK: now can commit
-                // FIXME: da un error de transacciones --> em.getTransaction().commit();
-
                 file = FileDTOs.createFileDescriptor( _file );
             }
             catch( RuntimeException exc )
