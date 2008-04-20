@@ -14,22 +14,22 @@ public class ImagesFactory
 {
     public enum Icon 
     { 
-        COPY       ( "copy"        ),
-        CUT        ( "cut"         ),
-        DELETE     ( "delete"      ), 
-        FOLDER     ( "folder"      ), 
-        INFO       ( "info"        ),
-        LAUNCHER   ( "launcher"    ), 
-        LOCK       ( "lock"        ),
-        MOVE       ( "move"        ), 
-        NO_IMAGE   ( "no_image"    ),
-        PASTE      ( "paste"       ),
-        PROPERTIES ( "properties"  ),
-        REMOVE     ( "remove"      ),
-        CONN_SERVER( "conn_server" ),
-        TRASHCAN   ( "trashcan"    ), 
-        USER_FEMALE( "user_female" ),
-        USER_MALE  ( "user_male"   ); 
+        COPY        ( "copy"         ),
+        CUT         ( "cut"          ),
+        DELETE      ( "delete"       ), 
+        FOLDER      ( "folder"       ), 
+        INFO        ( "info"         ),
+        LAUNCHER    ( "launcher"     ), 
+        LOCK        ( "lock"         ),
+        MOVE        ( "move"         ), 
+        NO_IMAGE    ( "no_image"     ),
+        PASTE       ( "paste"        ),
+        PROPERTIES  ( "properties"   ),
+        REMOVE      ( "remove"       ),
+        NOTIFICATION( "notification" ),
+        TRASHCAN    ( "trashcan"     ), 
+        USER_FEMALE ( "user_female"  ),
+        USER_MALE   ( "user_male"    ); 
       
         private final String sName;      // Don't use var name "name"
         

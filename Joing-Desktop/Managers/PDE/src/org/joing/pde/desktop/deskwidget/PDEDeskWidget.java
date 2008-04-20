@@ -30,7 +30,7 @@ public abstract class PDEDeskWidget extends PDECanvas implements DeskWidget
     public PDEDeskWidget()
     {
         // As this class is abstract, it does not needs a glass pane.
-        // But there a better reason not to set a glass pane: if the next line 
+        // But there is a better reason not to set a glass pane: if the next line 
         // is used, an extrange bug happens and dragging is a mess. -->
         // root.setGlassPane( new GlassPaneWidget( this ) );
     }

@@ -164,11 +164,30 @@ public class PDEUtilities
         return icon;
     }
     
+    /**
+     * Return an icon from the standard PDE collection.
+     * 
+     * Example of use: 
+     * <code>PDEUtilities.getStandardIcon( ImagesFactory.Icon.FOLDER )</code>
+     * 
+     * @param icon Icon to be retrieved.
+     * @return The ImageIcon instance.
+     */
     public static ImageIcon getStandardIcon( ImagesFactory.Icon icon )
     {
         return getIcon( ImagesFactory.class, icon.getName() );
     }
     
+    /**
+     * Return an icon from the standard PDE collection and with desired width
+     * and height.
+     * 
+     * Example of use: 
+     * <code>PDEUtilities.getStandardIcon( ImagesFactory.Icon.FOLDER, 32, 32 )</code>
+     * 
+     * @param icon Icon to be retrieved.
+     * @return The ImageIcon instance.
+     */
     public static ImageIcon getStandardIcon( ImagesFactory.Icon icon, int nWidth, int nHeight )
     {
         return getIcon( ImagesFactory.class, icon.getName(), nWidth, nHeight );
@@ -198,15 +217,22 @@ public class PDEUtilities
         return Toolkit.getDefaultToolkit().createCustomCursor( image, pHotSpot, sName );        
     }
     
-    public static boolean showBasicDialog( ImageIcon icon, String sTitle, JComponent content )
+    /**
+     * Shows a dialog with buttons [Accept] and [Cancel].
+     * 
+     * @param icon Dialog icon, if null, a default one will be used.
+     * @param sTitle Dialog title. If null an empty title will be used.
+     * @param content Panel to be shown.
+     * @return true if dialog was closed via [Accpet] button and false otherwise.
+     */
+    public static boolean showBasicDialog( String sTitle, JComponent content )
     {
-        BasicDialog dialog = new BasicDialog( icon, sTitle, content );
+        BasicDialog dialog = new BasicDialog( sTitle, content );
         
         org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
         
         return dialog.bExitWithAccept;
     }
-    
     
     /**
      * Shows an exception in a JDialog.
@@ -251,7 +277,7 @@ public class PDEUtilities
     {
         private boolean bExitWithAccept = false;
         
-        private BasicDialog( ImageIcon icon, String sTitle, JComponent content )
+        private BasicDialog( String sTitle, JComponent content )
         {
             super();
             
@@ -286,9 +312,8 @@ public class PDEUtilities
             setDefaultCloseOperation( JInternalFrame.DISPOSE_ON_CLOSE );
             getRootPane().setDefaultButton( btnAccept );
             setTitle( (sTitle == null) ? "" : sTitle );
-            
-            if( icon != null )
-                setFrameIcon( icon );
+            // FIXME setFrameIcon( icon );   // As this class is for PDE internal use only, the icon will always be PDE icon (or Join'g icon)
+            //setLocationRelativeTo( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea() );
         }
     }
 }

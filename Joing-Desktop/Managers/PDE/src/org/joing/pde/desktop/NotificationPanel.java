@@ -15,7 +15,6 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.container.PDECanvas;
 import org.joing.pde.misce.images.ImagesFactory;
@@ -57,7 +56,7 @@ class NotificationPanel extends PDECanvas
         lblMessage.setText( sMessage );
         lblMessage.setHorizontalTextPosition( JLabel.CENTER );
         
-        lblIcon.setIcon( (icon == null) ? PDEUtilities.getStandardIcon( ImagesFactory.Icon.CONN_SERVER ) :
+        lblIcon.setIcon( (icon == null) ? PDEUtilities.getStandardIcon( ImagesFactory.Icon.NOTIFICATION ) :
                                           new ImageIcon( icon ) );
         
         panel.setOpaque( false );

@@ -55,7 +55,7 @@ public class SysTray extends PDETaskBarPanel
         }
         
         nWidth += (aComp.length - 1) * nHGAP;
-        nWidth += 10;  // TODO: el 12 es por el component que está a la izq ("||"): hacer esto bien, no así, a lo bestia
+        nWidth += 10;  // TODO: el 10 es por el component que está a la izq ("||"): hacer esto bien, no así, a lo bestia
         
         return new Dimension( nWidth, nHeight );
     }
