@@ -3,7 +3,6 @@
  *
  * Created on 10 de septiembre de 2007, 11:55
  */
-
 package org.joing.applauncher;
 
 import java.awt.Cursor;
@@ -23,62 +22,69 @@ import org.joing.jvmm.RuntimeFactory;
  *
  * @author  Francisco Morero Peyrona
  */
-public class Login extends JDialog {
-
+public class Login extends JDialog
+{
     private int nTries = 0; // Number of failed tries to login
     private boolean bValid = false;
 
     //------------------------------------------------------------------------//
     /** Creates new form Login */
-    public Login() {
-        super((JFrame) null, true);
+    public Login()
+    {
+        super( (JFrame) null, true );
 
         initComponents();
         fillDesktopComboBox();
 
-        getRootPane().setDefaultButton(btnOk);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        getRootPane().setDefaultButton( btnOk );
+        setLocationRelativeTo( null );
+        setDefaultCloseOperation( JDialog.DISPOSE_ON_CLOSE );
 
-        txtAccount.setText("peyrona@joing.org");
-        txtPassword.setText("admin");
+        //txtAccount.setText( "peyrona@joing.org" );
+        //txtPassword.setText( "admin" );
     }
 
-    public boolean wasSuccessful() {
+    public boolean wasSuccessful()
+    {
         return bValid;
     }
 
-    public boolean fullScreen() {
+    public boolean fullScreen()
+    {
         return chkFullScreen.isSelected();
     }
 
-    public AppDescriptor getApplicationDescriptor() {
-        String        sDesktop = (String) cmbDesktop.getSelectedItem();
-        AppDescriptor appDesc  = (AppDescriptor) cmbDesktop.getClientProperty( sDesktop );
+    public AppDescriptor getApplicationDescriptor()
+    {
+        String sDesktop = (String) cmbDesktop.getSelectedItem();
+        AppDescriptor appDesc = (AppDescriptor) cmbDesktop.getClientProperty( sDesktop );
 
         return appDesc;
     }
-    
+
     // TODO: Fix this. An application object contains the application data,
     // we need to store a simpler object.
-    public Integer getDesktopApplicationId() {
-        String desktop = (String)cmbDesktop.getSelectedItem();
-        
-        return (Integer)cmbDesktop.getClientProperty(desktop);
+    public Integer getDesktopApplicationId()
+    {
+        String desktop = (String) cmbDesktop.getSelectedItem();
+
+        return (Integer) cmbDesktop.getClientProperty( desktop );
     }
 
     //------------------------------------------------------------------------//
-    private void fillDesktopComboBox() {
-        
-        AppBridge           bridge     = RuntimeFactory.getPlatform().getBridge().getAppBridge();
+    private void fillDesktopComboBox()
+    {
+
+        AppBridge bridge = RuntimeFactory.getPlatform().getBridge().getAppBridge();
 
         List<Application> desktops = bridge.getAvailableDesktops();
-        
-        for (Application app : desktops) {
-            cmbDesktop.addItem(app.getName());
-            cmbDesktop.putClientProperty(app.getName(), app.getId());
+
+        for( Application app : desktops )
+        {
+            cmbDesktop.addItem( app.getName() );
+            cmbDesktop.putClientProperty( app.getName(), app.getId() );
         }
-        
+
     }
 
     /** This method is called from within the constructor to
@@ -197,55 +203,69 @@ public class Login extends JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
     private void onOk(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onOk
     {//GEN-HEADEREND:event_onOk
         Cursor cursor = getRootPane().getCursor();
-        getRootPane().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        getRootPane().setCursor( new Cursor( Cursor.WAIT_CURSOR ) );
 
-        btnOk.setEnabled(false);
-        btnCancel.setEnabled(false);
+        btnOk.setEnabled( false );
+        btnCancel.setEnabled( false );
 
-        try {
+        try
+        {
             Bridge2Server b2s = RuntimeFactory.getPlatform().getBridge();
-            LoginResult result = b2s.getSessionBridge().login(txtAccount.getText(), String.valueOf(txtPassword.getPassword()));
+            LoginResult result = b2s.getSessionBridge().login( txtAccount.getText(), String.valueOf( txtPassword.getPassword() ) );
 
-            if (result.isLoginValid()) {
+            if( result.isLoginValid() )
+            {
                 bValid = true;
                 dispose();
-            } else {
-                if (++nTries == 3) {
-                    JOptionPane.showMessageDialog(Login.this, "Please check your account and password\nand try it later.");
+            }
+            else
+            {
+                if( ++nTries == 3 )
+                {
+                    JOptionPane.showMessageDialog( Login.this, "Please check your account and password\nand try it later." );
                     dispose();
-                } else {
+                }
+                else
+                {
                     String sMsg = "Can't login: ";
 
-                    if (!result.isAccountValid()) {
+                    if( !result.isAccountValid() )
+                    {
                         sMsg += "invalid account";
                     }
 
-                    if (!result.isPasswordValid()) {
-                        if (!result.isAccountValid()) {
+                    if( !result.isPasswordValid() )
+                    {
+                        if( !result.isAccountValid() )
+                        {
                             sMsg += " and password";
-                        } else {
+                        }
+                        else
+                        {
                             sMsg += "invalid password";
                         }
                     }
 
                     sMsg += ".\nPlease, try again.";
-                    JOptionPane.showMessageDialog(Login.this, sMsg);
+                    JOptionPane.showMessageDialog( Login.this, sMsg );
                 }
             }
-        } catch (JoingServerException exc) {
+        }
+        catch( JoingServerException exc )
+        {
             // Can't invoke org.joing.runtime.Runtime.getRuntime().showException( ... )
             // because the desktop does not exists yet.
-            JOptionPane.showMessageDialog(this, exc.getLocalizedMessage(), "Error during login", JOptionPane.ERROR_MESSAGE);
-        } finally {
-            getRootPane().setCursor(cursor);
-            btnOk.setEnabled(true);
-            btnCancel.setEnabled(true);
+            JOptionPane.showMessageDialog( this, exc.getLocalizedMessage(), "Error during login", JOptionPane.ERROR_MESSAGE );
         }
-        // }
+        finally
+        {
+            getRootPane().setCursor( cursor );
+            btnOk.setEnabled( true );
+            btnCancel.setEnabled( true );
+        }
     }//GEN-LAST:event_onOk
 
     private void onCancel(java.awt.event.ActionEvent evt)//GEN-FIRST:event_onCancel
