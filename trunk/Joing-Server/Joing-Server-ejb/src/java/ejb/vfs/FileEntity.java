@@ -44,8 +44,8 @@ import javax.persistence.TemporalType;
                             
         @NamedQuery(name  = "FileEntity.findInTrashcan",
                     query = "SELECT f FROM FileEntity f"+
-                            " WHERE f.account        = :account"+
-                            "   AND f.is_in_trashcan = 1" )
+                            " WHERE f.account = :account"+
+                            "   AND f.isInTrashcan = 1" )
     } )
     
 public class FileEntity implements Serializable
