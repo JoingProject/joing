@@ -44,13 +44,10 @@ public class JoingFileSystemView extends FileSystemView
     
     public static JoingFileSystemView getFileSystemView()
     {
-        if( instance == null )
+        synchronized( JoingFileSystemView.class )
         {
-            synchronized( VFSView.class )
-            {
-                if( instance == null )
-                    instance = new JoingFileSystemView();
-            }
+            if( instance == null )
+                instance = new JoingFileSystemView();
         }
         
         return instance;
@@ -63,9 +60,9 @@ public class JoingFileSystemView extends FileSystemView
     public java.io.File createFileObject( java.io.File dir, String name  )
     {
         if( dir instanceof VFSFile )
-            return remoteView.createFileObject( dir, name  );
+            return remoteView.createFileObject( dir, name );
         else
-            return localView.createFileObject( dir, name  );
+            return localView.createFileObject( dir, name );
     }
     
     /**
@@ -75,10 +72,8 @@ public class JoingFileSystemView extends FileSystemView
     {
         java.io.File fLocal = new java.io.File( path );
         
-        
-        
         // FIXME: hacerlo
-        throw new UnsupportedOperationException( "Not supported operation." );
+        return new java.io.File( path );
     }
     
     /**
@@ -97,9 +92,9 @@ public class JoingFileSystemView extends FileSystemView
      * @see javax.swing.filechooser.FileSystemView#getChild(java.io.File parent,
      *                                                      String fileName)
      */
-    public java.io.File getChild( java.io.File dir, String fileName    )
+    public java.io.File getChild( java.io.File dir, String fileName )
     {
-        return createFileObject( dir, fileName  );
+        return createFileObject( dir, fileName );
     }
     
     /**
