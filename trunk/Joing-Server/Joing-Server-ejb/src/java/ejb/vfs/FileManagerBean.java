@@ -131,8 +131,6 @@ public class FileManagerBean
                     if( VFSTools.existsName( em, sAccount, _file.getFilePath(), sNameNew ) )
                         throw new JoingServerVFSException( JoingServerVFSException.FILE_NAME_EXISTS );
                     
-                    // FIXME: Iniciar transacción
-                    
                     // If _file is a directory, all its childs have also to be renamed.
                     // And have to be renamed before their parent changes its name.
                     if( _file.getIsDir() == 1 )
@@ -146,8 +144,6 @@ public class FileManagerBean
                     _file.setAccessed( new Date() );  // Modified flag changes only when contents are modified, not when name is modified
                     em.persist( _file );
                     fileOut = FileDTOs.createFileDescriptor( _file );
-                    
-                    // FIXME: Finalizar transacción
                 }
             }
             catch( RuntimeException exc )
@@ -771,13 +767,6 @@ public class FileManagerBean
                 Constant.getLogger().throwing( getClass().getName(), "createEntry(...)", exc );
                 throw new JoingServerVFSException( JoingServerException.ACCESS_NFS, exc );
             }
-            // FIXME: da un error de transacciones --> 
-            /*
-            finally
-            {
-                if( em.getTransaction().isActive() )
-                    em.getTransaction().rollback();
-            }*/
         }
         
         return file;
