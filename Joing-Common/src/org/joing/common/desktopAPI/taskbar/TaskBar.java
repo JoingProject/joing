@@ -22,15 +22,15 @@ public interface TaskBar extends Closeable
     
     void add( TaskBarPanel tbp );
     void add( TaskBarPanel tbp, int x, int y );
-    void add( DeskComponent dc );
-    void add( DeskComponent dc, int x, int y );
+    void add( TaskBarComponent dc );
+    void add( TaskBarComponent dc, int x, int y );
     void remove( TaskBarPanel tbp );
-    void remove( DeskComponent dc );
+    void remove( TaskBarComponent dc );
     
     int  getWidth();
     int  getHeight();
     
-    TaskBarPanel getSysTray();
+    TaskBarComponent getSysTray();
     
     boolean isAutoHide();
     void setAutoHide( boolean autohide );
