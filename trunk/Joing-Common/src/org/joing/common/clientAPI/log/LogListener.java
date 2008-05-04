@@ -5,8 +5,6 @@
 
 package org.joing.common.clientAPI.log;
 
-import org.joing.common.clientAPI.log.Levels;
-
 /**
  * Public interface for the Event Logger.
  * The concrete implementation must add all relevant info, like

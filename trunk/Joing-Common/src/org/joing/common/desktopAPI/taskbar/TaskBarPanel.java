@@ -9,13 +9,8 @@ import org.joing.common.desktopAPI.DeskContainer;
 
 /**
  *
- * @author Francisco Morero Peyrona
+ * @author fmorero
  */
-public interface TaskBarPanel extends DeskContainer
+public interface TaskBarPanel extends TaskBarComponent, DeskContainer
 {
-    boolean isLocked();
-    void    setLocked( boolean b );
-    
-    void addTaskBarPanelListener( TaskBarListener tbl );
-    void removeTaskBarPanelListener( TaskBarListener tbl );
 }

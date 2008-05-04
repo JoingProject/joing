@@ -30,16 +30,16 @@ public interface DesktopListener
     
     /**
      * Invoked when selecetd (active) WorkArea changes.
-     */  
+     */
     public void workAreaSelected( WorkArea waPrevious, WorkArea waCurrent );
-
+    
     /**
      * Invoked when a TaskBar has been added to the Desktop.
      */
     public void taskBarAdded( TaskBar tb );
-
+    
     /**
      * Invoked when a TaskBar has been removed from the Desktop.
-     */    
+     */
     public void taskBarRemoved( TaskBar tb );
 }

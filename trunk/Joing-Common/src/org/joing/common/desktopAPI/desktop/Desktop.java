@@ -39,14 +39,14 @@ public interface Desktop extends Closeable
     
     // Other things
     /**
-     * A way to notify user without disturbing him/her (therefore, dialogs and
-     * other gadgets that block user inputs should be avoided).
+     * A way to notify user without disturbing him/her (because in a nice GUI
+     * dialogs and other gadgets that block user inputs should be avoided).
      * 
-     * Every Joing desktop can implement this information in different ways:
+     * Every Join'g desktop can implement this information in different ways:
      * using a mesagge in the status bar, a canvas, a bubble, etc.
      * 
-     * For exmaple, this method is invoked from Platform to inform that a long 
-     * task is in progress against Join'g Server.
+     * This method can be invoked (as an example) from Platform to inform that a
+     * long task is in progress against Join'g Server.
      * 
      * @param sMesaage Message to be shown: if null an standard one will be used.
      * @param icon     Icon to be shown: if null an standard one will be used.
