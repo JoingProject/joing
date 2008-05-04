@@ -124,7 +124,7 @@ public class CreateAccountForm extends ManagedBean {
 	missing = testEmpty(ctx, secondName, "second name") || missing;
 	missing = testEmpty(ctx, male, "gender") || missing;
 	missing = testEmpty(ctx, password, "password") || missing;
-	missing = testEmpty(ctx, confirmPassword, "password confirmation") || missing;;
+	missing = testEmpty(ctx, confirmPassword, "password confirmation") || missing;
 		
 	boolean ok = !missing;
 	
