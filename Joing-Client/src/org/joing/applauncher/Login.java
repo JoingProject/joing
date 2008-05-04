@@ -7,6 +7,7 @@ package org.joing.applauncher;
 
 import java.awt.Cursor;
 import java.util.List;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -39,9 +40,10 @@ public class Login extends JDialog
         getRootPane().setDefaultButton( btnOk );
         setLocationRelativeTo( null );
         setDefaultCloseOperation( JDialog.DISPOSE_ON_CLOSE );
-
-        //txtAccount.setText( "peyrona@joing.org" );
-        //txtPassword.setText( "admin" );
+        setIconImage(  (new ImageIcon( getClass().getResource( "resources/joing_icon.png" ) )).getImage() );
+        
+        txtAccount.setText( "peyrona@joing.org" );
+        txtPassword.setText( "admin" );
     }
 
     public boolean wasSuccessful()

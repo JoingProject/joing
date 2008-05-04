@@ -91,13 +91,10 @@ public class VFSView extends FileSystemView
      */
     public static VFSView getFileSystemView()
     {
-        if( instance == null )
+        synchronized( VFSView.class )
         {
-            synchronized( VFSView.class )
-            {
-                if( instance == null )
-                    instance = new VFSView();
-            }
+            if( instance == null )
+                instance = new VFSView();
         }
         
         return instance;

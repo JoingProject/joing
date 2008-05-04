@@ -3,10 +3,13 @@
  * and open the template in the editor.
  */
 
-package org.joing.runtime.vfs;
+package org.joing.runtime.toSwap;
 
+import org.joing.runtime.vfs.*;
 import java.awt.Component;
 import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileSystemView;
@@ -23,8 +26,7 @@ import org.joing.common.desktopAPI.pane.DeskDialog;
  */
 public class JoingFileChooser extends JFileChooser implements DeskComponent
 {
-    private DeskDialog dialog      = null;
-    private int        returnValue = ERROR_OPTION;
+    private int returnValue = ERROR_OPTION;
     
     //------------------------------------------------------------------------//
     
@@ -107,8 +109,8 @@ public class JoingFileChooser extends JFileChooser implements DeskComponent
     public int showDialog( Component parent, String approveButtonText )
            throws HeadlessException
     {
-        DesktopManager   dm     = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
-        String           sTitle = getDialogTitle();
+        DesktopManager dm     = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+        String         sTitle = getDialogTitle();
         
         if( sTitle == null )
             sTitle = getUI().getDialogTitle( this );
@@ -117,22 +119,36 @@ public class JoingFileChooser extends JFileChooser implements DeskComponent
         {
 	    setApproveButtonText( approveButtonText );
 	    setDialogType( CUSTOM_DIALOG );
-	}
+	
+        }
         
-        dialog = dm.getRuntime().createDialog();
-        dialog.setTitle( sTitle );
-        dialog.add( this );
-	dialog.setLocationRelativeTo( (DeskComponent) parent );
-                  
-        dm.getDesktop().getActiveWorkArea().add( dialog );
+        final DeskDialog dialog = dm.getRuntime().createDialog();
+                         dialog.setTitle( sTitle );
+                         dialog.add( this );
+                         dialog.setLocationRelativeTo( (DeskComponent) parent );
+                         ((Component) dialog).setComponentOrientation( getComponentOrientation() );
+        
 	returnValue = ERROR_OPTION;
 	rescanCurrentDirectory();
+        
+        // Add listener for accept and cancel events
+        addActionListener( new ActionListener() 
+        {
+            public void actionPerformed( ActionEvent ae )
+            {
+                if( JFileChooser.APPROVE_SELECTION.equals( ae.getActionCommand() ) )
+                    returnValue = JFileChooser.APPROVE_OPTION;
+                else if( JFileChooser.CANCEL_SELECTION.equals( ae.getActionCommand() ) )
+                    returnValue = JFileChooser.CANCEL_OPTION;
+                
+                dialog.close();
+            }
+        } );
         
         dm.getDesktop().getActiveWorkArea().add( dialog );
         
         firePropertyChange( "JFileChooserDialogIsClosingProperty", dialog, null );
         dialog.close();
-	dialog = null;
 	return returnValue;
     }
     

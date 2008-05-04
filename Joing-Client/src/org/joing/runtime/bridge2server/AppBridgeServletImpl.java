@@ -40,150 +40,165 @@ import org.joing.common.pkt.app.ApplicationRequest;
  */
 public class AppBridgeServletImpl
         extends BridgeServletBaseImpl
-        implements AppBridge {
-
+        implements AppBridge
+{
     ApplicationCache cache =
-            ApplicationCacheFactory.getCache(ApplicationCache.ID);
+            ApplicationCacheFactory.getCache( ApplicationCache.ID );
 
     /**
      * Creates a new instance of AppBridgeServletImpl
      * 
      * Package scope: only Runtime class can create instances of this class.
      */
-    AppBridgeServletImpl() {
+    AppBridgeServletImpl()
+    {
     }
 
-    public List<AppGroup> getAvailableForUser(AppEnvironment environ, AppGroupKey groupKey)
-            throws JoingServerException {
+    public List<AppGroup> getAvailableForUser( AppEnvironment environ, AppGroupKey groupKey )
+            throws JoingServerException
+    {
         List<AppGroup> apps = null;
 
-        Channel channel = new Channel(APP_GET_AVAILABLES);
-        channel.write(platform.getBridge().getSessionBridge().getSessionId());
-        channel.write(environ);
-        channel.write(groupKey);
+        Channel channel = new Channel( APP_GET_AVAILABLES );
+        channel.write( platform.getBridge().getSessionBridge().getSessionId() );
+        channel.write( environ );
+        channel.write( groupKey );
         apps = (List<AppGroup>) channel.read();
         channel.close();
 
         return apps;
     }
 
-    public List<AppGroup> getNotInstalledForUser(AppEnvironment environ, AppGroupKey groupKey)
-            throws JoingServerException {
+    public List<AppGroup> getNotInstalledForUser( AppEnvironment environ, AppGroupKey groupKey )
+            throws JoingServerException
+    {
         List<AppGroup> apps = null;
 
-        Channel channel = new Channel(APP_GET_NOT_INSTALLED);
-        channel.write(platform.getBridge().getSessionBridge().getSessionId());
-        channel.write(environ);
-        channel.write(groupKey);
+        Channel channel = new Channel( APP_GET_NOT_INSTALLED );
+        channel.write( platform.getBridge().getSessionBridge().getSessionId() );
+        channel.write( environ );
+        channel.write( groupKey );
         apps = (List<AppGroup>) channel.read();
         channel.close();
 
         return apps;
     }
 
-    public List<AppGroup> getInstalledForUser(AppEnvironment environ, AppGroupKey groupKey)
-            throws JoingServerException {
+    public List<AppGroup> getInstalledForUser( AppEnvironment environ, AppGroupKey groupKey )
+            throws JoingServerException
+    {
         List<AppGroup> apps = null;
 
-        Channel channel = new Channel(APP_GET_INSTALLED);
-        channel.write(platform.getBridge().getSessionBridge().getSessionId());
-        channel.write(environ);
-        channel.write(groupKey);
+        Channel channel = new Channel( APP_GET_INSTALLED );
+        channel.write( platform.getBridge().getSessionBridge().getSessionId() );
+        channel.write( environ );
+        channel.write( groupKey );
         apps = (List<AppGroup>) channel.read();
         channel.close();
 
         return apps;
     }
 
-    public boolean install(AppDescriptor app)
-            throws JoingServerException {
+    public boolean install( AppDescriptor app )
+            throws JoingServerException
+    {
         boolean bSuccess = false;
 
-        Channel channel = new Channel(APP_INSTALL);
-        channel.write(platform.getBridge().getSessionBridge().getSessionId());
-        channel.write(app);
+        Channel channel = new Channel( APP_INSTALL );
+        channel.write( platform.getBridge().getSessionBridge().getSessionId() );
+        channel.write( app );
         bSuccess = (Boolean) channel.read();
         channel.close();
 
         return bSuccess;
     }
 
-    public boolean uninstall(AppDescriptor app)
-            throws JoingServerException {
+    public boolean uninstall( AppDescriptor app )
+            throws JoingServerException
+    {
         boolean bSuccess = false;
 
-        Channel channel = new Channel(APP_UNINSTALL);
-        channel.write(platform.getBridge().getSessionBridge().getSessionId());
-        channel.write(app);
+        Channel channel = new Channel( APP_UNINSTALL );
+        channel.write( platform.getBridge().getSessionBridge().getSessionId() );
+        channel.write( app );
         bSuccess = (Boolean) channel.read();
         channel.close();
 
         return bSuccess;
     }
 
-    public AppDescriptor getPreferredForType(String sFileExtension)
-            throws JoingServerException {
+    public AppDescriptor getPreferredForType( String sFileExtension )
+            throws JoingServerException
+    {
         AppDescriptor appDescriptor = null;
 
-        Channel channel = new Channel(APP_GET_PREFERRED);
-        channel.write(platform.getBridge().getSessionBridge().getSessionId());
-        channel.write(sFileExtension);
+        Channel channel = new Channel( APP_GET_PREFERRED );
+        channel.write( platform.getBridge().getSessionBridge().getSessionId() );
+        channel.write( sFileExtension );
         appDescriptor = (AppDescriptor) channel.read();
         channel.close();
 
         return appDescriptor;
     }
 
-    public Application getApplication(int nAppId)
-            throws JoingServerException {
+    public Application getApplication( int nAppId )
+            throws JoingServerException
+    {
         Application application = null;
 
-        application = cache.get(nAppId);
+        application = cache.get( nAppId );
 
-        if (application == null) {
-            Channel channel = new Channel(APP_GET_APPLICATION);
-            channel.write(platform.getBridge().getSessionBridge().getSessionId());
-            channel.write(nAppId);
+        if( application == null )
+        {
+            Channel channel = new Channel( APP_GET_APPLICATION );
+            channel.write( platform.getBridge().getSessionBridge().getSessionId() );
+            channel.write( nAppId );
             application = (Application) channel.read();
             channel.close();
-            if (application != null) {
-                cache.put(nAppId, application);
+            if( application != null )
+            {
+                cache.put( nAppId, application );
             }
         }
 
         return application;
     }
 
-    public Application getApplicationByName(String executableName)
-            throws JoingServerException {
+    public Application getApplicationByName( String executableName )
+            throws JoingServerException
+    {
 
         Application application = null;
 
         // aqui tenemos el problema. Por lo pronto llevaremos
         // doble cache.
-        application = cache.get(executableName);
+        application = cache.get( executableName );
 
-        if (application == null) {
-            Channel channel = new Channel(APP_SERVLET);
+        if( application == null )
+        {
+            Channel channel = new Channel( APP_SERVLET );
             ApplicationRequest req = new ApplicationRequest();
             String sessionId =
                     platform.getBridge().getSessionBridge().getSessionId();
             String account =
                     platform.getBridge().getUserBridge().getUser().getAccount();
-            req.setAccount(account);
-            req.setName(executableName);
-            req.setSessionId(sessionId);
-            req.setCode(ApplicationRequest.APP_BY_NAME);
+            req.setAccount( account );
+            req.setName( executableName );
+            req.setSessionId( sessionId );
+            req.setCode( ApplicationRequest.APP_BY_NAME );
 
-            channel.write(req);
+            channel.write( req );
             ApplicationReply reply = (ApplicationReply) channel.read();
             channel.close();
 
-            if (reply.isOk() == false) {
+            if( reply.isOk() == false )
+            {
                 application = null;
-            } else {
+            }
+            else
+            {
                 application = (Application) reply.getReply();
-                cache.put(executableName, application);
+                cache.put( executableName, application );
             }
         }
 
@@ -191,29 +206,33 @@ public class AppBridgeServletImpl
     }
 
     public List<Application> getAvailableDesktops()
-            throws JoingServerException {
+            throws JoingServerException
+    {
 
-        Channel channel = new Channel(APP_SERVLET);
+        Channel channel = new Channel( APP_SERVLET );
         ApplicationRequest req = new ApplicationRequest();
-        req.setCode(ApplicationRequest.AVAILABLE_DESKTOPS);
+        req.setCode( ApplicationRequest.AVAILABLE_DESKTOPS );
 
         List<Application> apps = null;
 
-        channel.write(req);
+        channel.write( req );
         ApplicationReply reply = (ApplicationReply) channel.read();
         channel.close();
-        
-        if (reply.isOk()) {
-            apps = (List<Application>)reply.getReply();
-        } else {
+
+        if( reply.isOk() )
+        {
+            apps = (List<Application>) reply.getReply();
+        }
+        else
+        {
             apps = new ArrayList<Application>();
         }
-        
-        for (Application app : apps) {
-            cache.put(app.getId(), app);
-        }
-        
-        return apps;
 
+        for( Application app : apps )
+        {
+            cache.put( app.getId(), app );
+        }
+
+        return apps;
     }
 }
