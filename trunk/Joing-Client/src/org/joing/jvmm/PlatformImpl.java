@@ -365,6 +365,8 @@ class PlatformImpl implements Platform {
 
             UUID uuid = UUID.randomUUID();
             String tmpDir = clientProp.getProperty("LocalTempDir");
+            if( tmpDir == null )                               // Antonio, he añadido esto porque en Linux
+                tmpDir = System.getProperty("java.io.tmpdir"); // cuando tmpDir == null, crea ficheros raros (peyrona)
             tmpDir = (tmpDir == null) ? "C:\\Temp\\Joing" : tmpDir;
 
             if (tmpDir.endsWith("\\") == false) {
@@ -448,6 +450,7 @@ class PlatformImpl implements Platform {
      */
     @Override
     public void shutdown() {
+        getDesktopManager().shutdown();  // Antonio, he añadido esta línea (peyrona)
         halt(); // fix this.
     }
     
