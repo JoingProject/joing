@@ -11,6 +11,7 @@
 package org.joing.pde.desktop.taskbar.frameslist;
 
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics2D;
@@ -27,6 +28,7 @@ import javax.swing.JInternalFrame;
 import javax.swing.JToggleButton;
 import javax.swing.JToolTip;
 import javax.swing.event.MouseInputAdapter;
+import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.pde.desktop.container.FramePopupMenu;
 import org.joing.pde.desktop.container.PDEFrame;
 
@@ -36,7 +38,7 @@ import org.joing.pde.desktop.container.PDEFrame;
  * 
  * @author Francisco Morero Peyrona
  */
-class FrameButton extends JToggleButton
+class FrameButton extends JToggleButton implements DeskComponent
 {
     // Wihout a tooltip text "createToolTip()" method is not invoked
     private final static String sTOOLTIP = "A";  // To save memory all instances share same String
@@ -68,7 +70,7 @@ class FrameButton extends JToggleButton
     
     public Container getFrame()
     {
-        return (frame == null) ? iframe : frame;
+        return (frame != null) ? frame : iframe;
     }
     
     public void setIcon( Icon icon )
@@ -145,6 +147,9 @@ class FrameButton extends JToggleButton
         setMargin( new Insets( 2,3,2,3 ) );
         setVerticalTextPosition( AbstractButton.CENTER );
         setHorizontalTextPosition( AbstractButton.TRAILING );
+        setMinimumSize( new Dimension( 16, 12 ) );
+        setMaximumSize( new Dimension( 120, 24 ) );
+        setPreferredSize( new Dimension( 90, 18 ) );
         
         // I use a mouse listener instead of JComponent.setComponentPopupMenu(...) 
         // to save memory: in this way the Popup object is created only when needed

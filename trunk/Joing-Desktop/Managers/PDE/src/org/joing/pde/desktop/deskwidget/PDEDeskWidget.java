@@ -15,10 +15,10 @@ import org.joing.common.desktopAPI.deskwidget.DeskWidget;
 import org.joing.pde.desktop.container.PDECanvas;
 
 /**
- * A Deskgadget is every component shown in the dektop that can be dragged 
+ * A Deskwidget is every component shown in the dektop that can be dragged 
  * (can change its position by the user interaction).
  * <p>
- * DeskLaunchers and Desklets are subclased from here.
+ * DeskLaunchers and Desklets are subclased from this class.
  *
  * @author Francisco Morero Peyrona
  */

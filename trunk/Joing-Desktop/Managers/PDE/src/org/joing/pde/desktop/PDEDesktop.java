@@ -14,40 +14,25 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Image;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.SwingWorker;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.desktopAPI.desktop.Desktop;
 import org.joing.common.desktopAPI.desktop.DesktopListener;
-import org.joing.common.desktopAPI.pane.DeskDialog;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.common.desktopAPI.taskbar.TaskBar;
 import org.joing.common.dto.vfs.FileText;
 import org.joing.pde.desktop.container.PDECanvas;
-import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.taskbar.PDETaskBar;
-import org.joing.pde.desktop.workarea.PDEWallpaper;
-import org.joing.pde.misce.apps.EditUser;
 import org.joing.pde.swing.EventListenerList;
-import org.joing.runtime.vfs.JoingFileChooser;
 import org.xml.sax.SAXException;
 
 /**
@@ -76,21 +61,34 @@ public class PDEDesktop extends JPanel implements Desktop
         listenerList = new EventListenerList();
         htInfoPanels = new Hashtable<Integer, PDECanvas>();
         
-        initGUI();
+        // Init GUI
+        setLayout( new BorderLayout() );
+        pnlWorkAreas = new JPanel( new CardLayout() );
+        add( pnlWorkAreas, BorderLayout.CENTER );
     }
     
     //------------------------------------------------------------------------//
     
-    public void load()
+    public void restore()
     {
-        FileText ftSavedStatus = null;
+        SwingWorker sw = new SwingWorker()
+        {
+            protected Object doInBackground() throws Exception
+            {
+                // Do not move next lines !
+                FileText ftSavedStatus = null;
         
-        if( ftSavedStatus == null )
-            createDefaultDesktop();
-        else
-            processSavedStatus( ftSavedStatus.getContent() );
-        
-        setActiveWorkArea( getWorkAreas().get( 0 ) );
+                if( ftSavedStatus == null )
+                    createDefaultDesktop();
+                else
+                    processSavedStatus( ftSavedStatus.getContent() );
+
+                setActiveWorkArea( getWorkAreas().get( 0 ) );
+
+                return null;
+            }
+        };
+        sw.execute();
     }
     
     //------------------------------------------------------------------------//
@@ -98,15 +96,14 @@ public class PDEDesktop extends JPanel implements Desktop
     private void createDefaultDesktop()
     {
         PDETaskBar tb = new PDETaskBar();
-                       tb.createDefaultComponents();
-                       // TODO: probar esto --> tb.setOrientation( TaskBarOrientation.TOP );
-                       
+                   tb.createDefaultComponents();
+                   // TODO: probar esto --> tb.setOrientation( TaskBarOrientation.TOP );
         addTaskBar( tb );
         
         for( int n = 0; n < 3; n++ )
             addWorkArea( new PDEWorkArea() );
         
-        //createTestComponents( getWorkAreas().get( 0 ) );   // TODO: quitarlo
+        Components4Testing.createTestComponents();
     }
     
     private void processSavedStatus( BufferedReader in )
@@ -134,18 +131,15 @@ public class PDEDesktop extends JPanel implements Desktop
         }
     }
     
-    private void initGUI()
-    {
-        setLayout( new BorderLayout() );
-        pnlWorkAreas = new JPanel( new CardLayout() );
-        add( pnlWorkAreas, BorderLayout.CENTER );
-    }
-    
     //------------------------------------------------------------------------//
     // Desktop interface implementation
     //------------------------------------------------------------------------//
     // CLOSEABLE INTERFACE
     
+    /**
+     * Saves current status (to be restored next time) and detaches (close) all 
+     * workareas and toolbars.
+     */
     public void close()
     { // Info at: http://java.sun.com/products/jfc/tsc/articles/persistence4/index.html
 //        FileOutputStream os = null;
@@ -359,97 +353,5 @@ public class PDEDesktop extends JPanel implements Desktop
             htInfoPanels.get( nHandle ).close();
             htInfoPanels.remove( nHandle );
         }
-    }
-    
-    //------------------------------------------------------------------------//
-    // JUST FOR TESTING
-    //------------------------------------------------------------------------//
-    
-    private void createTestComponents( WorkArea wa )
-    {
-        PDEWallpaper wp0 = (PDEWallpaper) getWorkAreas().get( 0 ).getWallpaper();
-        
-        if( wp0 == null )
-            wp0 = new PDEWallpaper();
-        
-        wp0.setImage( new ImageIcon( "/home/fmorero/Imágenes/iconos/duke/starwars.png" ) );
-        getWorkAreas().get( 0 ).setWallpaper( wp0 );
-        
-        PDEWallpaper wp1 =  (PDEWallpaper) getWorkAreas().get( 1 ).getWallpaper();
-        
-        if( wp1 == null )
-            wp1 = new PDEWallpaper();
-        
-        wp1.setImage( new ImageIcon( "/home/fmorero/Imágenes/reflections.jpg" ) );
-        getWorkAreas().get( 1 ).setWallpaper( wp1 );
-        
-        SwingUtilities.invokeLater( new Runnable() 
-        {
-            public void run()
-            {
-                DesktopManager dm = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
-                
-                /*PDEFrame frame = (PDEFrame) dm.getRuntime().createFrame();
-                frame.setTitle( "Frame" );
-                frame.add( new JTextArea( "Soy un Frame" ) );
-                
-                dm.getDesktop().getActiveWorkArea().add( frame );*/
-                
-                
-                //JFileChooser fc = new JFileChooser( JoingFileSystemView.getFileSystemView() );
-                //PDEWorkArea wa = (PDEWorkArea) getActiveWorkArea();
-                //JOptionPane.showInternalMessageDialog( (JDesktopPane) wa, fc );
-                
-                JoingFileChooser jfc = new JoingFileChooser();
-                int nSelection = jfc.showDialog( null, "Zarva" );
-                
-                if( nSelection == JoingFileChooser.APPROVE_OPTION )
-                    dm.getRuntime().showMessageDialog( "Result", "Approved" );
-                else
-                    dm.getRuntime().showMessageDialog( "Result", "Canceled" );
-            }
-        } );
-
-        
-//        SwingUtilities.invokeLater( new Runnable() 
-//        {
-//            public void run()
-//            {
-//                new org.joing.notes.Notes();
-//            }
-//        } );
-        /*NasaPhoto nasa = new NasaPhoto();
-                  nasa.setBounds( 10,350, nasa.getPreferredSize().width, nasa.getPreferredSize().height );
-        wa.add( nasa );
-        
-        JLabel lblCanvas = new JLabel( "<html><h2>Soy un canvas.</h2>Y esto es <u>texto <font color=\"#0066CC\">HTML</font></u>.</h3></html>" );
-        PDECanvas canvas = new PDECanvas();
-                  canvas.add( lblCanvas );
-                  canvas.setBounds( 330, 130, 240, 80 );
-        wa.add( canvas );*/
-        
-        //---------------------------------------------------------------------
-       
-        JSlider slrTranslucency = new JSlider( JSlider.HORIZONTAL, 0, 100, 0 );
-                slrTranslucency.setMajorTickSpacing( 10 );
-                slrTranslucency.setPaintLabels( true );
-                slrTranslucency.setPaintTicks( true );
-                slrTranslucency.addChangeListener( new ChangeListener() 
-                {
-                    public void stateChanged( ChangeEvent ce )
-                    {
-                        JSlider slr = (JSlider) ce.getSource();
-                        
-                        PDEFrame frm = (PDEFrame) SwingUtilities.getAncestorOfClass( PDEFrame.class, slr );
-                                 frm.setTranslucency( slr.getValue() );
-                    }
-                } );
-                    
-        PDEFrame frm = new PDEFrame();
-                 frm.setTitle( "Example Join'g Frame" );
-                 frm.add( new JLabel( "Translucency" ), BorderLayout.NORTH );
-                 frm.add( slrTranslucency, BorderLayout.SOUTH );
-                 frm.setBounds( 380, 200, 600, 580 );
-        wa.add( frm, false );   // Do not autoarrange
     }
 }

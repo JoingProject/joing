@@ -19,26 +19,32 @@ import java.awt.image.FilteredImageSource;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.MenuSelectionManager;
-import javax.swing.border.EmptyBorder;
-import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.pde.PDEUtilities;
+import org.joing.pde.desktop.taskbar.PDETaskBarComponent;
 import org.joing.pde.swing.ImageHighlightFilter;
 
 /**
  *
  * @author fmorero
  */
-public final class StartButton extends JLabel implements DeskComponent
+public final class StartButton extends PDETaskBarComponent
 {
+    private JLabel    label;
     private ImageIcon icon;
     private StartMenu popup;
-    
     //------------------------------------------------------------------------//
+    
+    // Popup Menu (StartMenu) is created everytime it is needed to save memory
     
     public StartButton()
     {
-        popup = new StartMenu();            
-        initGUI();        
+        label = new JLabel();
+        popup = new StartMenu();
+        
+        initGUI();
+        
+        getComponentPopupMenu().remove( itemRemove );
+        getComponentPopupMenu().remove( itemPreferences );
     }
         
     // Redefined from JComponent
@@ -51,6 +57,29 @@ public final class StartButton extends JLabel implements DeskComponent
         // TODO: hay q mirar dónde mostarlo (la barra puede estar: arriba, abajo, izq o dcha)
         
         return new Point( x, y );
+    }
+    
+    //------------------------------------------------------------------------//
+    // TaskBarComponent interface
+    
+    public void onAbout()
+    {
+        // TODO: Implementarlo
+    }
+
+    public void onRemove()
+    {
+        // Nothing to do: better to not allow to remove Start button
+    }
+
+    public void onMove()
+    {
+        // TODO: Implementarlo
+    }
+
+    public void onPreferences()
+    {
+        // Nothing to do: Start button has no preferences
     }
     
     //------------------------------------------------------------------------//
@@ -71,11 +100,11 @@ public final class StartButton extends JLabel implements DeskComponent
     }
     
     private void initGUI()
-    {
+    {        
         icon = PDEUtilities.getIcon( this, "images/start" );
+        label.setIcon( icon );
         
-        setBorder( new EmptyBorder( 0,2,0,4 ) );
-        setIcon( icon );
+        add( label );
         
         addMouseListener( new MouseAdapter()
         {
@@ -87,13 +116,13 @@ public final class StartButton extends JLabel implements DeskComponent
             public void mouseEntered( MouseEvent me )
             {
                 Image imgHigh = createImage( new FilteredImageSource( icon.getImage().getSource(), new ImageHighlightFilter( true, 32 ) ) );
-                setIcon( new ImageIcon (imgHigh ) );                        
+                StartButton.this.label.setIcon( new ImageIcon (imgHigh ) );                        
                 setForeground( getForeground().brighter() );
             }
 
             public void mouseExited( MouseEvent me )
             {
-                setIcon( icon );
+                StartButton.this.label.setIcon( icon );
                 setForeground( getForeground().darker() );
             }
         } );

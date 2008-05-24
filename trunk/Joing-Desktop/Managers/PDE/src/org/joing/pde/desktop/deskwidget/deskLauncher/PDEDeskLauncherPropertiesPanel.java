@@ -6,23 +6,31 @@
 package org.joing.pde.desktop.deskwidget.deskLauncher;
 
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 
 /**
  *
- * @author  fmorero
+ * @author  Francisco Morero Peyrona
  */
 public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implements DeskComponent
 {
     private PDEDeskLauncher launcher;
     
-    /** Creates new form PDEDeskLauncherPropertiesPanel */
-    public PDEDeskLauncherPropertiesPanel( boolean bIsDirActive )
+    //------------------------------------------------------------------------//
+    
+    /**
+     * Invoked when creating a new launcher.
+     * 
+     * @param bIsDir true to create a dir and false to create a "normal" 
+     *               launcher.
+     */
+    public PDEDeskLauncherPropertiesPanel( boolean bIsDir )
     {
         this( null );
         
-        if( bIsDirActive )
+        if( bIsDir )
             radDir.setSelected( true );
         else
             radApp.setSelected( true );
@@ -30,6 +38,11 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
         updateEnabled();
     }
     
+    /**
+     * Invoked when editing properties of an existing launcher.
+     * 
+     * @param launcher Target launcher.
+     */
     public PDEDeskLauncherPropertiesPanel( PDEDeskLauncher launcher )
     {
         this.launcher = launcher;
@@ -38,20 +51,32 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
         
         if( launcher != null )
         {
-            txtText.setText( launcher.getText() );
+            txtName.setText( launcher.getText() );
             txtDescription.setText( launcher.getToolTipText() );
-            
         }
+        
+        SwingUtilities.invokeLater( new Runnable() 
+        {
+            public void run()
+            {
+                txtName.requestFocusInWindow();
+            }
+        } );
     }
     
-    public PDEDeskLauncher retrieveLauncher()
+    /**
+     * Creates a new launcher based on provided information.
+     * 
+     * @return A new Launcher.
+     */
+    public PDEDeskLauncher createLauncher()
     {        
         if( launcher == null )
             launcher = new PDEDeskLauncher();
         
-        launcher.setText( txtText.getText() );
+        launcher.setText( txtName.getText() );
         launcher.setDescription( txtDescription.getText() );
-        launcher.setIcon( (ImageIcon) btnIcon.getIcon() );
+        launcher.setImage( ((ImageIcon) btnIcon.getIcon()).getImage() );
         
         if( radApp.isSelected() )
         {
@@ -92,7 +117,7 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
     private void initComponents() {
 
         radButtonGroup = new javax.swing.ButtonGroup();
-        txtText = new javax.swing.JTextField();
+        txtName = new javax.swing.JTextField();
         txtDescription = new javax.swing.JTextField();
         btnIcon = new javax.swing.JButton();
         lblText = new javax.swing.JLabel();
@@ -234,7 +259,7 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
                             .addComponent(lblText))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtText, javax.swing.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
+                            .addComponent(txtName, javax.swing.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
                             .addComponent(txtDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE))))
                 .addContainerGap())
         );
@@ -246,7 +271,7 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblText)
-                            .addComponent(txtText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
@@ -269,7 +294,7 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
     }//GEN-LAST:event_radDirActionPerformed
 
     private void btnIconActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIconActionPerformed
-        // TODO add your handling code here:
+        // TODO: hacerlo
     }//GEN-LAST:event_btnIconActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -290,6 +315,6 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
     private javax.swing.JTextField txtArguments;
     private javax.swing.JTextField txtDescription;
     private javax.swing.JTextField txtDirectory;
-    private javax.swing.JTextField txtText;
+    private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
 }

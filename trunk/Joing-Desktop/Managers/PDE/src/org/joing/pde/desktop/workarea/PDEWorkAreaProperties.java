@@ -62,6 +62,13 @@ public class PDEWorkAreaProperties extends javax.swing.JPanel
             setBorder( new LineBorder( Color.black ) );
             setFocusable( false );
             setSize( 40, 40 );
+            setOpaque( true );
+        }
+        
+        public void setEnabled( boolean b )
+        {
+            //setOpaque( b );
+            super.setEnabled( b );
         }
         
         public void paintComponent( Graphics g )
@@ -71,7 +78,6 @@ public class PDEWorkAreaProperties extends javax.swing.JPanel
             if( isOpaque() )
             {
                 Graphics2D g2d = (Graphics2D) g;
-                
                            g2d.setPaint( new GradientPaint( 1, 1, Color.BLUE,
                                                  getWidth()-2, getHeight()-2, Color.RED ) );
 
@@ -138,17 +144,17 @@ public class PDEWorkAreaProperties extends javax.swing.JPanel
         pnlImage.setLayout(pnlImageLayout);
         pnlImageLayout.setHorizontalGroup(
             pnlImageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlImageLayout.createSequentialGroup()
-                .addContainerGap(176, Short.MAX_VALUE)
+            .addGroup(pnlImageLayout.createSequentialGroup()
+                .addGap(132, 132, 132)
                 .addGroup(pnlImageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(radImageMosaic)
                     .addComponent(radImageStretch)
                     .addComponent(radImageCenter))
-                .addGap(96, 96, 96))
+                .addContainerGap(131, Short.MAX_VALUE))
             .addGroup(pnlImageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(pnlImageLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(btnImage, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnImage, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addContainerGap(185, Short.MAX_VALUE)))
         );
         pnlImageLayout.setVerticalGroup(
@@ -234,7 +240,7 @@ public class PDEWorkAreaProperties extends javax.swing.JPanel
                 .addComponent(radGradientTopRightToBottomLeft)
                 .addGap(4, 4, 4)
                 .addComponent(lblGradientTopRightToBottomLeft, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
         pnlGradientChooserLayout.setVerticalGroup(
             pnlGradientChooserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -253,9 +259,7 @@ public class PDEWorkAreaProperties extends javax.swing.JPanel
         pnlColor.setLayout(pnlColorLayout);
         pnlColorLayout.setHorizontalGroup(
             pnlColorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlColorLayout.createSequentialGroup()
-                .addComponent(pnlGradientChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(9, 9, 9))
+            .addComponent(pnlGradientChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(pnlColorLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lblColorFrom)
@@ -267,7 +271,7 @@ public class PDEWorkAreaProperties extends javax.swing.JPanel
                 .addComponent(btnColorTo, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(chkColorGradient)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pnlColorLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnColorFrom, btnColorTo});
@@ -295,14 +299,14 @@ public class PDEWorkAreaProperties extends javax.swing.JPanel
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblName)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtName, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE))
-                    .addComponent(pnlImage, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnlColor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                        .addComponent(txtName))
+                    .addComponent(pnlImage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pnlColor, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

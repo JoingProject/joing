@@ -31,7 +31,8 @@ import org.joing.pde.desktop.container.PDEDialog;
 import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
 import org.joing.pde.desktop.deskwidget.desklet.PDEDesklet;
-import org.joing.pde.ColorSchema;
+import org.joing.pde.media.PDEColorSchema;
+import org.joing.pde.PDEUtilities;
 import org.joing.pde.desktop.container.PDEWindow;
 import org.joing.pde.swing.EventListenerList;
 
@@ -156,7 +157,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             
             removeSelectedComponents( clazz );
         }*/
-        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
+        PDEUtilities.getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
     }
     
     /**
@@ -176,7 +177,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             Client.getClient().getClipBoard().clear();
             Client.getClient().getClipBoard().add( vSelected );
         }*/
-        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
+        PDEUtilities.getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
     }
 
     /**
@@ -210,7 +211,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             
             root.setCursor( Cursor.getPredefinedCursor( Cursor.DEFAULT_CURSOR) );
         }*/
-        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
+        PDEUtilities.getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
     }
 
     /**
@@ -287,7 +288,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     {
         setLayout( null );
         setOpaque( true );
-        setBackground( ColorSchema.getInstance().getDesktopBackground() );
+        setBackground( PDEColorSchema.getInstance().getDesktopBackground() );
         
         // Add listener for mouse events to: 
         //  · Get the focus
@@ -331,15 +332,21 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     {
         Component component = (Component) dc;
         
-        if(      component instanceof PDEDeskLauncher )  addDeskLauncher( (PDEDeskLauncher) dc );
-        else if( component instanceof PDEDesklet      )  addDesklet( (PDEDesklet) component );
-        else if( component instanceof PDECanvas       )  super.add( component, LAYER_CANVAS );
-        else if( component instanceof PDEDialog       )  addDialog( (PDEDialog) component, true );
-        else if( component instanceof PDEFrame        )  addFrame( (PDEFrame) component, true );
-        else                                             super.add( component, LAYER_FRAME  );
-        
-        moveToFront( (Component) dc );
-        fireComponentAdded( dc );
+        if( component instanceof PDEDialog )  
+        {   // As dialogs are modal, fireComponentAdded() must be launched before 
+            // addign dialog to workarea. And moveToFrom() has no sense.
+            addDialog( (PDEDialog) component, true );
+        }
+        else
+        {
+            if(      component instanceof PDEDeskLauncher )  addDeskLauncher( (PDEDeskLauncher) dc );
+            else if( component instanceof PDEDesklet      )  addDesklet( (PDEDesklet) component );
+            else if( component instanceof PDECanvas       )  super.add( component, LAYER_CANVAS );
+            else if( component instanceof PDEFrame        )  addFrame( (PDEFrame) component, true );
+            else                                             super.add( component, LAYER_FRAME  );
+            
+            fireComponentAdded( dc );    
+        }
     }
     
     public void add( DeskWindow window, boolean bAutoArrange  )
@@ -348,6 +355,8 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             addDialog( (PDEDialog) window, bAutoArrange );
         else
             addFrame( (PDEFrame) window, bAutoArrange );
+        
+        fireComponentAdded( window );
     }
     
     // super is in charge of detecting when the JinternalFrame is closed, so it
@@ -512,6 +521,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         dl.addLauncherListener( deskLauncherListener );
         super.add( dl, LAYER_LAUNCHER  );
         validate();
+        moveToFront( (Component) dl );
     }
     
     //------------------------------------------------------------------------//
@@ -526,6 +536,8 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             dialog.center();
         }
         
+        // As dialogs are modal, fireComponentAdded() must be launched before addign dialog to workarea
+        fireComponentAdded( dialog );
         dialog.setVisible( true );
     }
     /* Esta es la que usaba cuando PDEDialog hereda de PDEWindow
@@ -549,6 +561,8 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             moveToFront( (Component) dialog );
         }
         
+        // As dialogs are modal, fireComponentAdded() must be launched before addign dialog to workarea
+        fireComponentAdded( dialog );
         dialog.startModal();
     }
     --------------------------------------------------------------------------*/

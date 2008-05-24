@@ -33,7 +33,7 @@ public class PDEFrame extends PDEWindow implements DeskFrame
     
     public PDEFrame()
     {           // resizable, closable, maximizable, minimizable
-        super( "", true, true, true, true );
+        super( "", true,      true,     true,        true );
         
         setDefaultCloseOperation( JInternalFrame.DISPOSE_ON_CLOSE );
         

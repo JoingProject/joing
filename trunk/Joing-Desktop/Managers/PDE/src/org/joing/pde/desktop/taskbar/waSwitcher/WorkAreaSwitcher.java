@@ -17,14 +17,15 @@ import org.joing.common.desktopAPI.desktop.Desktop;
 import org.joing.common.desktopAPI.desktop.DesktopListener;
 import org.joing.common.desktopAPI.taskbar.TaskBar;
 import org.joing.common.desktopAPI.workarea.WorkArea;
+import org.joing.pde.PDEUtilities;
+import org.joing.pde.desktop.taskbar.PDETaskBarComponent;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
-import org.joing.pde.swing.PDEDeskComponent;
 
 /**
  *
  * @author fmorero
  */
-public class WorkAreaSwitcher extends PDEDeskComponent
+public class WorkAreaSwitcher extends PDETaskBarComponent
 {
     private GridLayout grid;
     
@@ -37,9 +38,8 @@ public class WorkAreaSwitcher extends PDEDeskComponent
         setLayout( grid );
         setBorder( new LineBorder( Color.black, 1 ) );
         setInheritsPopupMenu( true );  // It is also inherited by sub-components
-        //setHandleVisible( false );
         
-        Desktop desktop = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop();
+        Desktop desktop = PDEUtilities.getDesktopManager().getDesktop();
         
         // Traverse existing workareas: one or more workareas would exist when this component is shown.
         List<WorkArea> lstWorAreas = desktop.getWorkAreas();
@@ -59,6 +59,29 @@ public class WorkAreaSwitcher extends PDEDeskComponent
         } );
         
         calculateSizes( lstWorAreas.size() );
+    }
+    
+    //------------------------------------------------------------------------//
+    // TaskBarComponent interface
+    
+    public void onAbout()
+    {
+        // TODO: hacerlo
+    }
+
+    public void onRemove()
+    {
+        // TODO: hacerlo
+    }
+
+    public void onMove()
+    {
+        // TODO: hacerlo
+    }
+
+    public void onPreferences()
+    {
+        // TODO: hacerlo
     }
     
     //------------------------------------------------------------------------//

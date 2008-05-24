@@ -26,14 +26,14 @@ import javax.swing.MenuElement;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import org.joing.common.desktopAPI.DesktopManager;
+import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncherListener;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.pde.desktop.deskwidget.PDEDeskWidget;
-import org.joing.pde.ColorSchema;
+import org.joing.pde.media.PDEColorSchema;
 import org.joing.pde.PDEUtilities;
-import org.joing.pde.misce.images.ImagesFactory;
 import org.joing.pde.swing.EventListenerList;
 import org.joing.pde.swing.ImageHighlightFilter;
 import org.joing.pde.swing.JRoundLabel;
@@ -66,27 +66,6 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     {
         listenerList = new EventListenerList();
         initGUI();
-    }
-    
-    /**
-     * To be used internally by PDE
-     * @param icon
-     */
-    public ImageIcon getIcon()
-    {
-        return (ImageIcon) this.icon.getIcon();
-    }
-    
-    /**
-     * To be used internally by PDE
-     * @param icon
-     */
-    public void setIcon( ImageIcon icon )
-    {
-        if( icon == null )
-            icon = PDEUtilities.getStandardIcon( ImagesFactory.Icon.LAUNCHER );
-        
-        this.icon.setIcon( icon );
     }
     
     //------------------------------------------------------------------------//
@@ -155,6 +134,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
      */
     public void launch()
     {
+        PDEUtilities.getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
         // FIXME: hacerlo
     }
     
@@ -262,30 +242,32 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     //       llamar al container (WorkArea)
     public void delete()
     {
-        DesktopManager dm = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+        DesktopManager dm = PDEUtilities.getDesktopManager();
         
         if( dm.getRuntime().showYesNoDialog( "Delete launcher", 
                                              "Are you sure you want to delete it?\n"+
                                              "(deleted objects can not be recovered)" ) )
         {
             WorkArea workArea = (PDEWorkArea) SwingUtilities.getAncestorOfClass( PDEWorkArea.class, this );
-                     // FIXME: hacerlo --> workArea.remove( this );
+     
+            dm.getRuntime().showMessageDialog( null, "Option not yet implemented" );
+            /// workArea.remove( this );
                 
             // There is not a fireLauncherDeleted() because it can be resolved   
-            // by adding a listner to the WorkArea
+            // by adding a listener to the WorkArea
         }
     }
     
     public void toTrashcan()
     {
-        DesktopManager dm = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+        DesktopManager dm = PDEUtilities.getDesktopManager();
         
         if( dm.getRuntime().showYesNoDialog( "Send launcher to trashcan", 
                                              "Are you sure you want to send it to trashcan?" ) )
         {
             
             PDEWorkArea workArea = (PDEWorkArea) SwingUtilities.getAncestorOfClass( PDEWorkArea.class, this );
-                        // FIXME: hacerlo --> workArea.remove( this );
+                      /// hacerlo --> workArea.remove( this );
                         
             // TODO: mandarlo a la papelera e implementar el fire
             // fireLauncherToTrashcan( this );
@@ -298,7 +280,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
         PDEDeskLauncherPropertiesPanel panel = new PDEDeskLauncherPropertiesPanel( this );
         
         if( PDEUtilities.showBasicDialog( "Launcher Properties", panel ) )
-            panel.retrieveLauncher();
+            panel.createLauncher();
     }
     
     /**
@@ -322,7 +304,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
         setMaximumSize(   new Dimension( 92,182 ) );
         setPreferredSize( new Dimension( 72, 65 ) );
 
-        // Inicializo los componentes
+        // Initialising components
         icon = new IconComponent();
         
         text = new TextComponent();
@@ -333,7 +315,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
         
         pnlAll = new JRoundPanel();
         pnlAll.setOpaque( false );
-        pnlAll.setBackground( ColorSchema.getInstance().getDeskLauncherTextBackground() );
+        pnlAll.setBackground( PDEColorSchema.getInstance().getDeskLauncherTextBackground() );
         pnlAll.setTransparency( 85 );
         pnlAll.setLayout( new BorderLayout( 0,0 ) );
         pnlAll.setBorder( new EmptyBorder( 3,3,3,3 ) );
@@ -346,8 +328,16 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
                    0,
                    (int) getPreferredSize().getWidth(), 
                    (int) getPreferredSize().getHeight() );
+        
         add( pnlAll );
-        //////////root.setGlassPane( new GlassPaneDeskLauncher( this ) );
+        
+        SwingUtilities.invokeLater( new Runnable()    // RootPane is null until runtime
+        {
+            public void run()
+            {
+                PDEDeskLauncher.this.getRootPane().setGlassPane( new GlassPaneDeskLauncher( PDEDeskLauncher.this ) );
+            }
+        });
     }
 
     //------------------------------------------------------------------------//
@@ -362,7 +352,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
         {
             setHorizontalAlignment( JLabel.CENTER );
             setBorder( new EmptyBorder( 0, (getPreferredSize().width - 48) / 2,
-                                        0, (getPreferredSize().width - 48) / 2  )  );  // Border to center the icon
+                                        0, (getPreferredSize().width - 48) / 2 ) );  // Border to center the icon
             setImage( null );
         }
         
@@ -378,9 +368,9 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
             this.image = image;
             
             if( image == null )
-                imgIcon = PDEUtilities.getStandardIcon( ImagesFactory.Icon.LAUNCHER );
-            else
-                imgIcon = new ImageIcon( image );
+                image = PDEUtilities.getDesktopManager().getRuntime().getImage( StandardImage.LAUNCHER );
+            
+            imgIcon = new ImageIcon( image );
 
             if( imgIcon.getIconWidth() != 48 || imgIcon.getIconHeight() != 48 )
                 imgIcon.setImage( imgIcon.getImage().getScaledInstance( 48, 48, Image.SCALE_SMOOTH ) );
@@ -415,13 +405,13 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
         {
             setText( "Noname" );
             setOpaque( false );
-            setBackground( ColorSchema.getInstance().getDeskLauncherTextBackground() );
+            setBackground( PDEColorSchema.getInstance().getDeskLauncherTextBackground() );
         }
         
         private void setSelected( boolean b )
         {
-            Color clrFore = b ? ColorSchema.getInstance().getDeskLauncherTextForegroundSelected() :
-                                ColorSchema.getInstance().getDeskLauncherTextForegroundUnSelected();
+            Color clrFore = b ? PDEColorSchema.getInstance().getDeskLauncherTextForegroundSelected() :
+                                PDEColorSchema.getInstance().getDeskLauncherTextForegroundUnSelected();
                     
             setForeground( clrFore );
             setOpaque( b );
@@ -435,22 +425,22 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     {
         private ThisPopupMenu()
         {
-            add( createMenuItem( "Open"       , ImagesFactory.Icon.LAUNCHER  , "OPEN"       ) );
+            add( createMenuItem( "Open"       , StandardImage.LAUNCHER  , "OPEN"       ) );
             addSeparator();
-            add( createMenuItem( "To trashcan", ImagesFactory.Icon.TRASHCAN  , "TRASHCAN"   ) );
-            add( createMenuItem( "Delete"     , ImagesFactory.Icon.DELETE    , "DELETE"     ) );
+            add( createMenuItem( "To trashcan", StandardImage.TRASHCAN  , "TRASHCAN"   ) );
+            add( createMenuItem( "Delete"     , StandardImage.DELETE    , "DELETE"     ) );
             addSeparator();
-            add( createMenuItem( "Properties" , ImagesFactory.Icon.PROPERTIES, "PROPERTIES" ) );
+            add( createMenuItem( "Properties" , StandardImage.PROPERTIES, "PROPERTIES" ) );
         }
         
-        private JMenuItem createMenuItem( String sText, ImagesFactory.Icon icon, String sCommand )
+        private JMenuItem createMenuItem( String sText, StandardImage icon, String sCommand )
         {
             JMenuItem item = new JMenuItem( sText );
                       item.setActionCommand( sCommand );
                       item.addActionListener( this );
                       
             if( icon != null )
-                item.setIcon( PDEUtilities.getStandardIcon( icon, 16, 16 ) );
+                item.setIcon( new ImageIcon( PDEUtilities.getDesktopManager().getRuntime().getImage( icon, 16, 16 ) ) );
             
             return item;
         }

@@ -1,5 +1,5 @@
 /*
- * ColorSchema.java
+ * PDEColorSchema.java
  *
  * Created on 14 de febrero de 2007, 20:13
  *
@@ -8,16 +8,17 @@
  * License: {license}
  */
 
-package org.joing.pde;
+package org.joing.pde.media;
 
+import org.joing.pde.*;
+import org.joing.common.desktopAPI.ColorSchema;
 import java.awt.Color;
 
 /**
  *
  * @author Francisco Morero Peyrona
  */
-// FIXME: Hacer que implement in interface y cambiar en todos sitios la clase por el interface 
-public class ColorSchema
+public class PDEColorSchema implements ColorSchema
 {
     private static Color desktopBackground;
     private static Color taskbarBackground;
@@ -29,18 +30,18 @@ public class ColorSchema
     private static Color UserNameBackground;
     private static Color UserNameForeground;
     
-    private static ColorSchema instance = null;
+    private static PDEColorSchema instance = null;
     
     //------------------------------------------------------------------------//
     
-    public static ColorSchema getInstance()
+    public static PDEColorSchema getInstance()
     {
         if( instance == null )
         {
             synchronized( PDERuntime.class )
             {
                 if( instance == null )
-                     instance = new ColorSchema();
+                     instance = new PDEColorSchema();
             }
         }
         
@@ -57,8 +58,17 @@ public class ColorSchema
         return taskbarBackground;
     }
     
-    // This method does not exists because in PDE, the unselected label is not opaque
-    // public Color getDesktopLauncherBackgroundUnSelected()
+    // This is not used in PDE because in PDE the label is not opaque
+    public Color getDeskLauncherBackgroundUnSelected()
+    {
+        return null;
+    }
+    
+    // This is not used in PDE because in PDE the label is not opaque
+    public Color getDeskLauncherBackgroundSelected()
+    {
+        return null;
+    }
     
     public Color getDeskLauncherTextForegroundSelected()
     {
@@ -88,11 +98,11 @@ public class ColorSchema
     //------------------------------------------------------------------------//
     // Singleton Design Pattern
     
-    private ColorSchema()
+    private PDEColorSchema()
     {
-        // @TODO esto en lugar de hacerlo así habría que leerlo de la configuración
-        //       de usuario y cargar el conjunto de colores peferidos, 
-        //       p.ej.: "dessert" o 2blue",...
+        // NEXT esto en lugar de hacerlo así habría que leerlo de la configuración
+        //      de usuario y cargar el conjunto de colores preferidos, 
+        //      p.ej.: "dessert" o "blue",...
         desktopBackground = new Color( 255, 255, 220 );
         taskbarBackground = new Color( 230, 230, 221 );
         

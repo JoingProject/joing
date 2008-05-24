@@ -13,9 +13,12 @@ import java.util.List;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.pane.DeskFrame;
 import org.joing.common.desktopAPI.workarea.WorkArea;
+import org.joing.pde.PDEUtilities;
 
 /**
  * PopupMenu for both: Frame and PDEFrame (JInterbalFrame).
@@ -113,11 +116,13 @@ public class FramePopupMenu extends JPopupMenu
     }
     
     private void toWorkArea( WorkArea waDestiny )
-    {// FIXME: Esto no va bien porque se están cogiendo 2 eventos: el de close window y el de add/remove del work area, creo que habría que coger sólo uno de los dos
-        /*WorkArea  waOrigin  = DesktopManagerFactory.getDM().getDesktop().getActiveWorkArea();
+    {
+        JOptionPane.showMessageDialog( null, "Option not yet implemented" );
+        // TODO: Hacerlo bien: esto no funciona -->
+        /*WorkArea waOrigin = PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea();
         
-        waOrigin.remove( getFrame() );
-        waDestiny.add( getFrame() );*/
+        waOrigin.remove( (DeskComponent) getFrame() );
+        waDestiny.add(   (DeskComponent) getFrame() );*/
     }
     
     private void init()
@@ -166,8 +171,8 @@ public class FramePopupMenu extends JPopupMenu
                           } );                          
         add( itemCheck );
 
-        List<WorkArea> lstWorkAreas = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getWorkAreas();
-        WorkArea       waActive     = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
+        List<WorkArea> lstWorkAreas = PDEUtilities.getDesktopManager().getDesktop().getWorkAreas();
+        WorkArea       waActive     = PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea();
 
         if( lstWorkAreas.size() > 1 )
         {

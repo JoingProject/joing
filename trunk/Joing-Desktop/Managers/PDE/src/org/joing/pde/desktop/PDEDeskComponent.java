@@ -3,9 +3,8 @@
  * and open the template in the editor.
  */
 
-package org.joing.pde.swing;
+package org.joing.pde.desktop;
 
-import java.awt.LayoutManager;
 import javax.swing.JPanel;
 import org.joing.common.desktopAPI.DeskComponent;
 
@@ -15,12 +14,4 @@ import org.joing.common.desktopAPI.DeskComponent;
  */
 public class PDEDeskComponent extends JPanel implements DeskComponent
 {
-    public PDEDeskComponent()
-    {    
-    }
-    
-    public PDEDeskComponent( LayoutManager lm )
-    {
-        super( lm );
-    }
 }

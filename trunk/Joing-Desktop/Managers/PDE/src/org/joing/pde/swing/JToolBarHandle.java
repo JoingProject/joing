@@ -13,18 +13,20 @@ import javax.swing.JComponent;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 public class JToolBarHandle extends JComponent
 {
     private Container parent;
     
+    //------------------------------------------------------------------------//
+    
     public JToolBarHandle( Container parent )
     {
         this.parent = parent;
-        setMinimumSize( new Dimension( 10,6 ) );
-        setMaximumSize( new Dimension( 10, Integer.MAX_VALUE ) );
-        setPreferredSize( new Dimension( 10, 10 ) );
+        setMinimumSize( new Dimension( 8,6 ) );
+        setMaximumSize( new Dimension( 8, Integer.MAX_VALUE ) );
+        setPreferredSize( new Dimension( 8, 10 ) );
     }
     
     public void paintComponent( Graphics g )
@@ -34,7 +36,7 @@ public class JToolBarHandle extends JComponent
             // First, update component's size
             setSize( getPreferredSize().width, parent.getSize().height );
             
-            // Calculte lines height
+            // Calculate lines height
             Insets insets = parent.getInsets();
             int    y1     = insets.top + 3;
             int    y2     = getHeight() - insets.bottom -3;

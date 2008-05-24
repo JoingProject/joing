@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.joing.pde.misce.apps;
+package org.joing.pde.apps;
 
 /**
  *
