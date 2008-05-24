@@ -20,10 +20,7 @@ import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.PDEUtilities;
 
 /**
- * A JPanel placed over the background image (if any) and below all other
- * desktop objects.
- * <p>
- * Useful for information, publicity panels and similar. 
+ * A very basic component.
  * 
  * @author Francisco Morero Peyrona
  */
@@ -85,7 +82,7 @@ public class PDECanvas extends JPanel implements DeskCanvas
     }
     
     // Just to avoid accidental use of them  ---------------------------------------------------------
-    // NEXT: Tengo que permitir este metjod porque no he fabricado una clase asï:
+    // NEXT: Tengo que permitir este metodo porque no he fabricado una clase asï:
     //       PDEDesckComponent extends JComponent implements DesckComponent
     //       Para que todo fuese bonito, habría que hacer igual con las demás.
     ///public Component add( Component c )             { throw new IllegalAccessError(DONT_USE_ME); }

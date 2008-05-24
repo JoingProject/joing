@@ -15,6 +15,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import javax.swing.JToolTip;
+import org.joing.pde.PDEUtilities;
 
 class FrameButtonToolTip extends JToolTip
 {
@@ -27,7 +28,7 @@ class FrameButtonToolTip extends JToolTip
     
     public Dimension getPreferredSize()
     {
-        Dimension dim = ((Component) org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop()).getSize();
+        Dimension dim = ((Component) PDEUtilities.getDesktopManager().getDesktop()).getSize();
                   dim = new Dimension( dim.width / 7, dim.height / 7 );
         return dim;
     }

@@ -15,9 +15,9 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.container.PDECanvas;
-import org.joing.pde.misce.images.ImagesFactory;
 
 /**
  * An information panel indicating that a connection with server is in progress.
@@ -56,8 +56,10 @@ class NotificationPanel extends PDECanvas
         lblMessage.setText( sMessage );
         lblMessage.setHorizontalTextPosition( JLabel.CENTER );
         
-        lblIcon.setIcon( (icon == null) ? PDEUtilities.getStandardIcon( ImagesFactory.Icon.NOTIFICATION ) :
-                                          new ImageIcon( icon ) );
+        if( icon == null )
+            icon = PDEUtilities.getDesktopManager().getRuntime().getImage( StandardImage.NOTIFICATION );
+        
+        lblIcon.setIcon( new ImageIcon( icon ) );
         
         panel.setOpaque( false );
         panel.setBorder( new EmptyBorder( 3,5,3,5 ) );
@@ -87,7 +89,7 @@ class NotificationPanel extends PDECanvas
     // Calculates size and postion
     private void setBounds()
     {
-        WorkArea wa = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
+        WorkArea wa = PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea();
         
         setSize( 205, 70 );    // FIXME: Buscar su tamaño, en lugar de 180,70
         setLocation( wa.getWidth() - getWidth(), wa.getHeight() - getHeight() - 5 );   // NEXT: no sé por qué tengo que hace rel -5

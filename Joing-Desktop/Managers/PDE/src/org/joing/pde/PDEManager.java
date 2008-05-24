@@ -29,14 +29,18 @@ import org.joing.pde.desktop.PDEDesktop;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Toolkit;
+import javax.swing.ImageIcon;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javax.swing.JLabel;
+import javax.swing.JPasswordField;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
+import javax.swing.border.EmptyBorder;
 import org.joing.common.clientAPI.runtime.Bridge2Server;
 import org.joing.common.desktopAPI.DesktopManager;
+import org.joing.common.desktopAPI.StandardImage;
+import org.joing.common.desktopAPI.StandardSound;
 import org.joing.jvmm.RuntimeFactory;
 
 /**
@@ -103,13 +107,13 @@ public class PDEManager extends JApplet implements DesktopManager
                     else
                         getMainFrame().setSize( Toolkit.getDefaultToolkit().getScreenSize() );
                     
-                    loadSavedStatus();
+                    desktop.restore();
                 }
             } );
         }
         catch( Exception exc )
         {
-            exc.printStackTrace();   // TODO: mostrarla sólo por pantalla
+            exc.printStackTrace();  // Shown only in console (not inside a JFrame/JDialog)
         }
     }
     
@@ -120,14 +124,18 @@ public class PDEManager extends JApplet implements DesktopManager
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             GraphicsDevice      gs = ge.getDefaultScreenDevice();
 
-            if( gs.isFullScreenSupported() )
+            // NEXT: When bug is fixed
+            // Due to a bug in Ubuntu and also in JDK, gs.isFullScreenSupported() always return false.
+            if( true ) ///////// gs.isFullScreenSupported() )
             {
                 getMainFrame().setUndecorated( true );
                 getMainFrame().setResizable( false );
                 getMainFrame().pack();
+                getMainFrame().setVisible( true );
                 
-                gs.setFullScreenWindow( frame );
-                loadSavedStatus();
+                gs.setFullScreenWindow( getMainFrame() );
+                runtime.play( StandardSound.WELCOME );
+                desktop.restore();
             }
             else
             {
@@ -136,7 +144,7 @@ public class PDEManager extends JApplet implements DesktopManager
         }
         catch( Exception exc )
         {
-            exc.printStackTrace();   // TODO: mostrarla sólo por pantalla
+            exc.printStackTrace();  // Shown only in console (not inside a JFrame/JDialog)
         }
     }
     
@@ -150,12 +158,10 @@ public class PDEManager extends JApplet implements DesktopManager
         return runtime;
     }
     
-    /**
-     * This method exists to be called from Platform and should <u>never</u> be 
-     * called from the Desktop.
-     */
+    
     public void shutdown()
     {
+        runtime.play( StandardSound.GOODBYE );
         getDesktop().close();
 
         // TODO: Quizás, tras enviar la orden al Desktop para que cierre todas sus
@@ -166,16 +172,15 @@ public class PDEManager extends JApplet implements DesktopManager
         halt();
     }
     
-    /**
-     * This method exists to be called from Platform and should <u>never</u> be 
-     * called from the Desktop.
-     */
     public void halt()
     {
         if( frame != null )   // Can't call getFrame(), because this method constructs the frame
             frame.dispose();
-        else
-            stop();
+    }
+    
+    public String getVersion()
+    {
+        return "0.1";
     }
     
     //------------------------------------------------------------------------//
@@ -187,8 +192,7 @@ public class PDEManager extends JApplet implements DesktopManager
      */
     public void exit()
     {
-        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().shutdown();
-        System.exit( 0 );   // FIXME: quitar esto
+        org.joing.jvmm.RuntimeFactory.getPlatform().shutdown();   // Calls this::shutdown()
     }
 
     /**
@@ -213,22 +217,24 @@ public class PDEManager extends JApplet implements DesktopManager
     {
         MyGlassPane myGlass = (MyGlassPane) (frame != null ? frame.getGlassPane()
                                                            : getRootPane().getGlassPane());
-
         myGlass.unlock();
         
         if( frame != null )
             frame.setGlassPane( myGlass.getPreviousGlassPane() );
         else
             getRootPane().setGlassPane( myGlass.getPreviousGlassPane() );
-    }
         
+        myGlass = null;
+    }
+    
     //------------------------------------------------------------------------//
     
     private JFrame getMainFrame()
     {
         if( frame == null )
         {
-            frame = new JFrame( "Join'g :: PDE" );
+            frame = new JFrame( "Join'g :: PDE - Version "+ getVersion() );
+            frame.setIconImage( getRuntime().getImage( StandardImage.DESKTOP ) );
             frame.setDefaultCloseOperation( JFrame.DO_NOTHING_ON_CLOSE );
             frame.setContentPane( getContentPane() );
             frame.addWindowListener( new WindowListener()
@@ -246,67 +252,54 @@ public class PDEManager extends JApplet implements DesktopManager
         return frame;
     }
     
-    private void loadSavedStatus()
-    {
-        SwingWorker sw = new SwingWorker()
-        {
-            protected Object doInBackground() throws Exception
-            {
-                getDesktop().load();   // Do not move this line !
-                return null;
-            }
-        };
-        sw.execute();
-    }
-    
     //------------------------------------------------------------------------//
     // INNER CLASS: AskForPassword
     //------------------------------------------------------------------------//
-    private final class AskForPassword extends JPanel implements Runnable
+    private final class AskForPassword implements Runnable
     {
         public void run()
         {
-            String sPassword = JOptionPane.showInputDialog( null, "", "Enter password", JOptionPane.QUESTION_MESSAGE );
-        
-            if( sPassword != null && sPassword.trim().length() > 0 )
+            JPanel panel = new JPanel();
+            JLabel lblPicture = new JLabel( new ImageIcon( getRuntime().getImage( StandardImage.USER_MALE, 32, 32 ) ) );
+                   lblPicture.setBorder( new EmptyBorder( 8,8,8,8 ) );
+                   
+            JPasswordField txtPassword = new JPasswordField( 32 );
+            
+            panel.add( lblPicture , BorderLayout.WEST   );
+            panel.add( txtPassword, BorderLayout.CENTER );
+            
+            if( PDEUtilities.showBasicDialog( "Enter your password", panel, "Unlock", "Lock" ) )
             {
-                JRootPane root = (frame != null ? frame.getRootPane() : getRootPane());
-                Cursor    cursor = root.getCursor();
+                String sPassword = String.valueOf( txtPassword.getPassword() );
                 
-                root.setCursor( new Cursor( Cursor.WAIT_CURSOR ) );
-                
-                sPassword = sPassword.trim();
-                
-                try
-                {
-                    Bridge2Server b2s = RuntimeFactory.getPlatform().getBridge();
-                    boolean       bOk = sPassword.length() > 0; // TODO: implementar un servicio en el servidor para comprobar la password
+                if( sPassword != null && sPassword.trim().length() > 0 )
+                {        
+                    JRootPane root = (frame != null ? frame.getRootPane() : getRootPane());
+                    Cursor    cursor = root.getCursor();
 
-                    if( bOk )
-                        unlock();
-                }
-                catch( Exception exc )
-                {
-                    // TODO: Informar que por falta de comunicación con el servidor no se puede comprobar la password
-                    //       y que el sistema tiene que seguir bloqueado.
-                }
-                finally
-                {
-                    root.setCursor( cursor );
+                    root.setCursor( new Cursor( Cursor.WAIT_CURSOR ) );
+
+                    sPassword = sPassword.trim();
+
+                    try
+                    {
+                        Bridge2Server b2s = RuntimeFactory.getPlatform().getBridge();
+                        boolean       bOk = sPassword.length() > 0; // TODO: implementar un servicio en el servidor para comprobar la password
+
+                        if( bOk )
+                            unlock();
+                    }
+                    catch( Exception exc )
+                    {
+                        // TODO: Informar que por falta de comunicación con el servidor no se puede comprobar la password
+                        //       y que el sistema tiene que seguir bloqueado.
+                    }
+                    finally
+                    {
+                        root.setCursor( cursor );
+                    }
                 }
             }
-//            JLabel  lblPicture = new JLabel( PDEUtilities.getStandardIcon( ImagesFactory.Icon.USER_MALE, 48, 48 ) );
-//                    lblPicture.setBorder( new EmptyBorder( 8,8,8,8 ) );
-//            JLabel  lblText = new JLabel( "Enter your password" );
-//            JButton btnAccept = new JButton( "Unlock" );
-//            JButton btnCancel = new JButton( "Lock" );
-//            
-//            txtPassword.setColumns( 32 );
-//            
-//            add( lblPicture , BorderLayout.WEST   );
-//            add( lblText    , BorderLayout.NORTH  );
-//            add( txtPassword, BorderLayout.CENTER );
-            
         }
     }
     

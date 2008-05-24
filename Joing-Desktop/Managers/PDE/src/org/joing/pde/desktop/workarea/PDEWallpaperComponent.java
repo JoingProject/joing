@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.joing.common.desktopAPI.workarea.Wallpaper;
@@ -67,7 +68,7 @@ class PDEWallpaperComponent extends JPanel implements PropertyChangeListener
         
         if( wp.getMode() == Wallpaper.Mode.CENTER )
         {
-            JLabel lbl = new JLabel( wp.getImage() );
+            JLabel lbl = new JLabel( new ImageIcon( wp.getImage() ) );
                    lbl.setHorizontalAlignment( JLabel.CENTER );
                    
             setLayout( new BorderLayout() );
@@ -93,7 +94,7 @@ class PDEWallpaperComponent extends JPanel implements PropertyChangeListener
         for( int n = 0; n < aComp.length; n++ )
         {
             if( aComp[n] instanceof JLabel )
-                ((JLabel) aComp[n]).setIcon( wp.getImage() );
+                ((JLabel) aComp[n]).setIcon( new ImageIcon( wp.getImage() ) );
         }
     }
 }

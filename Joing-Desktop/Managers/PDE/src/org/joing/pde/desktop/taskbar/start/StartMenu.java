@@ -23,16 +23,16 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import org.joing.common.clientAPI.jvmm.ApplicationExecutionException;
+import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.app.AppEnvironment;
 import org.joing.common.dto.app.AppGroup;
 import org.joing.common.dto.app.AppGroupKey;
 import org.joing.common.dto.user.User;
-import org.joing.pde.ColorSchema;
+import org.joing.pde.media.PDEColorSchema;
 import org.joing.pde.PDEManager;
 import org.joing.pde.PDEUtilities;
-import org.joing.pde.misce.apps.EditUser;
-import org.joing.pde.misce.images.ImagesFactory;
+import org.joing.pde.apps.EditUser;
 import org.joing.pde.swing.JScrollablePopupMenu;
 
 /**
@@ -64,8 +64,8 @@ class StartMenu extends JScrollablePopupMenu
     private void addUser()
     {
         JMenuItem item = new JMenuItem();
-                  item.setBackground( ColorSchema.getInstance().getUserNameBackground() );
-                  item.setForeground( ColorSchema.getInstance().getUserNameForeground() );
+                  item.setBackground( PDEColorSchema.getInstance().getUserNameBackground() );
+                  item.setForeground( PDEColorSchema.getInstance().getUserNameForeground() );
                   item.setBorder( new EmptyBorder( 4,4,4,4 ) );
                   item.setFont( item.getFont().deriveFont( Font.BOLD, item.getFont().getSize() + 4 ) );
 
@@ -73,10 +73,9 @@ class StartMenu extends JScrollablePopupMenu
         
         if( user != null )
         {
-            ImagesFactory.Icon icon = user.isMale() ? ImagesFactory.Icon.USER_MALE : 
-                                                      ImagesFactory.Icon.USER_FEMALE;
+            StandardImage image = (user.isMale() ? StandardImage.USER_MALE : StandardImage.USER_FEMALE);
             
-            item.setIcon( PDEUtilities.getStandardIcon( icon, ICON_SIZE+5, ICON_SIZE+5 ) );
+            item.setIcon( new ImageIcon( PDEUtilities.getDesktopManager().getRuntime().getImage( image, ICON_SIZE+5, ICON_SIZE+5 ) ) );
             item.setText( user.getFirstName() +" "+ user.getSecondName() );
 
             item.addActionListener( new ActionListener()
@@ -103,7 +102,7 @@ class StartMenu extends JScrollablePopupMenu
                   {
                       public void actionPerformed( ActionEvent ae )
                       {
-                          ((PDEManager) org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager()).lock();
+                          ((PDEManager) PDEUtilities.getDesktopManager()).lock();
                       }
                   } );
         add( itmLock );
@@ -117,7 +116,7 @@ class StartMenu extends JScrollablePopupMenu
                   {
                       public void actionPerformed( ActionEvent ae )
                       {
-                          ((PDEManager) org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager()).exit();
+                          ((PDEManager) PDEUtilities.getDesktopManager()).exit();
                       }
                   } );
         add( itmExit );

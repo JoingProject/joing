@@ -12,7 +12,11 @@ package org.joing.pde.desktop.taskbar.systray;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.common.desktopAPI.pane.DeskFrame;
+import org.joing.pde.PDEUtilities;
 import org.joing.pde.desktop.taskbar.PDETaskBarPanel;
+import org.joing.pde.swing.PDEAboutPanel;
 
 /**
  * AKA: "Notification Area", "Taskbar Status Area", etc.<br>
@@ -68,5 +72,45 @@ public class SysTray extends PDETaskBarPanel
     public Dimension getPreferredSize()
     {
         return getMinimumSize();
+    }
+    
+    //------------------------------------------------------------------------//
+    // TaskBar Interface
+    
+    public void onPreferences()
+    {
+        // Nothing to do: SysTray has no preferences
+    }
+
+    public void onAbout()
+    {
+        PDEAboutPanel panel = new PDEAboutPanel();
+                      panel.setProductName( "Notification Area" );
+                      panel.setVersion( "1.0" );
+                      
+        // Better to use a Frame than a Dialog (modaless: this is the way Gnome does it)
+        DeskFrame frame = PDEUtilities.getDesktopManager().getRuntime().createFrame();
+                  frame.setTitle( "About" );
+                  frame.add( (DeskComponent) panel );
+                  
+        PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
+    }
+
+    public void onRemove()
+    {
+        // Nothing to do: SysTray can not be removed
+    }
+
+    public void onMove()
+    {
+        // Nothing to do: SysTray can not be moved
+    }
+
+    //------------------------------------------------------------------------//
+    // Closeable Interface
+    
+    public void close()
+    {
+        // FIXME: Llamar a close() en todos sus sub-comps 
     }
 }

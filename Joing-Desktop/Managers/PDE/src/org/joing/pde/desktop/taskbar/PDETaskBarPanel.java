@@ -9,291 +9,102 @@
 
 package org.joing.pde.desktop.taskbar;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
+import java.awt.Graphics;
+import javax.swing.BoxLayout;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.pane.DeskFrame;
-import org.joing.common.desktopAPI.taskbar.TaskBarListener;
 import org.joing.common.desktopAPI.taskbar.TaskBarPanel;
-import org.joing.pde.PDEUtilities;
-import org.joing.pde.desktop.container.PDEFrame;
-import org.joing.pde.misce.images.ImagesFactory;
 import org.joing.pde.swing.JToolBarHandle;
 
 /**
  * The base class for most part of the widtgets that are shown in the TaskBar.
  * 
+ * By default it has a BoxLayout on X_AXIS.
+ * 
  * @author Francisco Morero Peyrona
  */
-public class PDETaskBarPanel 
-       extends JPanel 
-       implements MouseListener, 
-                  TaskBarPanel
+public class PDETaskBarPanel extends PDETaskBarComponent implements TaskBarPanel
 {
-    private boolean        bLocked;
-    private JToolBarHandle handle;
+    private static final String DONT_USE_ME = "Do not use me";
     
-    // Popup menu items
-    protected JMenuItem itemPreferences;
-    protected JMenuItem itemAbout;
-    protected JMenuItem itemRemove;
-    protected JMenuItem itemMove;
-    protected JMenuItem itemLock;
+    private JToolBarHandle handle;
     
     //------------------------------------------------------------------------//
     
     /** Creates a new instance of PDETaskBarPanel */
     public PDETaskBarPanel()
     {
-        bLocked    = false;
-        handle     = new JToolBarHandle( this );
-        add( handle, BorderLayout.WEST );
+        handle = new JToolBarHandle( this );
         
-        setComponentPopupMenu( new CommonPopupMenu() );    // It is inherited by sub-components
-        
-        addMouseListener( this );
-    }
-    
-    //------------------------------------------------------------------------//
-    // PDETaskBarPanel interface
-    
-    public boolean isLocked()
-    {
-        return bLocked;
-    }
-    
-    public void setLocked( boolean b )
-    {
-        bLocked = b; 
-    }
-    
-    public void addTaskBarPanelListener( TaskBarListener tbl )
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        setBorder( new EmptyBorder( 0, handle.getPreferredSize().width + 2, 0, 2 ) );
+        setLayout( new BoxLayout( this, BoxLayout.X_AXIS ) );
     }
 
-    public void removeTaskBarPanelListener( TaskBarListener tbl )
+    public void setBorder( Border border )
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        // I can not allow to modify border.
+        // But I can not throw an exception because this method is invoked by Swing.
     }
     
-    //------------------------------------------------------------------------//
-    
-    // Mouse Listener is needed to show the popup. 
-    // See: http://www.jguru.com/forums/view.jsp?EID=1239349
-    public void mouseClicked( MouseEvent me )
+    public void paintComponent( Graphics g )
     {
-    }
-
-    public void mousePressed(MouseEvent e)
-    {
-    }
-
-    public void mouseReleased(MouseEvent e)
-    {
-    }
-
-    public void mouseEntered(MouseEvent e)
-    {
-    }
-
-    public void mouseExited(MouseEvent e)
-    {
-    }
-    
-    //------------------------------------------------------------------------//
-    
-    protected DeskComponent getAboutPanel()
-    {
-        // FIXME: Decidir qué hacer con esto
-        return null;
-    }
-    
-    protected DeskComponent getPreferencesPanel()
-    {
-        // FIXME: Decidir qué hacer con esto
-        return null;
-    }
-    
-    protected void onPreferencesChanged( DeskComponent prefs )
-    {
-        // FIXME: Decidir qué hacer con esto
+        super.paintComponent( g );
+        handle.paintComponent( g );
     }
         
     //------------------------------------------------------------------------//
+    // DeskContainer interface
     
-    private void onPreferences()
+    // Note: A TaskBarComponent is also a DeskComponent nad a DeskContainer also
+    public void add( DeskComponent comp )
     {
-        DeskComponent prefs = getPreferencesPanel();
-        
-        if( prefs != null )
-            org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( new TheFrame( (Component) prefs ) );
+        super.add( (Component) comp );
     }
     
-    private void onAbout()
+    public void remove( DeskComponent comp )
     {
-        DeskComponent about = getAboutPanel();
-        
-        if( about == null )
-        {
-            JPanel pnl = new JPanel();
-                   pnl.add( new JLabel( "There is no information about this component." ) );
-            about = (DeskComponent) pnl;
-        }
-        
-        // Better to use a Frame than a Dialog (modaless: this is the way Gnome does it)
-        DeskFrame frame = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().createFrame();
-                  frame.setTitle( "About" );
-                  frame.add( about );
-                  
-        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
-    }
-    
-    private void onRemove()
-    {   // TODO: Hacerlo
-        throw new UnsupportedOperationException( "Operation not supported yet." );
-    }
-    
-    private void onMove()
-    {   // TODO: Hacerlo
-        throw new UnsupportedOperationException( "Operation not supported yet." );
-    }
-    
-    private void onLock()
-    {
-        bLocked = ! bLocked;
+        super.remove( (Component) comp );
     }
     
     //------------------------------------------------------------------------//
-    // INNER CLASS: Popup Menu
-    //------------------------------------------------------------------------//
-    private final class CommonPopupMenu extends JPopupMenu implements ActionListener
-    { 
-        private CommonPopupMenu()
-        {   
-            itemPreferences = new JMenuItem( "Preferences" );
-            itemPreferences.addActionListener( this );
-            itemPreferences.setIcon( PDEUtilities.getStandardIcon( ImagesFactory.Icon.PROPERTIES, 16, 16 ) );
-            add( itemPreferences );
-            
-            itemAbout = new JMenuItem( "About" );
-            itemAbout.addActionListener( this );
-            itemAbout.setIcon( PDEUtilities.getStandardIcon( ImagesFactory.Icon.INFO, 16, 16 ) );
-            add( itemAbout );
-            
-            addSeparator();
-            
-            itemRemove = new JMenuItem( "Remove" );
-            itemRemove.addActionListener( this );
-            itemRemove.setIcon( PDEUtilities.getStandardIcon( ImagesFactory.Icon.REMOVE, 16, 16 ) );
-            add( itemRemove );
-            
-            itemMove = new JMenuItem( "Move" );
-            itemMove.addActionListener( this );
-            itemMove.setIcon( PDEUtilities.getStandardIcon( ImagesFactory.Icon.MOVE, 16, 16 ) );
-            itemMove.setEnabled( ! isLocked() );
-            add( itemMove );
-            
-            itemLock = new JMenuItem( "Lock" );
-            itemLock.addActionListener( this );
-            itemLock.setIcon( PDEUtilities.getStandardIcon( ImagesFactory.Icon.LOCK, 16, 16 ) );
-            add( itemLock );
-        }
-        
-        public void actionPerformed( ActionEvent ae )
-        {
-            JMenuItem source = (JMenuItem) ae.getSource();
-            
-            if(      source == itemPreferences )  onPreferences();
-            else if( source == itemAbout       )  onAbout();
-            else if( source == itemRemove      )  onRemove();
-            else if( source == itemMove        )  onMove();
-            else if( source == itemLock        )  onLock();
-        }
+    // TaskBarComponent interface
+    
+    public void onAbout()
+    {
+        // TODO: Hacerlo
+    }
+    
+    public void onRemove()
+    {
+        // TODO: Hacerlo
+    }
+    
+    public void onMove()
+    {
+        // TODO: Hacerlo
+    }
+    
+    public void onPreferences()
+    {
+        // TODO: Hacerlo
     }
     
     //------------------------------------------------------------------------//
-    // INNER CLASS: Default empty frame with [Accept] and [Cancel] buttons
-    //------------------------------------------------------------------------//
+    // Closeable interface
     
-    private final class TheFrame extends PDEFrame
-    {
-        private JButton   btnAccept;
-        private JButton   btnCancel;
-        private Component contents;
-        
-        TheFrame( Component pnl )
-        {
-            contents  = pnl;
-            btnAccept = new JButton( "Accept" );
-            btnCancel = new JButton( "Cancel" );
-
-            btnAccept.addActionListener( new ActionListener()
-            {
-                public void actionPerformed( ActionEvent ae )
-                {
-                    dispose();
-                    onPreferencesChanged( (DeskComponent) TheFrame.this.contents );
-                }
-            } );
-        
-            btnCancel.addActionListener( new ActionListener() 
-            {
-                public void actionPerformed( ActionEvent ae )
-                {
-                    dispose();
-                }
-            } );
-            
-            javax.swing.GroupLayout layout = new javax.swing.GroupLayout( getContentPane() );
-            getContentPane().setLayout(layout);
-            layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(contents, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(btnAccept)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(btnCancel)))
-                    .addContainerGap())
-            );
-            layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(contents, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGap(18, 18, 18)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnAccept)
-                        .addComponent(btnCancel))
-                    .addContainerGap())
-            );
-        }
-    }
-
-    public void add( DeskComponent dc )
-    {
-        add( (Component) dc );
-    }
-
-    public void remove( DeskComponent dc )
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
     public void close()
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        
     }
+    
+    // Just to avoid accidental use of them  ---------------------------------------------------------
+    public Component add( Component c )             { throw new IllegalAccessError(DONT_USE_ME); }
+    public Component add( Component c, int n )      { throw new IllegalAccessError(DONT_USE_ME); }
+    public Component add( String s, Component c )   { throw new IllegalAccessError(DONT_USE_ME); }
+    public void add( Component c, Object o )        { throw new IllegalAccessError(DONT_USE_ME); }
+    public void add( Component c, Object o, int n ) { throw new IllegalAccessError(DONT_USE_ME); }
+    public void remove( Component c )               { throw new IllegalAccessError(DONT_USE_ME); }
+    //------------------------------------------------------------------------------------------------
 }

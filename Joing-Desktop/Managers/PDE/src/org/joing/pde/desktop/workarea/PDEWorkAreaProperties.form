@@ -23,16 +23,16 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Group type="102" alignment="0" attributes="1">
                       <Component id="lblName" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="txtName" pref="304" max="32767" attributes="0"/>
+                      <Component id="txtName" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="pnlImage" alignment="1" max="32767" attributes="1"/>
-                  <Component id="pnlColor" alignment="0" max="32767" attributes="0"/>
+                  <Component id="pnlImage" alignment="0" max="32767" attributes="1"/>
+                  <Component id="pnlColor" alignment="0" pref="346" max="32767" attributes="1"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -48,7 +48,7 @@
               <Component id="pnlImage" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="pnlColor" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -73,19 +73,19 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="176" max="32767" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" pref="132" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="radImageMosaic" min="-2" max="-2" attributes="0"/>
                       <Component id="radImageStretch" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="radImageCenter" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="96" max="-2" attributes="0"/>
+                  <EmptySpace pref="131" max="32767" attributes="0"/>
               </Group>
               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnImage" min="-2" pref="134" max="-2" attributes="0"/>
+                      <Component id="btnImage" min="-2" pref="95" max="-2" attributes="0"/>
                       <EmptySpace pref="185" max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -153,10 +153,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <Component id="pnlGradientChooser" max="32767" attributes="1"/>
-                  <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
-              </Group>
+              <Component id="pnlGradientChooser" max="32767" attributes="1"/>
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="lblColorFrom" min="-2" max="-2" attributes="0"/>
@@ -168,7 +165,7 @@
                   <Component id="btnColorTo" linkSize="3" min="-2" pref="66" max="-2" attributes="0"/>
                   <EmptySpace min="18" pref="18" max="-2" attributes="0"/>
                   <Component id="chkColorGradient" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="18" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -241,7 +238,7 @@
                       <Component id="radGradientTopRightToBottomLeft" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                       <Component id="lblGradientTopRightToBottomLeft" min="-2" pref="40" max="-2" attributes="0"/>
-                      <EmptySpace pref="20" max="32767" attributes="0"/>
+                      <EmptySpace pref="23" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

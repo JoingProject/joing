@@ -11,6 +11,7 @@ package org.joing.pde.desktop.taskbar.clock;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -18,10 +19,9 @@ import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.Timer;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -29,12 +29,17 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.common.desktopAPI.pane.DeskFrame;
+import org.joing.pde.PDEUtilities;
+import org.joing.pde.desktop.container.PDEFrame;
+import org.joing.pde.desktop.taskbar.PDETaskBarComponent;
+import org.joing.pde.swing.PDEAboutPanel;
 
 /**
  *
  * @author Francisco Morero Peyrona
  */
-public class ClockDigital extends JPanel implements DeskComponent
+public class ClockDigital extends PDETaskBarComponent
 {
     private final static float nFONT_SIZE = 10f;
     
@@ -72,7 +77,6 @@ public class ClockDigital extends JPanel implements DeskComponent
         setInheritsPopupMenu( true );
         
         changeFormat( true, true, true );
-        createPopup();
         
         timer = new Timer( 1000, new ActionListener()
         {
@@ -104,20 +108,90 @@ public class ClockDigital extends JPanel implements DeskComponent
     }
     
     //------------------------------------------------------------------------//
+    // PDETaskBarPanel interface
     
-    protected JPanel getAboutPanel()
+    public void onAbout()
     {
-        return null;   // TODO: hacerlo
+        PDEAboutPanel panel = new PDEAboutPanel();
+                      panel.setProductName( "Digital Clock" );
+                      panel.setVersion( "1.0" );
+                      panel.setDescription( "A very simple and configurable digital clock with date.\nThis is the default PDE clock.");
+                      
+        // Better to use a Frame than a Dialog (modaless: this is the way Gnome does it)
+        DeskFrame frame = PDEUtilities.getDesktopManager().getRuntime().createFrame();
+                  frame.setTitle( "About" );
+                  frame.add( (DeskComponent) panel );
+                  
+        PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
     }
 
-    protected JPanel getPreferencesPanel()
+    public void onPreferences()
     {
-        return null;
+        JCheckBox chkDate = new JCheckBox( "Show date"           );
+        JCheckBox chkSecs = new JCheckBox( "Show seconds"        );
+        JCheckBox chk24Hr = new JCheckBox( "Use 24 hours format" );
+        
+        chkDate.setSelected( bShowDate );
+        chkDate.addActionListener( new ActionListener()
+        {
+            public void actionPerformed( ActionEvent ae )
+            {
+                boolean bShowDate = ((JCheckBox) ae.getSource()).isSelected();
+                ClockDigital.this.changeFormat( bShowDate, ClockDigital.this.bShowSecs, ClockDigital.this.b24Format );
+            }
+        } );
+        
+        chkSecs.setSelected( this.bShowSecs );
+        chkSecs.addActionListener( new ActionListener()
+        {
+            public void actionPerformed( ActionEvent ae )
+            {
+                boolean bShowSecs = ((JCheckBox) ae.getSource()).isSelected();
+                ClockDigital.this.changeFormat( ClockDigital.this.bShowDate, bShowSecs, ClockDigital.this.b24Format );
+            }
+        } );
+        
+        chk24Hr.setSelected( this.b24Format );
+        chk24Hr.addActionListener( new ActionListener()
+        {
+            public void actionPerformed( ActionEvent ae )
+            {
+                boolean b24Format = ((JCheckBox) ae.getSource()).isSelected();
+                ClockDigital.this.changeFormat( ClockDigital.this.bShowDate, ClockDigital.this.bShowSecs, b24Format );
+            }
+        } );
+        
+        JPanel panel = new JPanel( new GridLayout( 3,1 ) );
+               panel.setBorder( new EmptyBorder( 9,9,9,9 ) );
+               panel.add( chkDate );
+               panel.add( chkSecs );
+               panel.add( chk24Hr );
+               
+        PDEFrame frame = new PDEFrame();
+                 frame.setTitle( "Clock Preferences" );
+                 frame.add( panel );
+        
+        PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
     }
-
-    protected void onPreferencesChanged( JPanel pnlPrefs )
+    
+    public void onRemove()
     {
-        // As this component has no preferences panel, there is nothing to do.
+        PDEUtilities.getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
+        // TODO: Hacerlo
+    }
+    
+    public void onMove()
+    {
+        PDEUtilities.getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
+        // TODO: Hacerlo: muy posiblmenete esto no será un método sino algo más complicado. 
+    }
+    
+    //------------------------------------------------------------------------//
+    // Closeable interface
+    
+    public void close()
+    {
+        // TODO: hacerlo
     }
     
     //------------------------------------------------------------------------//
@@ -149,47 +223,5 @@ public class ClockDigital extends JPanel implements DeskComponent
         
         setMaximumSize( getPreferredSize() );
         validate();
-    }
-    
-    private void createPopup()
-    {
-        JCheckBoxMenuItem itemDate = new JCheckBoxMenuItem( "Show date" );
-        JCheckBoxMenuItem itemSecs = new JCheckBoxMenuItem( "Show seconds" );
-        JCheckBoxMenuItem item24Hr = new JCheckBoxMenuItem( "24 hours" );
-        
-        itemDate.setState( this.bShowDate );
-        itemDate.addActionListener( new ActionListener()
-        {
-            public void actionPerformed( ActionEvent ae )
-            {
-                boolean bShowDate = ((JCheckBoxMenuItem) ae.getSource()).getState();
-                ClockDigital.this.changeFormat( bShowDate, ClockDigital.this.bShowSecs, ClockDigital.this.b24Format );
-            }
-        } );
-
-        itemSecs.setState( this.bShowSecs );
-        itemSecs.addActionListener( new ActionListener()
-        {
-            public void actionPerformed( ActionEvent ae )
-            {
-                boolean bShowSecs = ((JCheckBoxMenuItem) ae.getSource()).getState();
-                ClockDigital.this.changeFormat( ClockDigital.this.bShowDate, bShowSecs, ClockDigital.this.b24Format );
-            }
-        } );
-        
-        item24Hr.setState( this.b24Format );
-        item24Hr.addActionListener( new ActionListener()
-        {
-            public void actionPerformed( ActionEvent ae )
-            {
-                boolean b24Format = ((JCheckBoxMenuItem) ae.getSource()).getState();
-                ClockDigital.this.changeFormat( ClockDigital.this.bShowDate, ClockDigital.this.bShowSecs, b24Format );
-            }
-        } );
-        
-        JPopupMenu popup = new JPopupMenu();
-                   popup.add( itemDate );
-                   popup.add( itemSecs );
-                   popup.add( item24Hr );
     }
 }

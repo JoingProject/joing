@@ -12,6 +12,7 @@ import java.beans.PropertyVetoException;
 import javax.swing.ImageIcon;
 import javax.swing.JInternalFrame;
 import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.pane.DeskWindow;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.PDEUtilities;
@@ -26,6 +27,9 @@ public class PDEWindow extends JInternalFrame implements DeskWindow
                       boolean bMaximizable, boolean bMinimizable )
     {
         super( sTitle, bResizable, bClosable, bMaximizable, bMinimizable );
+        
+        // As this class is for PDE internal use only, the icon will always be PDE
+        setIcon( PDEUtilities.getDesktopManager().getRuntime().getImage( StandardImage.DESKTOP ) );
     }
     
     //------------------------------------------------------------------------//

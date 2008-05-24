@@ -29,15 +29,17 @@ import org.joing.common.desktopAPI.taskbar.TaskBar;
 import org.joing.common.desktopAPI.workarea.Wallpaper;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.common.desktopAPI.workarea.WorkAreaListener;
+import org.joing.pde.PDEUtilities;
 import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.taskbar.PDETaskBarPanel;
 
 /**
- * A component that shows all opened frames: Frame, JFrame, JDesktopFrame
+ * A component that shows all opened frames: Frame, JFrame, JDesktopFrame in all
+ * work areas: there is only one FrameList for all WorkAreas.
  * 
  * @author Francisco Morero Peyrona
  */
-public class FramesList extends PDETaskBarPanel
+public class FrameList extends PDETaskBarPanel
 {
     private GridLayout grid;
     
@@ -48,21 +50,53 @@ public class FramesList extends PDETaskBarPanel
     
     //------------------------------------------------------------------------//
     
-    public FramesList()
+    public FrameList()
     {
         grid = new GridLayout( 1, 0, 2, 0 );
-        ///((JPanel) getContent()).setLayout( grid );
+        // NEXT: hay que buscar un buen layout
+        setLayout( grid );
         
         tdl  = new TheDesktopListener();
         twal = new TheWorkAreaListener();
         twl  = new TheWindowListener();
         tifl = new TheIntenalFrameListener();
         
-        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().addDesktopListener( tdl );
+        PDEUtilities.getDesktopManager().getDesktop().addDesktopListener( tdl );
         
-        setMinimumSize( new Dimension( 80,22 ) );
+        setMinimumSize( new Dimension( 120,22 ) );
         setMaximumSize( new Dimension( Integer.MAX_VALUE, Integer.MAX_VALUE ) );
         setPreferredSize( new Dimension( 480,24 ) );
+    }
+    
+    //------------------------------------------------------------------------//
+    // TaskBarPanel interface
+    
+    public void onPreferences()
+    {
+        // TODO: Hacerlo
+    }
+
+    public void onAbout()
+    {
+        // TODO: Hacerlo
+    }
+
+    public void onRemove()
+    {
+        // TODO: Hacerlo
+    }
+
+    public void onMove()
+    {
+        // TODO: Hacerlo
+    }
+    
+    //------------------------------------------------------------------------//
+    // Closeable interface
+    
+    public void close()
+    {
+        // TODO: hacerlo
     }
     
     //------------------------------------------------------------------------//
@@ -70,16 +104,16 @@ public class FramesList extends PDETaskBarPanel
     private void add( Frame frame )
     {
         frame.addWindowListener( twl );
-        _add( frame, new FrameButton( frame ) );
+        _add( new FrameButton( frame ) );
     }
     
     private void add( PDEFrame iframe )
     {
         iframe.addInternalFrameListener( tifl );        
-        _add( iframe, new FrameButton( iframe ) );
+        _add( new FrameButton( iframe ) );
     }
     
-    private void _add( Container frame, FrameButton fb )
+    private void _add( FrameButton fb )
     {
         fb.addActionListener( new ActionListener()
         {
@@ -90,7 +124,7 @@ public class FramesList extends PDETaskBarPanel
         } );
         
         grid.setColumns( grid.getColumns() + 1 );
-        add( fb );
+        add( (DeskComponent) fb );
         grid.layoutContainer( this );
         updateSelected();
     }
@@ -108,7 +142,7 @@ public class FramesList extends PDETaskBarPanel
                 
                 if( frame == fb.getFrame() )
                 {
-                    super.remove( fb );       // Removes the button from the panel
+                    remove( (DeskComponent) fb );       // Removes the button from the panel
                     grid.setColumns( grid.getColumns() - 1 );
                     grid.layoutContainer( this );
                     updateSelected();
@@ -116,6 +150,9 @@ public class FramesList extends PDETaskBarPanel
                 }
             }
         }
+        
+        if( getComponentCount() == 0 )
+            repaint();    // This is needed, otherwise last button is not erased
     }
     
     public void onButtonClicked( ActionEvent ae )
@@ -123,38 +160,69 @@ public class FramesList extends PDETaskBarPanel
         FrameButton btn = (FrameButton) ae.getSource();
         Container   frm = btn.getFrame();
         
-        if( frm instanceof PDEFrame )
+        if( (WorkArea) frm.getParent() != PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea() )
         {
-            PDEFrame iframe = (PDEFrame) frm;
+            // If the frame was in a different workarea, then change active work area
+            PDEUtilities.getDesktopManager().getDesktop().setActiveWorkArea( (WorkArea) frm.getParent() );
             
-            if(      iframe.isSelected() )  iframe.setStatus( DeskFrame.Status.MINIMIZED );
-            else if( iframe.isIcon()     )  iframe.setStatus( DeskFrame.Status.RESTORED  );
-            else                            iframe.setSelected( true );
+            // And if it was minimized, then restore; but if it was restored don't minimize. Always make selected
+            if( frm instanceof PDEFrame )
+            {
+                PDEFrame iframe = (PDEFrame) frm;
+
+                if( iframe.isIcon() )  iframe.setStatus( DeskFrame.Status.RESTORED  );
+                else                   iframe.setSelected( true );
+            }
+            else
+            {
+                Frame frame = (Frame) frm;
+
+                if( frame.getExtendedState() == Frame.ICONIFIED )
+                {
+                    frame.setExtendedState( frame.getExtendedState() | Frame.NORMAL );
+                }
+                else   // Make it the active (selected) frame
+                {
+                    frame.setVisible( false );
+                    frame.setVisible( true );
+                }
+            }
         }
         else
         {
-            Frame frame = (Frame) frm;
-            
-            if( frame.isActive() )
+            if( frm instanceof PDEFrame )
             {
-                frame.setExtendedState( frame.getExtendedState() | Frame.ICONIFIED );
+                PDEFrame iframe = (PDEFrame) frm;
+
+                if(      iframe.isSelected() )  iframe.setStatus( DeskFrame.Status.MINIMIZED );
+                else if( iframe.isIcon()     )  iframe.setStatus( DeskFrame.Status.RESTORED  );
+                else                            iframe.setSelected( true );
             }
-            else if( frame.getExtendedState() == Frame.ICONIFIED )
+            else
             {
-                frame.setExtendedState( frame.getExtendedState() | Frame.NORMAL );
-            }
-            else   // Make it the active (selected) frame
-            {
-                frame.setVisible( false );
-                frame.setVisible( true );
+                Frame frame = (Frame) frm;
+
+                if( frame.isActive() )
+                {
+                    frame.setExtendedState( frame.getExtendedState() | Frame.ICONIFIED );
+                }
+                else if( frame.getExtendedState() == Frame.ICONIFIED )
+                {
+                    frame.setExtendedState( frame.getExtendedState() | Frame.NORMAL );
+                }
+                else   // Make it the active (selected) frame
+                {
+                    frame.setVisible( false );
+                    frame.setVisible( true );
+                }
             }
         }
     }
     
     private void updateSelected()
     {
-        WorkArea    waActive = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
-        Component[] aComp    = getComponents();///pnlButtons.getComponents();
+        WorkArea    waActive = PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea();
+        Component[] aComp    = getComponents();
         
         for( int n = 0; n < aComp.length; n++ )
         {
@@ -168,6 +236,10 @@ public class FramesList extends PDETaskBarPanel
                     boolean b = (frame instanceof Frame) ? ((Frame) frame).isActive()
                                                          : ((JInternalFrame) frame).isSelected();
                     frmbtn.setSelected( b );
+                }
+                else
+                {
+                    frmbtn.setSelected( false );
                 }
             }
         }
@@ -187,7 +259,7 @@ public class FramesList extends PDETaskBarPanel
         }
         public void workAreaAdded( WorkArea wa )
         {
-            wa.addWorkAreaListener( FramesList.this.twal );
+            wa.addWorkAreaListener( FrameList.this.twal );
         }
         public void workAreaRemoved( WorkArea wa )
         {
@@ -209,8 +281,8 @@ public class FramesList extends PDETaskBarPanel
     {
         public void componentAdded( DeskComponent comp )
         {
-                 if( comp instanceof PDEFrame ) FramesList.this.add( (PDEFrame) comp );
-            else if( comp instanceof Frame    ) FramesList.this.add( (Frame)    comp ); // Used for Frame and JFrame
+                 if( comp instanceof PDEFrame ) FrameList.this.add( (PDEFrame) comp );
+            else if( comp instanceof Frame    ) FrameList.this.add( (Frame)    comp ); // Used for Frame and JFrame
         }
 
         public void componentRemoved( DeskComponent comp )

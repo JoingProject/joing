@@ -8,6 +8,7 @@
  */
 
 package org.joing.pde.desktop.workarea;
+
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,11 +17,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.PDEUtilities;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncherPropertiesPanel;
-import org.joing.pde.misce.images.ImagesFactory;
+import org.joing.pde.swing.FrameAcceptCancel;
 
 /**
  * 
@@ -38,15 +40,15 @@ class PDEWorkAreaPopupMenu extends JPopupMenu implements ActionListener
         this.waParent = waParent;
         this.ptWhere  = ptWhere;
         
-        add( createMenuItem( "Create folder"  , "folder"    , "NEW_FOLDER"   ) );
-        add( createMenuItem( "Create launcher", "launcher"  , "NEW_LACUNHER" ) );
+        add( createMenuItem( "Create folder"  , StandardImage.FOLDER    , "NEW_FOLDER"   ) );
+        add( createMenuItem( "Create launcher", StandardImage.LAUNCHER  , "NEW_LACUNHER" ) );
         addSeparator();
-        add( createMenuItem( "Align to grid"  , "grid"      , "TOGGLE_ALIGN" ) );
+        add( createMenuItem( "Align to grid"  , null                    , "TOGGLE_ALIGN" ) );
         addSeparator();
-        add( createMenuItem( "Properties"     , "properties", "PROPERTIES"   ) );
+        add( createMenuItem( "Preferences"    , StandardImage.PROPERTIES, "PROPERTIES"   ) );
         
-        List<WorkArea> lstWorkAreas = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getWorkAreas();
-        WorkArea       waActive     = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
+        List<WorkArea> lstWorkAreas = PDEUtilities.getDesktopManager().getDesktop().getWorkAreas();
+        WorkArea       waActive     = PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea();
         
         if( lstWorkAreas.size() > 1 )
         {
@@ -67,23 +69,20 @@ class PDEWorkAreaPopupMenu extends JPopupMenu implements ActionListener
         }
     }
 
-    private JMenuItem createMenuItem( String sText, String sIconName, String sCommand )
+    private JMenuItem createMenuItem( String sText, StandardImage image, String sCommand )
     {
         JMenuItem item = new JMenuItem( sText );
                   item.setActionCommand( sCommand );
                   item.addActionListener( this );
       
-        if( sIconName != null )
-        {
-            ImageIcon icon = null;
-
-            if( sIconName.equals( "grid" ) )
-                icon = PDEUtilities.getIcon( this, "images/"+ sIconName, 16, 16 );
-            else
-                icon = PDEUtilities.getStandardIcon( ImagesFactory.getIcon( sIconName ), 16, 16 );
-
-            item.setIcon( icon );
-        }
+        ImageIcon icon = null;
+        
+        if( image != null )
+            icon = new ImageIcon( PDEUtilities.getDesktopManager().getRuntime().getImage( image, 16, 16 ) );
+        else
+            icon = PDEUtilities.getIcon( this, "images/grid", 16, 16 );
+                  
+        item.setIcon( icon );
         
         return item;
     }
@@ -103,7 +102,7 @@ class PDEWorkAreaPopupMenu extends JPopupMenu implements ActionListener
     private void switchToWorkArea( JMenuItem item )
     {
         WorkArea waTarget = (WorkArea) item.getClientProperty( "WORK_AREA" );
-        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().setActiveWorkArea( waTarget ); 
+        PDEUtilities.getDesktopManager().getDesktop().setActiveWorkArea( waTarget ); 
     }
     
     private void createLauncher( boolean bDir )
@@ -112,26 +111,32 @@ class PDEWorkAreaPopupMenu extends JPopupMenu implements ActionListener
         
         if( PDEUtilities.showBasicDialog( "Create new Launcher", panel ) )
         {
-            PDEDeskLauncher launcher = panel.retrieveLauncher();
+            PDEDeskLauncher launcher = panel.createLauncher();
                             launcher.setLocation( ptWhere );
                             
-            org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( launcher );
+            PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea().add( launcher );
         }
     }
     
     private void toggleAlign()
     {
         // TODO: hacerlo
-        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
+        PDEUtilities.getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
     }
     
     private void editProperties()
     {
-        PDEWorkAreaProperties panel = new PDEWorkAreaProperties( waParent );
-        
-        if( PDEUtilities.showBasicDialog( "WorkArea Preferences", panel ) )
+        FrameAcceptCancel frame = new FrameAcceptCancel( "WorkArea Preferences", 
+                                                         new PDEWorkAreaProperties( waParent ) )
         {
-            // TODO: Actualizarlo y salvarlo a fichero
-        }
+            public void onAccept()
+            {
+                PDEUtilities.getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
+                // TODO: Actualizarlo
+                super.onAccept();
+            }
+        };
+        
+        PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
     }
 }

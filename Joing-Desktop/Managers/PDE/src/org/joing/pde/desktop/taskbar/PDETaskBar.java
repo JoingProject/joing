@@ -11,6 +11,7 @@
 package org.joing.pde.desktop.taskbar;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -18,18 +19,19 @@ import javax.swing.border.EtchedBorder;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DeskContainer;
 import org.joing.common.desktopAPI.taskbar.TaskBarListener;
-import org.joing.common.desktopAPI.taskbar.TaskBarPanel;
+import org.joing.common.desktopAPI.taskbar.TaskBarComponent;
 import org.joing.pde.desktop.taskbar.clock.ClockDigital;
-import org.joing.pde.desktop.taskbar.frameslist.FramesList;
+import org.joing.pde.desktop.taskbar.frameslist.FrameList;
 import org.joing.pde.desktop.taskbar.start.StartButton;
 import org.joing.pde.desktop.taskbar.systray.SysTray;
-import org.joing.pde.ColorSchema;
+import org.joing.pde.media.PDEColorSchema;
 import org.joing.common.desktopAPI.taskbar.TaskBar;
+import org.joing.common.desktopAPI.taskbar.TaskBarPanel;
 import org.joing.pde.desktop.taskbar.waSwitcher.WorkAreaSwitcher;
 import org.joing.pde.swing.EventListenerList;
 
 /**
- * TaskBar can hold JComponents or instances of TaskBarPanel
+ * TaskBar can hold JComponents or instances of TaskBarComponent
  * 
  * @author Francisco Morero Peyrona
  */
@@ -53,19 +55,23 @@ public class PDETaskBar extends JPanel implements TaskBar
                 
         setOpaque( true );
         setLayout( new BoxLayout( this, BoxLayout.X_AXIS ) );
-        setBackground( ColorSchema.getInstance().getTaskBarBackground() );
+        setBackground( PDEColorSchema.getInstance().getTaskBarBackground() );
         setBorder( new EtchedBorder( EtchedBorder.LOWERED ) );
         setComponentPopupMenu( createPopupMenu() );
+        
+        setMinimumSize( new Dimension( 180, 14 ) );
+        setMaximumSize( new Dimension( Integer.MAX_VALUE, 76 ) );
+        setPreferredSize( new Dimension( Integer.MAX_VALUE, 36 ) );
     }
     
     public void createDefaultComponents()
-    {                
-        add( (DeskComponent) new StartButton() );
-        add( (DeskComponent) new FramesList() );
-        add( (DeskComponent) new WorkAreaSwitcher() );
-        ///add( Box.createHorizontalGlue() );
-        add( (DeskComponent) new SysTray() );
-        getSysTray().add( (DeskComponent) new ClockDigital() );
+    {   
+        add( (TaskBarComponent) new StartButton() );
+        add( (TaskBarPanel)     new FrameList() );
+        add( (TaskBarComponent) new WorkAreaSwitcher() );
+        add( (TaskBarPanel)     new SysTray() );
+        
+        getSysTray().add( (TaskBarComponent) new ClockDigital() );
     }
     
     /**
@@ -106,16 +112,16 @@ public class PDETaskBar extends JPanel implements TaskBar
         add( tbp );   // TODO: mejorarlo
     }
 
-    public void add( DeskComponent tbo )
+    public void add( TaskBarComponent tbo )
     {
         super.add( (Component) tbo );
         validate();
         fireComponentAdded( tbo );
     }
 
-    public void add( DeskComponent tbo, int x, int y )
+    public void add( TaskBarComponent tbo, int x, int y )
     {
-        add( tbo );   // TODO: mejorarlo
+        add( tbo );   // TODO: mejorarlo con la x,y
     }
 
     public void remove( TaskBarPanel tbp )
@@ -125,7 +131,7 @@ public class PDETaskBar extends JPanel implements TaskBar
         fireComponentRemoved( tbp );
     }
     
-    public void remove( DeskComponent dc )
+    public void remove( TaskBarComponent dc )
     {
         super.remove( (Component) dc );
         validate();

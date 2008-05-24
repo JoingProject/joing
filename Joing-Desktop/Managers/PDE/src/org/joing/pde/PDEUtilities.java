@@ -27,12 +27,13 @@ import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.common.desktopAPI.DesktopManager;
+import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.exception.JoingServerVFSException;
 import org.joing.pde.desktop.container.PDEDialog;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
-import org.joing.pde.misce.images.ImagesFactory;
 
 /**
  * Extra functions used internally by PDE.
@@ -113,7 +114,7 @@ public class PDEUtilities
      * Return an icon which location is relative to passed class.
      * 
      * @param invoker The class to be used as base to find the files. If null,
-     *                <code>ImagesFactory</code> will be used (common images).
+     *                <code>PDEImagesFactory</code> will be used (common images).
      * @param sName   Name of file with its extension.
      * @return        The icon or an standard one if teh requested was not found
      */
@@ -137,10 +138,7 @@ public class PDEUtilities
         }
         
         if( icon == null )
-        {
-            url  = ImagesFactory.class.getResource( "no_image" );
-            icon = new ImageIcon( url );
-        }
+            icon = new ImageIcon( getDesktopManager().getRuntime().getImage( StandardImage.NO_IMAGE ) );
         
         return icon;
     }
@@ -150,7 +148,7 @@ public class PDEUtilities
      * passed class.
      * 
      * @param invoker The class to be used as base to find the files. If null,
-     *                <code>ImagesFactory</code> will be used (common images).
+     *                <code>PDEImagesFactory</code> will be used (common images).
      * @param sName   Name of file with its extension.
      * @return        The icon or an standard one if teh requested was not found
      */
@@ -162,35 +160,6 @@ public class PDEUtilities
             icon.setImage( icon.getImage().getScaledInstance( nWidth, nHeight, Image.SCALE_SMOOTH ) );
         
         return icon;
-    }
-    
-    /**
-     * Return an icon from the standard PDE collection.
-     * 
-     * Example of use: 
-     * <code>PDEUtilities.getStandardIcon( ImagesFactory.Icon.FOLDER )</code>
-     * 
-     * @param icon Icon to be retrieved.
-     * @return The ImageIcon instance.
-     */
-    public static ImageIcon getStandardIcon( ImagesFactory.Icon icon )
-    {
-        return getIcon( ImagesFactory.class, icon.getName() );
-    }
-    
-    /**
-     * Return an icon from the standard PDE collection and with desired width
-     * and height.
-     * 
-     * Example of use: 
-     * <code>PDEUtilities.getStandardIcon( ImagesFactory.Icon.FOLDER, 32, 32 )</code>
-     * 
-     * @param icon Icon to be retrieved.
-     * @return The ImageIcon instance.
-     */
-    public static ImageIcon getStandardIcon( ImagesFactory.Icon icon, int nWidth, int nHeight )
-    {
-        return getIcon( ImagesFactory.class, icon.getName(), nWidth, nHeight );
     }
     
     public static void play( URL urlSound )
@@ -220,7 +189,6 @@ public class PDEUtilities
     /**
      * Shows a dialog with buttons [Accept] and [Cancel].
      * 
-     * @param icon Dialog icon, if null, a default one will be used.
      * @param sTitle Dialog title. If null an empty title will be used.
      * @param content Panel to be shown.
      * @return true if dialog was closed via [Accpet] button and false otherwise.
@@ -229,7 +197,28 @@ public class PDEUtilities
     {
         BasicDialog dialog = new BasicDialog( sTitle, content );
         
-        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
+        PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
+        
+        return dialog.bExitWithAccept;
+    }
+    
+    /**
+     * Shows a dialog with buttons [Accept] and [Cancel] and optionally chanes
+     * the text for these buttons.
+     * 
+     * @param sTitle Dialog title. If null an empty title will be used.
+     * @param content Panel to be shown.
+     * @param sAcceptText New text to be shown in Accept button (null will not change)
+     * @param sCancelText New text to be shown in Cancel button (null will not change)
+     * @return true if dialog was closed via [Accpet] button and false otherwise.
+     */
+    public static boolean showBasicDialog( String sTitle, JComponent content, String sAcceptText, String sCancelText )
+    {
+        BasicDialog dialog = new BasicDialog( sTitle, content );
+                    dialog.setAcceptText( sAcceptText );
+                    dialog.setCancelText( sCancelText );
+        
+        PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
         
         return dialog.bExitWithAccept;
     }
@@ -240,7 +229,7 @@ public class PDEUtilities
      * @param exc     Exception to be shown
      * @param bReport <code>true</code> when error should be reported to TelcoDomo
      */
-    public void showException( Throwable exc, String sTitle )
+    public static void showException( Throwable exc, String sTitle )
     {
         exc.printStackTrace();   // TODO: quitarlo en la version final 
                                  //       y hacer una ventana para mostrar exc -->
@@ -250,11 +239,22 @@ public class PDEUtilities
                        dialog.setVisible( true );*/
     }
     
+    /**
+     * A short way for:
+     * <code>PDEUtilities.getDesktopManager()</code>
+     * 
+     * @return The sigleton instance of DesktopManager.
+     */
+    public static DesktopManager getDesktopManager()
+    {
+        return org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+    }
+    
     //------------------------------------------------------------------------//
     
     public static WorkArea findWorkAreaFor( DeskComponent comp )
     {
-        List<WorkArea> lstWA = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getWorkAreas();
+        List<WorkArea> lstWA = PDEUtilities.getDesktopManager().getDesktop().getWorkAreas();
         
         for( WorkArea wa : lstWA )
         {
@@ -276,29 +276,31 @@ public class PDEUtilities
     private static final class BasicDialog extends PDEDialog
     {
         private boolean bExitWithAccept = false;
+        private JButton btnAccept       = new JButton();
+        private JButton btnCancel       = new JButton();
         
         private BasicDialog( String sTitle, JComponent content )
         {
             super();
             
-            JButton btnAccept = new JButton( "Accept" );
-                    btnAccept.addActionListener( new ActionListener()
-                    {
-                        public void actionPerformed( ActionEvent e )
-                        {
-                            BasicDialog.this.bExitWithAccept = true;
-                            BasicDialog.this.close();
-                        }
-                    } );
+            btnAccept.setText( "Accept" );
+            btnAccept.addActionListener( new ActionListener()
+            {
+                public void actionPerformed( ActionEvent e )
+                {
+                    BasicDialog.this.bExitWithAccept = true;
+                    BasicDialog.this.close();
+                }
+            } );
         
-            JButton btnCancel = new JButton( "Cancel" );
-                    btnCancel.addActionListener( new ActionListener()
-                    {
-                        public void actionPerformed( ActionEvent e )
-                        {
-                            BasicDialog.this.close();
-                        }
-                    } );
+            btnCancel.setText( "Cancel" );
+            btnCancel.addActionListener( new ActionListener()
+            {
+                public void actionPerformed( ActionEvent e )
+                {
+                    BasicDialog.this.close();
+                }
+            } );
                     
             JPanel  pnlButtons = new JPanel( new FlowLayout( FlowLayout.TRAILING, 5, 0 ) );
                     pnlButtons.setBorder( new EmptyBorder( 0, 10, 10, 10 ) );
@@ -312,8 +314,18 @@ public class PDEUtilities
             setDefaultCloseOperation( JInternalFrame.DISPOSE_ON_CLOSE );
             getRootPane().setDefaultButton( btnAccept );
             setTitle( (sTitle == null) ? "" : sTitle );
-            // FIXME setFrameIcon( icon );   // As this class is for PDE internal use only, the icon will always be PDE icon (or Join'g icon)
-            //setLocationRelativeTo( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea() );
+        }
+        
+        private void setAcceptText( String sAcceptText )
+        {
+            if( sAcceptText != null )
+                btnAccept.setText( sAcceptText );
+        }
+        
+        private void setCancelText( String sCancelText )
+        {
+            if( sCancelText != null )
+                btnCancel.setText( sCancelText );
         }
     }
 }

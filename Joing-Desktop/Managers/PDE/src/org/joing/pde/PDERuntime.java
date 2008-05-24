@@ -9,11 +9,12 @@ package org.joing.pde;
 
 import java.awt.Component;
 import java.awt.Image;
-import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.common.desktopAPI.StandardSound;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.desktopAPI.pane.DeskCanvas;
 import org.joing.common.desktopAPI.pane.DeskDialog;
@@ -23,7 +24,7 @@ import org.joing.pde.desktop.container.PDECanvas;
 import org.joing.pde.desktop.container.PDEDialog;
 import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
-import org.joing.pde.misce.images.ImagesFactory;
+import org.joing.pde.media.images.CommonImagesUtil;
 
 /**
  * The Runtime class.
@@ -64,27 +65,31 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
     }
     
     //------------------------------------------------------------------------//
-    // Images and icons
+    // Images and sounds
     //------------------------------------------------------------------------//
     
-    public Image getStandardImage( String name )
+    public Image getImage( StandardImage image )
     {
-        URL url = ImagesFactory.class.getResource( name + ".png" );
-        return (new ImageIcon( url )).getImage();
+        String    sFileName = CommonImagesUtil.getFileName4Icon( image );
+        ImageIcon img       = new ImageIcon( CommonImagesUtil.class.getResource( sFileName ) );
+        
+        return img.getImage();
     }
 
-    public Image getStandardImage( String name, int width, int height )
+    public Image getImage( StandardImage image, int width, int height )
     {
-        URL       url   = ImagesFactory.class.getResource( name + ".png" );
-        ImageIcon icon  = new ImageIcon( url );
-        Image     image = null;
-        
-        if( icon.getIconWidth() != width || icon.getIconHeight() != height )
-            image = icon.getImage().getScaledInstance( width, height, Image.SCALE_SMOOTH );
-        else
-            image = icon.getImage();
-        
-        return image;
+        String    sFileName = CommonImagesUtil.getFileName4Icon( image );
+        ImageIcon img       = new ImageIcon( CommonImagesUtil.class.getResource( sFileName ) );
+
+        if( img.getIconWidth() != width || img.getIconHeight() != height )
+            img.setImage( img.getImage().getScaledInstance( width, height, Image.SCALE_SMOOTH ) );
+
+        return img.getImage();
+    }
+    
+    public void play( StandardSound sound )
+    {
+        // FIXME: hacerlo
     }
     
     //------------------------------------------------------------------------//
@@ -93,7 +98,7 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
     
     public void showMessageDialog( String sTitle, String sMessage )
     {
-        WorkArea workArea = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
+        WorkArea workArea = PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea();
         // TODO: Can't use showInternalMessageDialog(...) because bug ID = 6178755
         JOptionPane.showMessageDialog( (Component) workArea, sMessage, sTitle,
                                                JOptionPane.INFORMATION_MESSAGE );
@@ -106,7 +111,7 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
     
     public boolean showYesNoDialog( String sTitle, String sMessage )
     {
-        WorkArea workArea = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
+        WorkArea workArea = PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea();
         // TODO: Can't use showInternalMessageDialog(...) because bug ID = 6178755
         return JOptionPane.showConfirmDialog( 
                                      (Component) workArea, sMessage, sTitle,
