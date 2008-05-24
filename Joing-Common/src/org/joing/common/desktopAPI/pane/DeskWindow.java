@@ -13,7 +13,7 @@ import org.joing.common.desktopAPI.Selectable;
  * 
  * @author Francisco Morero Peyrona
  */
-public interface DeskWindow extends DeskPane, Selectable
+public interface DeskWindow extends DeskCanvas, Selectable
 {
     boolean isResizable();
     void    setResizable( boolean b );

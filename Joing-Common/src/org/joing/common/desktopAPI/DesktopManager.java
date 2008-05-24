@@ -18,7 +18,15 @@ public interface DesktopManager
     void showInFullScreen();
     
     // Called from Platform
+    /**
+     * This method exists to be called from Platform and should <u>never</u> be 
+     * called from the Desktop.
+     */
     void shutdown();
+    /**
+     * This method exists to be called from Platform and should <u>never</u> be 
+     * called from the Desktop.
+     */
     void halt();
     
     // References
@@ -28,4 +36,6 @@ public interface DesktopManager
     // Locking & unlocking
     void lock();
     void unlock();
+    
+    String getVersion();
 }

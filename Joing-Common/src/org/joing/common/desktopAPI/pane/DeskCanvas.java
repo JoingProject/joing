@@ -9,11 +9,16 @@
 
 package org.joing.common.desktopAPI.pane;
 
+import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.common.desktopAPI.DeskContainer;
+
 /**
  * Base interface for Desktop Containers.
  * 
  * @author Francisco Morero Peyrona
  */
-public interface DeskCanvas extends DeskPane
+public interface DeskCanvas extends DeskContainer
 {
+    void center();
+    void setLocationRelativeTo( DeskComponent parent );
 }

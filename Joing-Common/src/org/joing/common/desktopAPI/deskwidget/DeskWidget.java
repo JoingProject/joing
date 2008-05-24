@@ -18,4 +18,9 @@ import org.joing.common.desktopAPI.pane.DeskCanvas;
  */
 public interface DeskWidget extends DeskCanvas
 {
+    String getDescription();
+    void   setDescription( String sDescription );
+    
+    // TODO: añadir aquí los métodos necesarios cuando tenga bien implementados
+    //       los desk widgets (faltan los pijos).
 }

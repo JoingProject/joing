@@ -50,12 +50,12 @@ public interface Desktop extends Closeable
      * 
      * @param sMesaage Message to be shown: if null an standard one will be used.
      * @param icon     Icon to be shown: if null an standard one will be used.
-     * @bAnimation     true to show an animation: again, every implementation 
+     * @bAnimated      true to show an animation: again, every implementation 
      *                 decide what to use, v.g. an indeterminate progress bar or
-     *                 and animated GIF image.
+     *                 an animated GIF image.
      * @return A handle to the message GUI to be closed when the trade is over.
      */
-    int  showNotification( String sMesaage, Image icon, boolean bAnimation );
+    int  showNotification( String sMesaage, Image icon, boolean bAnimated );
     /**
      * Hides a notification previously opended via showNotification(...)
      * 

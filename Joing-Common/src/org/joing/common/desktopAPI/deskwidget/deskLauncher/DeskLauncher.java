@@ -44,9 +44,6 @@ public interface DeskLauncher extends DeskWidget, Selectable
     String getText();
     void   setText( String sText );
     
-    String getDescription();
-    void   setDescription( String sDescription );
-    
     public void launch();
     
     /**
@@ -75,6 +72,6 @@ public interface DeskLauncher extends DeskWidget, Selectable
     public String getArguments();
     public void   setArguments( String s );
     
-    public void addLauncherListener( DeskLauncherListener ll );
-    public void removeLauncherListener( DeskLauncherListener ll );
+    public void addLauncherListener( DeskLauncherListener dll );
+    public void removeLauncherListener( DeskLauncherListener dll );
 }
