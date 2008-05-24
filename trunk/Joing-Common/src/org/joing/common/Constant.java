@@ -14,7 +14,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.logging.Logger;
-import org.joing.common.desktopAPI.DesktopManager;
 
 /**
  * This class defines a set of constants used by other classes.
@@ -26,13 +25,13 @@ import org.joing.common.desktopAPI.DesktopManager;
 public class Constant
 {
     private static String sVersion;
-    private static String sSysName; // System name (decided by Join'g provider)
+    private static String sSysName;   // System name (decided by Join'g provider)
     private static File   fBaseDir;   // Joing base directory
     private static File   fAppDir;    // Dir for all apps for all users
     private static File   fUserDir;   // Dir for all users home dirs
     private static URL    emailServer;
     private static long   nSessionTimeOut;
-
+    
     //-----------------------------
     private static final String sSYSTEM_NAME = "system_name"; // The provider, vg. "joing.sun.com"
     private static final String sBASE_DIR = "base_dir";

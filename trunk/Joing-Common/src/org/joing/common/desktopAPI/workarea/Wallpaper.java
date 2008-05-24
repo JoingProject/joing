@@ -9,6 +9,8 @@
 
 package org.joing.common.desktopAPI.workarea;
 
+import java.awt.Image;
+
 /**
  *
  * @author Mario Serrano Leones
@@ -17,8 +19,8 @@ public interface Wallpaper
 {
     public enum Mode { EXPANDED, CENTER, TILES; }
     
-    String getSource();
-    void   setSource( String sFileName );
-    Mode   getMode();
-    void   setMode( Mode mode );
+    Image getImage();
+    void  setImage( Image image );
+    Mode  getMode();
+    void  setMode( Mode mode );
 }
