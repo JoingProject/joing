@@ -12,6 +12,9 @@ package org.joing.jvmm;
 import java.io.IOException;
 import java.io.OutputStream;
 import org.joing.common.clientAPI.jvmm.JThreadGroup;
+import org.joing.common.clientAPI.log.JoingLogger;
+import org.joing.common.clientAPI.log.Logger;
+import org.joing.common.clientAPI.log.SimpleLoggerFactory;
 
 /**
  * Joing's own ThreadGroup implementation. Based on Chris Oliver's example.
@@ -22,6 +25,7 @@ public class JThreadGroupImpl extends JThreadGroup {
 
     OutputStream out;
     OutputStream err;
+    Logger logger = SimpleLoggerFactory.getLogger(JoingLogger.ID);
 
     public JThreadGroupImpl(OutputStream out, OutputStream err) {
         super();
@@ -29,6 +33,12 @@ public class JThreadGroupImpl extends JThreadGroup {
         this.err = err;
     }
 
+    public JThreadGroupImpl(String name, OutputStream out, OutputStream err) {
+        super(name);
+        this.out = out;
+        this.err = err;
+    }
+    
     public OutputStream getOut() {
         return this.out;
     }
@@ -60,7 +70,7 @@ public class JThreadGroupImpl extends JThreadGroup {
         disposer = null;
 
         if (t != null) {
-            System.out.println("Launching Disposer Thread...");
+            logger.debugJVMM("Launching disposer Thread...");
             t.start();
         }
     }

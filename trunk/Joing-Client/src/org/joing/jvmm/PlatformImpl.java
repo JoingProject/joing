@@ -26,6 +26,8 @@ import java.util.UUID;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import org.joing.Main;
 import org.joing.common.clientAPI.jvmm.App;
 import org.joing.common.desktopAPI.DesktopManager;
@@ -61,6 +63,8 @@ class PlatformImpl implements Platform {
     private String serverBaseUrl = null;
     private boolean autoHandlingExceptions = true;
     private final Logger logger = SimpleLoggerFactory.getLogger(JoingLogger.ID);
+    private boolean sharedAWTContext = false;
+    private boolean halted = false;
 
     public PlatformImpl() {
 
@@ -91,6 +95,9 @@ class PlatformImpl implements Platform {
             this.initialized = false;
         }
 
+        this.sharedAWTContext = 
+                Boolean.valueOf(clientProp.getProperty("sharedAWTContext", "false"));
+        
     }
 
     @Override
@@ -147,6 +154,11 @@ class PlatformImpl implements Platform {
     @Override
     public long getMainThreadId() {
         return mainThread.getId();
+    }
+    
+    // This property is for debugging purposes
+    public final Thread getMainThread() {
+        return this.mainThread;
     }
 
     @Override
@@ -305,7 +317,7 @@ class PlatformImpl implements Platform {
         logger.debugJVMM("ClassLoader: {0}", classLoader);
 
         // Crea un JThreadGroup
-        final JThreadGroup threadGroup = new JThreadGroupImpl(out, err);
+        JThreadGroup threadGroup = new JThreadGroupImpl(out, err);
 
         final BridgeClassLoader finalClassLoader = classLoader;
         final String[] finalArgs =
@@ -321,14 +333,63 @@ class PlatformImpl implements Platform {
         getAppManager().addApp(app);
 
         // Este thread es quien ejecuta la tarea.
-        ExecutionThread executionThread =
+        final ExecutionThread executionThread =
                 new ExecutionThread(getAppManager(), app, executionTask);
-
-        logger.debugJVMM("Starting new ExecutionThread with Id {0}", 
-                executionThread.getId());
         
-        executionThread.start();
+        if (SwingUtilities.isEventDispatchThread()) {
+             SwingWorker worker = new SwingWorker<Void, Void>() {
 
+                @Override
+                protected Void doInBackground() throws InterruptedException {
+                    
+                    if (sharedAWTContext) {
+                        executionTask.run();
+                    } else {
+                        executionThread.start();
+                    }
+                    
+                    return null;
+                }
+            };
+            
+            logger.debugJVMM("Starting new ExecutionThread with Id {0} " +
+                    "and ThreadGroup {1} from a SwingWorker", executionThread.getId(),
+                    executionThread.getThreadGroup().getName());
+            worker.execute();
+            
+        } else {
+            
+            logger.debugJVMM("Starting new Standalone ExecutionThread with Id {0} " +
+                    "and ThreadGroup {1}", executionThread.getId(),
+                    executionThread.getThreadGroup().getName());
+
+            executionThread.start();
+        }
+
+    }
+    
+    
+    /**
+     * Launches a joing app based on the appId.
+     * @param appId
+     * @throws org.joing.common.clientAPI.jvmm.ApplicationExecutionException
+     */
+    @Override
+    public void start(int appId) throws ApplicationExecutionException {
+        
+        AppBridge appBridge = bridge.getAppBridge();
+
+        Application app = appBridge.getApplication(appId);
+
+        // En caso de error, no tengo idea de que lo está casando.
+        if (app == null) {
+            String msg = "Unable to get application from server.";
+            logger.write(Levels.CRITICAL, msg);
+            throw new ApplicationExecutionException(msg);
+        }
+        
+        start(app, new String[] {}, System.out, System.err);
+        
     }
 
     /**
@@ -339,8 +400,7 @@ class PlatformImpl implements Platform {
      * @throws org.joing.common.clientAPI.jvmm.ApplicationExecutionException
      * @deprecated Will be removed anytime soon,
      */
-    @Override
-    public void start(int appId) throws ApplicationExecutionException {
+    public void startFromTmpDir(int appId) throws ApplicationExecutionException {
 
         AppBridge appBridge = bridge.getAppBridge();
 
@@ -442,7 +502,14 @@ class PlatformImpl implements Platform {
      */
     @Override
     public void halt() {
-        Runtime.getRuntime().exit(0); // fix this
+        //Runtime.getRuntime().exit(0); // fix this
+        this.halted = true;
+        this.mainThread.interrupt();
+    }
+    
+    @Override
+    public boolean isHalted() {
+        return this.halted;
     }
 
     /**
@@ -450,7 +517,9 @@ class PlatformImpl implements Platform {
      */
     @Override
     public void shutdown() {
-        getDesktopManager().shutdown();  // Antonio, he añadido esta línea (peyrona)
+        if (getDesktopManager() != null) {
+            getDesktopManager().shutdown();  // Antonio, he añadido esta línea (peyrona)
+        }
         halt(); // fix this.
     }
     

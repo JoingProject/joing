@@ -39,7 +39,8 @@ public class URLFormat {
     public static URL toURL(Application application, String entry)
             throws MalformedURLException {
 
-        StringBuilder sb = new StringBuilder("bridge2server:/!/?appId=");
+        //StringBuilder sb = new StringBuilder("bridge2server:/!/?appId=");
+        StringBuilder sb = new StringBuilder("bridge2server:appId=");
 
         sb.append(application.getId());
         
@@ -49,6 +50,7 @@ public class URLFormat {
 
         return new URL(sb.toString());
     }
+    
     
     public static URL toURL(Application application) 
             throws MalformedURLException {
