@@ -20,11 +20,11 @@ public class ExecutionThread extends Thread {
 
     private AppManager appManager;
     private App application;
-    private ExecutionTask executionTask;
+    private Task executionTask;
     final private Logger logger = SimpleLoggerFactory.getLogger(JoingLogger.ID);
 
     public ExecutionThread(AppManager appManager,
-            App application, ExecutionTask executionTask) {
+            App application, Task executionTask) {
         super(application.getThreadGroup(), "JoingExecutionThread " + 
                 application.getThreadGroup().getName());
         this.appManager = appManager;
@@ -36,7 +36,7 @@ public class ExecutionThread extends Thread {
     public void run() {
 
         // createNewAppContext will grab the current thread group,
-        // me need to supply an aditional thread group for the
+        // we need to supply an aditional thread group for the
         // disposer
         ThreadGroup currentThreadGroup = getThreadGroup();
         ThreadGroup dtg = new ThreadGroup(currentThreadGroup,
@@ -67,13 +67,9 @@ public class ExecutionThread extends Thread {
         }
 
         try {
-            // invokeAndWait necesita un Runnable como parámetro, aunque
-            // en realidad no lo ejecuta como un Thread. El Runnable se
-            // coloca en el EDT (Event Dispatch Thread) y si el objeto
-            // es Runnable, simplemente invoca el metodo run().
+            
             ///SwingUtilities.invokeAndWait(executionTask);
             executionTask.run();
-
 
         } catch (Exception e) {
             appManager.removeApp(application);

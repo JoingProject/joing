@@ -323,8 +323,8 @@ class PlatformImpl implements Platform {
         final String[] finalArgs =
                 (args == null) ? new String[] {} : args;
 
-        final ExecutionTask executionTask =
-                new ExecutionTask(finalClassLoader, finalClassName, finalArgs);
+        final Task executionTask =
+                new Task(finalClassLoader, finalClassName, finalArgs);
 
         // Crea una Nueva aplicacion "nativa"
         final App app =

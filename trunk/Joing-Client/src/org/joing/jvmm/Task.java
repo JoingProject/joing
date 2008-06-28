@@ -11,11 +11,11 @@ import org.joing.common.clientAPI.log.Logger;
 import org.joing.common.clientAPI.log.SimpleLoggerFactory;
 
 /**
- * Execution Task, must be executed by SwingUtilites.invokeAndWait().
+ * Execution Task.
  * 
  * @author Antonio Varela Lizardi <antonio@icon.net.mx>
  */
-public class ExecutionTask implements Runnable {
+public class Task implements Runnable {
 
     private BridgeClassLoader classLoader;
     private String mainClassName;
@@ -23,7 +23,7 @@ public class ExecutionTask implements Runnable {
     
     private Logger logger = SimpleLoggerFactory.getLogger(JoingLogger.ID);
 
-    public ExecutionTask(final BridgeClassLoader classLoader, 
+    public Task(final BridgeClassLoader classLoader, 
             final String mainClassName, final String[] args) {
         this.classLoader = classLoader;
         this.mainClassName = mainClassName;
