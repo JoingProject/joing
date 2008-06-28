@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,14 +24,13 @@ import org.joing.common.clientAPI.runtime.Bridge2Server;
 import org.joing.common.dto.app.Application;
 import org.joing.jvmm.net.BridgeURLConnection;
 import org.joing.jvmm.net.URLFormat;
-import org.joing.runtime.bridge2server.ApplicationCache;
 
 /**
  * Class loader needed to find Classes from the server bridge.
  * 
  * @author Antonio Varela Lizardi <antonio@icon.net.mx>
  */
-public class BridgeClassLoader extends ClassLoader {
+public class BridgeClassLoader extends URLClassLoader {
 
     private static final int BLOCKSIZE = 8192;
     
@@ -39,15 +39,18 @@ public class BridgeClassLoader extends ClassLoader {
     private final Logger logger = SimpleLoggerFactory.getLogger(JoingLogger.ID);
 
     private URL[] classPath;
+    private final List<URL> bridgeClassPath = new ArrayList<URL>();
 
     public BridgeClassLoader(Bridge2Server bridge, URL[] classPath) {
+        super(classPath);
         this.bridge = bridge;
         this.classPath = classPath;
     }
 
+    
     public BridgeClassLoader(Bridge2Server bridge, URL[] classPath,
             ClassLoader parent) {
-        super(parent);
+        super(classPath, parent);
         this.bridge = bridge;
         this.classPath = classPath;
     }
@@ -87,7 +90,7 @@ public class BridgeClassLoader extends ClassLoader {
     }
 
     @Override
-    protected URL findResource(String name) {
+    public URL findResource(String name) {
 
         // Parent delegation
         URL tmpUrl = super.findResource(name);
@@ -150,7 +153,7 @@ public class BridgeClassLoader extends ClassLoader {
 
     // TODO: Terminar de implementar este metodo.
     @Override
-    protected Enumeration<URL> findResources(String name) throws IOException {
+    public Enumeration<URL> findResources(String name) throws IOException {
         
         List<URL> urlList = null;
 
@@ -162,6 +165,9 @@ public class BridgeClassLoader extends ClassLoader {
 
         }
 
+        // Este metodo tiene un error, porque a pesar que
+        // el class loader parent puede regresar null o size == 0,
+        // todavia necesito buscar en las URL de los bridges
         if ((urlList != null) && (urlList.size() > 0)) {
             return Collections.enumeration(urlList);
         }
@@ -265,6 +271,7 @@ public class BridgeClassLoader extends ClassLoader {
         boolean done = false;
         while (!done) {
             JarEntry entry = jar.getNextJarEntry();
+
             if (entry == null) {
                 done = true;
                 jar.closeEntry();
@@ -282,15 +289,13 @@ public class BridgeClassLoader extends ClassLoader {
             }
 
             if (findOnly == false) {
-                boolean readDone = false;
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                while (!readDone) {
+                int bytesRead = 0;
+                while (bytesRead != -1) {
                     byte[] tmp = new byte[BLOCKSIZE];
-                    int r = jar.read(tmp);
-                    if (r == -1) {
-                        readDone = true;
-                    } else {
-                        baos.write(tmp, 0, r);
+                    bytesRead = jar.read(tmp);
+                    if (bytesRead != -1) {
+                        baos.write(tmp, 0, bytesRead);
                     }
                 }
 
@@ -311,8 +316,9 @@ public class BridgeClassLoader extends ClassLoader {
 
     private String convertName(String entryName) {
 
-        StringBuilder sb = new StringBuilder(entryName.replace(".", "/"));
-        sb.append(".class");
+        StringBuilder sb = 
+                new StringBuilder(entryName.replace(".", "/")).append(".class");
+        
         return sb.toString();
     }
 

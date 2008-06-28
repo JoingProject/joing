@@ -33,11 +33,21 @@ public class DisposerTask implements Runnable {
     }
     
     public void run() {
-        logger.debug("Removing application '{0}'.",
+        
+        logger.debugJVMM("Removing application '{0}'.",
                 application.getMainClassName());
+        
         appManager.removeApp(application);
-        logger.debug("Disposing AppContext.");
-        appContext.dispose();
+        
+        logger.debugJVMM("Disposing AppContext.");
+        if (appContext != null) {
+            try {
+                appContext.dispose();
+            } catch (Exception e) {
+                logger.debugJVMM("Exception en appContext.dispose(): {0}",
+                        e.getMessage());
+            }
+        }
     }
 
 }

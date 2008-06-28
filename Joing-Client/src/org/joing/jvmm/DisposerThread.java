@@ -9,6 +9,7 @@
 
 package org.joing.jvmm;
 
+import java.util.UUID;
 import org.joing.common.clientAPI.log.JoingLogger;
 import org.joing.common.clientAPI.log.Logger;
 import org.joing.common.clientAPI.log.SimpleLoggerFactory;
@@ -24,10 +25,22 @@ public class DisposerThread extends Thread {
     private Runnable disposerTask;
     private Logger logger = SimpleLoggerFactory.getLogger(JoingLogger.ID);
     
-    public DisposerThread(DisposerTask disposerTask) {
-        this.disposerTask = disposerTask;
+//    public DisposerThread(ThreadGroup threadGroup, DisposerTask disposerTask) {
+//        super(threadGroup, 
+//                "Disposer Thread[".concat(UUID.randomUUID().toString()).concat("]"));
+//        this.disposerTask = disposerTask;
+//    }
+
+    public DisposerThread(ThreadGroup threadGroup) {
+        super(threadGroup, 
+                "DisposerThread[".concat(UUID.randomUUID().toString()).concat("]"));
     }
 
+    
+    public void setDisposerTask(DisposerTask task) {
+        this.disposerTask = task;
+    }
+    
     @Override
     public void run() {
         logger.debugJVMM("DisposerThread running...");

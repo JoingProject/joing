@@ -88,10 +88,17 @@ public class BridgeURLConnection extends URLConnection {
      */
     public static Integer getAppId(URL url) throws IOException {
         String q = url.getQuery();
+        
+        if (q == null) {
+            throw new IOException("AppId missing in query string");
+        }
+        
         String[] s = q.split("=");
+        
         if (s.length != 2) {
             throw new IOException("Malformed Query String.");
         }
+        
         return Integer.parseInt(s[1]);
     }
 

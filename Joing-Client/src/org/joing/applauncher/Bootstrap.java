@@ -25,6 +25,7 @@ import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+import javax.swing.SwingUtilities;
 import org.joing.Main;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.clientAPI.jvmm.Platform;
@@ -132,8 +133,13 @@ public class Bootstrap {
      * </ui>
      */
     public static void init() {
-
+        
         Platform platform = RuntimeFactory.getPlatform();
+        
+        //debug
+        logger.debugJVMM("init(): mainThread: {0}",
+                platform.getMainThreadId());
+        
         Properties clientProps = platform.getClientProp();
         
         // Initialization of Logging subsystem. 
@@ -154,9 +160,6 @@ public class Bootstrap {
             logger.addLevel(Levels.DEBUG_DESKTOP);
         }
         
-//        logger.addLevels(Levels.DEBUG, Levels.DEBUG_JVMM, Levels.DEBUG_DESKTOP,
-//                Levels.DEBUG_CACHE);
-
         String logFile = clientProps.getProperty("LogFile", null);
         if (logFile != null) {
             logger.addListener(new FileLogListenerImpl(logFile, true));
@@ -190,7 +193,12 @@ public class Bootstrap {
                 String.valueOf(RuntimeFactory.getPlatform().getMainThreadId()));
 
         
-        setupTrayIcon();
+        // Debera ser invokeAndWait?
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                setupTrayIcon();
+            }
+        });
               
     }
 
@@ -263,24 +271,33 @@ public class Bootstrap {
         Platform platform = RuntimeFactory.getPlatform();
         boolean done = false;
 
+        logger.debugJVMM("Thread {0} ({1}) is running the Main Loop.",
+                Thread.currentThread().getName(), 
+                Thread.currentThread().getId());
+        
         // TODO: Fix this.
         while (!done) {
-            
+
             // We need to find a way to know when to break the
             // loop. Currently the Security manager is't preventing
             // the app to terminate via the System.exit() call.
-            DesktopManager desktop = platform.getDesktopManager();
-            
-            if (desktop == null) {
+//            DesktopManager desktop = platform.getDesktopManager();
+//            
+//            if (desktop == null) {
+//                done = true;
+//                continue;
+//            }
+
+            if (platform.isHalted()) {
                 done = true;
-                continue;
             }
-            
+
             try {
                 Thread.sleep(500);
             } catch (InterruptedException ie) {
-
+                // silently ignore...
             }
+
         }
     }
 }

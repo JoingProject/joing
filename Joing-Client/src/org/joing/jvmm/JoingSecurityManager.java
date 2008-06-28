@@ -28,10 +28,11 @@ public class JoingSecurityManager extends SecurityManager {
     }
 
     @Override
-    public void checkExit(int status) {
-
+    public void checkExit(int status) {     
+        
         Throwable t = new Throwable();
         StackTraceElement[] trace = t.getStackTrace();
+        String name = Thread.currentThread().getName();
 
         for (int i = 0; i < trace.length; i++) {
 
@@ -49,18 +50,25 @@ public class JoingSecurityManager extends SecurityManager {
             }
         }
         
+        super.checkExit(status);
+        
         if (Thread.currentThread().getId() !=
                 RuntimeFactory.getPlatform().getMainThreadId()) {
 
-            StringBuilder sb = new StringBuilder("Call to exit() by ");
-            sb.append("unauthorized Thread with id ");
-            sb.append(Thread.currentThread().getId());
+            StringBuilder sb = new StringBuilder("Call to exit() ");
+            sb.append("with status ").append(status).append(" by ");
+            sb.append("unauthorized Thread[").append(name).append("] ");
+            sb.append("with id ");
+            sb.append(Thread.currentThread().getId()).append("\n");
+            for (int i = 0; i < trace.length; i++) {
+                sb.append(trace[i].toString()).append("\n");
+            }
             logger.warning(sb.toString());
 
             // TODO: Fix this.
             // uncommenting this will prevent the application to exit.
             // We must fix the mainLoop() before doing it.
-            //throw new SecurityException(sb.toString());
+           // throw new SecurityException(sb.toString());
         }
     }
 

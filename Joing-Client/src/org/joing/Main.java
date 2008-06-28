@@ -53,23 +53,28 @@ public class Main {
 
     public static void main(final String[] args) {
         
-        Thread initWorker = new Thread(new Runnable() {
-            public void run() {
-                Bootstrap.init();
-            }
-        });
-        initWorker.start();
+        // Ejecutamos Bootstrap.init() en su propio Thread.
+//        Thread initWorker = new Thread(new Runnable() {
+//            public void run() {
+//                Bootstrap.init();
+//            }
+//        }, "Bootstrap-Thread");
+//        initWorker.start();
+        Bootstrap.init();
 
         boolean noGUI = false;    
         
         final List<URL> urls = new ArrayList<URL>();
         final Logger logger = SimpleLoggerFactory.getLogger(JoingLogger.ID);
         final Platform platform = RuntimeFactory.getPlatform();
-        
+      
+        // Analizamos los argumentos
         for (String arg : args) {
             if ("-nogui".equals(arg)) {
+                // No presentaremos el dialogo Login
                 noGUI = true;
             } else {
+                // URLs que ejecutaremos en modo standalone
                 try {
                     URL u = new URL(arg);
                     urls.add(u);
@@ -81,42 +86,48 @@ public class Main {
         
         if (noGUI == false) {
             // LoginDialog blocks the current thread
-            Thread loginWorker = new Thread(new Runnable() {
+            // LoginDialog blocks the *EDT*....
+//            Thread loginWorker = new Thread(new Runnable() {
+//                public void run() {
+//                    Bootstrap.loginDialog();
+//                }
+//            }, "LoginDialog-Thread");
+//            loginWorker.start();
+            SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     Bootstrap.loginDialog();
                 }
             });
-            loginWorker.start();
         }
         
         if ((urls.size() == 0) && (noGUI)) {
             logger.info("No standalone jars launched, nothing to do.");
         } else {
             Thread auxWorker = new Thread(new Runnable() {
-                public void run() {
-            for (URL url : urls) {
-                try {
-                    Application a = applicationFromURL(url);
-                    URL[] classPath = new URL[]{url};
-                    String[] localArgs = new String[]{};
-                    platform.start(classPath, a, localArgs,
-                            System.out, System.err);
 
-                } catch (ApplicationExecutionException aee) {
-                    logger.critical("Unable to launch app: {0}", aee.getMessage());
-                } catch (MalformedURLException mue) {
-                    logger.critical("Unable to parse URL: {0}", mue.getMessage());
-                } catch (IOException ioe) {
-                    logger.critical("IOException: {0}", ioe.getMessage());
+                public void run() {
+                    for (URL url : urls) {
+                        try {
+                            Application a = applicationFromURL(url);
+                            URL[] classPath = new URL[]{url};
+                            String[] localArgs = new String[]{};
+                            platform.start(classPath, a, localArgs,
+                                    System.out, System.err);
+
+                        } catch (ApplicationExecutionException aee) {
+                            logger.critical("Unable to launch app: {0}", aee.getMessage());
+                        } catch (MalformedURLException mue) {
+                            logger.critical("Unable to parse URL: {0}", mue.getMessage());
+                        } catch (IOException ioe) {
+                            logger.critical("IOException: {0}", ioe.getMessage());
+                        }
+                    }
                 }
-            }
-                }
-            });
+            }, "Joing-StandaloneLauncher-Thread");
             auxWorker.start();
         }
         
-        //Bootstrap.mainLoop();
- 
+        Bootstrap.mainLoop();
         
     }
     

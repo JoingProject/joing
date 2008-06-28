@@ -63,8 +63,10 @@ public class BridgeURLStreamHandler extends URLStreamHandler {
             String path = uri.getPath();
             String fragment = uri.getFragment();
             
+            //setURL(u, proto, "", getDefaultPort(),
+            //        null, null, path, query, fragment);
             setURL(u, proto, "", getDefaultPort(),
-                    null, null, path, query, fragment);
+                    null, null, path, file, fragment);
             
         } catch (URISyntaxException use) {
 
