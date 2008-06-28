@@ -20,6 +20,7 @@ import org.joing.common.dto.app.Application;
 public interface Platform {
 
     void halt();
+    boolean isHalted();
     void shutdown();
     
 //    PlatformRuntime getRuntime();
