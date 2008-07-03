@@ -13,8 +13,13 @@ import org.joing.common.desktopAPI.desktop.Desktop;
  */
 public interface DesktopManager
 {
-    // Showing in different ways
+    /**
+     * Desktop runs inside a Frame (either Frame or JFrame)
+     */
     void showInFrame();
+    /**
+     * Desktop runs in full-screen modes (when available).
+     */
     void showInFullScreen();
     
     // Called from Platform
@@ -29,13 +34,39 @@ public interface DesktopManager
      */
     void halt();
     
-    // References
+    /**
+     * Returns a reference to the Desktop
+     * @return A reference to the Desktop
+     */
     Desktop getDesktop();
+    /**
+     * Returns a reference to the Runtime
+     * @return A reference to the Runtime
+     */
     Runtime getRuntime();
     
-    // Locking & unlocking
+    /**
+     * Locks desktop
+     */
     void lock();
+    /**
+     * Unlocks dekstop
+     */
     void unlock();
     
+    /**
+     * Desktop comercial name.
+     * @return Desktop comercial name.
+     */
+    String getName();
+    /**
+     * Desktop version.
+     * @return Desktop version.
+     */
     String getVersion();
+    /**
+     * Return comercial information (one or more lines).
+     * @return Comercial information
+     */
+    String getComercialInfo();
 }
