@@ -105,7 +105,7 @@ public class AppDescriptor implements Serializable
     // En este caso no sería una buena práctica devolver un array vacío si el 
     // dato es null, porque null significa que no hay imagen, además, el array
     // no se utiliza para recorerlo, sino como una estructura.
-    public byte[] getPNGIcon()
+    public byte[] getPNGIcon()   // FIXME: Hay que renombrarlo a getIconPNG
     {
         if( iconPNG == null )
         {
@@ -124,7 +124,7 @@ public class AppDescriptor implements Serializable
      * 
      * @return The SVG icon for this application.
      */
-    public byte[] getSVGIcon()
+    public byte[] getSVGIcon()   // FIXME: Hay que renombrarlo a getIconSVG
     {
         if( iconSVG == null )
         {

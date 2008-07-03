@@ -8,8 +8,7 @@ package org.joing.common.desktopAPI;
 /**
  * Standar images: common to all desktop implementations.
  * Every implementation can define its own images set, but the names will be 
- * always the same, in this way applications can run in every desktop 
- * implementation.
+ * always the same to allow applications protability between desktops.
  * 
  * @author Francisco Morero Peyrona
  */
