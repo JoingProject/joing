@@ -178,9 +178,20 @@ public class PDEManager extends JApplet implements DesktopManager
             frame.dispose();
     }
     
+    public String getName()
+    {
+        return "Peyrona Desktop Environment";
+    }
+    
     public String getVersion()
     {
         return "0.1";
+    }
+    
+    public String getComercialInfo()
+    {
+        return "©Join'g Team - Published under GPLv3\n"+
+               "Author: Francisco Morero Peyrona";
     }
     
     //------------------------------------------------------------------------//
