@@ -64,9 +64,4 @@ public interface DesktopManager
      * @return Desktop version.
      */
     String getVersion();
-    /**
-     * Return comercial information (one or more lines).
-     * @return Comercial information
-     */
-    String getComercialInfo();
 }
