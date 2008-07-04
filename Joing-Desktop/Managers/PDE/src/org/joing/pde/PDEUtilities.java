@@ -30,10 +30,12 @@ import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.workarea.WorkArea;
+import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.exception.JoingServerVFSException;
 import org.joing.pde.desktop.container.PDEDialog;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
+import org.joing.pde.swing.ApplicationTreePanel;
 
 /**
  * Extra functions used internally by PDE.
@@ -250,6 +252,24 @@ public class PDEUtilities
         return org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
     }
     
+    /**
+     * Open a dialog showing in a tree all installed applications for current
+     * user.
+     * 
+     * @return An instance of <code>org.joing.common.dto.app.Application</code>
+     *         if user selected one or <code>null</code> if cancelled.
+     */
+    public static AppDescriptor selectApplication()
+    {
+        AppDescriptor        app = null;
+        ApplicationTreePanel atp = new ApplicationTreePanel();
+        
+        if( showBasicDialog( "Select Application", atp ) )
+            app = atp.getSelectedApplication();
+        
+        return app;
+    }
+    
     //------------------------------------------------------------------------//
     
     public static WorkArea findWorkAreaFor( DeskComponent comp )
@@ -292,7 +312,7 @@ public class PDEUtilities
                     BasicDialog.this.close();
                 }
             } );
-        
+            
             btnCancel.setText( "Cancel" );
             btnCancel.addActionListener( new ActionListener()
             {
@@ -309,7 +329,7 @@ public class PDEUtilities
             JPanel  pnlContent = new JPanel( new BorderLayout() );
                     pnlContent.add( content   , BorderLayout.CENTER );
                     pnlContent.add( pnlButtons, BorderLayout.SOUTH  );
-                    
+            
             getContentPane().add( pnlContent, BorderLayout.CENTER );
             setDefaultCloseOperation( JInternalFrame.DISPOSE_ON_CLOSE );
             getRootPane().setDefaultButton( btnAccept );

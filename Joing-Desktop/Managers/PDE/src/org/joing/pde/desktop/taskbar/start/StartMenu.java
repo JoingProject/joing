@@ -157,13 +157,13 @@ class StartMenu extends JScrollablePopupMenu
         }
     }
     
-    private ImageIcon createItemIcon( byte[] abImage )
+    private ImageIcon createItemIcon( byte[] anImage )
     {
         ImageIcon icon = null;
         
-        if( abImage != null )
+        if( anImage != null )
         {
-            icon = new ImageIcon( abImage );
+            icon = new ImageIcon( anImage );
             
             if( icon.getIconWidth() != ICON_SIZE || icon.getIconHeight() != ICON_SIZE )
                 icon.setImage( icon.getImage().getScaledInstance( ICON_SIZE, ICON_SIZE, Image.SCALE_SMOOTH ) );

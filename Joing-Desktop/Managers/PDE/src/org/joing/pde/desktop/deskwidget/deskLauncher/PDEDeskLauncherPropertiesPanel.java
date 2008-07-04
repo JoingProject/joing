@@ -5,10 +5,14 @@
  */
 package org.joing.pde.desktop.deskwidget.deskLauncher;
 
+import java.awt.Image;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
+import org.joing.common.dto.app.AppDescriptor;
+import org.joing.pde.PDEUtilities;
 
 /**
  *
@@ -35,7 +39,7 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
         else
             radApp.setSelected( true );
         
-        updateEnabled();
+        onSelectionChanged();
     }
     
     /**
@@ -95,7 +99,7 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
     
     //------------------------------------------------------------------------//
     
-    private void updateEnabled()
+    private void onSelectionChanged()
     {
         lblApplication.setEnabled( radApp.isSelected() );
         txtApplication.setEnabled( radApp.isSelected() );
@@ -106,6 +110,9 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
         lblDirectory.setEnabled( radDir.isSelected() );
         txtDirectory.setEnabled( radDir.isSelected() );
         btnSelectDirectory.setEnabled( radDir.isSelected() );
+        
+        Image image = PDEUtilities.getDesktopManager().getRuntime().getImage( (radApp.isSelected() ? StandardImage.LAUNCHER : StandardImage.FOLDER) );
+        btnIcon.setIcon( new ImageIcon( image ) );
     }
     
     /** This method is called from within the constructor to
@@ -121,7 +128,7 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
         txtDescription = new javax.swing.JTextField();
         btnIcon = new javax.swing.JButton();
         lblText = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        lblDescription = new javax.swing.JLabel();
         pnlApp = new javax.swing.JPanel();
         lblApplication = new javax.swing.JLabel();
         lblArguments = new javax.swing.JLabel();
@@ -135,6 +142,7 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
         radDir = new javax.swing.JRadioButton();
         lblDirectory = new javax.swing.JLabel();
 
+        btnIcon.setFocusPainted(false);
         btnIcon.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnIconActionPerformed(evt);
@@ -143,7 +151,7 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
 
         lblText.setText("Name");
 
-        jLabel1.setText("Description");
+        lblDescription.setText("Description");
 
         pnlApp.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -152,6 +160,11 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
         lblArguments.setText("Arguments");
 
         btnSelectApp.setText("...");
+        btnSelectApp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onSelectAppButton(evt);
+            }
+        });
 
         radButtonGroup.add(radApp);
         radApp.setText("Application");
@@ -255,7 +268,7 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
                         .addComponent(btnIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
+                            .addComponent(lblDescription)
                             .addComponent(lblText))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -274,7 +287,7 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
                             .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
+                            .addComponent(lblDescription)
                             .addComponent(txtDescription, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(btnIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
@@ -286,24 +299,31 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
     }// </editor-fold>//GEN-END:initComponents
 
     private void radAppActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radAppActionPerformed
-        updateEnabled();
+        onSelectionChanged();
     }//GEN-LAST:event_radAppActionPerformed
 
     private void radDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radDirActionPerformed
-        updateEnabled();
+        onSelectionChanged();
     }//GEN-LAST:event_radDirActionPerformed
 
     private void btnIconActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIconActionPerformed
-        // TODO: hacerlo
+        // TODO: hacerlo -> Seleccionar una imagen desde archivo
     }//GEN-LAST:event_btnIconActionPerformed
+
+private void onSelectAppButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onSelectAppButton
+        AppDescriptor app = PDEUtilities.selectApplication();
+        
+        if( app != null )
+            txtApplication.setText( Integer.toString( app.getId() ) );
+}//GEN-LAST:event_onSelectAppButton
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnIcon;
     private javax.swing.JButton btnSelectApp;
     private javax.swing.JButton btnSelectDirectory;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lblApplication;
     private javax.swing.JLabel lblArguments;
+    private javax.swing.JLabel lblDescription;
     private javax.swing.JLabel lblDirectory;
     private javax.swing.JLabel lblText;
     private javax.swing.JPanel pnlApp;

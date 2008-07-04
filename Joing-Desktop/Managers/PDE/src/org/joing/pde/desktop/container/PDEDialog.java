@@ -8,14 +8,13 @@
 
 package org.joing.pde.desktop.container;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dialog.ModalityType;
 import java.awt.Image;
 import java.util.List;
 import javax.swing.JDialog;
 import javax.swing.JInternalFrame;
 import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.desktopAPI.pane.DeskDialog;
 
 /**
@@ -30,6 +29,7 @@ public class PDEDialog extends JDialog implements DeskDialog
 {
     public PDEDialog()
     {
+        setLayout( new BorderLayout() );
         setModalityType( ModalityType.APPLICATION_MODAL );
         setDefaultCloseOperation( JInternalFrame.DISPOSE_ON_CLOSE );
     }
@@ -40,8 +40,8 @@ public class PDEDialog extends JDialog implements DeskDialog
     }
     
     public void add( DeskComponent dc )
-    {        
-        getContentPane().add( (Component) dc );
+    {
+        add( (Component) dc, BorderLayout.CENTER );
     }
     
     public Image getIcon()

@@ -28,7 +28,7 @@
                       <Component id="btnIcon" min="-2" pref="66" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="lblDescription" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="lblText" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -54,7 +54,7 @@
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="lblDescription" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="txtDescription" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -75,6 +75,9 @@
     <Component class="javax.swing.JTextField" name="txtDescription">
     </Component>
     <Component class="javax.swing.JButton" name="btnIcon">
+      <Properties>
+        <Property name="focusPainted" type="boolean" value="false"/>
+      </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnIconActionPerformed"/>
       </Events>
@@ -84,7 +87,7 @@
         <Property name="text" type="java.lang.String" value="Name"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel1">
+    <Component class="javax.swing.JLabel" name="lblDescription">
       <Properties>
         <Property name="text" type="java.lang.String" value="Description"/>
       </Properties>
@@ -161,6 +164,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="..."/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="onSelectAppButton"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JRadioButton" name="radApp">
           <Properties>
