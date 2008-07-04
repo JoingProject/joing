@@ -1,16 +1,5 @@
 /*
- * Copyright (c) 2002 CHS Data Systems GmbH, All Rights Reserved.
- *
- * Permission to use, copy and modify; but NOT to distribute this source code
- * either for NON-COMMERCIAL or COMMERCIAL purposes without the explicit
- * written permission of CHS Data Systems GmbH.
- *
- * Chs makes no representations or warranties about the suitability of
- * the software, either express or implied, including but not limited
- * to the implied warranties of merchantability, fitness for a
- * particular purpose, or non-infringement. Chs shall not be liable for
- * any damages suffered by licensee as a result of using, modifying or
- * distributing this software or its derivatives.
+ * 
  */
 package org.joing.basicalc;
 
