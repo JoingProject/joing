@@ -146,7 +146,7 @@ public class JoingFileSystemView extends FileSystemView
     public java.io.File[] getRoots()
     {
         java.io.File[] afLocal  = localView.getRoots();
-        java.io.File[] afRemote = remoteView.getRoots();
+        VFSFile[]      afRemote = remoteView.getRoots();
         java.io.File[] afAll    = new java.io.File[ afLocal.length + afRemote.length ];
         
         // FIXME: user este cuando esté corregido el bug
