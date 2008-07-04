@@ -188,12 +188,6 @@ public class PDEManager extends JApplet implements DesktopManager
         return "0.1";
     }
     
-    public String getComercialInfo()
-    {
-        return "©Join'g Team - Published under GPLv3\n"+
-               "Author: Francisco Morero Peyrona";
-    }
-    
     //------------------------------------------------------------------------//
     // exit() and lock() methods are called from the "start-menu" in the desktop
     
