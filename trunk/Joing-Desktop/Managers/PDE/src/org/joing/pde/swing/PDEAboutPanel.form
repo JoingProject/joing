@@ -18,21 +18,19 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                      <Component id="lblHomePage" alignment="0" max="32767" attributes="1"/>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="lblImage" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="lblVersion" pref="265" max="32767" attributes="1"/>
-                              <Component id="lblName" alignment="0" pref="265" max="32767" attributes="1"/>
-                          </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="lblImage" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="lblVersion" pref="329" max="32767" attributes="1"/>
+                          <Component id="lblName" alignment="0" pref="329" max="32767" attributes="1"/>
                       </Group>
                   </Group>
                   <Component id="spDescription" alignment="0" pref="341" max="32767" attributes="1"/>
                   <Component id="lblCopyright1" alignment="0" pref="341" max="32767" attributes="1"/>
                   <Component id="lblCopyright" alignment="0" pref="341" max="32767" attributes="1"/>
                   <Component id="jLabel1" alignment="0" pref="341" max="32767" attributes="0"/>
+                  <Component id="lblHomePage" alignment="0" pref="341" max="32767" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -69,9 +67,6 @@
     <Component class="javax.swing.JLabel" name="lblImage">
       <Properties>
         <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/org/joing/pde/misce/images/pde.png"/>
-        </Property>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="null"/>
         </Property>

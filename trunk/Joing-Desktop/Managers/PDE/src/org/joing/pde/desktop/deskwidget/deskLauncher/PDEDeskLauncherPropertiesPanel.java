@@ -84,14 +84,14 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
         
         if( radApp.isSelected() )
         {
-            launcher.setTarget( txtDirectory.getText() );
-            launcher.setType( DeskLauncher.Type.DIRECTORY );
-        }
-        else
-        {
             launcher.setTarget( txtApplication.getText() );
             launcher.setArguments( txtArguments.getText() );
             launcher.setType( DeskLauncher.Type.APPLICATION );
+        }
+        else
+        {
+            launcher.setTarget( txtDirectory.getText() );
+            launcher.setType( DeskLauncher.Type.DIRECTORY );
         }
         
         return launcher;
@@ -314,7 +314,11 @@ private void onSelectAppButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
         AppDescriptor app = PDEUtilities.selectApplication();
         
         if( app != null )
+        {
+            txtName.setText( app.getName() );
+            txtDescription.setText( app.getDescription() );
             txtApplication.setText( Integer.toString( app.getId() ) );
+        }
 }//GEN-LAST:event_onSelectAppButton
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

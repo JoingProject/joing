@@ -158,7 +158,7 @@ public class PDEManager extends JApplet implements DesktopManager
         return runtime;
     }
     
-    
+    // Called from Platform
     public void shutdown()
     {
         runtime.play( StandardSound.GOODBYE );
@@ -172,6 +172,7 @@ public class PDEManager extends JApplet implements DesktopManager
         halt();
     }
     
+    // Called from Platform
     public void halt()
     {
         if( frame != null )   // Can't call getFrame(), because this method constructs the frame
@@ -197,7 +198,7 @@ public class PDEManager extends JApplet implements DesktopManager
      */
     public void exit()
     {
-        org.joing.jvmm.RuntimeFactory.getPlatform().shutdown();   // Calls this::shutdown()
+        org.joing.jvmm.RuntimeFactory.getPlatform().shutdown();   // Platform calls this::shutdown()
     }
 
     /**

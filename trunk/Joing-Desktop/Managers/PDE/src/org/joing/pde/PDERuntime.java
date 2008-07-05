@@ -25,6 +25,7 @@ import org.joing.pde.desktop.container.PDEDialog;
 import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
 import org.joing.pde.media.images.CommonImagesUtil;
+import org.joing.pde.swing.JErrorPanel;
 
 /**
  * The Runtime class.
@@ -116,5 +117,17 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
         return JOptionPane.showConfirmDialog( 
                                      (Component) workArea, sMessage, sTitle,
                                      JOptionPane.YES_NO_OPTION ) == JOptionPane.YES_OPTION;
+    }
+    
+    public void showException( Throwable exc, String sTitle )
+    {
+        if( sTitle == null || sTitle.length() == 0 )
+            sTitle = "Error during execution";
+        
+        PDEDialog dialog = new PDEDialog();
+                  dialog.setTitle( sTitle );
+                  dialog.add( (DeskComponent) new JErrorPanel( exc ) );
+                  
+        PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
     }
 }
