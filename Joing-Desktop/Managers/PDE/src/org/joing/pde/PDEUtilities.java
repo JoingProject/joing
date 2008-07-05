@@ -36,6 +36,7 @@ import org.joing.common.exception.JoingServerVFSException;
 import org.joing.pde.desktop.container.PDEDialog;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.pde.swing.ApplicationTreePanel;
+import org.joing.pde.swing.JErrorPanel;
 
 /**
  * Extra functions used internally by PDE.
@@ -223,23 +224,7 @@ public class PDEUtilities
         PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
         
         return dialog.bExitWithAccept;
-    }
-    
-    /**
-     * Shows an exception in a JDialog.
-     * 
-     * @param exc     Exception to be shown
-     * @param bReport <code>true</code> when error should be reported to TelcoDomo
-     */
-    public static void showException( Throwable exc, String sTitle )
-    {
-        exc.printStackTrace();   // TODO: quitarlo en la version final 
-                                 //       y hacer una ventana para mostrar exc -->
-        /*
-        JShowException dialog = new JShowException( sTitle, exc );
-                       dialog.setLocationRelativeTo( getDesktop() );
-                       dialog.setVisible( true );*/
-    }
+    }    
     
     /**
      * A short way for:
