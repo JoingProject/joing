@@ -67,5 +67,4 @@ public interface Platform {
     void start(final URL[] classPath, final Application application,
             final String[] args, final OutputStream out, final OutputStream err)
             throws ApplicationExecutionException;
-    
 }

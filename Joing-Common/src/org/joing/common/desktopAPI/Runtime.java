@@ -54,6 +54,13 @@ public interface Runtime
     boolean showYesNoDialog( String sTitle, String sMessage );
     
     /**
+     * Shows an error in a dialog.
+     * 
+     * @param exc Error to show
+     * @param sTitle Optional dialog frame title
+     */
+    void showException( Throwable exc, String sTitle );
+    /**
      * Return an image from the standard collection.
      * 
      * @param image Image to be retrieved.

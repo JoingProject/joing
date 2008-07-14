@@ -48,14 +48,14 @@ public interface Desktop extends Closeable
      * This method can be invoked (as an example) from Platform to inform that a
      * long task is in progress against Join'g Server.
      * 
-     * @param sMesaage Message to be shown: if null an standard one will be used.
+     * @param sMessage Message to be shown: if null an standard one will be used.
      * @param icon     Icon to be shown: if null an standard one will be used.
-     * @bAnimated      true to show an animation: again, every implementation 
+     * @param bAnimated <code>true</code> to show an animation: again, every implementation 
      *                 decide what to use, v.g. an indeterminate progress bar or
      *                 an animated GIF image.
      * @return A handle to the message GUI to be closed when the trade is over.
      */
-    int  showNotification( String sMesaage, Image icon, boolean bAnimated );
+    int  showNotification( String sMessage, Image icon, boolean bAnimated );
     /**
      * Hides a notification previously opended via showNotification(...)
      * 
