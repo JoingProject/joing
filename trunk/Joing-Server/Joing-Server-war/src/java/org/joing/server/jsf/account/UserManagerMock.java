@@ -46,4 +46,9 @@ class UserManagerMock implements UserManagerLocal {
     public List<Local> getAvailableLocales(String sSessionId) throws JoingServerUserException {
 	throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public boolean areLinked( String sSessionId, String sPassword )
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
 }
