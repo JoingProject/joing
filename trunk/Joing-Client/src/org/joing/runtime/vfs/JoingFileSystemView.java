@@ -72,6 +72,8 @@ public class JoingFileSystemView extends FileSystemView
     {
         java.io.File fLocal = new java.io.File( path );
         
+        javax.swing.JOptionPane.showMessageDialog( null, "Invocado: JoingFileSystemView::createFileObject( String path )");
+        
         // FIXME: hacerlo
         return new java.io.File( path );
     }
