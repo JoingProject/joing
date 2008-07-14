@@ -22,8 +22,8 @@ import javax.swing.JMenuItem;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import org.joing.common.clientAPI.jvmm.ApplicationExecutionException;
 import org.joing.common.desktopAPI.StandardImage;
+import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.app.AppEnvironment;
 import org.joing.common.dto.app.AppGroup;
@@ -180,17 +180,10 @@ class StartMenu extends JScrollablePopupMenu
     {
         public void actionPerformed( ActionEvent ae )
         {
-            try
-            {
-                JMenuItem item = (JMenuItem) ae.getSource();
-                AppDescriptor appDesc = (AppDescriptor) item.getClientProperty( KEY_APP_DESCRIPTOR );
+            JMenuItem item = (JMenuItem) ae.getSource();
+            AppDescriptor appDesc = (AppDescriptor) item.getClientProperty( KEY_APP_DESCRIPTOR );
 
-                org.joing.jvmm.RuntimeFactory.getPlatform().start( appDesc.getId() );
-            }
-            catch( ApplicationExecutionException exc )
-            {
-                exc.printStackTrace();   // TODO: Mostrarla por pantalla: showException( ... )
-            }
+            PDEUtilities.launch( DeskLauncher.Type.APPLICATION, String.valueOf( appDesc.getId() ) );   
         }
     }
 }

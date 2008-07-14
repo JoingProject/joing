@@ -31,6 +31,7 @@ class Components4Testing
         {
             public void run()
             {
+                  new org.joing.pde.apps.YAFE.YAFE();
 //                wallPapers();
 //                launchers();
 //                InternalFrames();

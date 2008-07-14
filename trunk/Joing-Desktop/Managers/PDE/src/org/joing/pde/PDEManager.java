@@ -68,9 +68,6 @@ public class PDEManager extends JApplet implements DesktopManager
         runtime = new PDERuntime();
         desktop = new PDEDesktop();
         getContentPane().add( desktop, BorderLayout.CENTER );
-        
-        // Continuous layout on frame resize
-        Toolkit.getDefaultToolkit().setDynamicLayout( true );
     }
     
     //------------------------------------------------------------------------//
