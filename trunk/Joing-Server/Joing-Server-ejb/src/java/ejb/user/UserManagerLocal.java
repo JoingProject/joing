@@ -58,7 +58,7 @@ public interface UserManagerLocal extends UserManagerRemote
      */
     void removeUser( User user )
          throws JoingServerUserException;
-    
+   
     /**
      * Checks if passed value is a valid account.
      * Note: It is public to be invoked from the Joing's Web side.

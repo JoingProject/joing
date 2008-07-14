@@ -72,7 +72,10 @@ insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, ENVIRONM
      values ('System Monitor', '0.5', 'system', 'SystemMonitor.jar', 3, '1.5');
 
 insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, ENVIRONMENT, ENVIRON_VER)
-     values ('Tiny Explorer', '0.1', 'accessories', 'TinyExplorer.jar', 3, '1.5');
+     values ('File Explorer', '0.1', 'accessories', 'TinyExplorer.jar', 3, '1.5');
+
+insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, ENVIRONMENT, ENVIRON_VER)
+     values ('Community Explorer', '0.1', 'accessories', 'YACE.jar', 3, '1.5');
 
 -- ------------------------------------------------------------------
 
@@ -125,10 +128,16 @@ insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
      values (8, 2, 'SystemMonitor: monitor del systema' );
 
 insert into app_descriptions( ID_APPLICATION, ID_LOCALE, DESCRIPTION )
-     values( 9, 1, 'Small and simple file explorer')
+     values( 9, 1, 'Small and simple file explorer');
 
 insert into app_descriptions( ID_APPLICATION, ID_LOCALE, DESCRIPTION )
-     values( 9, 2, 'Pequeño y sencillo explorador de archivos')
+     values( 9, 2, 'Pequeño y sencillo explorador de archivos');
+
+insert into app_descriptions( ID_APPLICATION, ID_LOCALE, DESCRIPTION )
+     values( 10, 1, 'Small and simple community explorer');
+
+insert into app_descriptions( ID_APPLICATION, ID_LOCALE, DESCRIPTION )
+     values( 10, 2, 'Pequeño y sencillo explorador de la comunidad');
 
 -- ------------------------------------------------------------------
 
@@ -157,7 +166,10 @@ insert into apps_with_groups (ID_APPLICATION, ID_APP_GROUP)
      values (8, 9);   -- App 'SystemMonitor' belongs to Group 'System'
 
 insert into apps_with_groups (ID_APPLICATION, ID_APP_GROUP)
-     values (9, 1);   -- App 'TinyExplorer' belongs to Group 'Accesories'
+     values (9, 1);   -- App 'File Explorer' belongs to Group 'Accesories'
+
+insert into apps_with_groups (ID_APPLICATION, ID_APP_GROUP)
+     values (10, 1);   -- App 'Community Explorer' belongs to Group 'Accesories'
 
 -- ------------------------------------------------------------------
 
@@ -210,6 +222,9 @@ insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
 
 insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
      values ('peyrona@joing.org', 9, 1);
+
+insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
+     values ('peyrona@joing.org', 10, 1);
 
 -- ------------------------------------------------------------------
 

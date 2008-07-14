@@ -1,8 +1,4 @@
 /*
- * NativeFileSystemTools.java
- *
- * Created on 3 de junio de 2007, 21:50
- *
  * Copyright (C) 2007 Francisco Morero Peyrona
  *
  * This program is free software; you can redistribute it and/or modify
