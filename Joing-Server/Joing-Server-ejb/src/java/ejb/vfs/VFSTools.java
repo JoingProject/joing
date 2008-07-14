@@ -1,9 +1,5 @@
 /*
- * FileTools.java
- * 
- * Created on 08-ago-2007, 13:05:42
- * 
- * Author: Francisco Morero Peyrona.
+ * Copyright (C) 2007 Francisco Morero Peyrona
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+
 package ejb.vfs;
 
 import ejb.Constant;

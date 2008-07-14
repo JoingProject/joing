@@ -11,13 +11,14 @@ package ejb.session;
 
 import ejb.Constant;
 import ejb.user.UserEntity;
+import ejb.user.UserManagerLocal;
 import org.joing.common.dto.session.LoginResult;
 import org.joing.common.exception.JoingServerException;
 import org.joing.common.exception.JoingServerSessionException;
-import ejb.user.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Random;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.PersistenceContext;
 import javax.persistence.EntityManager;

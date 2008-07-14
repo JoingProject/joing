@@ -218,7 +218,7 @@ public class AppDescriptor implements Serializable
      */
     void setRemoteExecutionAllowed( boolean allowRemote )
     {
-        allowRemote = allowRemote;
+        this.allowRemote = allowRemote;
     }
     
     /**
@@ -231,6 +231,6 @@ public class AppDescriptor implements Serializable
      */
     void setDescription( String description )
     {
-        description = description;
+        this.description = description;
     }
 }

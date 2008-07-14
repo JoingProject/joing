@@ -73,7 +73,7 @@ public class UserManagerBean
     //------------------------------------------------------------------------//
     // REMOTE INTERFACE
     
-    public User getUser( String sSessionId ) 
+    public User getUser( String sSessionId )
            throws JoingServerUserException
     {
         User   user     = null;
@@ -157,6 +157,16 @@ public class UserManagerBean
         }
         
         return locals;
+    }
+    
+    public boolean areLinked( String sSessionId, String sPassword )
+    {
+        User       user  = getUser( sSessionId );
+        UserEntity _user = em.find( UserEntity.class, user.getAccount() );
+        
+        // TODO: implementar el resto: servlet y la parte del cliente
+        
+        return (sPassword != null && sPassword.equals( _user.getPassword() ));
     }
     
     //------------------------------------------------------------------------//
