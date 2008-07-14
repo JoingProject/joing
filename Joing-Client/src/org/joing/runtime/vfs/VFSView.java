@@ -135,26 +135,26 @@ public class VFSView extends FileSystemView
      * @see javax.swing.filechooser.FileSystemView#createNewFolder( 
      *                                              java.io.File containingDir )
      */
-    public VFSFile createNewFolder( java.io.File dir ) throws IOException
+    public VFSFile createNewFolder( java.io.File parent ) throws IOException
     {
-        if( dir == null )
+        if( parent == null )
             throw new IOException( "Containing directory is null." );
         
-        if( ! dir.isDirectory() )
-            throw new IllegalArgumentException( "Containing file is not a directory." );
+        if( ! parent.isDirectory() )
+            throw new IllegalArgumentException( "Parent is not a directory." );
         
         VFSFile vfsNewFolder = null;
         
-        if( ! dir.exists() )    // The directory itself does not exists
+        if( ! parent.exists() )    // The directory itself does not exists
         {
-            vfsNewFolder = createFileObject( dir.getAbsolutePath() );
+            vfsNewFolder = createFileObject( parent.getAbsolutePath() );
         }
         else                    // A new directory has to be created inside passed dir
         {
-            vfsNewFolder = createFileObject( dir, sNewFolder );
+            vfsNewFolder = createFileObject( parent, sNewFolder );
             
             if( vfsNewFolder.exists() )
-                vfsNewFolder = createFileObject( dir, sNewFolder +"."+ System.currentTimeMillis() );  // This name can't exists
+                vfsNewFolder = createFileObject( parent, sNewFolder +"."+ System.currentTimeMillis() );  // This name can't exists
         }
         
         return (vfsNewFolder.mkdir() ? vfsNewFolder : null);

@@ -44,8 +44,8 @@ public class VFSFile extends File
     // TODO: Revisar la clase para que las búsquedas de ficheros en el Servidor
     //       se hagan siempre que sea posible en base al ID_PARENT en lugar de
     //       en base al Path.
-    //       También habría que hacer un chaché de ficheros descargados para no
-    //       tener que estar cotínuamente leyendo del servidor que puede ser muy
+    //       También habría que hacer un caché de ficheros descargados para no
+    //       tener que estar contínuamente leyendo del servidor que puede ser muy
     //       lento.
  
     /**
