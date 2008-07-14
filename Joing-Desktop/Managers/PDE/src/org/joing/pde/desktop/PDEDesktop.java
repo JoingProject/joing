@@ -348,7 +348,7 @@ public class PDEDesktop extends JPanel implements Desktop
     
     public void hideNotification( int nHandle )
     {
-        if( htInfoPanels != null && htInfoPanels.contains( nHandle ) )
+        if( htInfoPanels != null && htInfoPanels.containsKey( nHandle ) )
         {
             htInfoPanels.get( nHandle ).close();
             htInfoPanels.remove( nHandle );

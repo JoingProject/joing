@@ -9,6 +9,7 @@ import java.awt.Component;
 import java.awt.Image;
 import java.util.List;
 import javax.swing.ImageIcon;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
@@ -25,7 +26,7 @@ import org.joing.common.dto.app.AppGroupKey;
  *
  * @author  fmorero
  */
-public class ApplicationTreePanel extends javax.swing.JPanel
+public class ApplicationTreePanel extends JPanel
 {
     private JTree     tree;
     private JTextArea text;
@@ -42,7 +43,7 @@ public class ApplicationTreePanel extends javax.swing.JPanel
         
         split.setTopComponent( new JScrollPane( tree ) );
         split.setBottomComponent( new JScrollPane( text ) );
-        split.setDividerLocation( .2d );
+        split.setResizeWeight( 0.9d );
         
         tree.addTreeSelectionListener( new TreeSelectionListener()
             {

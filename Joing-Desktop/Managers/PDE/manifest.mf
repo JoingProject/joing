@@ -1,3 +1,7 @@
 Manifest-Version: 1.0
 X-COMMENT: Main-Class will be added automatically by build
 
+AppName: Peyrona Desktop Environment (PDE)
+AppDescription: A simple yet powerfull Swing desktop for Join'g
+AppIcon: org/joing/pde/media/images/pde.png
+

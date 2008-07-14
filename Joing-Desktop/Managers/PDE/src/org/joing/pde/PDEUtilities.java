@@ -26,9 +26,11 @@ import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import org.joing.common.clientAPI.jvmm.ApplicationExecutionException;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.desktopAPI.StandardImage;
+import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.vfs.FileDescriptor;
@@ -36,7 +38,6 @@ import org.joing.common.exception.JoingServerVFSException;
 import org.joing.pde.desktop.container.PDEDialog;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.pde.swing.ApplicationTreePanel;
-import org.joing.pde.swing.JErrorPanel;
 
 /**
  * Extra functions used internally by PDE.
@@ -253,6 +254,39 @@ public class PDEUtilities
             app = atp.getSelectedApplication();
         
         return app;
+    }
+    
+    public static void launch( DeskLauncher.Type type, String sTarget )
+    {
+        switch( type )
+        {
+            case APPLICATION:
+                Image launch = getDesktopManager().getRuntime().getImage( StandardImage.LAUNCHER );
+                int nId = PDEUtilities.getDesktopManager().getDesktop().showNotification( "Launching application", launch, true );
+                
+                try
+                {
+                    org.joing.jvmm.RuntimeFactory.getPlatform().start( Integer.valueOf( sTarget ) );
+                }
+                catch( ApplicationExecutionException exc )
+                {
+                    PDEUtilities.getDesktopManager().getRuntime().showException( exc, null );
+                }
+                catch( NumberFormatException nfe )
+                {
+                    // If it is not an app Id (a number), it has to be an app name
+                    // TODO: hacerlo
+                }
+                finally
+                {
+                    PDEUtilities.getDesktopManager().getDesktop().hideNotification( nId );   // TODO: Invocar hide cuando la app haya finalizado de mostrarse (quizás sólo lo sepa Platform)
+                }
+                break;
+                
+             case DIRECTORY:
+                 // TODO: hacerlo
+                 break;
+        }
     }
     
     //------------------------------------------------------------------------//

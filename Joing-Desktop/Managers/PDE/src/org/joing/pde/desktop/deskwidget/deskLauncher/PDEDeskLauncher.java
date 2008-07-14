@@ -25,7 +25,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.MenuElement;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import org.joing.common.clientAPI.jvmm.ApplicationExecutionException;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
@@ -135,29 +134,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
      */
     public void launch()
     {
-        switch( type )
-        {
-            case APPLICATION:
-                try
-                {
-                    org.joing.jvmm.RuntimeFactory.getPlatform().start( Integer.valueOf( sTarget ) );
-                }
-                catch( ApplicationExecutionException exc )
-                {
-                    PDEUtilities.getDesktopManager().getRuntime().showException( exc, null );
-                }
-                catch( NumberFormatException nfe )
-                {
-                    // If it is not an app Id (a number), it has to be an app name
-                    // TODO: hacerlo
-                }
-                
-                break;
-                
-             case DIRECTORY:
-                 // TODO: hacerlo
-                 break;
-        }
+       PDEUtilities.launch( type, sTarget );
     }
     
     public String getTarget()
