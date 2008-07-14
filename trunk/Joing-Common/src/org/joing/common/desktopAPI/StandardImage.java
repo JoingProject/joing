@@ -14,6 +14,7 @@ package org.joing.common.desktopAPI;
  */
 public enum StandardImage
 { 
+    ALERT       ,
     COPY        ,
     CUT         ,
     DELETE      ,
@@ -24,11 +25,14 @@ public enum StandardImage
     LAUNCHER    ,
     LOCK        ,
     MOVE        ,
+    NEW         ,
     NO_IMAGE    ,
     NOTIFICATION,
     PASTE       ,
+    PRINT       ,
     PROPERTIES  ,
     REMOVE      ,
+    SEARCH      ,
     TRASHCAN    ,
     USER_FEMALE ,
     USER_MALE   ;
