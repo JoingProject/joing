@@ -32,14 +32,14 @@ public class AppDescriptor implements Serializable
     private String       version;
     private String       executable;
     private String[]     arguments;
-    private byte[]       iconPNG;
-    private byte[]       iconSVG;
+    private byte[]       iconPixel;     // PNG like
+    private byte[]       iconVector;    // SVG like
     private List<String> fileTypes;
     private String       description;
+    private String       author;
+    private String       vendor;
+    private String       license;
     private boolean      allowRemote;  // Used by ApplicationManagerBean class
-    
-    private int          environment;  // Defined in org.joing.common.dto.app.AppEnvironment
-    private int          environ_ver;  // Minimum Environment Version to run the application
     
     //------------------------------------------------------------------------//
     
@@ -51,8 +51,8 @@ public class AppDescriptor implements Serializable
     public int getId()
     {
         return id;
-    }    
-    
+    }
+
     /**
      * Return the name of the application.
      *
@@ -84,7 +84,8 @@ public class AppDescriptor implements Serializable
     }
     
     /**
-     * Return the arguments that will be passed to the appllication.
+     * Return the arguments that will be passed to the application or an empty
+     * String array if none.
      *
      * @return The arguments.
      */
@@ -105,18 +106,21 @@ public class AppDescriptor implements Serializable
     // En este caso no sería una buena práctica devolver un array vacío si el 
     // dato es null, porque null significa que no hay imagen, además, el array
     // no se utiliza para recorerlo, sino como una estructura.
-    public byte[] getPNGIcon()   // FIXME: Hay que renombrarlo a getIconPNG
+    public byte[] getIconPixel()
     {
-        if( iconPNG == null )
+        byte[] ret;
+        
+        if( iconPixel == null )
         {
-            return new byte[0];
+            ret = new byte[0];
         }
         else
         {   // Defensive copy
-            byte[] ret = new byte[ iconPNG.length ];
-            System.arraycopy( iconPNG, 0, ret, 0, iconPNG.length );
-            return ret;
+            ret = new byte[ iconPixel.length ];
+            System.arraycopy( iconPixel, 0, ret, 0, iconPixel.length );
         }
+        
+        return ret;
     }
     
     /**
@@ -124,22 +128,26 @@ public class AppDescriptor implements Serializable
      * 
      * @return The SVG icon for this application.
      */
-    public byte[] getSVGIcon()   // FIXME: Hay que renombrarlo a getIconSVG
+    public byte[] getIconVector()
     {
-        if( iconSVG == null )
+        byte[] ret;
+        
+        if( iconVector == null )
         {
-            return new byte[0];
+            ret = new byte[0];
         }
         else
         {   // Defensive copy
-            byte[] ret = new byte[ iconSVG.length ];
-            System.arraycopy( iconSVG, 0, ret, 0, iconSVG.length );
-            return ret;
+            ret = new byte[ iconVector.length ];
+            System.arraycopy( iconVector, 0, ret, 0, iconVector.length );
         }
+        
+        return ret;
     }
     
     /**
-     * Informs about the file types this application can work with.
+     * Informs about the file types this application can work with or an empty
+     * list if none.
      *
      * @return An array indicating those file name extensions that this 
      *         application can operate with.
@@ -160,6 +168,36 @@ public class AppDescriptor implements Serializable
     }
     
     /**
+     * The application author.
+     *
+     * @return The application author
+     */
+    public String getAuthor()
+    {
+        return author;
+    }
+
+    /**
+     * The application license.
+     *
+     * @return The application license
+     */
+    public String getLicense()
+    {
+        return license;
+    }
+
+    /**
+     * The application vendor.
+     *
+     * @return The application vendor
+     */
+    public String getVendor()
+    {
+        return vendor;
+    }
+    
+    /**
      * Tells about the permission for the user to run the application remotely.
      *
      * @return <code>true</code> if the user is allowed to run this application
@@ -171,25 +209,9 @@ public class AppDescriptor implements Serializable
         return allowRemote;
     }
     
-    /**
-     * The kind of Java environment this application needs.
-     *
-     * @return The kind of Java environment this application needs.
-     * @see org.joing.common.dto.app.AppEnvironment
-     */
-    public int getEnvironment()
+    public static long getSerialVersionUID()
     {
-        return environment;
-    }
-
-    /**
-     * The minimum environment version needed to run this application.
-     *
-     * @return Minimum environment version needed to run this application.
-     */ 
-    public int getEnvironVersion()
-    {
-        return environ_ver;
+        return serialVersionUID;
     }
     
     //------------------------------------------------------------------------//
@@ -206,6 +228,9 @@ public class AppDescriptor implements Serializable
      */
     public AppDescriptor()
     {
+        id          = -1;
+        arguments   = new String[0];
+        fileTypes   = new ArrayList<String>();
     }
     
     public void setId(int id)
@@ -215,32 +240,46 @@ public class AppDescriptor implements Serializable
     
     public void setName(String name)
     {
-        this.name = name;
+        this.name = (name == null ? null : name.trim());
     }
     
     public void setVersion(String version)
     {
-        this.version = version;
+        this.version = (version == null ? null : version.trim());
     }
     
     public void setExecutable(String executable)
     {
-        this.executable = executable;
+        this.executable = (executable == null ? null : executable.trim());
     }
     
     public void setArguments(String[] arguments)
     {
-        this.arguments = arguments;
+        if( arguments == null )
+        {
+            this.arguments = new String[0];
+        }
+        else
+        {
+            for( int n = 0; n < arguments.length; n++ )
+            {
+                if( arguments[n] != null )
+                    arguments[n] = arguments[n].trim();
+            }
+            
+            arguments = new String[ arguments.length ];
+            System.arraycopy( arguments, 0, this.arguments, 0, arguments.length );
+        }
     }
 
-    public void setIconPNG(byte[] iconPNG)
+    public void setIconPixel(byte[] iconPNG)
     {
-        this.iconPNG = iconPNG;
+        this.iconPixel = iconPNG;
     }
     
-    public void setIconSVG(byte[] iconSVG)
+    public void setIconVector(byte[] iconSVG)
     {
-        this.iconSVG = iconSVG;
+        this.iconVector = iconSVG;
     }
     
     public void setFileTypes(List<String> fileTypes)
@@ -273,21 +312,21 @@ public class AppDescriptor implements Serializable
      */
     public void setDescription( String description )
     {
-        this.description = description;
+        this.description = (description == null ? null : description.trim());
     }
 
-    public static long getSerialVersionUID()
+    public void setAuthor( String author )
     {
-        return serialVersionUID;
+        this.author = (author == null ? null : author.trim());
     }
 
-    public void setEnvironment(int environment)
+    public void setLicense( String license )
     {
-        this.environment = environment;
+        this.license = (license == null ? null : license.trim());
     }
 
-    public void setEnvironVersion(int environ_ver)
+    public void setVendor( String vendor )
     {
-        this.environ_ver = environ_ver;
+        this.vendor = (vendor == null ? null : vendor.trim());
     }
 }

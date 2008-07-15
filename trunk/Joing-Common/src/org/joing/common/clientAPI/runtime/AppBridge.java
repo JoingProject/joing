@@ -11,7 +11,6 @@ package org.joing.common.clientAPI.runtime;
 
 import java.util.List;
 import org.joing.common.dto.app.AppDescriptor;
-import org.joing.common.dto.app.AppEnvironment;
 import org.joing.common.dto.app.Application;
 import org.joing.common.dto.app.AppGroup;
 import org.joing.common.dto.app.AppGroupKey;
@@ -22,11 +21,11 @@ import org.joing.common.dto.app.AppGroupKey;
  */
 public interface AppBridge
 {
-    List<AppGroup> getAvailableForUser( AppEnvironment environ, AppGroupKey groupKey );
+    List<AppGroup> getAvailableForUser( AppGroupKey groupKey );
     
-    List<AppGroup> getNotInstalledForUser( AppEnvironment environ, AppGroupKey groupKey );
+    List<AppGroup> getNotInstalledForUser( AppGroupKey groupKey );
     
-    List<AppGroup> getInstalledForUser( AppEnvironment environ, AppGroupKey groupKey );
+    List<AppGroup> getInstalledForUser( AppGroupKey groupKey );
     
     boolean install( AppDescriptor app );
     
