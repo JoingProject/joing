@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import org.joing.common.clientAPI.runtime.AppBridge;
 import java.util.List;
 import org.joing.common.dto.app.AppDescriptor;
-import org.joing.common.dto.app.AppEnvironment;
 import org.joing.common.dto.app.Application;
 import org.joing.common.dto.app.AppGroup;
 import org.joing.common.dto.app.AppGroupKey;
@@ -53,17 +52,17 @@ public class AppBridgeSocketImpl
         super();
     }
 
-    public List<AppGroup> getAvailableForUser( AppEnvironment environ, AppGroupKey groupKey )
+    public List<AppGroup> getAvailableForUser( AppGroupKey groupKey )
     {
         return null;
     }
 
-    public List<AppGroup> getNotInstalledForUser( AppEnvironment environ, AppGroupKey groupKey )
+    public List<AppGroup> getNotInstalledForUser( AppGroupKey groupKey )
     {
         return null;
     }
 
-    public List<AppGroup> getInstalledForUser( AppEnvironment environ, AppGroupKey groupKey )
+    public List<AppGroup> getInstalledForUser( AppGroupKey groupKey )
     {
         return null;
     }

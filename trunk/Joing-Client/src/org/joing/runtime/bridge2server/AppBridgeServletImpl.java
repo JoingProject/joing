@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import org.joing.common.clientAPI.runtime.AppBridge;
 import java.util.List;
 import org.joing.common.dto.app.AppDescriptor;
-import org.joing.common.dto.app.AppEnvironment;
 import org.joing.common.dto.app.Application;
 import org.joing.common.dto.app.AppGroup;
 import org.joing.common.dto.app.AppGroupKey;
@@ -54,14 +53,13 @@ public class AppBridgeServletImpl
     {
     }
 
-    public List<AppGroup> getAvailableForUser( AppEnvironment environ, AppGroupKey groupKey )
+    public List<AppGroup> getAvailableForUser( AppGroupKey groupKey )
             throws JoingServerException
     {
         List<AppGroup> apps = null;
 
         Channel channel = new Channel( APP_GET_AVAILABLES );
         channel.write( platform.getBridge().getSessionBridge().getSessionId() );
-        channel.write( environ );
         channel.write( groupKey );
         apps = (List<AppGroup>) channel.read();
         channel.close();
@@ -69,14 +67,13 @@ public class AppBridgeServletImpl
         return apps;
     }
 
-    public List<AppGroup> getNotInstalledForUser( AppEnvironment environ, AppGroupKey groupKey )
+    public List<AppGroup> getNotInstalledForUser( AppGroupKey groupKey )
             throws JoingServerException
     {
         List<AppGroup> apps = null;
 
         Channel channel = new Channel( APP_GET_NOT_INSTALLED );
         channel.write( platform.getBridge().getSessionBridge().getSessionId() );
-        channel.write( environ );
         channel.write( groupKey );
         apps = (List<AppGroup>) channel.read();
         channel.close();
@@ -84,14 +81,13 @@ public class AppBridgeServletImpl
         return apps;
     }
 
-    public List<AppGroup> getInstalledForUser( AppEnvironment environ, AppGroupKey groupKey )
+    public List<AppGroup> getInstalledForUser( AppGroupKey groupKey )
             throws JoingServerException
     {
         List<AppGroup> apps = null;
 
         Channel channel = new Channel( APP_GET_INSTALLED );
         channel.write( platform.getBridge().getSessionBridge().getSessionId() );
-        channel.write( environ );
         channel.write( groupKey );
         apps = (List<AppGroup>) channel.read();
         channel.close();
