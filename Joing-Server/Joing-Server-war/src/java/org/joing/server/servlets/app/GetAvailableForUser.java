@@ -8,13 +8,11 @@ package org.joing.server.servlets.app;
 
 import ejb.app.ApplicationManagerLocal;
 import java.io.*;
-import java.net.*;
 import java.util.List;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import org.joing.common.dto.app.AppEnvironment;
 import org.joing.common.dto.app.AppGroup;
 import org.joing.common.dto.app.AppGroupKey;
 import org.joing.common.exception.JoingServerException;
@@ -45,12 +43,11 @@ public class GetAvailableForUser extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String         sSessionId = (String)         reader.readObject();
-            AppEnvironment environ    = (AppEnvironment) reader.readObject();
-            AppGroupKey    groupKey   = (AppGroupKey)    reader.readObject();
+            String      sSessionId = (String)      reader.readObject();
+            AppGroupKey groupKey   = (AppGroupKey) reader.readObject();
             
             // Process request
-            List<AppGroup> apps = applicationManagerBean.getAvailableForUser( sSessionId, environ, groupKey );
+            List<AppGroup> apps = applicationManagerBean.getAvailableForUser( sSessionId, groupKey );
             
             // Write to Client (desktop)
             writer.writeObject( apps );
