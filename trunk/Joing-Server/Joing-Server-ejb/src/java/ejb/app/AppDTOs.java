@@ -11,10 +11,12 @@ package ejb.app;
 
 import ejb.Constant;
 import ejb.vfs.NativeFileSystemTools;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
+import java.io.InputStream;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.app.Application;
 import org.joing.common.exception.JoingServerAppException;
@@ -51,7 +53,10 @@ class AppDTOs
         transfer( appEntity, app );
         
         if( app.getExecutable() != null )
-            app.setContents( getContents( appEntity.getExtraPath(), app.getExecutable() ) );
+        {
+            java.io.File fJAR = createFileForJAR( appEntity.getExtraPath(), appEntity.getExecutable() );
+            app.setContents( getContents( fJAR ) );
+        }
         
         return app;
     }
@@ -64,33 +69,57 @@ class AppDTOs
     
     private static void transfer( ApplicationEntity appEntity, AppDescriptor appDTO )
     {
-        appDTO.setId( appEntity.getIdApplication() );
-        appDTO.setName( appEntity.getApplication() );
-        appDTO.setVersion( appEntity.getVersion() );
-        appDTO.setExecutable( appEntity.getExecutable() );
-        appDTO.setArguments( null );// FIXME: implementarlo --> appEntity.getArguments();
-        appDTO.setIconPNG( appEntity.getIconPng() );
-        appDTO.setIconSVG( appEntity.getIconSvg() );
+        String sExecutable = appEntity.getExecutable();
         
-        // Prepare file types
-        ArrayList<String> lstFileTypes = new ArrayList<String>();        
-        
-        if( appEntity.getFileTypes() != null )
+        if( sExecutable.toUpperCase().endsWith( ".JAR" ) )
         {
-            StringTokenizer st = new StringTokenizer( appEntity.getFileTypes(), ";" );
+            JarFile jar = null;
             
-            while( st.hasMoreTokens() )
-                lstFileTypes.add( st.nextToken() );
+            try
+            {
+                java.io.File  fJAR = createFileForJAR( appEntity.getExtraPath(), appEntity.getExecutable() );
+                              jar  = new JarFile( fJAR );
+                JoingManifest jm   = new JoingManifest( jar );
+                
+                String sAppName = jm.getAppName();
+                
+                if( sAppName == null )     // Can't be null
+                {
+                    sAppName = fJAR.getName();
+                
+                    if( sAppName.indexOf( '.' ) > -1 )
+                        sAppName = sAppName.substring( 0, sAppName.indexOf( '.' ) );
+                }
+                
+                appDTO.setName( sAppName );
+                appDTO.setVersion( jm.getVersion() );
+                appDTO.setIconPixel( readBinaryFileFromJAR( jar, jm.getIconPixel() ) );
+                appDTO.setIconVector( readBinaryFileFromJAR( jar, jm.getIconVector() ) );
+                appDTO.setDescription( jm.getDescription() );
+                appDTO.setArguments( jm.getArguments() );
+                appDTO.setFileTypes( jm.getFileTypes() );
+                appDTO.setAuthor( jm.getAuthor() );
+                appDTO.setVendor( jm.getVendor() );
+                appDTO.setLicense( jm.getLicense() );
+            }
+            catch( IOException exc )
+            {
+                Constant.getLogger().throwing( AppDTOs.class.getName(), "transfer(...)", exc );
+                throw new JoingServerAppException( JoingServerException.ACCESS_NFS, exc );
+            }
+            finally
+            {
+                if( jar != null )
+                    try{ jar.close(); }catch( IOException e ) { /* Nothing to do */ }
+            }
         }
-          
-        appDTO.setFileTypes( lstFileTypes );
+        
+        appDTO.setId( appEntity.getIdApplication() );
+        appDTO.setExecutable( appEntity.getExecutable() );
     }
     
-    // Application contents is sat by this method
-    private static byte[] getContents( String sExtraPath, String sExec )
+    private static java.io.File createFileForJAR( String sExtraPath, String sExec )
     {
-        byte[] btContent = null;
-        
         if( sExtraPath != null && sExtraPath.length() > 0 )
         {
             // Removes leading and trailing "/"
@@ -100,23 +129,27 @@ class AppDTOs
             if( sExtraPath.charAt( sExtraPath.length() - 1 ) == '/' )
                 sExtraPath = sExtraPath.substring( 0, sExtraPath.length() - 1 );
             
-            sExec = sExtraPath +"/"+ sExec;
+            sExec = sExtraPath +'/'+ sExec;
         }
         
-        java.io.File fApp = NativeFileSystemTools.getApplication( sExec );
-        
-        btContent = new byte[ (int) fApp.length() ];
+        return NativeFileSystemTools.getApplication( sExec );
+    }
+    
+    // Application contents is sat by this method
+    private static byte[] getContents( java.io.File fJAR )
+    {
+        byte[] btContent = new byte[ (int) fJAR.length() ];
         
         try
         {
-            FileInputStream fis  = new FileInputStream( fApp );
+            FileInputStream fis  = new FileInputStream( fJAR );
                             fis.read( btContent, 0, btContent.length );
         }
         catch( RuntimeException exc )
         {
             if( ! (exc instanceof JoingServerException) )
             {
-                Constant.getLogger().throwing( "Application", "setContents()", exc );
+                Constant.getLogger().throwing( AppDTOs.class.getName(), "setContents()", exc );
                 exc = new JoingServerAppException( JoingServerException.ACCESS_DB, exc );
             }
 
@@ -124,10 +157,40 @@ class AppDTOs
         }
         catch( IOException exc )
         {
-            Constant.getLogger().throwing( "Application", "setContents()", exc );
+            Constant.getLogger().throwing( AppDTOs.class.getName(), "setContents()", exc );
             throw new JoingServerAppException( JoingServerException.ACCESS_NFS, exc );
         }
         
         return btContent;
+    }
+    
+    private static byte[] readBinaryFileFromJAR( JarFile jar, String sEntry )
+    {
+        byte[] anRet = null;
+        
+        if( sEntry != null )
+        {
+            try
+            {
+                JarEntry              entry  = jar.getJarEntry( sEntry );
+                InputStream           input  = jar.getInputStream( entry );
+                ByteArrayOutputStream output = new ByteArrayOutputStream( 1024*8 );
+                
+                byte[] buffer = new byte[1024];
+                int    bytes;
+                
+                while( (bytes = input.read( buffer )) > 0 )
+                    output.write( buffer, 0, bytes );
+                
+                input.close();
+                anRet = output.toByteArray();
+            }
+            catch( IOException exc )
+            {
+                // Nothing to do: returning null
+            }
+        }
+        
+        return anRet;
     }
 }

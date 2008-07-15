@@ -13,7 +13,6 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -27,26 +26,15 @@ import javax.persistence.Table;
 @Table(name = "APPLICATIONS")
 @NamedQueries(
             {
-        @NamedQuery(name = "ApplicationEntity.findByIdApplication", query = "SELECT a FROM ApplicationEntity a WHERE a.idApplication = :idApplication"),
-        @NamedQuery(name = "ApplicationEntity.findByApplication", query = "SELECT a FROM ApplicationEntity a WHERE a.application = :application"),
-        @NamedQuery(name = "ApplicationEntity.findByVersion", query = "SELECT a FROM ApplicationEntity a WHERE a.version = :version"),
+        @NamedQuery(name = "ApplicationEntity.findByIdApplication", query = "SELECT a FROM ApplicationEntity a WHERE a.idApplication = :idApplication"),        
         @NamedQuery(name = "ApplicationEntity.findByExtraPath", query = "SELECT a FROM ApplicationEntity a WHERE a.extraPath = :extraPath"),
-        @NamedQuery(name = "ApplicationEntity.findByExecutable", query = "SELECT a FROM ApplicationEntity a WHERE a.executable = :executable"),
-        @NamedQuery(name = "ApplicationEntity.findByArguments", query = "SELECT a FROM ApplicationEntity a WHERE a.arguments = :arguments"),
-        @NamedQuery(name = "ApplicationEntity.findByFileTypes", query = "SELECT a FROM ApplicationEntity a WHERE a.fileTypes = :fileTypes")
+        @NamedQuery(name = "ApplicationEntity.findByExecutable", query = "SELECT a FROM ApplicationEntity a WHERE a.executable = :executable")
     })
 public class ApplicationEntity implements Serializable
 {
-
     @Id
     @Column(name = "ID_APPLICATION", nullable = false)
     private Integer idApplication;
-
-    @Column(name = "APPLICATION", nullable = false)
-    private String application;
-
-    @Column(name = "VERSION", nullable = false)
-    private String version;
 
     @Column(name = "EXTRA_PATH")
     private String extraPath;
@@ -54,19 +42,6 @@ public class ApplicationEntity implements Serializable
     @Column(name = "EXECUTABLE", nullable = false)
     private String executable;
 
-    @Column(name = "ARGUMENTS")
-    private String arguments;
-
-    @Lob
-    @Column(name = "ICON_PNG")
-    private byte [] iconPng;
-
-    @Lob
-    @Column(name = "ICON_SVG")
-    private byte [] iconSvg;
-
-    @Column(name = "FILE_TYPES")
-    private String fileTypes;
     
 //    private List<AppGroupEntity> groups = new ArrayList<AppGroupEntity>();
 //
@@ -101,11 +76,9 @@ public class ApplicationEntity implements Serializable
      * @param version the version of the ApplicationEntity
      * @param executable the executable of the ApplicationEntity
      */
-    public ApplicationEntity(Integer idApplication, String application, String version, String executable)
+    public ApplicationEntity(Integer idApplication, String executable)
     {
         this.idApplication = idApplication;
-        this.application = application;
-        this.version = version;
         this.executable = executable;
     }
 
@@ -125,42 +98,6 @@ public class ApplicationEntity implements Serializable
     public void setIdApplication(Integer idApplication)
     {
         this.idApplication = idApplication;
-    }
-
-    /**
-     * Gets the application of this ApplicationEntity.
-     * @return the application
-     */
-    public String getApplication()
-    {
-        return this.application;
-    }
-
-    /**
-     * Sets the application of this ApplicationEntity to the specified value.
-     * @param application the new application
-     */
-    public void setApplication(String application)
-    {
-        this.application = application;
-    }
-
-    /**
-     * Gets the version of this ApplicationEntity.
-     * @return the version
-     */
-    public String getVersion()
-    {
-        return this.version;
-    }
-
-    /**
-     * Sets the version of this ApplicationEntity to the specified value.
-     * @param version the new version
-     */
-    public void setVersion(String version)
-    {
-        this.version = version;
     }
 
     /**
@@ -197,78 +134,6 @@ public class ApplicationEntity implements Serializable
     public void setExecutable(String executable)
     {
         this.executable = executable;
-    }
-
-    /**
-     * Gets the arguments of this ApplicationEntity.
-     * @return the arguments
-     */
-    public String getArguments()
-    {
-        return this.arguments;
-    }
-
-    /**
-     * Sets the arguments of this ApplicationEntity to the specified value.
-     * @param arguments the new arguments
-     */
-    public void setArguments(String arguments)
-    {
-        this.arguments = arguments;
-    }
-
-    /**
-     * Gets the iconPng of this ApplicationEntity.
-     * @return the iconPng
-     */
-    public byte [] getIconPng()
-    {
-        return this.iconPng;
-    }
-
-    /**
-     * Sets the iconPng of this ApplicationEntity to the specified value.
-     * @param iconPng the new iconPng
-     */
-    public void setIconPng(byte [] iconPng)
-    {
-        this.iconPng = iconPng;
-    }
-
-    /**
-     * Gets the iconSvg of this ApplicationEntity.
-     * @return the iconSvg
-     */
-    public byte [] getIconSvg()
-    {
-        return this.iconSvg;
-    }
-
-    /**
-     * Sets the iconSvg of this ApplicationEntity to the specified value.
-     * @param iconSvg the new iconSvg
-     */
-    public void setIconSvg(byte [] iconSvg)
-    {
-        this.iconSvg = iconSvg;
-    }
-
-    /**
-     * Gets the fileTypes of this ApplicationEntity.
-     * @return the fileTypes
-     */
-    public String getFileTypes()
-    {
-        return this.fileTypes;
-    }
-
-    /**
-     * Sets the fileTypes of this ApplicationEntity to the specified value.
-     * @param fileTypes the new fileTypes
-     */
-    public void setFileTypes(String fileTypes)
-    {
-        this.fileTypes = fileTypes;
     }
 
     /**
@@ -314,5 +179,4 @@ public class ApplicationEntity implements Serializable
     {
         return "ejb.app.ApplicationEntity[idApplication=" + idApplication + "]";
     }
-    
 }

@@ -33,8 +33,8 @@ public class AppDescriptor implements Serializable
     
     private String       executable;
     private String[]     arguments;
-    private byte[]       iconPNG;
-    private byte[]       iconSVG;
+    private byte[]       iconPixel;   // PNG
+    private byte[]       iconVector;  // SVG   TODO: hacerlo (es un byte[] porque se envía comprimida)
     private List<String> fileTypes;
     private String       description;
     
@@ -115,37 +115,21 @@ public class AppDescriptor implements Serializable
     // En este caso no sería una buena práctica devolver un array vacío si el 
     // dato es null, porque null significa que no hay imagen, además, el array
     // no se utiliza para recorerlo, sino como una estructura.
-    public byte[] getPNGIcon()
+    public byte[] getIconPixel()
     {
-        if( iconPNG == null )
+        byte[] ret;
+        
+        if( iconPixel == null )
         {
-            return new byte[0];
+            ret = new byte[0];
         }
         else
         {   // Defensive copy
-            byte[] ret = new byte[ iconPNG.length ];
-            System.arraycopy( iconPNG, 0, ret, 0, iconPNG.length );
-            return ret;
+            ret = new byte[ iconPixel.length ];
+            System.arraycopy( iconPixel, 0, ret, 0, iconPixel.length  );
         }
-    }
-    
-    /**
-     * Return the SVG icon for this application.
-     * 
-     * @return The SVG icon for this application.
-     */
-    public byte[] getSVGIcon()
-    {
-        if( iconSVG == null )
-        {
-            return new byte[0];
-        }
-        else
-        {   // Defensive copy
-            byte[] ret = new byte[ iconSVG.length ];
-            System.arraycopy( iconSVG, 0, ret, 0, iconSVG.length );
-            return ret;
-        }
+        
+        return ret;
     }
     
     public String[] getFileTypes()
@@ -193,12 +177,7 @@ public class AppDescriptor implements Serializable
 
     void setIconPNG(byte[] iconPNG)
     {
-        this.iconPNG = iconPNG;
-    }
-
-    void setIconSVG(byte[] iconSVG)
-    {
-        this.iconSVG = iconSVG;
+        this.iconPixel = iconPNG;
     }
 
     void setFileTypes(List<String> fileTypes)

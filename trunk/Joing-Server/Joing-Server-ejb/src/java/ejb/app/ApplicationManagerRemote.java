@@ -4,11 +4,11 @@ package ejb.app;
 import java.util.List;
 import javax.ejb.Remote;
 import org.joing.common.dto.app.AppDescriptor;
-import org.joing.common.dto.app.AppEnvironment;
 import org.joing.common.dto.app.Application;
 import org.joing.common.dto.app.AppGroup;
 import org.joing.common.dto.app.AppGroupKey;
 import org.joing.common.exception.JoingServerAppException;
+import org.joing.common.exception.JoingServerVFSException;
 
 /**
  * This is the business interface for <code>ApplicationManager</code> enterprise
@@ -27,11 +27,10 @@ public interface ApplicationManagerRemote
      * went wrong.
      *
      * @param sSessionId A valid session (sSessionId in order to obtain the user).
-     * @param environ Environment. Refer to <code>org.joing.common.dto.app.AppEnvironment</code>
      * @param groupKey App group. Refer to <code>org.joing.common.dto.app.AppGroup</code>
      * @return List of applications matching the criteria.
      */
-    List<AppGroup> getAvailableForUser( String sSessionId, AppEnvironment environ, AppGroupKey groupKey )
+    List<AppGroup> getAvailableForUser( String sSessionId, AppGroupKey groupKey )
                    throws JoingServerAppException;
     
     /**
@@ -44,11 +43,10 @@ public interface ApplicationManagerRemote
      * or will be <code>null</code> if something went wrong.
      *
      * @param sSessionId A valid session (sSessionId in order to obtain the user).
-     * @param environ Environment. Refer to <code>org.joing.common.dto.app.AppEnvironment</code>
      * @param groupKey App group. Refer to <code>org.joing.common.dto.app.AppGroup</code>
      * @return List of applications matching the criteria.
      */
-    List<AppGroup> getNotInstalledForUser( String sSessionId, AppEnvironment environ, AppGroupKey groupKey )
+    List<AppGroup> getNotInstalledForUser( String sSessionId, AppGroupKey groupKey )
                    throws JoingServerAppException;
     
     /**
@@ -61,11 +59,10 @@ public interface ApplicationManagerRemote
      * or will be <code>null</code> if something went wrong.
      *
      * @param sSessionId A valid session (sSessionId in order to obtain the user).
-     * @param environ Environment. Refer to <code>org.joing.common.dto.app.AppEnvironment</code>
      * @param groupKey App group. Refer to <code>org.joing.common.dto.app.AppGroup</code>
      * @return List of applications matching the criteria.
      */
-    List<AppGroup> getInstalledForUser( String sSessionId, AppEnvironment environ, AppGroupKey groupKey )
+    List<AppGroup> getInstalledForUser( String sSessionId, AppGroupKey groupKey )
                    throws JoingServerAppException;
     
     /**
