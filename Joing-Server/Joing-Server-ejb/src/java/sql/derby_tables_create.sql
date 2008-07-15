@@ -5,10 +5,8 @@
 -- First step: to drop all tables (if any)
 
 DROP TABLE USERS_WITH_APPS;
-DROP TABLE APP_DESCRIPTIONS;
 DROP TABLE APP_GROUP_DESCRIPTIONS;
 DROP TABLE APPS_WITH_GROUPS;
-DROP TABLE APP_PREFERRED;
 DROP TABLE FILES;
 DROP TABLE SESSIONS;
 DROP TABLE APP_GROUPS;
@@ -18,9 +16,9 @@ DROP TABLE LOCALES;
 
 -- ********************************************************************************************************************
 
-CREATE TABLE USERS(               -- Can't be named 'USER' because it is an SQL-99 keyword
+CREATE TABLE USERS(               -- Can't be named 'USER' because it is a SQL reserved word
    PRIMARY KEY (ACCOUNT),
-   ACCOUNT     VARCHAR(128) NOT NULL ,   -- Identinfies uniquely the user in all Joing communities (<account>@<community>.<domain>)
+   ACCOUNT     VARCHAR(128) NOT NULL ,   -- Identifies uniquely the user in all Joing communities (<account>@<community>.<domain>)
    PASSWORD    VARCHAR(32)  NOT NULL ,
    EMAIL       VARCHAR(64)           ,   -- In case that the community don't offer an email based on ACCOUNT
    FIRST_NAME  VARCHAR(48)           ,
@@ -43,23 +41,15 @@ CREATE TABLE USERS_WITH_APPS(               -- Many-To-Many: which apps are avai
    PRIMARY KEY (ACCOUNT, ID_APPLICATION)  , -- and which will be shown in the menu (installed == true)
    ACCOUNT        VARCHAR(128) NOT NULL   ,
    ID_APPLICATION INT          NOT NULL   ,
-   ALLOW_REMOTE   SMALLINT     DEFAULT 1 ); -- Is this user allowed to run this app in the server?
+   ALLOW_REMOTE   SMALLINT     DEFAULT 0 ); -- Is this user allowed to run this app in the server?
 
 -- ********************************************************************************************************************
 
 CREATE TABLE APPLICATIONS(
    PRIMARY KEY (ID_APPLICATION),
-   ID_APPLICATION INT GENERATED ALWAYS AS IDENTITY,
-   --APPLICATION    VARCHAR(64)    NOT NULL    ,  -- Application name (NAME is a reserved SQL word)   
-   --VERSION        VARCHAR(16)    NOT NULL    ,  -- Application Version
-   EXTRA_PATH     VARCHAR(255)               ,  -- From applications dir (defined in Constant.sAPP_DIR)
-   EXECUTABLE     VARCHAR(255)   NOT NULL    ,  -- Normally a .jar or a .class, but could be a native or a C# file
-   --ARGUMENTS      VARCHAR(255)               ,  -- Arguments to be passed
-   --ICON_PNG       VARCHAR(4096)  FOR BIT DATA,  -- A PNG (24x24) image up to 4Kb
-   --ICON_SVG       VARCHAR(16384) FOR BIT DATA,  -- A SVGZ (compresed) image up to 16Kb
-   --FILE_TYPES     VARCHAR(255)               ,  -- File extensions that can manage (v.g: "png;jpg;gif")
-   --ENVIRONMENT    INT            NOT NULL    ,  -- Refer to Common.dto.app.AppEnvironment.java
-   --ENVIRON_VER    VARCHAR(16)    NOT NULL   );  -- Minimum Environment Version to run the application
+   ID_APPLICATION INT GENERATED ALWAYS AS IDENTITY,   
+   EXTRA_PATH     VARCHAR(255),             -- From applications dir (defined in Constant.sAPP_DIR)
+   EXECUTABLE     VARCHAR(255) NOT NULL );  -- Normally a .jar or a .class, but could be a JRuby, Groovy, ... file
 
 CREATE TABLE LOCALES(
    PRIMARY KEY (ID_LOCALE),
@@ -67,17 +57,11 @@ CREATE TABLE LOCALES(
    IDIOM     VARCHAR(3) NOT NULL,               -- LOCALE language (LANGUAGE is a reserved SQL word)
    COUNTRY   VARCHAR(3) );
 
-CREATE TABLE APP_DESCRIPTIONS(    -- Application descriptions in different languages
-   PRIMARY KEY (ID_APPLICATION, ID_LOCALE),
-   ID_APPLICATION INT          NOT NULL,
-   ID_LOCALE      INT          NOT NULL,   -- Language (as in java.util.Locale)
-   DESCRIPTION    VARCHAR(512) NOT NULL );
-
 CREATE TABLE APP_GROUPS(          -- Application groups (categories)
    PRIMARY KEY (ID_APP_GROUP),
    ID_APP_GROUP INT            NOT NULL    ,   -- Refer to Common.dto.app.AppGroup.java
-   ICON_PNG     VARCHAR(4096)  FOR BIT DATA,   -- A PNG (24x24) image up to 16Kb
-   ICON_SVG     VARCHAR(16384) FOR BIT DATA ); -- A SVGZ (compresed) image up to 32Kb
+   ICON_PIXEL   VARCHAR(4096)  FOR BIT DATA,   -- A PNG (24x24) image up to 16Kb
+   ICON_VECTOR  VARCHAR(16384) FOR BIT DATA ); -- A SVGZ (compresed) image up to 32Kb
 
 CREATE TABLE APP_GROUP_DESCRIPTIONS(    -- Application Group name (descriptive) in different languages
    PRIMARY KEY (ID_APP_GROUP, ID_LOCALE),
@@ -91,14 +75,9 @@ CREATE TABLE APPS_WITH_GROUPS(    -- Many-To-Many: Which apps belong to which gr
    ID_APPLICATION INT NOT NULL,
    ID_APP_GROUP   INT NOT NULL );
 
-CREATE TABLE APP_PREFERRED(       -- Preferred app to open a file type (denoted by the file extension)
-   PRIMARY KEY (FILE_EXTENSION),  -- Every file extension can exists only once in the table
-   ID_APPLICATION INT         NOT NULL ,
-   FILE_EXTENSION VARCHAR(64) NOT NULL);  -- One and only one file extension (it can be long, not just 3 chars)
-
 -- ********************************************************************************************************************
 
-CREATE TABLE FILES(               -- 'FILE' is an SQL-99 keyword 
+CREATE TABLE FILES(               -- 'FILE' is a reserved SQL word 
    PRIMARY KEY (ID_FILE),
    ID_FILE         INT GENERATED ALWAYS AS IDENTITY, -- Real file name in real (native) FS
    ID_ORIGINAL     INT                    ,  -- In case it is a link: Which file is the original?  (null == none)
@@ -127,8 +106,8 @@ CREATE TABLE FILES(               -- 'FILE' is an SQL-99 keyword
 --   ID_FILE_TYPE INT GENERATED ALWAYS AS IDENTITY,
 --   ID_FILE      INT            NOT NULL    ,
 --   MIME_TYPE    VARCHAR(32)                ,
---   ICON_PNG     VARCHAR(4096)  FOR BIT DATA,    -- A PNG (24x24) image up to 4Kb
---   ICON_SVG     VARCHAR(16384) FOR BIT DATA );  -- A SVGZ (compresed) image up to 16Kb
+--   ICON_PIXEL   VARCHAR(4096)  FOR BIT DATA,    -- A PNG (24x24) image up to 4Kb
+--   ICON_VECTOR  VARCHAR(16384) FOR BIT DATA );  -- A SVGZ (compresed) image up to 16Kb
 
 -- ********************************************************************************************************************
 

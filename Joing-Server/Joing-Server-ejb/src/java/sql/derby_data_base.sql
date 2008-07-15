@@ -9,37 +9,37 @@ insert into locales (IDIOM, COUNTRY)    -- ID_LOCALE = 1
 
 -- For inf about ID_APP_GROUP, refer to -> org.joing.common.dto.app.AppGroup.java
 
-insert into app_groups (ID_APP_GROUP, ICON_PNG, ICON_SVG)
+insert into app_groups (ID_APP_GROUP, ICON_PIXEL, ICON_VECTOR)
      values (1, NULL, NULL);
 
-insert into app_groups (ID_APP_GROUP, ICON_PNG, ICON_SVG)
+insert into app_groups (ID_APP_GROUP, ICON_PIXEL, ICON_VECTOR)
      values (2, NULL, NULL);
 
-insert into app_groups (ID_APP_GROUP, ICON_PNG, ICON_SVG)
+insert into app_groups (ID_APP_GROUP, ICON_PIXEL, ICON_VECTOR)
      values (3, NULL, NULL);
 
-insert into app_groups (ID_APP_GROUP, ICON_PNG, ICON_SVG)
+insert into app_groups (ID_APP_GROUP, ICON_PIXEL, ICON_VECTOR)
      values (4, NULL, NULL);
 
-insert into app_groups (ID_APP_GROUP, ICON_PNG, ICON_SVG)
+insert into app_groups (ID_APP_GROUP, ICON_PIXEL, ICON_VECTOR)
      values (5, NULL, NULL);
 
-insert into app_groups (ID_APP_GROUP, ICON_PNG, ICON_SVG)
+insert into app_groups (ID_APP_GROUP, ICON_PIXEL, ICON_VECTOR)
      values (6, NULL, NULL);
 
-insert into app_groups (ID_APP_GROUP, ICON_PNG, ICON_SVG)
+insert into app_groups (ID_APP_GROUP, ICON_PIXEL, ICON_VECTOR)
      values (7, NULL, NULL);
 
-insert into app_groups (ID_APP_GROUP, ICON_PNG, ICON_SVG)
+insert into app_groups (ID_APP_GROUP, ICON_PIXEL, ICON_VECTOR)
      values (8, NULL, NULL);
 
-insert into app_groups (ID_APP_GROUP, ICON_PNG, ICON_SVG)
+insert into app_groups (ID_APP_GROUP, ICON_PIXEL, ICON_VECTOR)
      values (9, NULL, NULL);
 
-insert into app_groups (ID_APP_GROUP, ICON_PNG, ICON_SVG)
+insert into app_groups (ID_APP_GROUP, ICON_PIXEL, ICON_VECTOR)
      values (10, NULL, NULL);
 
-insert into app_groups (ID_APP_GROUP, ICON_PNG, ICON_SVG)
+insert into app_groups (ID_APP_GROUP, ICON_PIXEL, ICON_VECTOR)
      values (99, NULL, NULL);
 
 -- ------------------------------------------------------------------

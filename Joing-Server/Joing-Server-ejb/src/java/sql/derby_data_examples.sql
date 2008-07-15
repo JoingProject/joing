@@ -47,97 +47,35 @@ insert into app_group_descriptions (ID_APP_GROUP, ID_LOCALE, GROUP_NAME)
 
 -- -----------------------------------------------------------------------------
 
-insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, FILE_TYPES, ENVIRONMENT, ENVIRON_VER)
-     values ('PDE', '0.0.1', 'desktops', 'PDE.jar', null, 3, '1.5');
+insert into applications (EXTRA_PATH, EXECUTABLE)
+     values ('desktops', 'PDE.jar');
 
-insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, FILE_TYPES, ENVIRONMENT, ENVIRON_VER)
-     values ('Notes', '0.1', 'accessories', 'Notes.jar', 'txt;ini', 3, '1.5');
+insert into applications (EXTRA_PATH, EXECUTABLE)
+     values ('accessories', 'Notes.jar');
 
-insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, ENVIRONMENT, ENVIRON_VER)
-     values ('Basic Calculator', '2.4', 'accessories', 'BasicCalculator.jar', 3, '1.5');
+insert into applications (EXTRA_PATH, EXECUTABLE)
+     values ('accessories', 'BasicCalculator.jar');
 
-insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, ENVIRONMENT, ENVIRON_VER)
-     values ('Images', '1.1', 'graphics', 'Images.jar', 3, '1.5');
+insert into applications (EXTRA_PATH, EXECUTABLE)
+     values ('graphics', 'Images.jar');
 
-insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, ENVIRONMENT, ENVIRON_VER)
-     values ('Tetris', '0.5', 'games', 'Tetris.jar', 3, '1.2');
+insert into applications (EXTRA_PATH, EXECUTABLE)
+     values ('games', 'Tetris.jar');
 
-insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, ENVIRONMENT, ENVIRON_VER)
-     values ('Pacman', '0.5', 'games', 'Pacman.jar', 3, '1.2');
+insert into applications (EXTRA_PATH, EXECUTABLE)
+     values ('games', 'Pacman.jar');
 
-insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, ENVIRONMENT, ENVIRON_VER)
-     values ('Proxy Config', '0.5', 'system', 'ProxyConfig.jar', 3, '1.5');
+insert into applications (EXTRA_PATH, EXECUTABLE)
+     values ('system', 'ProxyConfig.jar');
 
-insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, ENVIRONMENT, ENVIRON_VER)
-     values ('System Monitor', '0.5', 'system', 'SystemMonitor.jar', 3, '1.5');
+insert into applications (EXTRA_PATH, EXECUTABLE)
+     values ('system', 'SystemMonitor.jar');
 
-insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, ENVIRONMENT, ENVIRON_VER)
-     values ('File Explorer', '0.1', 'accessories', 'TinyExplorer.jar', 3, '1.5');
+insert into applications (EXTRA_PATH, EXECUTABLE)
+     values ('accessories', 'TinyExplorer.jar');
 
-insert into applications (APPLICATION, VERSION, EXTRA_PATH, EXECUTABLE, ENVIRONMENT, ENVIRON_VER)
-     values ('Community Explorer', '0.1', 'accessories', 'YACE.jar', 3, '1.5');
-
--- ------------------------------------------------------------------
-
-insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
-     values (1, 1, 'Peyrona Desktop Environment' );
-
-insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
-     values (1, 2, 'Peyrona Desktop Environment' );
-
-insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
-     values (2, 1, 'A very simple text editor' );
-
-insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
-     values (2, 2, 'Un editor de textos muy simple' );
-
-insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
-     values (3, 1, 'Calculator - Very basic calculator with paper' );
-
-insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
-     values (3, 2, 'Calculadora - Básica con papel' );
-
-insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
-     values (4, 1, 'Simple image viewer with support for several graphic formats' );
-
-insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
-     values (4, 2, 'Visualizador de imágenes básico con soporte para varios formatos' );
-
-insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
-     values (5, 1, 'Tetris: as fun as simple' );
-
-insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
-     values (5, 2, 'Tetris: tan divertido como simple' );
-
-insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
-     values (6, 1, 'Pacman: the old good times' );
-
-insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
-     values (6, 2, 'Pacman: como en los viejos tiempos' );
-
-insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
-     values (7, 1, 'ProxyConfig: proxy configuration tool' );
-
-insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
-     values (7, 2, 'ProxyConfig: utilidad para configuración del proxy' );
-
-insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
-     values (8, 1, 'SystemMonitor: system monitor' );
-
-insert into app_descriptions (ID_APPLICATION, ID_LOCALE, DESCRIPTION)
-     values (8, 2, 'SystemMonitor: monitor del systema' );
-
-insert into app_descriptions( ID_APPLICATION, ID_LOCALE, DESCRIPTION )
-     values( 9, 1, 'Small and simple file explorer');
-
-insert into app_descriptions( ID_APPLICATION, ID_LOCALE, DESCRIPTION )
-     values( 9, 2, 'Pequeño y sencillo explorador de archivos');
-
-insert into app_descriptions( ID_APPLICATION, ID_LOCALE, DESCRIPTION )
-     values( 10, 1, 'Small and simple community explorer');
-
-insert into app_descriptions( ID_APPLICATION, ID_LOCALE, DESCRIPTION )
-     values( 10, 2, 'Pequeño y sencillo explorador de la comunidad');
+insert into applications (EXTRA_PATH, EXECUTABLE)
+     values ('accessories', 'YACE.jar');
 
 -- ------------------------------------------------------------------
 
@@ -170,29 +108,6 @@ insert into apps_with_groups (ID_APPLICATION, ID_APP_GROUP)
 
 insert into apps_with_groups (ID_APPLICATION, ID_APP_GROUP)
      values (10, 1);   -- App 'Community Explorer' belongs to Group 'Accesories'
-
--- ------------------------------------------------------------------
-
-insert into app_preferred (ID_APPLICATION, FILE_EXTENSION)
-     values (1, 'txt');
-
-insert into app_preferred (ID_APPLICATION, FILE_EXTENSION)
-     values (1, 'ini');
-
-insert into app_preferred (ID_APPLICATION, FILE_EXTENSION)
-     values (4, 'png');
-
-insert into app_preferred (ID_APPLICATION, FILE_EXTENSION)
-     values (4, 'gif');
-
-insert into app_preferred (ID_APPLICATION, FILE_EXTENSION)
-     values (4, 'bmp');
-
-insert into app_preferred (ID_APPLICATION, FILE_EXTENSION)
-     values (4, 'jpg');
-
-insert into app_preferred (ID_APPLICATION, FILE_EXTENSION)
-     values (4, 'jpeg');
 
 -- ------------------------------------------------------------------
 

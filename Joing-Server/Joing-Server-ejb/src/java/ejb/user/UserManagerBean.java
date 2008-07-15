@@ -23,6 +23,7 @@
 package ejb.user;
 
 import ejb.Constant;
+import ejb.app.ApplicationEntity;
 import org.joing.common.dto.user.Local;
 import org.joing.common.dto.user.User;
 import org.joing.common.exception.JoingServerException;
@@ -219,6 +220,15 @@ public class UserManagerBean
             NativeFileSystemTools.createAccount( _user.getAccount() );
             
             user = UserDTOs.createUser( _user );
+            
+            // Apps Welcome Pack: Basic (free) apps that are available for all users
+            // TODO: Para salr del paso las añado todas, pero habría que leer de algún
+            //       sitio cuáles son las básicas y añadir sólo esas
+            Query                   query   = em.createQuery( "SELECT a FROM ApplicationEntity a" );
+            List<ApplicationEntity> lstApps = query.getResultList();
+            
+            for( ApplicationEntity app : lstApps )
+                em.persist( new UsersWithAppsEntity( sAccount, app.getIdApplication() ) );
         }
         catch( RuntimeException exc )
         {
