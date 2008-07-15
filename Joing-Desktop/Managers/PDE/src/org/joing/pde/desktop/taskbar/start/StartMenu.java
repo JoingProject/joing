@@ -25,7 +25,6 @@ import javax.swing.border.LineBorder;
 import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.dto.app.AppDescriptor;
-import org.joing.common.dto.app.AppEnvironment;
 import org.joing.common.dto.app.AppGroup;
 import org.joing.common.dto.app.AppGroupKey;
 import org.joing.common.dto.user.User;
@@ -124,8 +123,7 @@ class StartMenu extends JScrollablePopupMenu
     
     private void addApplications()
     {
-        List<AppGroup> lstGroups = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().getAppBridge().
-                                              getInstalledForUser( AppEnvironment.JAVA_ALL, AppGroupKey.ALL );
+        List<AppGroup> lstGroups = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().getAppBridge().getInstalledForUser( AppGroupKey.ALL );
                                               
         if( lstGroups != null )
         {
@@ -147,7 +145,7 @@ class StartMenu extends JScrollablePopupMenu
                 for( AppDescriptor appDesc : appList )
                 {
                     JMenuItem itemApp = new JMenuItem( appDesc.getName() );
-                              itemApp.setIcon( createItemIcon( appDesc.getPNGIcon() ) );
+                              itemApp.setIcon( createItemIcon( appDesc.getIconPixel() ) );
                               itemApp.setToolTipText( appDesc.getDescription() );
                               itemApp.putClientProperty( KEY_APP_DESCRIPTOR, appDesc );
                               itemApp.addActionListener( apil );

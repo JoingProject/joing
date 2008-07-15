@@ -18,7 +18,6 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 import org.joing.common.dto.app.AppDescriptor;
-import org.joing.common.dto.app.AppEnvironment;
 import org.joing.common.dto.app.AppGroup;
 import org.joing.common.dto.app.AppGroupKey;
 
@@ -90,8 +89,7 @@ public class ApplicationTreePanel extends JPanel
     {
         boolean bRootVisible = false;
         
-        List<AppGroup> lstGroups = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().getAppBridge().
-                                                    getInstalledForUser( AppEnvironment.JAVA_ALL, AppGroupKey.ALL );
+        List<AppGroup> lstGroups = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().getAppBridge().getInstalledForUser( AppGroupKey.ALL );
         
         DefaultMutableTreeNode root = new DefaultMutableTreeNode( "Installed Apps" );
         
@@ -156,7 +154,7 @@ public class ApplicationTreePanel extends JPanel
                 
                 sName = appDesc.getName() +" [Ver. "+ appDesc.getVersion() +"]";
                 sDesc = appDesc.getDescription();
-                aByte = appDesc.getPNGIcon();
+                aByte = appDesc.getIconPixel();
             }
             else if( objUser instanceof String )
             {
