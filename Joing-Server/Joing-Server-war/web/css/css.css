@@ -352,3 +352,7 @@ dl.form dt, dl.form dd {
 	background-color: #6F94BC;
 	padding: 1px 4px 1px 4px;
 }
+
+ol {
+    list-style-type: upper-latin;
+}
