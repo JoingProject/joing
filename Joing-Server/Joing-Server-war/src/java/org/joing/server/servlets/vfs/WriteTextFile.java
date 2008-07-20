@@ -21,7 +21,7 @@ import org.joing.common.dto.vfs.FileText;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  * @version
  */
 public class WriteTextFile extends HttpServlet

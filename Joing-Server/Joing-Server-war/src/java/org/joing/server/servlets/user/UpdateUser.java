@@ -19,7 +19,7 @@ import org.joing.common.exception.JoingServerServletException;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  * @version
  */
 public class UpdateUser extends HttpServlet
