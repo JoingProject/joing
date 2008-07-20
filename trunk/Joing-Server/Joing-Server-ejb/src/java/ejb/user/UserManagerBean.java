@@ -141,7 +141,7 @@ public class UserManagerBean
         {
             try
             {
-                Query query = em.createQuery( "SELECT l FROM LocaleEntity" );
+                Query query = em.createQuery( "SELECT l FROM LocaleEntity l" );
 
                 List<LocaleEntity> _locales = (List<LocaleEntity>) query.getResultList();
 
@@ -317,9 +317,14 @@ public class UserManagerBean
         
         try
         {
-            Query query = em.createQuery( "SELECT l FROM LocaleEntity "+
-                                      " WHERE l.language = '"+ locale.getLanguage() +"'"+ 
-                                      "   AND l.country ='"+ locale.getCountry() +"'" );
+
+//            Query query = em.createQuery( "SELECT l FROM LocaleEntity l"+
+//                                      " WHERE l.language = '"+ locale.getLanguage() +"'"+ 
+//                                      "   AND l.country ='"+ locale.getCountry() +"'" );
+            // Asumo que l.idiom es equivalente a l.language
+            Query query = em.createQuery("SELECT l FROM LocaleEntity l"+
+                                " WHERE l.idiom='"+ locale.getLanguage() +"'"+ 
+                                " AND l.country='"+ locale.getCountry() +"'" );
             
             _local = (LocaleEntity) query.getSingleResult();
         }
