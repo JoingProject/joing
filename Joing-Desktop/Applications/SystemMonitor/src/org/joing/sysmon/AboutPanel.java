@@ -1,14 +1,25 @@
-/*
- * AboutPanel.java
+/* 
+ * Copyright (C) 2007, 2008 Join'g Team Members.  All Rights Reserved.
  *
- * Created on 3 de mayo de 2008, 11:12
+ * This file is part of Join'g project: www.joing.org
+ *
+ * GNU Classpath is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the free
+ * Software Foundation; either version 3, or (at your option) any later version.
+ * 
+ * GNU Classpath is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * GNU Classpath; see the file COPYING.  If not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
 package org.joing.sysmon;
 
 import java.awt.Image;
 import javax.swing.ImageIcon;
-import org.joing.common.Constant;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.desktopAPI.StandardImage;
 
@@ -34,13 +45,13 @@ class AboutPanel extends javax.swing.JPanel
             
             lblJoingLogo.setIcon(   new ImageIcon( imgJoing   ) );
             lblDesktopLogo.setIcon( new ImageIcon( imgDesktop ) );
-            lblDesktopName.setText( dm.getName() );
-            lblDesktopVersion.setText( dm.getVersion() );
+            // TODO: Mirar cómo sería el mejor modo de acceder a la inf. del Manifest
+            ///lblDesktopName.setText( dm.getName() );
+            ///lblDesktopVersion.setText( dm.getVersion() );
         }
         
         // TODO: inicializar el resto de las labels
         //       Hay que hacer métodos para obtener los nombres y los autores y las versiones de las cosas
-        lblClientVersion.setText( Constant.getVersion() );
     }
 
     /** This method is called from within the constructor to

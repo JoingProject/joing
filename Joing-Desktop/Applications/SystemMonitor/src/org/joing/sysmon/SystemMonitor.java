@@ -1,9 +1,21 @@
-/*
- * SystemMonitorr.java
+/* 
+ * Copyright (C) 2007, 2008 Join'g Team Members.  All Rights Reserved.
  *
- * Created on 24 de junio de 2007, 19:11
+ * This file is part of Join'g project: www.joing.org
+ *
+ * GNU Classpath is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the free
+ * Software Foundation; either version 3, or (at your option) any later version.
+ * 
+ * GNU Classpath is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * GNU Classpath; see the file COPYING.  If not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
 package org.joing.sysmon;
 
 import javax.swing.ImageIcon;
@@ -60,32 +72,14 @@ public class SystemMonitor extends JPanel implements DeskComponent
     {
         DesktopManager dm   = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
         ImageIcon      icon = new ImageIcon( getClass().getResource( "system_monitor.png" ) );
-        
-        if( dm == null )
-        {
-            javax.swing.JFrame frame = new javax.swing.JFrame();
-                               frame.setDefaultCloseOperation( javax.swing.JFrame.EXIT_ON_CLOSE );
-                               frame.add( this );
-                               frame.pack();
-                               frame.setVisible( true );
-        }
-        else
-        {
-            // Show this panel in a frame created by DesktopManager Runtime.
-            DeskFrame frame = dm.getRuntime().createFrame();
-                      frame.setTitle( "System Monitor" );
-                      frame.setIcon( icon.getImage() );
-                      frame.add( (DeskComponent) this );
-                      
-            dm.getDesktop().getActiveWorkArea().add( frame );            
-        }
-    }
-    
-    //------------------------------------------------------------------------//
-    
-    public static void main( String[] asArg )
-    {
-        new SystemMonitor();
+
+        // Show this panel in a frame created by DesktopManager Runtime.
+        DeskFrame frame = dm.getRuntime().createFrame();
+                  frame.setTitle( "System Monitor" );
+                  frame.setIcon( icon.getImage() );
+                  frame.add( (DeskComponent) this );
+
+        dm.getDesktop().getActiveWorkArea().add( frame );
     }
     
     //------------------------------------------------------------------------//
