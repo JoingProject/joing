@@ -11,7 +11,7 @@ import javax.persistence.Embeddable;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 @Embeddable
 public class UsersWithAppsEntityPK implements Serializable {

@@ -9,6 +9,7 @@
 
 package ejb.app;
 
+import org.joing.common.JoingManifestEntry;
 import ejb.Constant;
 import ejb.vfs.NativeFileSystemTools;
 import java.io.ByteArrayOutputStream;
@@ -23,13 +24,13 @@ import org.joing.common.exception.JoingServerAppException;
 import org.joing.common.exception.JoingServerException;
 
 /**
- * Moves information from Application Entity to Aplication DTO class.
+ * Moves information from Application Entity to Aplication DTO classes.
  * <br>
- * In this way, the DTO class does not need a reference to the Entity class and 
+ * In this way, DTO classes does not need a reference to the Entity class and 
  * the size of the package needed by the Cliente side will be smaller.
  * <p>
- * Note: The opposite method does not exists because the Client can't change the 
- * Application properties.
+ * Note: The opposite method does not exists because the Client can't change 
+ * Application's properties.
  * <p>
  * Obviously this class has package scope.
  *
@@ -79,7 +80,7 @@ class AppDTOs
             {
                 java.io.File  fJAR = createFileForJAR( appEntity.getExtraPath(), appEntity.getExecutable() );
                               jar  = new JarFile( fJAR );
-                JoingManifest jm   = new JoingManifest( jar );
+                JoingManifestEntry jm   = new JoingManifestEntry( jar.getManifest() );
                 
                 String sAppName = jm.getAppName();
                 
