@@ -1,3 +1,14 @@
 Manifest-Version: 1.0
 X-COMMENT: Main-Class will be added automatically by build
 
+Name: Join'g
+AppName: Community Explorer
+Version: 0.0
+IconPixel: org/joing/yace/images/yace.png
+IconVector: 
+Description: A mockup to show how could look like an application to communicate with the Join'g community
+Arguments: 
+FileTypes: 
+Author: Francisco Morero Peyrona
+Vendor: 
+License: GPL-V3
