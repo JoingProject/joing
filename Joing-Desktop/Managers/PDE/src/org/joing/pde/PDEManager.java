@@ -23,12 +23,16 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import org.joing.pde.desktop.PDEDesktop;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Toolkit;
+import java.io.InputStream;
+import java.util.Locale;
+import java.util.jar.Manifest;
 import javax.swing.ImageIcon;
 import javax.swing.JApplet;
 import javax.swing.JFrame;
@@ -37,11 +41,15 @@ import javax.swing.JPasswordField;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import org.joing.common.JoingManifestEntry;
 import org.joing.common.clientAPI.runtime.Bridge2Server;
+import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.StandardSound;
+import org.joing.common.dto.user.User;
 import org.joing.jvmm.RuntimeFactory;
+import org.joing.pde.joingswingtools.JoingPanel;
 
 /**
  * DesktopManager interface implementation.
@@ -65,8 +73,21 @@ public class PDEManager extends JApplet implements DesktopManager
     
     public PDEManager()
     {
-        runtime = new PDERuntime();
-        desktop = new PDEDesktop();
+        // Initialised via thread to make things smoother
+        new Thread( new Runnable()
+        {
+            public void run()
+            {
+                User user = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().getUserBridge().getUser();
+                // Changes default local to the one perfered by user. In this way all apps opened by
+                // user in Join'g will use the user locale instead of machine default locale.
+                if( user != null )
+                    Locale.setDefault( user.getLocale() );
+            }
+        } ).start();
+        
+        runtime = new PDERuntime();   // Constructor is empty
+        desktop = new PDEDesktop();   // Constructor not empty, but very fast
         getContentPane().add( desktop, BorderLayout.CENTER );
     }
     
@@ -104,7 +125,7 @@ public class PDEManager extends JApplet implements DesktopManager
                     else
                         getMainFrame().setSize( Toolkit.getDefaultToolkit().getScreenSize() );
                     
-                    desktop.restore();
+                    showCommon();
                 }
             } );
         }
@@ -131,8 +152,7 @@ public class PDEManager extends JApplet implements DesktopManager
                 getMainFrame().setVisible( true );
                 
                 gs.setFullScreenWindow( getMainFrame() );
-                runtime.play( StandardSound.WELCOME );
-                desktop.restore();
+                showCommon();
             }
             else
             {
@@ -174,16 +194,6 @@ public class PDEManager extends JApplet implements DesktopManager
     {
         if( frame != null )   // Can't call getFrame(), because this method constructs the frame
             frame.dispose();
-    }
-    
-    public String getName()
-    {
-        return "Peyrona Desktop Environment";
-    }
-    
-    public String getVersion()
-    {
-        return "0.1";
     }
     
     //------------------------------------------------------------------------//
@@ -236,7 +246,27 @@ public class PDEManager extends JApplet implements DesktopManager
     {
         if( frame == null )
         {
-            frame = new JFrame( "Join'g :: PDE - Version "+ getVersion() );
+            String      sPDE = "PDE";
+            // FIXME: Esto no va: en lugar de coger el manifest de PDEManager, coje el de Joing-Common (su interface)
+            InputStream is   = getClass().getResourceAsStream( "/META-INF/MANIFEST.MF" );
+            
+            if( is != null )
+            {
+                try
+                {
+                    JoingManifestEntry manifest = new JoingManifestEntry( new Manifest( is ) );
+                    
+                    sPDE = ((manifest.getAppName() != null ? manifest.getAppName() : sPDE) +
+                            " - Version " +
+                            (manifest.getVersion() != null ? manifest.getVersion() : "n/a" ));                    
+                }
+                catch( IOException exc )
+                {
+                    // Nothing to do
+                }
+            }
+            
+            frame = new JFrame( "Join'g :: "+ sPDE );
             frame.setIconImage( getRuntime().getImage( StandardImage.DESKTOP ) );
             frame.setDefaultCloseOperation( JFrame.DO_NOTHING_ON_CLOSE );
             frame.setContentPane( getContentPane() );
@@ -255,6 +285,13 @@ public class PDEManager extends JApplet implements DesktopManager
         return frame;
     }
     
+    // I guess more thins will come into tihs method in the future
+    private void showCommon() 
+    {
+        runtime.play( StandardSound.WELCOME );        
+        desktop.restore();
+    }
+    
     //------------------------------------------------------------------------//
     // INNER CLASS: AskForPassword
     //------------------------------------------------------------------------//
@@ -262,16 +299,17 @@ public class PDEManager extends JApplet implements DesktopManager
     {
         public void run()
         {
-            JPanel panel = new JPanel();
-            JLabel lblPicture = new JLabel( new ImageIcon( getRuntime().getImage( StandardImage.USER_MALE, 32, 32 ) ) );
-                   lblPicture.setBorder( new EmptyBorder( 8,8,8,8 ) );
+            JoingPanel panel = new JoingPanel();
+            JLabel     lblPicture = new JLabel( new ImageIcon( getRuntime().getImage( StandardImage.USER_MALE, 32, 32 ) ) );
+                       lblPicture.setBorder( new EmptyBorder( 8,8,8,8 ) );
                    
-            JPasswordField txtPassword = new JPasswordField( 32 );
+            JPasswordField txtPassword = new JPasswordField( 16 );
             
             panel.add( lblPicture , BorderLayout.WEST   );
             panel.add( txtPassword, BorderLayout.CENTER );
             
-            if( PDEUtilities.showBasicDialog( "Enter your password", panel, "Unlock", "Lock" ) )
+            if( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
+                    showBasicDialog( "Enter your password", (DeskComponent) panel, "Unlock", "Lock" ) )
             {
                 String sPassword = String.valueOf( txtPassword.getPassword() );
                 

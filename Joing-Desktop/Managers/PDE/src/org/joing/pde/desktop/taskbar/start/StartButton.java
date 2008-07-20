@@ -19,13 +19,13 @@ import java.awt.image.FilteredImageSource;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.MenuSelectionManager;
-import org.joing.pde.PDEUtilities;
 import org.joing.pde.desktop.taskbar.PDETaskBarComponent;
+import org.joing.pde.joingswingtools.JoingSwingUtilities;
 import org.joing.pde.swing.ImageHighlightFilter;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 public final class StartButton extends PDETaskBarComponent
 {
@@ -101,7 +101,7 @@ public final class StartButton extends PDETaskBarComponent
     
     private void initGUI()
     {        
-        icon = PDEUtilities.getIcon( this, "images/start" );
+        icon = JoingSwingUtilities.getIcon( this, "images/start" );
         label.setIcon( icon );
         
         add( label );

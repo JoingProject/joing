@@ -30,7 +30,6 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.pane.DeskFrame;
-import org.joing.pde.PDEUtilities;
 import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.taskbar.PDETaskBarComponent;
 import org.joing.pde.swing.PDEAboutPanel;
@@ -118,11 +117,11 @@ public class ClockDigital extends PDETaskBarComponent
                       panel.setDescription( "A very simple and configurable digital clock with date.\nThis is the default PDE clock.");
                       
         // Better to use a Frame than a Dialog (modaless: this is the way Gnome does it)
-        DeskFrame frame = PDEUtilities.getDesktopManager().getRuntime().createFrame();
+        DeskFrame frame = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().createFrame();
                   frame.setTitle( "About" );
                   frame.add( (DeskComponent) panel );
                   
-        PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
     }
 
     public void onPreferences()
@@ -171,18 +170,18 @@ public class ClockDigital extends PDETaskBarComponent
                  frame.setTitle( "Clock Preferences" );
                  frame.add( panel );
         
-        PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
     }
     
     public void onRemove()
     {
-        PDEUtilities.getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
         // TODO: Hacerlo
     }
     
     public void onMove()
     {
-        PDEUtilities.getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
         // TODO: Hacerlo: muy posiblmenete esto no será un método sino algo más complicado. 
     }
     

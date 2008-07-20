@@ -32,8 +32,8 @@ import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncherListener;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.pde.desktop.deskwidget.PDEDeskWidget;
+import org.joing.pde.joingswingtools.JoingSwingUtilities;
 import org.joing.pde.media.PDEColorSchema;
-import org.joing.pde.PDEUtilities;
 import org.joing.pde.swing.EventListenerList;
 import org.joing.pde.swing.ImageHighlightFilter;
 import org.joing.pde.swing.JRoundLabel;
@@ -134,7 +134,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
      */
     public void launch()
     {
-       PDEUtilities.launch( type, sTarget );
+       JoingSwingUtilities.launch( getType(), getTarget(), getArguments() );
     }
     
     public String getTarget()
@@ -241,7 +241,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     //       llamar al container (WorkArea)
     public void delete()
     {
-        DesktopManager dm = PDEUtilities.getDesktopManager();
+        DesktopManager dm = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
         
         if( dm.getRuntime().showYesNoDialog( "Delete launcher", 
                                              "Are you sure you want to delete it?\n"+
@@ -259,7 +259,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     
     public void toTrashcan()
     {
-        DesktopManager dm = PDEUtilities.getDesktopManager();
+        DesktopManager dm = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
         
         if( dm.getRuntime().showYesNoDialog( "Send launcher to trashcan", 
                                              "Are you sure you want to send it to trashcan?" ) )
@@ -278,7 +278,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     {
         PDEDeskLauncherPropertiesPanel panel = new PDEDeskLauncherPropertiesPanel( this );
         
-        if( PDEUtilities.showBasicDialog( "Launcher Properties", panel ) )
+        if( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showAcceptCancelDialog( "Launcher Properties", panel ) )
             panel.createLauncher();
     }
     
@@ -367,7 +367,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
             this.image = image;
             
             if( image == null )
-                image = PDEUtilities.getDesktopManager().getRuntime().getImage( StandardImage.LAUNCHER );
+                image = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.LAUNCHER );
             
             imgIcon = new ImageIcon( image );
 
@@ -439,7 +439,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
                       item.addActionListener( this );
                       
             if( icon != null )
-                item.setIcon( new ImageIcon( PDEUtilities.getDesktopManager().getRuntime().getImage( icon, 16, 16 ) ) );
+                item.setIcon( new ImageIcon( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( icon, 16, 16 ) ) );
             
             return item;
         }

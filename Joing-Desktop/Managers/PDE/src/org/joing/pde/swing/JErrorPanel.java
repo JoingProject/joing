@@ -10,7 +10,6 @@ import java.awt.Image;
 import javax.swing.ImageIcon;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.StandardImage;
-import org.joing.pde.PDEUtilities;
 
 /**
  *
@@ -31,7 +30,7 @@ public class JErrorPanel extends javax.swing.JPanel implements DeskComponent
         
         initComponents();
         
-        Image image = PDEUtilities.getDesktopManager().getRuntime().getImage( StandardImage.ALERT, 50, 50 );
+        Image image = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.ALERT, 50, 50 );
         
         lblIcon.setIcon( new ImageIcon( image ) );
         txtMessage.setText( exc.getLocalizedMessage() );

@@ -2,18 +2,14 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.joing.pde;
+package org.joing.pde.joingswingtools;
 
 import java.applet.Applet;
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,11 +17,6 @@ import java.net.URL;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import org.joing.common.clientAPI.jvmm.ApplicationExecutionException;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManager;
@@ -35,8 +26,6 @@ import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.exception.JoingServerVFSException;
-import org.joing.pde.desktop.container.PDEDialog;
-import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.pde.swing.ApplicationTreePanel;
 
 /**
@@ -47,7 +36,7 @@ import org.joing.pde.swing.ApplicationTreePanel;
  *
  * @author Francisco Morero Peyrona
  */
-public class PDEUtilities
+public class JoingSwingUtilities
 {
     /**
      * 
@@ -117,10 +106,10 @@ public class PDEUtilities
     /**
      * Return an icon which location is relative to passed class.
      * 
-     * @param invoker The class to be used as base to find the files. If null,
-     *                <code>PDEImagesFactory</code> will be used (common images).
+     * @param invoker The class to be used as base to find the files. 
      * @param sName   Name of file with its extension.
-     * @return        The icon or an standard one if teh requested was not found
+     * @return        The icon or the standard one <code>StandardImage.NO_IMAGE</code>
+     *                if the requested was not found.
      */
     public static ImageIcon getIcon( Object invoker, String sName )
     {
@@ -142,7 +131,7 @@ public class PDEUtilities
         }
         
         if( icon == null )
-            icon = new ImageIcon( getDesktopManager().getRuntime().getImage( StandardImage.NO_IMAGE ) );
+            icon = new ImageIcon( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.NO_IMAGE ) );
         
         return icon;
     }
@@ -151,10 +140,10 @@ public class PDEUtilities
      * Return an icon (with specific dimension) which location is relative to 
      * passed class.
      * 
-     * @param invoker The class to be used as base to find the files. If null,
-     *                <code>PDEImagesFactory</code> will be used (common images).
+     * @param invoker The class to be used as base to find the files.
      * @param sName   Name of file with its extension.
-     * @return        The icon or an standard one if teh requested was not found
+     * @return        The icon or an standard one <code>StandardImage.NO_IMAGE</code>
+     *                if the requested was not found.
      */
     public static ImageIcon getIcon( Object invoker, String sName, int nWidth, int nHeight  )
     {
@@ -191,54 +180,6 @@ public class PDEUtilities
     }
     
     /**
-     * Shows a dialog with buttons [Accept] and [Cancel].
-     * 
-     * @param sTitle Dialog title. If null an empty title will be used.
-     * @param content Panel to be shown.
-     * @return true if dialog was closed via [Accpet] button and false otherwise.
-     */
-    public static boolean showBasicDialog( String sTitle, JComponent content )
-    {
-        BasicDialog dialog = new BasicDialog( sTitle, content );
-        
-        PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
-        
-        return dialog.bExitWithAccept;
-    }
-    
-    /**
-     * Shows a dialog with buttons [Accept] and [Cancel] and optionally chanes
-     * the text for these buttons.
-     * 
-     * @param sTitle Dialog title. If null an empty title will be used.
-     * @param content Panel to be shown.
-     * @param sAcceptText New text to be shown in Accept button (null will not change)
-     * @param sCancelText New text to be shown in Cancel button (null will not change)
-     * @return true if dialog was closed via [Accpet] button and false otherwise.
-     */
-    public static boolean showBasicDialog( String sTitle, JComponent content, String sAcceptText, String sCancelText )
-    {
-        BasicDialog dialog = new BasicDialog( sTitle, content );
-                    dialog.setAcceptText( sAcceptText );
-                    dialog.setCancelText( sCancelText );
-        
-        PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
-        
-        return dialog.bExitWithAccept;
-    }    
-    
-    /**
-     * A short way for:
-     * <code>PDEUtilities.getDesktopManager()</code>
-     * 
-     * @return The sigleton instance of DesktopManager.
-     */
-    public static DesktopManager getDesktopManager()
-    {
-        return org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
-    }
-    
-    /**
      * Open a dialog showing in a tree all installed applications for current
      * user.
      * 
@@ -250,36 +191,53 @@ public class PDEUtilities
         AppDescriptor        app = null;
         ApplicationTreePanel atp = new ApplicationTreePanel();
         
-        if( showBasicDialog( "Select Application", atp ) )
+        if( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showAcceptCancelDialog( "Select Application", atp ) )
             app = atp.getSelectedApplication();
         
         return app;
     }
     
-    public static void launch( DeskLauncher.Type type, String sTarget )
+    /**
+     * 
+     * @param dl
+     */
+    public static void launch( DeskLauncher dl )
     {
+        launch( dl.getType(), dl.getTarget(), dl.getArguments() );
+    }
+    
+    /**
+     * 
+     * @param type    See DeskLauncher
+     * @param sTarget See DeskLauncher
+     * @param sArguments Arguments to be passed if any, otherwise null.
+     */
+    public static void launch( DeskLauncher.Type type, String sTarget, String sArguments )
+    {
+        DesktopManager dm = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+        
         switch( type )
         {
             case APPLICATION:
-                Image launch = getDesktopManager().getRuntime().getImage( StandardImage.LAUNCHER );
-                int nId = PDEUtilities.getDesktopManager().getDesktop().showNotification( "Launching application", launch, true );
+                Image launch = dm.getRuntime().getImage( StandardImage.LAUNCHER );
+                int nId = dm.getDesktop().showNotification( "Launching application", launch, true );
                 
                 try
                 {
                     org.joing.jvmm.RuntimeFactory.getPlatform().start( Integer.valueOf( sTarget ) );
                 }
+
                 catch( ApplicationExecutionException exc )
                 {
-                    PDEUtilities.getDesktopManager().getRuntime().showException( exc, null );
-                }
-                catch( NumberFormatException nfe )
+                    dm.getRuntime().showException( exc, null );
+                }                catch( NumberFormatException nfe )
                 {
                     // If it is not an app Id (a number), it has to be an app name
                     // TODO: hacerlo
                 }
                 finally
                 {
-                    PDEUtilities.getDesktopManager().getDesktop().hideNotification( nId );   // TODO: Invocar hide cuando la app haya finalizado de mostrarse (quizás sólo lo sepa Platform)
+                    dm.getDesktop().hideNotification( nId );   // TODO: Invocar hide cuando la app haya finalizado de mostrarse (quizás sólo lo sepa Platform)
                 }
                 break;
                 
@@ -293,11 +251,11 @@ public class PDEUtilities
     
     public static WorkArea findWorkAreaFor( DeskComponent comp )
     {
-        List<WorkArea> lstWA = PDEUtilities.getDesktopManager().getDesktop().getWorkAreas();
+        List<WorkArea> lstWA = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getWorkAreas();
         
         for( WorkArea wa : lstWA )
         {
-            Component[] ac = ((PDEWorkArea) wa).getComponents();
+            Component[] ac = ((java.awt.Container) wa).getComponents();
             
             for( int n = 0; n < ac.length; n++ )
             {
@@ -307,64 +265,5 @@ public class PDEUtilities
         }
         
         return null;
-    }
-    
-    //------------------------------------------------------------------------//
-    // INNER CLASS: Basic Dialog
-    //------------------------------------------------------------------------//
-    private static final class BasicDialog extends PDEDialog
-    {
-        private boolean bExitWithAccept = false;
-        private JButton btnAccept       = new JButton();
-        private JButton btnCancel       = new JButton();
-        
-        private BasicDialog( String sTitle, JComponent content )
-        {
-            super();
-            
-            btnAccept.setText( "Accept" );
-            btnAccept.addActionListener( new ActionListener()
-            {
-                public void actionPerformed( ActionEvent e )
-                {
-                    BasicDialog.this.bExitWithAccept = true;
-                    BasicDialog.this.close();
-                }
-            } );
-            
-            btnCancel.setText( "Cancel" );
-            btnCancel.addActionListener( new ActionListener()
-            {
-                public void actionPerformed( ActionEvent e )
-                {
-                    BasicDialog.this.close();
-                }
-            } );
-                    
-            JPanel  pnlButtons = new JPanel( new FlowLayout( FlowLayout.TRAILING, 5, 0 ) );
-                    pnlButtons.setBorder( new EmptyBorder( 0, 10, 10, 10 ) );
-                    pnlButtons.add( btnAccept );
-                    pnlButtons.add( btnCancel );
-            JPanel  pnlContent = new JPanel( new BorderLayout() );
-                    pnlContent.add( content   , BorderLayout.CENTER );
-                    pnlContent.add( pnlButtons, BorderLayout.SOUTH  );
-            
-            getContentPane().add( pnlContent, BorderLayout.CENTER );
-            setDefaultCloseOperation( JInternalFrame.DISPOSE_ON_CLOSE );
-            getRootPane().setDefaultButton( btnAccept );
-            setTitle( (sTitle == null) ? "" : sTitle );
-        }
-        
-        private void setAcceptText( String sAcceptText )
-        {
-            if( sAcceptText != null )
-                btnAccept.setText( sAcceptText );
-        }
-        
-        private void setCancelText( String sCancelText )
-        {
-            if( sCancelText != null )
-                btnCancel.setText( sCancelText );
-        }
-    }
+    }   
 }

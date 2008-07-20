@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.joing.pde.apps.YAFE;
+package org.joing.pde.joingswingtools.tree;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,8 +66,16 @@ public class JoingFileSystemTreeEditable extends JoingFileSystemTree
      */
     public boolean rename()
     {
-        boolean  bSuccess = false;
-        FileNode aPath    = getSelectedNode();
+        boolean      bSuccess = false;
+        TreeNodeFile aPath    = getSelectedNode();
+        // TODO: hacerlo
+        return bSuccess;
+    }
+    
+    public boolean properties()
+    {
+        boolean      bSuccess = false;
+        TreeNodeFile aPath    = getSelectedNode();
         // TODO: hacerlo
         return bSuccess;
     }
@@ -77,14 +85,11 @@ public class JoingFileSystemTreeEditable extends JoingFileSystemTree
      * @param fNew
      * @return <code>true</code> if operation was successfull.
      */
-    public boolean cut()
+    public void cut()
     {
-        boolean    bSuccess = false;
-        TreePath[] aPath    = getSelectionPaths();
+        TreePath[] aPath = getSelectionPaths();
         
         // TODO: hacerlo
-        
-        return bSuccess;
     }
     
     /**
@@ -92,12 +97,10 @@ public class JoingFileSystemTreeEditable extends JoingFileSystemTree
      * @param fNew
      * @return <code>true</code> if operation was successfull.
      */
-    public boolean copy()
+    public void copy()
     {
-        boolean    bSuccess = false;
-        TreePath[] node     = getSelectionPaths();
+        TreePath[] node = getSelectionPaths();
         // TODO: hacerlo
-        return bSuccess;
     }
     
     /**
@@ -116,16 +119,17 @@ public class JoingFileSystemTreeEditable extends JoingFileSystemTree
     
     // If more than one node is selected this returns the first one and makes
     // the rest selected nodes unselected.
-    private FileNode getSelectedNode()
+    private TreeNodeFile getSelectedNode()
     {
-        TreePath path = getSelectionPath();
+        TreePath path = null;
         
         if( getSelectionCount() > 0 )
         {
+            path = getSelectionPath();
             clearSelection();
             setSelectionPath( path );
         }
         
-        return (FileNode) path.getLastPathComponent();
+        return (path == null ? null : (TreeNodeFile) path.getLastPathComponent());
     }
 }

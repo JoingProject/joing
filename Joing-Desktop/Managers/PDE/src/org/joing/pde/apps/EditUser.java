@@ -8,9 +8,9 @@ package org.joing.pde.apps;
 import javax.swing.JPanel;
 import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.desktopAPI.pane.DeskFrame;
 import org.joing.common.dto.user.User;
-import org.joing.pde.PDEUtilities;
 
 /**
  *
@@ -31,14 +31,15 @@ public class EditUser extends JPanel implements DeskComponent
     
     public void showFrame()
     {
-        StandardImage image = (user.isMale() ? StandardImage.USER_MALE : StandardImage.USER_FEMALE);
+        DesktopManager dm    = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+        StandardImage  image = (user.isMale() ? StandardImage.USER_MALE : StandardImage.USER_FEMALE);
         
-        frame = PDEUtilities.getDesktopManager().getRuntime().createFrame();
+        frame = dm.getRuntime().createFrame();
         frame.setTitle( "User Information" );
-        frame.setIcon( PDEUtilities.getDesktopManager().getRuntime().getImage( image ) );
+        frame.setIcon( dm.getRuntime().getImage( image ) );
         frame.add( this );
         
-        PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
+        dm.getDesktop().getActiveWorkArea().add( frame );
     }
     
     /** This method is called from within the constructor to

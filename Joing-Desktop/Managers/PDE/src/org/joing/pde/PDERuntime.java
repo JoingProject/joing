@@ -7,11 +7,22 @@
  */
 package org.joing.pde;
 
+import java.applet.Applet;
+import java.applet.AudioClip;
+import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.net.URL;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.StandardSound;
@@ -25,6 +36,7 @@ import org.joing.pde.desktop.container.PDEDialog;
 import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
 import org.joing.pde.media.images.CommonImagesUtil;
+import org.joing.pde.media.sounds.CommonSoundsUtil;
 import org.joing.pde.swing.JErrorPanel;
 
 /**
@@ -90,7 +102,13 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
     
     public void play( StandardSound sound )
     {
-        // FIXME: hacerlo
+        URL url = CommonSoundsUtil.getURL4Sound( sound );
+        
+        if( url != null )
+        {
+            AudioClip audio = Applet.newAudioClip( url );
+                      audio.play();
+        }
     }
     
     //------------------------------------------------------------------------//
@@ -99,20 +117,35 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
     
     public void showMessageDialog( String sTitle, String sMessage )
     {
-        WorkArea workArea = PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea();
+        WorkArea workArea = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
         // TODO: Can't use showInternalMessageDialog(...) because bug ID = 6178755
         JOptionPane.showMessageDialog( (Component) workArea, sMessage, sTitle,
                                                JOptionPane.INFORMATION_MESSAGE );
     }
     
-    public boolean showAcceptCancelDialog( String sTitle, DeskComponent panel )
+    public boolean showAcceptCancelDialog( String sTitle, DeskComponent content )
     {
-        return PDEUtilities.showBasicDialog( sTitle, (JComponent) panel );
+        BasicDialog dialog = new BasicDialog( sTitle, (JComponent) content );
+        
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
+        
+        return dialog.bExitWithAccept;
+    }
+    
+    public boolean showBasicDialog( String sTitle, DeskComponent content, String sAcceptText, String sCancelText )
+    {
+        BasicDialog dialog = new BasicDialog( sTitle, (JComponent) content );
+                    dialog.setAcceptText( sAcceptText );
+                    dialog.setCancelText( sCancelText );
+        
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
+        
+        return dialog.bExitWithAccept;
     }
     
     public boolean showYesNoDialog( String sTitle, String sMessage )
     {
-        WorkArea workArea = PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea();
+        WorkArea workArea = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
         // TODO: Can't use showInternalMessageDialog(...) because bug ID = 6178755
         return JOptionPane.showConfirmDialog( 
                                      (Component) workArea, sMessage, sTitle,
@@ -128,6 +161,66 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
                   dialog.setTitle( sTitle );
                   dialog.add( (DeskComponent) new JErrorPanel( exc ) );
                   
-        PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
+    }
+    
+    
+    //------------------------------------------------------------------------//
+    // INNER CLASS: Basic Dialog
+    //------------------------------------------------------------------------//
+    private static final class BasicDialog extends PDEDialog
+    {
+        private boolean bExitWithAccept = false;
+        private JButton btnAccept       = new JButton();
+        private JButton btnCancel       = new JButton();
+        
+        private BasicDialog( String sTitle, JComponent content )
+        {
+            super();
+            
+            btnAccept.setText( "Accept" );
+            btnAccept.addActionListener( new ActionListener()
+            {
+                public void actionPerformed( ActionEvent e )
+                {
+                    BasicDialog.this.bExitWithAccept = true;
+                    BasicDialog.this.close();
+                }
+            } );
+            
+            btnCancel.setText( "Cancel" );
+            btnCancel.addActionListener( new ActionListener()
+            {
+                public void actionPerformed( ActionEvent e )
+                {
+                    BasicDialog.this.close();
+                }
+            } );
+                    
+            JPanel  pnlButtons = new JPanel( new FlowLayout( FlowLayout.TRAILING, 5, 0 ) );
+                    pnlButtons.setBorder( new EmptyBorder( 0, 10, 10, 10 ) );
+                    pnlButtons.add( btnAccept );
+                    pnlButtons.add( btnCancel );
+            JPanel  pnlContent = new JPanel( new BorderLayout() );
+                    pnlContent.add( content   , BorderLayout.CENTER );
+                    pnlContent.add( pnlButtons, BorderLayout.SOUTH  );
+            
+            getContentPane().add( pnlContent, BorderLayout.CENTER );
+            setDefaultCloseOperation( JInternalFrame.DISPOSE_ON_CLOSE );
+            getRootPane().setDefaultButton( btnAccept );
+            setTitle( (sTitle == null) ? "" : sTitle );
+        }
+        
+        private void setAcceptText( String sAcceptText )
+        {
+            if( sAcceptText != null )
+                btnAccept.setText( sAcceptText );
+        }
+        
+        private void setCancelText( String sCancelText )
+        {
+            if( sCancelText != null )
+                btnCancel.setText( sCancelText );
+        }
     }
 }

@@ -11,8 +11,8 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import org.joing.common.desktopAPI.Closeable;
 import org.joing.common.desktopAPI.workarea.WorkArea;
-import org.joing.pde.PDEUtilities;
 import org.joing.pde.desktop.deskwidget.PDEDeskWidget;
+import org.joing.pde.joingswingtools.JoingSwingUtilities;
 
 /**
  * This is the base class to create DeskApplets: (normally) small applications
@@ -88,7 +88,7 @@ public abstract class PDEDesklet extends PDEDeskWidget implements Closeable
      */
     protected void onClose()
     {
-        WorkArea wa = PDEUtilities.findWorkAreaFor( this );
+        WorkArea wa = JoingSwingUtilities.findWorkAreaFor( this );
                  wa.remove( this );
         ((Component) wa).repaint( getX(), getY(), getWidth(), getHeight() );
     }
