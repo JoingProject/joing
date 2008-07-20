@@ -39,7 +39,7 @@ public class Login extends JDialog
         getRootPane().setDefaultButton( btnOk );
         setLocationRelativeTo( null );
         setDefaultCloseOperation( JDialog.DISPOSE_ON_CLOSE );
-        setIconImage(  (new ImageIcon( getClass().getResource( "resources/joing_icon.png" ) )).getImage() );
+        setIconImage( (new ImageIcon( getClass().getResource( "resources/joing_icon.png" ) )).getImage() );
         
         txtAccount.setText( "peyrona@joing.org" );
         txtPassword.setText( "admin" );
@@ -50,26 +50,25 @@ public class Login extends JDialog
         return bValid;
     }
 
-    public boolean fullScreen()
+    public boolean isFullScreenRequested()
     {
         return chkFullScreen.isSelected();
     }
 
-    public AppDescriptor getApplicationDescriptor()
-    {
-        String sDesktop = (String) cmbDesktop.getSelectedItem();
-        AppDescriptor appDesc = (AppDescriptor) cmbDesktop.getClientProperty( sDesktop );
-
-        return appDesc;
-    }
-
-    // TODO: Fix this. An application object contains the application data,
-    // we need to store a simpler object.
+// Not used currently
+//    public AppDescriptor getApplicationDescriptor()
+//    {
+//        String sDesktop = (String) cmbDesktop.getSelectedItem();
+//        AppDescriptor appDesc = (AppDescriptor) cmbDesktop.getClientProperty( sDesktop );
+//
+//        return appDesc;
+//    }
+    
     public Integer getDesktopApplicationId()
     {
-        String desktop = (String) cmbDesktop.getSelectedItem();
+        String sDesktop = (String) cmbDesktop.getSelectedItem();
 
-        return (Integer) cmbDesktop.getClientProperty( desktop );
+        return (Integer) cmbDesktop.getClientProperty( sDesktop );
     }
 
     //------------------------------------------------------------------------//

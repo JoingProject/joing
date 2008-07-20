@@ -218,7 +218,7 @@ public class Bootstrap {
 
                 platform.setDesktopManager(deskmgr);
 
-                if (login.fullScreen()) {
+                if (login.isFullScreenRequested()) {
                     deskmgr.showInFullScreen();
                 } else {
                     deskmgr.showInFrame();
