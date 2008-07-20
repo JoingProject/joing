@@ -17,7 +17,7 @@ import org.joing.common.dto.app.AppGroupKey;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 public interface AppBridge
 {
@@ -44,5 +44,5 @@ public interface AppBridge
     
     Application getApplicationByName(String executableName);
     
-    List<Application> getAvailableDesktops();
+    List<AppDescriptor> getAvailableDesktops();
 }

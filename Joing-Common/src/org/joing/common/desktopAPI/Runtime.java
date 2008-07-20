@@ -17,7 +17,7 @@ import org.joing.common.desktopAPI.pane.DeskFrame;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 public interface Runtime
 {
@@ -44,6 +44,17 @@ public interface Runtime
      * @return <code>true</code> if 'OK' button pressed, otherwise ('CANCEL' button or close dialog) return <code>false</code>
      */
     boolean showAcceptCancelDialog( String sTitle, DeskComponent panel );
+    /**
+     * Shows a dialog with buttons [Accept] and [Cancel] and optionally chanes
+     * the text for these buttons.
+     * 
+     * @param sTitle Dialog title. If null an empty title will be used.
+     * @param content Panel to be shown.
+     * @param sAcceptText New text to be shown in Accept button (null will not change)
+     * @param sCancelText New text to be shown in Cancel button (null will not change)
+     * @return true if dialog was closed via [Accpet] button and false otherwise.
+     */
+    boolean showBasicDialog( String sTitle, DeskComponent content, String sAcceptText, String sCancelText );
     /**
      * Shows a confimation modal dialog.
      * 

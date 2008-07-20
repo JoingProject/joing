@@ -9,7 +9,7 @@ import org.joing.common.desktopAPI.DeskContainer;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 public interface TaskBarPanel extends TaskBarComponent, DeskContainer
 {

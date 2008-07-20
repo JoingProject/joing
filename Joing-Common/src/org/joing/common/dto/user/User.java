@@ -14,7 +14,7 @@ import java.util.Locale;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 public class User implements Serializable
 {
@@ -193,6 +193,14 @@ public class User implements Serializable
     public void setAccount( String account )
     {
         this.account = account;
+    }
+    
+    public void setLocale( Locale locale )
+    {
+        // By storing language and country instead of an instace of Locale,
+        // serialization is lighter (there is no need to serialize object Locale)
+        this.language = locale.getLanguage();
+        this.country  = locale.getCountry();
     }
     
     public void setTotalSpace( long totalSpace )

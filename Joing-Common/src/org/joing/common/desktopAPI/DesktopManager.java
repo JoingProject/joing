@@ -53,15 +53,4 @@ public interface DesktopManager
      * Unlocks dekstop
      */
     void unlock();
-    
-    /**
-     * Desktop comercial name.
-     * @return Desktop comercial name.
-     */
-    String getName();
-    /**
-     * Desktop version.
-     * @return Desktop version.
-     */
-    String getVersion();
 }
