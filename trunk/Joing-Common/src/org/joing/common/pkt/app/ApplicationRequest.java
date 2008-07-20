@@ -50,8 +50,6 @@ public class ApplicationRequest implements java.io.Serializable {
     public void setCode(int code) {
         this.code = code;
     }
-
-    
     
     @Override
     public boolean equals(Object obj) {

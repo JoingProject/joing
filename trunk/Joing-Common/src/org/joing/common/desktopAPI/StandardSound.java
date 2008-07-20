@@ -15,5 +15,11 @@ package org.joing.common.desktopAPI;
 public enum StandardSound
 { 
     WELCOME,
-    GOODBYE;
+    GOODBYE,
+    MAXIMIZE,
+    MINIMIZE,
+    RESTORE,
+    WARNING,
+    ERROR,
+    QUESTION;
 }

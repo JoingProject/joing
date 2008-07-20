@@ -36,8 +36,8 @@ public class AppGroup implements Serializable
     private AppGroupKey         groupKey;
     private String              name;
     private String              description;
-    private byte[]              iconPNG;
-    private byte[]              iconSVG;
+    private byte[]              iconPixel;
+    private byte[]              iconVector;
     private List<AppDescriptor> apps;
     
     //------------------------------------------------------------------------//
@@ -52,8 +52,8 @@ public class AppGroup implements Serializable
         this.groupKey    = key;
         this.name        = "";
         this.description = "";
-        this.iconPNG     = null;
-        this.iconSVG     = null;
+        this.iconPixel   = null;
+        this.iconVector  = null;
         this.apps        = new ArrayList<AppDescriptor>();
     }
     
@@ -72,14 +72,14 @@ public class AppGroup implements Serializable
         return description;
     }
     
-    public byte[] getIconPNG()
+    public byte[] getIconPixel()
     {
-        return iconPNG;
+        return iconPixel;
     }
     
-    public byte[] getIconSVG()
+    public byte[] getIconVector()
     {
-        return iconSVG;
+        return iconVector;
     }
     
     /**
@@ -109,31 +109,31 @@ public class AppGroup implements Serializable
         this.description = description;
     }
     
-    public void setIconPNG( byte[] icon )
+    public void setIconPixel( byte[] icon )
     {
         if( icon != null )
         {
             byte[] copy = new byte[ icon.length ];
             System.arraycopy( icon, 0, copy, 0, icon.length );   // defensive copy
-            iconPNG = copy;
+            iconPixel = copy;
         }
         else
         {
-            iconPNG = null;
+            iconPixel = null;
         }
     }
     
-    public void setIconSVG( byte[] icon )
+    public void setIconVector( byte[] icon )
     {
         if( icon != null )
         {
             byte[] copy = new byte[ icon.length ];
             System.arraycopy( icon, 0, copy, 0, icon.length );   // defensive copy
-            iconSVG = copy;
+            iconVector = copy;
         }
         else
         {
-            iconSVG = null;
+            iconVector = null;
         }
     }
     

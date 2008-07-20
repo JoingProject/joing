@@ -13,7 +13,7 @@ import org.joing.common.dto.session.LoginResult;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 public interface SessionBridge
 {

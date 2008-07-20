@@ -7,7 +7,7 @@ package org.joing.common.desktopAPI;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 public interface DeskContainer extends DeskComponent, Closeable
 {

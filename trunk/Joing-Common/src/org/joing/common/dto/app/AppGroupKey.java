@@ -7,7 +7,7 @@ package org.joing.common.dto.app;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 public enum AppGroupKey
 {

@@ -11,7 +11,7 @@ package org.joing.common.desktopAPI.deskwidget.deskLauncher;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 public interface DeskLauncherListener
 {

@@ -15,7 +15,7 @@ import org.joing.common.dto.user.User;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 public interface UserBridge
 {

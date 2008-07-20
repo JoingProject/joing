@@ -23,7 +23,7 @@ package org.joing.common.exception;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 public class JoingServerSessionException extends JoingServerException
 {
