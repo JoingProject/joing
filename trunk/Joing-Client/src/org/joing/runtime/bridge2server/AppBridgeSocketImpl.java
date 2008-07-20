@@ -91,7 +91,7 @@ public class AppBridgeSocketImpl
         return null;
     }
 
-    public List<Application> getAvailableDesktops() {
-        return new ArrayList<Application>();
+    public List<AppDescriptor> getAvailableDesktops() {
+        return new ArrayList<AppDescriptor>();
     }
 }
