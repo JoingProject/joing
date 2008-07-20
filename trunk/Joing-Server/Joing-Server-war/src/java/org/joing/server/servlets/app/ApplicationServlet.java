@@ -6,12 +6,12 @@ package org.joing.server.servlets.app;
 
 import ejb.app.ApplicationManagerLocal;
 import java.io.*;
-import java.net.*;
 
 import java.util.List;
 import javax.ejb.EJB;
 import javax.servlet.*;
 import javax.servlet.http.*;
+import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.app.Application;
 import org.joing.common.exception.JoingServerAppException;
 import org.joing.common.exception.JoingServerServletException;
@@ -37,11 +37,10 @@ public class ApplicationServlet extends HttpServlet {
 
         response.setContentType("application/octet-stream");
 
-        ObjectInputStream reader = new ObjectInputStream(request.getInputStream());
+        ObjectInputStream reader  = new ObjectInputStream(request.getInputStream());
         ObjectOutputStream writer = new ObjectOutputStream(response.getOutputStream());
 
         ApplicationReply reply = new ApplicationReply();
-        ApplicationRequest req = null;
 
         try {
             
@@ -72,6 +71,7 @@ public class ApplicationServlet extends HttpServlet {
         String name = request.getName();
         int code = request.getCode();
         Application app = null;
+        
         try {
             switch (code) {
                 case ApplicationRequest.APP_BY_NAME:
@@ -80,7 +80,7 @@ public class ApplicationServlet extends HttpServlet {
                     reply.setOk(true);
                     break;
                 case ApplicationRequest.AVAILABLE_DESKTOPS:
-                    List<Application> appList = applicationManagerBean.getAvailableDesktops();
+                    List<AppDescriptor> appList = applicationManagerBean.getAvailableDesktops();
                     reply.setReply(appList);
                     reply.setOk(true);
                     break;

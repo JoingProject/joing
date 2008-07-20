@@ -16,7 +16,7 @@ import javax.servlet.http.*;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  * @version
  */
 public class Logout extends HttpServlet

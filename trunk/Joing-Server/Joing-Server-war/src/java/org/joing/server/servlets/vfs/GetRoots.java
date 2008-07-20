@@ -24,7 +24,7 @@ import org.joing.common.exception.JoingServerServletException;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 public class GetRoots extends HttpServlet
 {

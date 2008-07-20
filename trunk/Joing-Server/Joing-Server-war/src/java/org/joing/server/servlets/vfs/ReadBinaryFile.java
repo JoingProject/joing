@@ -18,7 +18,7 @@ import org.joing.common.exception.JoingServerException;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  * @version
  */
 public class ReadBinaryFile extends HttpServlet
