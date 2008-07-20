@@ -201,15 +201,14 @@ public class AppBridgeServletImpl
         return application;
     }
 
-    public List<Application> getAvailableDesktops()
+    public List<AppDescriptor> getAvailableDesktops()
             throws JoingServerException
     {
+        Channel            channel = new Channel( APP_SERVLET );
+        ApplicationRequest req     = new ApplicationRequest();
+                           req.setCode( ApplicationRequest.AVAILABLE_DESKTOPS );
 
-        Channel channel = new Channel( APP_SERVLET );
-        ApplicationRequest req = new ApplicationRequest();
-        req.setCode( ApplicationRequest.AVAILABLE_DESKTOPS );
-
-        List<Application> apps = null;
+        List<AppDescriptor> apps = new ArrayList<AppDescriptor>();
 
         channel.write( req );
         ApplicationReply reply = (ApplicationReply) channel.read();
@@ -217,16 +216,7 @@ public class AppBridgeServletImpl
 
         if( reply.isOk() )
         {
-            apps = (List<Application>) reply.getReply();
-        }
-        else
-        {
-            apps = new ArrayList<Application>();
-        }
-
-        for( Application app : apps )
-        {
-            cache.put( app.getId(), app );
+            apps = (List<AppDescriptor>) reply.getReply();
         }
 
         return apps;

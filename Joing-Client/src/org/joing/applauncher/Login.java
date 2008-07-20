@@ -16,7 +16,6 @@ import org.joing.common.dto.session.LoginResult;
 import org.joing.common.exception.JoingServerException;
 import org.joing.common.clientAPI.runtime.Bridge2Server;
 import org.joing.common.dto.app.AppDescriptor;
-import org.joing.common.dto.app.Application;
 import org.joing.jvmm.RuntimeFactory;
 
 /**
@@ -74,19 +73,18 @@ public class Login extends JDialog
     }
 
     //------------------------------------------------------------------------//
+    
     private void fillDesktopComboBox()
     {
-
         AppBridge bridge = RuntimeFactory.getPlatform().getBridge().getAppBridge();
 
-        List<Application> desktops = bridge.getAvailableDesktops();
+        List<AppDescriptor> desktops = bridge.getAvailableDesktops();
 
-        for( Application app : desktops )
+        for( AppDescriptor app : desktops )
         {
             cmbDesktop.addItem( app.getName() );
             cmbDesktop.putClientProperty( app.getName(), app.getId() );
         }
-
     }
 
     /** This method is called from within the constructor to

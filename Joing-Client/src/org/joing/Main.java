@@ -43,7 +43,7 @@ import org.joing.jvmm.net.BridgeURLConnection;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  * @author Antonio Varela Lizardi <antonio@icon.net.mx>
  */
 public class Main {
