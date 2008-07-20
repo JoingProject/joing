@@ -15,7 +15,7 @@ import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.pane.DeskWindow;
 import org.joing.common.desktopAPI.workarea.WorkArea;
-import org.joing.pde.PDEUtilities;
+import org.joing.pde.joingswingtools.JoingSwingUtilities;
 
 /**
  *
@@ -29,7 +29,7 @@ public class PDEWindow extends JInternalFrame implements DeskWindow
         super( sTitle, bResizable, bClosable, bMaximizable, bMinimizable );
         
         // As this class is for PDE internal use only, the icon will always be PDE
-        setIcon( PDEUtilities.getDesktopManager().getRuntime().getImage( StandardImage.DESKTOP ) );
+        setIcon( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.DESKTOP ) );
     }
     
     //------------------------------------------------------------------------//
@@ -58,7 +58,7 @@ public class PDEWindow extends JInternalFrame implements DeskWindow
         Container parent = getParent();   // Perhaps there is another parent sat (not DesktopPane).
         
         if( parent == null )
-            parent = (Container) PDEUtilities.findWorkAreaFor( this );
+            parent = (Container) JoingSwingUtilities.findWorkAreaFor( this );
         
         if( parent != null )
             center( (Component) parent );
@@ -105,7 +105,7 @@ public class PDEWindow extends JInternalFrame implements DeskWindow
         setVisible( false );
         
         // Detach from container WorkArea
-        WorkArea wa = PDEUtilities.findWorkAreaFor( this );
+        WorkArea wa = JoingSwingUtilities.findWorkAreaFor( this );
         
         if( wa != null )
             wa.remove( this );

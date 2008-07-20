@@ -9,7 +9,7 @@ import org.joing.pde.desktop.deskwidget.GlassPaneWidget;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 class GlassPaneDeskLauncher extends GlassPaneWidget
 {

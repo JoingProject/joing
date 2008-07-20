@@ -1,13 +1,12 @@
 Manifest-Version: 1.0
 X-COMMENT: Main-Class will be added automatically by build
 
-
 Name: Join'g
-AppName: Peyrona Desktop Environment (PDE)
+AppName: PDE
 Version: 0.1
 IconPixel: org/joing/pde/media/images/pde.png
 IconVector: 
-Description: A simple yet powerfull Swing desktop for Join'g
+Description: Peyrona Desktop Environment (PDE): A simple yet powerfull Swing desktop for Join'g
 Arguments: 
 FileTypes: 
 Author: Francisco Morero Peyrona

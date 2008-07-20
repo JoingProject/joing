@@ -30,13 +30,13 @@ import org.joing.common.dto.app.AppGroupKey;
 import org.joing.common.dto.user.User;
 import org.joing.pde.media.PDEColorSchema;
 import org.joing.pde.PDEManager;
-import org.joing.pde.PDEUtilities;
 import org.joing.pde.apps.EditUser;
+import org.joing.pde.joingswingtools.JoingSwingUtilities;
 import org.joing.pde.swing.JScrollablePopupMenu;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 class StartMenu extends JScrollablePopupMenu
 {
@@ -74,7 +74,7 @@ class StartMenu extends JScrollablePopupMenu
         {
             StandardImage image = (user.isMale() ? StandardImage.USER_MALE : StandardImage.USER_FEMALE);
             
-            item.setIcon( new ImageIcon( PDEUtilities.getDesktopManager().getRuntime().getImage( image, ICON_SIZE+5, ICON_SIZE+5 ) ) );
+            item.setIcon( new ImageIcon( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( image, ICON_SIZE+5, ICON_SIZE+5 ) ) );
             item.setText( user.getFirstName() +" "+ user.getSecondName() );
 
             item.addActionListener( new ActionListener()
@@ -96,12 +96,12 @@ class StartMenu extends JScrollablePopupMenu
     private void addLock()
     {
         JMenuItem itmLock = new JMenuItem( "Lock session" );
-                  itmLock.setIcon( PDEUtilities.getIcon( this, "images/lock", ICON_SIZE, ICON_SIZE ) );
+                  itmLock.setIcon( JoingSwingUtilities.getIcon( this, "images/lock", ICON_SIZE, ICON_SIZE ) );
                   itmLock.addActionListener( new ActionListener()
                   {
                       public void actionPerformed( ActionEvent ae )
                       {
-                          ((PDEManager) PDEUtilities.getDesktopManager()).lock();
+                          ((PDEManager) org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager()).lock();
                       }
                   } );
         add( itmLock );
@@ -110,12 +110,12 @@ class StartMenu extends JScrollablePopupMenu
     private void addExit()
     {
         JMenuItem itmExit = new JMenuItem( "End session" );
-                  itmExit.setIcon( PDEUtilities.getIcon( this, "images/exit", ICON_SIZE, ICON_SIZE ) );
+                  itmExit.setIcon( JoingSwingUtilities.getIcon( this, "images/exit", ICON_SIZE, ICON_SIZE ) );
                   itmExit.addActionListener( new ActionListener()
                   {
                       public void actionPerformed( ActionEvent ae )
                       {
-                          ((PDEManager) PDEUtilities.getDesktopManager()).exit();
+                          ((PDEManager) org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager()).exit();
                       }
                   } );
         add( itmExit );
@@ -136,7 +136,7 @@ class StartMenu extends JScrollablePopupMenu
                     break;
                 
                 JMenu menu = new JMenu( group.getName() );
-                      menu.setIcon( createItemIcon( group.getIconPNG() ) );
+                      menu.setIcon( createItemIcon( group.getIconPixel() ) );
                       
                 add( menu );
 
@@ -178,10 +178,10 @@ class StartMenu extends JScrollablePopupMenu
     {
         public void actionPerformed( ActionEvent ae )
         {
-            JMenuItem item = (JMenuItem) ae.getSource();
+            JMenuItem     item    = (JMenuItem) ae.getSource();
             AppDescriptor appDesc = (AppDescriptor) item.getClientProperty( KEY_APP_DESCRIPTOR );
-
-            PDEUtilities.launch( DeskLauncher.Type.APPLICATION, String.valueOf( appDesc.getId() ) );   
+            
+            JoingSwingUtilities.launch( DeskLauncher.Type.APPLICATION, String.valueOf( appDesc.getId() ), null );   
         }
     }
 }

@@ -11,7 +11,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputAdapter;
 import org.joing.common.desktopAPI.desktop.Desktop;
-import org.joing.pde.PDEUtilities;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 
 /**
@@ -42,7 +41,7 @@ class Map extends JPanel
             {
                 if( me.getButton() == MouseEvent.BUTTON1 )
                 {
-                    Desktop desktop = PDEUtilities.getDesktopManager().getDesktop();
+                    Desktop desktop = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop();
                             desktop.setActiveWorkArea( Map.this.workArea );
                 }
             }

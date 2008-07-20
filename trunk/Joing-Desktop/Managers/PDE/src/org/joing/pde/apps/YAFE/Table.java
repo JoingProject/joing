@@ -9,7 +9,7 @@ import javax.swing.JTable;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 class Table extends JTable
 {

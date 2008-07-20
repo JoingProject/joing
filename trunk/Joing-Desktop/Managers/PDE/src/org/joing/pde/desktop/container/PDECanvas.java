@@ -17,7 +17,7 @@ import org.joing.common.desktopAPI.Closeable;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.pane.DeskCanvas;
 import org.joing.common.desktopAPI.workarea.WorkArea;
-import org.joing.pde.PDEUtilities;
+import org.joing.pde.joingswingtools.JoingSwingUtilities;
 
 /**
  * A very basic component.
@@ -72,7 +72,7 @@ public class PDECanvas extends JPanel implements DeskCanvas
         setVisible( false );
         
         // Detach from container WorkArea
-        WorkArea wa = PDEUtilities.findWorkAreaFor( this );
+        WorkArea wa = JoingSwingUtilities.findWorkAreaFor( this );
         
         if( wa != null )
             wa.remove( this );

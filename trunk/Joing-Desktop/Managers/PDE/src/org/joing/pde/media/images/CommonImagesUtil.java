@@ -9,7 +9,7 @@ import org.joing.common.desktopAPI.StandardImage;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 public class CommonImagesUtil
 {

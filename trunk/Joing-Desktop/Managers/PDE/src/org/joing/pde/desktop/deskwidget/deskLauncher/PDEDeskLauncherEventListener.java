@@ -13,7 +13,7 @@ import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncherListener;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 public interface PDEDeskLauncherEventListener extends DeskLauncherListener
 {

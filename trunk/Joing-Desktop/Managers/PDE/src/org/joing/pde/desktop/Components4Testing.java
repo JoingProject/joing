@@ -10,20 +10,19 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.joing.common.desktopAPI.desktop.Desktop;
 import org.joing.common.desktopAPI.workarea.Wallpaper;
-import org.joing.pde.PDEUtilities;
 import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
 import org.joing.pde.desktop.workarea.PDEWallpaper;
 
 // JUST FOR TESTING
-import org.joing.runtime.toSwap.JoingColorChooser;
-import org.joing.runtime.toSwap.JoingFileChooser;
+import org.joing.pde.joingswingtools.JoingColorChooser;
+import org.joing.pde.joingswingtools.JoingFileChooser;
 
 //------------------------------------------------------------------------//
 
 class Components4Testing
 {
-    private static Desktop desktop = PDEUtilities.getDesktopManager().getDesktop();
+    private static Desktop desktop = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop();
     
     public static void createTestComponents()
     {
@@ -69,12 +68,12 @@ class Components4Testing
         PDEDeskLauncher launcher = new PDEDeskLauncher();
                         launcher.setText( "Launcher test" );
                         launcher.setLocation( 20,80 );
-        PDEUtilities.getDesktopManager().getDesktop().getWorkAreas().get( 0 ).add( launcher );
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getWorkAreas().get( 0 ).add( launcher );
     }
     
     private static void InternalFrames()
     {
-        PDEFrame frame = (PDEFrame) PDEUtilities.getDesktopManager().getRuntime().createFrame();
+        PDEFrame frame = (PDEFrame) org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().createFrame();
                  frame.setTitle( "Frame" );
                  frame.add( new JTextArea( "Soy un Frame" ) );
         desktop.getActiveWorkArea().add( frame );
@@ -102,7 +101,7 @@ class Components4Testing
                  frm.add( new JLabel( "Translucency" ), BorderLayout.NORTH );
                  frm.add( slrTranslucency, BorderLayout.SOUTH );
                  frm.setBounds( 380, 200, 600, 580 );
-        PDEUtilities.getDesktopManager().getDesktop().getWorkAreas().get( 0 ).add( frm, false ); // Do not autoarrange
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getWorkAreas().get( 0 ).add( frm, false ); // Do not autoarrange
     }
     
     private static void desklets()

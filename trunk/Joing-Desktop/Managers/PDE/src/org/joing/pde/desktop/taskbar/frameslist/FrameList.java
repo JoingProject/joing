@@ -29,7 +29,6 @@ import org.joing.common.desktopAPI.taskbar.TaskBar;
 import org.joing.common.desktopAPI.workarea.Wallpaper;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.common.desktopAPI.workarea.WorkAreaListener;
-import org.joing.pde.PDEUtilities;
 import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.taskbar.PDETaskBarPanel;
 
@@ -61,7 +60,7 @@ public class FrameList extends PDETaskBarPanel
         twl  = new TheWindowListener();
         tifl = new TheIntenalFrameListener();
         
-        PDEUtilities.getDesktopManager().getDesktop().addDesktopListener( tdl );
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().addDesktopListener( tdl );
         
         setMinimumSize( new Dimension( 120,22 ) );
         setMaximumSize( new Dimension( Integer.MAX_VALUE, Integer.MAX_VALUE ) );
@@ -160,10 +159,10 @@ public class FrameList extends PDETaskBarPanel
         FrameButton btn = (FrameButton) ae.getSource();
         Container   frm = btn.getFrame();
         
-        if( (WorkArea) frm.getParent() != PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea() )
+        if( (WorkArea) frm.getParent() != org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea() )
         {
             // If the frame was in a different workarea, then change active work area
-            PDEUtilities.getDesktopManager().getDesktop().setActiveWorkArea( (WorkArea) frm.getParent() );
+            org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().setActiveWorkArea( (WorkArea) frm.getParent() );
             
             // And if it was minimized, then restore; but if it was restored don't minimize. Always make selected
             if( frm instanceof PDEFrame )
@@ -221,7 +220,7 @@ public class FrameList extends PDETaskBarPanel
     
     private void updateSelected()
     {
-        WorkArea    waActive = PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea();
+        WorkArea    waActive = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
         Component[] aComp    = getComponents();
         
         for( int n = 0; n < aComp.length; n++ )

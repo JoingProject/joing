@@ -17,6 +17,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
+import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.app.AppGroup;
 import org.joing.common.dto.app.AppGroupKey;
@@ -25,7 +26,7 @@ import org.joing.common.dto.app.AppGroupKey;
  *
  * @author  fmorero
  */
-public class ApplicationTreePanel extends JPanel
+public class ApplicationTreePanel extends JPanel implements DeskComponent
 {
     private JTree     tree;
     private JTextArea text;
@@ -146,7 +147,7 @@ public class ApplicationTreePanel extends JPanel
             {
                 sName = ((AppGroup) objUser).getName();
                 sDesc = ((AppGroup) objUser).getDescription();
-                aByte = ((AppGroup) objUser).getIconPNG();
+                aByte = ((AppGroup) objUser).getIconPixel();
             }
             else if( objUser instanceof AppDescriptor )
             { 

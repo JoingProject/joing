@@ -14,7 +14,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.pane.DeskFrame;
-import org.joing.pde.PDEUtilities;
 import org.joing.pde.desktop.taskbar.PDETaskBarPanel;
 import org.joing.pde.swing.PDEAboutPanel;
 
@@ -89,11 +88,11 @@ public class SysTray extends PDETaskBarPanel
                       panel.setVersion( "1.0" );
                       
         // Better to use a Frame than a Dialog (modaless: this is the way Gnome does it)
-        DeskFrame frame = PDEUtilities.getDesktopManager().getRuntime().createFrame();
+        DeskFrame frame = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().createFrame();
                   frame.setTitle( "About" );
                   frame.add( (DeskComponent) panel );
                   
-        PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
     }
 
     public void onRemove()

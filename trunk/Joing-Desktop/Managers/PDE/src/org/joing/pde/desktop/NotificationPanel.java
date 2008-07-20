@@ -5,7 +5,6 @@
 
 package org.joing.pde.desktop;
 
-import org.joing.pde.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Image;
@@ -57,7 +56,7 @@ class NotificationPanel extends PDECanvas
         lblMessage.setHorizontalTextPosition( JLabel.CENTER );
         
         if( icon == null )
-            icon = PDEUtilities.getDesktopManager().getRuntime().getImage( StandardImage.NOTIFICATION );
+            icon = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.NOTIFICATION );
         
         lblIcon.setIcon( new ImageIcon( icon ) );
         
@@ -89,7 +88,7 @@ class NotificationPanel extends PDECanvas
     // Calculates size and postion
     private void setBounds()
     {
-        WorkArea wa = PDEUtilities.getDesktopManager().getDesktop().getActiveWorkArea();
+        WorkArea wa = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
         
         setSize( 205, 70 );    // FIXME: Buscar su tamaño, en lugar de 180,70
         setLocation( wa.getWidth() - getWidth(), wa.getHeight() - getHeight() - 5 );   // NEXT: no sé por qué tengo que hace rel -5

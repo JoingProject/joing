@@ -17,13 +17,12 @@ import org.joing.common.desktopAPI.desktop.Desktop;
 import org.joing.common.desktopAPI.desktop.DesktopListener;
 import org.joing.common.desktopAPI.taskbar.TaskBar;
 import org.joing.common.desktopAPI.workarea.WorkArea;
-import org.joing.pde.PDEUtilities;
 import org.joing.pde.desktop.taskbar.PDETaskBarComponent;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 public class WorkAreaSwitcher extends PDETaskBarComponent
 {
@@ -39,7 +38,7 @@ public class WorkAreaSwitcher extends PDETaskBarComponent
         setBorder( new LineBorder( Color.black, 1 ) );
         setInheritsPopupMenu( true );  // It is also inherited by sub-components
         
-        Desktop desktop = PDEUtilities.getDesktopManager().getDesktop();
+        Desktop desktop = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop();
         
         // Traverse existing workareas: one or more workareas would exist when this component is shown.
         List<WorkArea> lstWorAreas = desktop.getWorkAreas();

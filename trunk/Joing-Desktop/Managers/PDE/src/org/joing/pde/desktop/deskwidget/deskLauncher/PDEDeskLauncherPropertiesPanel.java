@@ -12,7 +12,7 @@ import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.dto.app.AppDescriptor;
-import org.joing.pde.PDEUtilities;
+import org.joing.pde.joingswingtools.JoingSwingUtilities;
 
 /**
  *
@@ -111,7 +111,7 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
         txtDirectory.setEnabled( radDir.isSelected() );
         btnSelectDirectory.setEnabled( radDir.isSelected() );
         
-        Image image = PDEUtilities.getDesktopManager().getRuntime().getImage( (radApp.isSelected() ? StandardImage.LAUNCHER : StandardImage.FOLDER) );
+        Image image = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( (radApp.isSelected() ? StandardImage.LAUNCHER : StandardImage.FOLDER) );
         btnIcon.setIcon( new ImageIcon( image ) );
     }
     
@@ -311,7 +311,7 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
     }//GEN-LAST:event_btnIconActionPerformed
 
 private void onSelectAppButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onSelectAppButton
-        AppDescriptor app = PDEUtilities.selectApplication();
+        AppDescriptor app = JoingSwingUtilities.selectApplication();
         
         if( app != null )
         {
