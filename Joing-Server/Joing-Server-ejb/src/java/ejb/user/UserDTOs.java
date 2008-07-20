@@ -9,6 +9,7 @@
 
 package ejb.user;
 
+import java.util.Locale;
 import org.joing.common.dto.user.Local;
 import org.joing.common.dto.user.User;
 
@@ -63,13 +64,17 @@ class UserDTOs
     }
     
     static void transfer( UserEntity fromUserEntity, User toUser )
-    {
+    {        
         toUser.setAccount( fromUserEntity.getAccount() );
         toUser.setEmail( fromUserEntity.getEmail() );
         toUser.setFirstName( fromUserEntity.getFirstName() );
         toUser.setSecondName( fromUserEntity.getSecondName() );
         toUser.setMale( fromUserEntity.getIsMale() != 0 );
         toUser.setIdLocale( fromUserEntity.getIdLocale().getIdLocale() );
+        // FIXME: Aunqaue la tabla USERS tenga el campo ID_LOCALE, cuando se 
+        //        cambia por UserEntity, tendría que tener una instancia de LocaleEntity
+        toUser.setLocale( Locale.getDefault() );
+        //-----------------------------------------------------------------------------
         toUser.setTotalSpace( (long) fromUserEntity.getQuota() );
     }
 }

@@ -27,7 +27,7 @@ import org.joing.common.exception.JoingServerVFSException;
  * <p>
  * For the API javadoc, refer to the 'remote' and 'local' interfaces.
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 @Stateless
 public class ListManagerBean 

@@ -389,14 +389,10 @@ public class ApplicationManagerBean
         return true;
     }
 
-    public List<Application> getAvailableDesktops()
+    public List<AppDescriptor> getAvailableDesktops()
             throws JoingServerAppException
     {
         // TODO: Arreglar esta marranada... :-(
-        // ¡¡ CUIDADO ANTONIO !! Este método está devolviendo List<Application>, 
-        //                       pero tendría que devolver List<AppDescriptor>
-        //                       Por favor, recuerda que lo tenemos que hablar.
-        //      ¡¡¡ Cuando hay más de un desktop se vuelve inoperante !!!
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -408,7 +404,7 @@ public class ApplicationManagerBean
 //            q.setParameter("idAppGroup", AppGroupKey.DESKTOP);
 //            AppGroupEntity appGrp = (AppGroupEntity)q.getSingleResult();
 //
-            List<Application> apps = new ArrayList<Application>();
+            List<AppDescriptor> apps = new ArrayList<AppDescriptor>();
 //            
 //            for (ApplicationEntity appEntity : appGrp.getApplications()) {
 //                Application app = AppDTOs.createApplication(appEntity);
@@ -435,8 +431,8 @@ public class ApplicationManagerBean
                 Query q = em.createNamedQuery( "ApplicationEntity.findByIdApplication" );
                 q.setParameter( "idApplication", appId );
                 ApplicationEntity entity = (ApplicationEntity) q.getSingleResult();
-                Application app = AppDTOs.createApplication( entity );
-                apps.add( app );
+                AppDescriptor appdesc = AppDTOs.createAppDescriptor( entity );
+                apps.add( appdesc );
             }
 
             return apps;

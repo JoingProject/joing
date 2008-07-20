@@ -14,7 +14,7 @@ import java.util.Locale;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 public class User implements Serializable
 {

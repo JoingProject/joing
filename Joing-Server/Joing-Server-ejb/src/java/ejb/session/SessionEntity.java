@@ -22,7 +22,7 @@ import javax.persistence.TemporalType;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 @Entity
 @Table(name = "SESSIONS")

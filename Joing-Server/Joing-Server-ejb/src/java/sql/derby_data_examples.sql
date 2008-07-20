@@ -8,7 +8,7 @@ insert into locales (IDIOM, COUNTRY)  -- ID_LOCALE = 2
 -- ------------------------------------------------------------------
 
 insert into users (ACCOUNT, PASSWORD, EMAIL, FIRST_NAME, SECOND_NAME, ID_LOCALE, IS_MALE, QUOTA)
-     values('peyrona@joing.org','admin','peyrona@gmail.com', 'Francisco','Morero Peyrona', 1, 1, 0);
+     values('peyrona@joing.org','admin','peyrona@gmail.com', 'Francisco','Morero Peyrona', 2, 1, 0);
 
 -- For inf about ID_APP_GROUP, refer to -> org.joing.common.dto.app.AppGroup.java
 

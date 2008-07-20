@@ -15,7 +15,7 @@ import javax.persistence.Table;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 @Entity
 @Table(name = "USERS_WITH_APPS")
