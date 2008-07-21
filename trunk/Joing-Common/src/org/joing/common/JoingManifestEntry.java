@@ -85,16 +85,16 @@ public class JoingManifestEntry
             sVendor      = attrs.getValue( VENDOR      );
             sLicense     = attrs.getValue( LICENSE     );
 
-            if( sAppName     != null && sAppName.length() == 0 )     sAppName     = null;
-            if( sVersion     != null && sVersion.length() == 0 )     sVersion     = null;
-            if( sIconPixel   != null && sIconPixel.length() == 0 )   sIconPixel   = null;
-            if( sIconVector  != null && sIconVector.length() == 0 )  sIconVector  = null;
+            if( sAppName     != null && sAppName.length()     == 0 ) sAppName     = null;
+            if( sVersion     != null && sVersion.length()     == 0 ) sVersion     = null;
+            if( sIconPixel   != null && sIconPixel.length()   == 0 ) sIconPixel   = null;
+            if( sIconVector  != null && sIconVector.length()  == 0 ) sIconVector  = null;
             if( sDescription != null && sDescription.length() == 0 ) sDescription = null;
-            if( sArguments   != null && sArguments.length() == 0 )   sArguments   = null;
-            if( sFileTypes   != null && sFileTypes.length() == 0 )   sFileTypes   = null;
-            if( sAuthor      != null && sAuthor.length() == 0 )      sAuthor      = null;
-            if( sVendor      != null && sVendor.length() == 0 )      sVendor      = null;
-            if( sLicense     != null && sLicense.length() == 0 )     sLicense     = null;
+            if( sArguments   != null && sArguments.length()   == 0 ) sArguments   = null;
+            if( sFileTypes   != null && sFileTypes.length()   == 0 ) sFileTypes   = null;
+            if( sAuthor      != null && sAuthor.length()      == 0 ) sAuthor      = null;
+            if( sVendor      != null && sVendor.length()      == 0 ) sVendor      = null;
+            if( sLicense     != null && sLicense.length()     == 0 ) sLicense     = null;
         }
     }
     
