@@ -58,7 +58,7 @@ public class NativeFileSystemTools
      */
     public static boolean removeAccount( String sAccount )
     {
-        return deleteDirectory( getUserHome( sAccount ) );
+        return deepDelete( getUserHome( sAccount ) );
     }
     
     /**
@@ -166,22 +166,31 @@ public class NativeFileSystemTools
         return new java.io.File( Constant.getUserDir(), sAccount );
     }
     
-    // Recursively deletes a directory an all its files
-    private static boolean deleteDirectory( java.io.File path )
+    // If passed file is a directory, recursively deletes it an all its files.
+    // If passed file is just a file, deletes it.
+    private static boolean deepDelete( java.io.File f )
     {
-        if( path.exists() )
+        boolean bSuccess = false;
+        
+        if( f.exists() )
         {
-            java.io.File[] files = path.listFiles();
+            bSuccess = true;
+            java.io.File[] files = f.listFiles();
             
-            for( int n = 0; n < files.length; n++ )
+            if( files != null )
             {
-                if( files[n].isDirectory() )
-                    deleteDirectory( files[n] );
-                else
-                    files[n].delete();
+                for( int n = 0; n < files.length; n++ )
+                {
+                    if( files[n].isDirectory() )
+                        bSuccess = bSuccess && deepDelete( files[n] );
+                    else
+                        bSuccess = bSuccess && files[n].delete();
+                }
             }
+            
+            bSuccess = bSuccess && f.delete();
         }
         
-        return( path.delete() );
+        return bSuccess;
     }
 }

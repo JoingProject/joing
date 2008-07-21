@@ -313,18 +313,13 @@ public class UserManagerBean
         LocaleEntity _local = null;
         
         if( locale == null )
-            Locale.getDefault();
+            locale = Locale.getDefault();
         
         try
         {
-
-//            Query query = em.createQuery( "SELECT l FROM LocaleEntity l"+
-//                                      " WHERE l.language = '"+ locale.getLanguage() +"'"+ 
-//                                      "   AND l.country ='"+ locale.getCountry() +"'" );
-            // Asumo que l.idiom es equivalente a l.language
-            Query query = em.createQuery("SELECT l FROM LocaleEntity l"+
-                                " WHERE l.idiom='"+ locale.getLanguage() +"'"+ 
-                                " AND l.country='"+ locale.getCountry() +"'" );
+            Query query = em.createQuery( "SELECT l FROM LocaleEntity l"+
+                                          " WHERE l.idiom='"+ locale.getLanguage() +"'"+ 
+                                          "   AND l.country='"+ locale.getCountry() +"'" );
             
             _local = (LocaleEntity) query.getSingleResult();
         }
