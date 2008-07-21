@@ -19,7 +19,6 @@
 package org.joing.pde.apps.YAFE;
 
 import javax.swing.event.TreeSelectionEvent;
-import org.joing.pde.joingswingtools.tree.JoingFileSystemTreeEditable;
 import java.awt.Event;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -33,10 +32,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.desktopAPI.pane.DeskFrame;
 import org.joing.common.desktopAPI.StandardImage;
+import org.joing.pde.joingswingtools.tree.JoingFileSystemTree;
 import org.joing.pde.joingswingtools.tree.TreeNodeFile;
 
 /**
@@ -46,14 +47,14 @@ import org.joing.pde.joingswingtools.tree.TreeNodeFile;
  */
 public class YAFE extends javax.swing.JPanel implements DeskComponent
 {
-    private JoingFileSystemTreeEditable tree;
+    private JoingFileSystemTree tree;
     private Table table;
     
     //------------------------------------------------------------------------//
     
     public YAFE()
     {
-        tree  = new JoingFileSystemTreeEditable();
+        tree  = new JoingFileSystemTree();
         tree.addTreeSelectionListener( new TreeSelectionListener() 
         {
             public void valueChanged( TreeSelectionEvent tse )
@@ -124,7 +125,10 @@ public class YAFE extends javax.swing.JPanel implements DeskComponent
         {
             public void actionPerformed( ActionEvent ae )
             {
-                tree.setSelected( new File( System.getProperty( "user.home" ) ) );
+                DefaultMutableTreeNode node = tree.search( null, new File( System.getProperty( "user.home" ) ) );
+                
+                if( node != null )
+                    tree.setSelected( node );
             }
         };
         
@@ -202,7 +206,7 @@ public class YAFE extends javax.swing.JPanel implements DeskComponent
         {
             public void actionPerformed( ActionEvent ae )
             {
-                if( ! tree.delete() )
+                if( ! tree.deleteAllSelected() )
                     org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog(
                             "Error deleting", "Can't delete one or more selected files or directories." );
             }

@@ -82,7 +82,17 @@ public class PDEManager extends JApplet implements DesktopManager
                 // Changes default local to the one perfered by user. In this way all apps opened by
                 // user in Join'g will use the user locale instead of machine default locale.
                 if( user != null )
+                {
                     Locale.setDefault( user.getLocale() );
+                }
+                else
+                {
+                    PDEManager.this.getRuntime().showMessageDialog( "Can't set user language", 
+                            "Due to a problem retrieving user preferences,\n"+
+                            "preferred language can not be sat.\n"+
+                            "\n"+
+                            "Using default language: "+ Locale.getDefault().getDisplayLanguage() );
+                }
             }
         } ).start();
         
@@ -111,58 +121,12 @@ public class PDEManager extends JApplet implements DesktopManager
     
     public void showInFrame()
     {
-        try
-        {
-            SwingUtilities.invokeLater( new Runnable()
-            {
-                public void run()
-                {
-                    getMainFrame().pack();
-                    getMainFrame().setVisible( true );
-
-                    if( Toolkit.getDefaultToolkit().isFrameStateSupported( Frame.MAXIMIZED_BOTH ) )
-                        getMainFrame().setExtendedState( Frame.MAXIMIZED_BOTH );
-                    else
-                        getMainFrame().setSize( Toolkit.getDefaultToolkit().getScreenSize() );
-                    
-                    showCommon();
-                }
-            } );
-        }
-        catch( Exception exc )
-        {
-            exc.printStackTrace();  // Shown only in console (not inside a JFrame/JDialog)
-        }
+        showFrame( false );
     }
     
     public void showInFullScreen()
     {
-        try
-        {
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            GraphicsDevice      gs = ge.getDefaultScreenDevice();
-
-            // NEXT: When bug is fixed
-            // Due to a bug in Ubuntu and also in JDK, gs.isFullScreenSupported() always return false.
-            if( true ) ///////// gs.isFullScreenSupported() )
-            {
-                getMainFrame().setUndecorated( true );
-                getMainFrame().setResizable( false );
-                getMainFrame().pack();
-                getMainFrame().setVisible( true );
-                
-                gs.setFullScreenWindow( getMainFrame() );
-                showCommon();
-            }
-            else
-            {
-                showInFrame();
-            }
-        }
-        catch( Exception exc )
-        {
-            exc.printStackTrace();  // Shown only in console (not inside a JFrame/JDialog)
-        }
+        showFrame( true );
     }
     
     public PDEDesktop getDesktop()
@@ -175,7 +139,7 @@ public class PDEManager extends JApplet implements DesktopManager
         return runtime;
     }
     
-    // Called from Platform
+    // Called from Platform: can't be used by PDEManager
     public void shutdown()
     {
         runtime.play( StandardSound.GOODBYE );
@@ -189,7 +153,7 @@ public class PDEManager extends JApplet implements DesktopManager
         halt();
     }
     
-    // Called from Platform
+    // Called from Platform: can't be used by PDEManager
     public void halt()
     {
         if( frame != null )   // Can't call getFrame(), because this method constructs the frame
@@ -246,7 +210,7 @@ public class PDEManager extends JApplet implements DesktopManager
     {
         if( frame == null )
         {
-            String      sPDE = "PDE";
+            String sPDE = "PDE";
             // FIXME: Esto no va: en lugar de coger el manifest de PDEManager, coje el de Joing-Common (su interface)
             InputStream is   = getClass().getResourceAsStream( "/META-INF/MANIFEST.MF" );
             
@@ -285,11 +249,50 @@ public class PDEManager extends JApplet implements DesktopManager
         return frame;
     }
     
-    // I guess more thins will come into tihs method in the future
-    private void showCommon() 
+    private void showFrame( final boolean bFullScreen )
     {
-        runtime.play( StandardSound.WELCOME );        
-        desktop.restore();
+        SwingUtilities.invokeLater( new Runnable()
+        {
+            public void run()
+            {
+                GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+                // NEXT: When bug is fixed
+                // Due to a bug in Ubuntu and also in JDK, gs.isFullScreenSupported() always return false.
+                // When fixed, use gsisFullScreenSupported().
+                boolean bFull = bFullScreen; ///&& gs.isFullScreenSupported();
+                
+                try
+                {
+                    if( bFull )
+                    {
+                        getMainFrame().setUndecorated( true );
+                        getMainFrame().setResizable( false );
+                    }
+                    
+                    getMainFrame().pack();
+                    getMainFrame().setVisible( true );
+                    
+                    if( bFull )
+                    {
+                        gd.setFullScreenWindow( getMainFrame() );
+                    }
+                    else
+                    {
+                        if( Toolkit.getDefaultToolkit().isFrameStateSupported( Frame.MAXIMIZED_BOTH ) )
+                            getMainFrame().setExtendedState( Frame.MAXIMIZED_BOTH );
+                        else
+                            getMainFrame().setSize( Toolkit.getDefaultToolkit().getScreenSize() );
+                    }
+                    
+                    runtime.play( StandardSound.WELCOME );
+                    desktop.restore();
+                }
+                catch( Exception exc )
+                {
+                    exc.printStackTrace();  // Shown only via console (not inside a JFrame/JDialog)
+                }
+            }
+        } );
     }
     
     //------------------------------------------------------------------------//

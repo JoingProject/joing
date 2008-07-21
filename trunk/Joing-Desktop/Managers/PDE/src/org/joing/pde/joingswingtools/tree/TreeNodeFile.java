@@ -14,38 +14,47 @@ import org.joing.runtime.vfs.VFSFile;
  *
  * @author Francisco Morero Peyrona
  */
-// TODO: No hace lo que yo pretendía
-//       Cuando se cierra un nodo del FS local, desaparece el 'handle', y pensé
-//       que re-escribiendo getAllowsChildren() y isLeaf() se arreglaría, pero no es así.
 public class TreeNodeFile extends DefaultMutableTreeNode
 {
+    private boolean bFakedNode = false;
+    
     public TreeNodeFile()
     {
         super();
     }
-
+    
     public TreeNodeFile( File f, boolean bAllowsChildren )
     {
         super( f, bAllowsChildren );
+    }
+    
+    public TreeNodeFile( boolean bFakedNode )
+    {
+        this.bFakedNode = bFakedNode;
     }
 
     public File getFile()
     {
         return (File) super.userObject;
     }
-
+    
     public boolean getAllowsChildren()
     {
         File f = (File) getUserObject();
-
+        
         return (f == null || f.isDirectory());    // f == null => root
     }
-
+    
     public boolean isLeaf()
     {
         return ! getAllowsChildren();
     }
-
+    
+    public boolean isFakedNode()
+    {
+        return bFakedNode;
+    }
+    
     public String toString()
     {
         File   f = (File) getUserObject();
@@ -53,7 +62,10 @@ public class TreeNodeFile extends DefaultMutableTreeNode
 
         if( f == null )
         {
-            s = "Join'g File System";
+            if( bFakedNode )
+                s = "Reading files ...";
+            else
+                s = "Join'g File System";
         }
         else
         {
