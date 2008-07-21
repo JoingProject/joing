@@ -27,29 +27,29 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="lblLogo" alignment="0" pref="321" max="32767" attributes="0"/>
+          <Component id="lblLogo" alignment="0" max="32767" attributes="0"/>
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace pref="176" max="32767" attributes="0"/>
-              <Component id="btnOk" min="-2" pref="72" max="-2" attributes="0"/>
+              <EmptySpace pref="116" max="32767" attributes="0"/>
+              <Component id="btnOk" linkSize="1" min="-2" pref="72" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="btnCancel" min="-2" max="-2" attributes="0"/>
+              <Component id="btnCancel" linkSize="1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="lblPassword" min="-2" max="-2" attributes="0"/>
                   <Component id="lblAccount" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="lblDesktop" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="chkFullScreen" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="txtPassword" alignment="0" pref="225" max="32767" attributes="1"/>
-                  <Component id="txtAccount" alignment="0" pref="225" max="32767" attributes="1"/>
-                  <Component id="cmbDesktop" alignment="1" pref="225" max="32767" attributes="0"/>
+                  <Component id="txtPassword" alignment="0" pref="182" max="32767" attributes="2"/>
+                  <Component id="txtAccount" alignment="0" pref="182" max="32767" attributes="2"/>
+                  <Component id="cmbDesktop" alignment="1" pref="182" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>

@@ -148,9 +148,9 @@ public class Login extends JDialog
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblLogo, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
+            .addComponent(lblLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(176, Short.MAX_VALUE)
+                .addContainerGap(116, Short.MAX_VALUE)
                 .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCancel)
@@ -164,11 +164,14 @@ public class Login extends JDialog
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(chkFullScreen)
-                    .addComponent(txtPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
-                    .addComponent(txtAccount, javax.swing.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)
-                    .addComponent(cmbDesktop, javax.swing.GroupLayout.Alignment.TRAILING, 0, 225, Short.MAX_VALUE))
+                    .addComponent(txtPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
+                    .addComponent(txtAccount, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
+                    .addComponent(cmbDesktop, javax.swing.GroupLayout.Alignment.TRAILING, 0, 182, Short.MAX_VALUE))
                 .addContainerGap())
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnCancel, btnOk});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
