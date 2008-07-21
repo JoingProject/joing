@@ -11,7 +11,7 @@ import org.joing.common.desktopAPI.StandardImage;
  *
  * @author Francisco Morero Peyrona
  */
-public class CommonImagesUtil
+public class ImagesUtil
 {
     public static String getFileName4Icon( StandardImage image )
     {

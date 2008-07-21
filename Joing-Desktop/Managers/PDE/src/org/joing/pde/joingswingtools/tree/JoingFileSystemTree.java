@@ -7,6 +7,7 @@ package org.joing.pde.joingswingtools.tree;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 import javax.swing.JTree;
@@ -14,6 +15,7 @@ import javax.swing.SwingWorker;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import org.joing.runtime.vfs.JoingFileSystemView;
 import org.joing.runtime.vfs.VFSFile;
 
@@ -21,9 +23,10 @@ import org.joing.runtime.vfs.VFSFile;
  *
  * @author Francisco Morero Peyrona
  */
-// TODO: Copiar esta calse cuando este terminada a PDE: es la base para el control DirSelector
 public class JoingFileSystemTree extends JoingSwingTree
 {
+    private static final String sNewFile = "NewFile";
+    
     private boolean bOnlyDirs;
     
     //------------------------------------------------------------------------//
@@ -43,7 +46,7 @@ public class JoingFileSystemTree extends JoingSwingTree
             {
                 JTree            tree    = JoingFileSystemTree.this;
                 DefaultTreeModel model   = (DefaultTreeModel) tree.getModel();
-                TreeNodeFile         root    = (TreeNodeFile) model.getRoot();
+                TreeNodeFile     root    = (TreeNodeFile) model.getRoot();
                 File[]           afRoots = JoingFileSystemView.getFileSystemView().getRoots();
         
                 for( int n = 0; n < afRoots.length; n++ )
@@ -78,6 +81,125 @@ public class JoingFileSystemTree extends JoingSwingTree
     }
     
     //------------------------------------------------------------------------//
+    // Editing actions
+    
+    /**
+     * Create a new directory as child of highlighted node.
+     * @return <code>true</code> if operation was successfull.
+     */
+    public File createDir() throws IOException
+    {
+        File         fDir = JoingFileSystemView.getFileSystemView().createNewFolder( (File) getSelectedNode().getUserObject() );
+        TreeNodeFile node = new TreeNodeFile( fDir, true );
+        
+        add( node );
+        
+        return fDir;
+    }
+    
+    /**
+     * Create a new file as child of highlighted node.
+     * @return <code>true</code> if operation was successfull.
+     */
+    public File createFile()
+    {
+        File fParent = (File) getSelectedNode().getUserObject();
+        
+        return JoingFileSystemView.getFileSystemView().createFileObject( fParent, sNewFile );
+    }
+    
+    public boolean deleteAllSelected()
+    {
+        boolean    bAll  = true;   // Where all selected files deleted?
+        TreePath[] aPath = getSelectionPaths();
+        
+        for( int n = 0; n < aPath.length; n++ )
+        {
+            TreeNodeFile node = (TreeNodeFile) aPath[n].getLastPathComponent();
+            
+            if( deepDelete( node.getFile() ) )
+                delete( node );
+            else
+                bAll = false;
+        }
+        
+        return bAll;
+    }
+    
+    /**
+     * Rename highlighted node.
+     * 
+     * @param sNewName
+     * @return <code>true</code> if operation was successfull.
+     */
+    public boolean rename()
+    {
+        boolean      bSuccess = false;
+        TreeNodeFile aPath    = getSelectedNode();
+        // TODO: hacerlo
+        return bSuccess;
+    }
+    
+    public boolean properties()
+    {
+        boolean      bSuccess = false;
+        TreeNodeFile aPath    = getSelectedNode();
+        // TODO: hacerlo
+        return bSuccess;
+    }
+    
+    /**
+     * Mark files to be deleted.
+     * @param fNew
+     * @return <code>true</code> if operation was successfull.
+     */
+    public void cut()
+    {
+        TreePath[] aPath = getSelectionPaths();
+        
+        // TODO: hacerlo
+    }
+    
+    /**
+     * Create a new entry (dir oor empty file) as child of highlighted node.
+     * @param fNew
+     * @return <code>true</code> if operation was successfull.
+     */
+    public void copy()
+    {
+        TreePath[] node = getSelectionPaths();
+        // TODO: hacerlo
+    }
+    
+    /**
+     * Create a new entry (dir oor empty file) as child of highlighted node.
+     * @param fNew
+     * @return <code>true</code> if operation was successfull.
+     */
+    public boolean paste()
+    {
+        boolean  bSuccess = false;
+        // TODO: hacerlo
+        return bSuccess;
+    }
+    
+    //------------------------------------------------------------------------//
+    
+    // If more than one node is selected this returns the first one and makes
+    // the rest selected nodes unselected.
+    private TreeNodeFile getSelectedNode()
+    {
+        TreePath path = null;
+        
+        if( getSelectionCount() > 0 )
+        {
+            path = getSelectionPath();
+            clearSelection();
+            setSelectionPath( path );
+        }
+        
+        return (path == null ? null : (TreeNodeFile) path.getLastPathComponent());
+    }
     
     private File[] getFilesIn( File fParent )
     {
@@ -107,6 +229,34 @@ public class JoingFileSystemTree extends JoingSwingTree
         return afChildren;
     }
     
+    // If passed file is a directory, recursively deletes it an all its files.
+    // If passed file is just a file, deletes it.
+    private boolean deepDelete( java.io.File f )
+    {
+        boolean bSuccess = false;
+        
+        if( f.exists() )
+        {
+            bSuccess = true;
+            java.io.File[] files = f.listFiles();
+            
+            if( files != null )
+            {
+                for( int n = 0; n < files.length; n++ )
+                {
+                    if( files[n].isDirectory() )
+                        bSuccess = bSuccess && deepDelete( files[n] );
+                    else
+                        bSuccess = bSuccess && files[n].delete();
+                }
+            }
+            
+            bSuccess = bSuccess && f.delete();
+        }
+        
+        return bSuccess;
+    }
+    
     //------------------------------------------------------------------------//
     // INNER CLASS: MyTreeExpansionListener
     //------------------------------------------------------------------------//
@@ -114,13 +264,18 @@ public class JoingFileSystemTree extends JoingSwingTree
     {
         public void treeExpanded( TreeExpansionEvent tee )
         {
-            TreeNodeFile node  = (TreeNodeFile) tee.getPath().getLastPathComponent();
+            TreeNodeFile node = (TreeNodeFile) tee.getPath().getLastPathComponent();
 
-            if( node.getAllowsChildren() && node.getChildCount() == 0 )
+            if( node.getAllowsChildren() && 
+                (node.getChildCount() == 0 || ((TreeNodeFile) node.getChildAt( 0 )).isFakedNode()) )
             {
                 DefaultTreeModel model      = (DefaultTreeModel) getModel();
                 File[]           afChildren = getFilesIn( (File) node.getUserObject() );
-
+                
+                // Deletes faked node (the one used to force JTree to show handles)
+                if( node.getChildCount() == 1 )  // Must be the faked node
+                    model.removeNodeFromParent( (TreeNodeFile) node.getChildAt( 0 ) );
+                
                 for( int n = 0; n < afChildren.length; n++ )
                 {
                     File f = afChildren[n];
@@ -140,6 +295,9 @@ public class JoingFileSystemTree extends JoingSwingTree
                 
                 while( node.getChildCount() > 0 )
                     model.removeNodeFromParent( (TreeNodeFile) node.getFirstChild() );
+                
+                // Inserts a faked node (used to force JTree to show handles)
+                model.insertNodeInto( new TreeNodeFile( true ), node, 0 );
             }
         }
     }

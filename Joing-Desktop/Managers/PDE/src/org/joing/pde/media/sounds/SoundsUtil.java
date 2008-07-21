@@ -12,7 +12,7 @@ import org.joing.common.desktopAPI.StandardSound;
  *
  * @author Francisco Morero Peyrona
  */
-public class CommonSoundsUtil
+public class SoundsUtil
 {
     public static URL getURL4Sound( StandardSound sound )
     {
@@ -21,12 +21,18 @@ public class CommonSoundsUtil
                 
         switch( sound )
         {
-            case WELCOME  : sFile = "welcome.wav"; break;
+            case WELCOME  : sFile = "welcome.ogg"; break;
             case GOODBYE  : sFile = "goodbye.ogg"; break;
+          //case MAXIMIZE
+          //case MINIMIZE
+          //case RESTORE
+          //case WARNING
+          //case ERROR
+          //case QUESTION
         }
         
         if( sFile != null )
-            url = CommonSoundsUtil.class.getResource( sFile );
+            url = SoundsUtil.class.getResource( sFile );
         
         return url;
     }

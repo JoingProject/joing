@@ -35,8 +35,8 @@ import org.joing.pde.desktop.container.PDECanvas;
 import org.joing.pde.desktop.container.PDEDialog;
 import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
-import org.joing.pde.media.images.CommonImagesUtil;
-import org.joing.pde.media.sounds.CommonSoundsUtil;
+import org.joing.pde.media.images.ImagesUtil;
+import org.joing.pde.media.sounds.SoundsUtil;
 import org.joing.pde.swing.JErrorPanel;
 
 /**
@@ -83,16 +83,16 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
     
     public Image getImage( StandardImage image )
     {
-        String    sFileName = CommonImagesUtil.getFileName4Icon( image );
-        ImageIcon img       = new ImageIcon( CommonImagesUtil.class.getResource( sFileName ) );
+        String    sFileName = ImagesUtil.getFileName4Icon( image );
+        ImageIcon img       = new ImageIcon( ImagesUtil.class.getResource( sFileName ) );
         
         return img.getImage();
     }
 
     public Image getImage( StandardImage image, int width, int height )
     {
-        String    sFileName = CommonImagesUtil.getFileName4Icon( image );
-        ImageIcon img       = new ImageIcon( CommonImagesUtil.class.getResource( sFileName ) );
+        String    sFileName = ImagesUtil.getFileName4Icon( image );
+        ImageIcon img       = new ImageIcon( ImagesUtil.class.getResource( sFileName ) );
 
         if( img.getIconWidth() != width || img.getIconHeight() != height )
             img.setImage( img.getImage().getScaledInstance( width, height, Image.SCALE_SMOOTH ) );
@@ -102,7 +102,7 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
     
     public void play( StandardSound sound )
     {
-        URL url = CommonSoundsUtil.getURL4Sound( sound );
+        URL url = SoundsUtil.getURL4Sound( sound );
         
         if( url != null )
         {
