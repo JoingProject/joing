@@ -22,7 +22,7 @@ public class TreeNodeFile extends DefaultMutableTreeNode
     
     public TreeNodeFile()
     {
-        super();
+        super( null, true );   // true because this constructor is used by roots
     }
     
     public TreeNodeFile( File f )
@@ -32,9 +32,10 @@ public class TreeNodeFile extends DefaultMutableTreeNode
     
     public TreeNodeFile( boolean bFakedNode )
     {
+        super( null, false );
         this.bFakedNode = bFakedNode;
     }
-
+    
     //------------------------------------------------------------------------//
     
     public File getFile()

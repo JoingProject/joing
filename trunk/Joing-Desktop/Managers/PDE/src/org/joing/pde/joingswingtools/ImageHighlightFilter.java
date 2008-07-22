@@ -8,7 +8,7 @@
  * License: {license}
  */
 
-package org.joing.pde.swing;
+package org.joing.pde.joingswingtools;
 
 import java.awt.image.RGBImageFilter;
 

@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package org.joing.pde.swing;
+package org.joing.pde.joingswingtools;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;

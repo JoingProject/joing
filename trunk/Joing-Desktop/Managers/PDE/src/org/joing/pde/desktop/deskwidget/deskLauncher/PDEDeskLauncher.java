@@ -35,9 +35,9 @@ import org.joing.pde.desktop.deskwidget.PDEDeskWidget;
 import org.joing.pde.joingswingtools.JoingSwingUtilities;
 import org.joing.pde.media.PDEColorSchema;
 import org.joing.pde.swing.EventListenerList;
-import org.joing.pde.swing.ImageHighlightFilter;
-import org.joing.pde.swing.JRoundLabel;
-import org.joing.pde.swing.JRoundPanel;
+import org.joing.pde.joingswingtools.ImageHighlightFilter;
+import org.joing.pde.joingswingtools.JRoundLabel;
+import org.joing.pde.joingswingtools.JRoundPanel;
 
 /**
  * This is the base class for all DeskLaunchers: Applications and Folders.

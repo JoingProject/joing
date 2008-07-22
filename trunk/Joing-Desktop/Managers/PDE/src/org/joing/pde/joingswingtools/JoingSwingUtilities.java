@@ -4,7 +4,6 @@
  */
 package org.joing.pde.joingswingtools;
 
-import java.applet.Applet;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Image;
@@ -24,9 +23,7 @@ import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.common.dto.app.AppDescriptor;
-import org.joing.common.dto.vfs.FileDescriptor;
-import org.joing.common.exception.JoingServerVFSException;
-import org.joing.pde.swing.ApplicationTreePanel;
+import org.joing.pde.joingswingtools.JoingApplicationTreePanel;
 
 /**
  * Extra functions used internally by PDE.
@@ -37,47 +34,7 @@ import org.joing.pde.swing.ApplicationTreePanel;
  * @author Francisco Morero Peyrona
  */
 public class JoingSwingUtilities
-{
-    /**
-     * 
-     * @param sFullPath
-     * @return One of following:
-     *         <ul>
-     *         <li>An instance of <code>java.io.File</code> if file exists in
-     *         local file system 
-     *         <li> An instance of <code>org.joing.common.dto.vfs.FileDescriptor</code> 
-     *              if file exists in remote file system (VFS)
-     *         <li><code>null</code> if file does not exists neither in local or
-     *             remote file systems.
-     *         </ul>
-     */
-    public static Object getFile( String sFullPath )
-    {
-        Object oRet = null;
-        
-        // 1st check local FS
-        java.io.File file = new java.io.File( sFullPath );
-        
-        if( file.exists() )
-        {
-            oRet = file;
-        }
-        else
-        {   // Now check in VFS
-            
-            try
-            {
-                FileDescriptor fdRet = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().getFileBridge().getFile( sFullPath );
-            }
-            catch( JoingServerVFSException exc )
-            {
-                // Nothing to do: oRet is already null
-            }
-        }
-        
-        return oRet;
-    }
-    
+{    
     public static byte[] icon2ByteArray( ImageIcon icon )
     {
         byte[] image = null;
@@ -155,11 +112,6 @@ public class JoingSwingUtilities
         return icon;
     }
     
-    public static void play( URL urlSound )
-    {
-        Applet.newAudioClip( urlSound ).play();
-    }
-    
     /**
      * Creates a custom cursor asuming that the image is under cursor 
      * application directory.
@@ -189,7 +141,7 @@ public class JoingSwingUtilities
     public static AppDescriptor selectApplication()
     {
         AppDescriptor        app = null;
-        ApplicationTreePanel atp = new ApplicationTreePanel();
+        JoingApplicationTreePanel atp = new JoingApplicationTreePanel();
         
         if( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showAcceptCancelDialog( "Select Application", atp ) )
             app = atp.getSelectedApplication();

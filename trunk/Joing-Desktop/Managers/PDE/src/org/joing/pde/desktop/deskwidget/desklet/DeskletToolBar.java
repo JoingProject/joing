@@ -12,7 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.border.EmptyBorder;
-import org.joing.pde.swing.JRoundPanel;
+import org.joing.pde.joingswingtools.JRoundPanel;
 
 /**
  *

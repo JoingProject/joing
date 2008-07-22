@@ -15,7 +15,7 @@ import java.awt.image.FilteredImageSource;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import org.joing.pde.joingswingtools.JoingSwingUtilities;
-import org.joing.pde.swing.ImageHighlightFilter;
+import org.joing.pde.joingswingtools.ImageHighlightFilter;
 
 /**
  *

@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.joing.pde.swing;
+package org.joing.pde.joingswingtools.tree;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
