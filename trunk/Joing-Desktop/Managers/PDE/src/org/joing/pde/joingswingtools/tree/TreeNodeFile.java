@@ -18,14 +18,16 @@ public class TreeNodeFile extends DefaultMutableTreeNode
 {
     private boolean bFakedNode = false;
     
+    //------------------------------------------------------------------------//
+    
     public TreeNodeFile()
     {
         super();
     }
     
-    public TreeNodeFile( File f, boolean bAllowsChildren )
+    public TreeNodeFile( File f )
     {
-        super( f, bAllowsChildren );
+        super( f, f.isDirectory() );
     }
     
     public TreeNodeFile( boolean bFakedNode )
@@ -33,6 +35,8 @@ public class TreeNodeFile extends DefaultMutableTreeNode
         this.bFakedNode = bFakedNode;
     }
 
+    //------------------------------------------------------------------------//
+    
     public File getFile()
     {
         return (File) super.userObject;

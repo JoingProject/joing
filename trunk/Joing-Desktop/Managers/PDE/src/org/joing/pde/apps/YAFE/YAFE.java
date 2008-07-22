@@ -18,25 +18,16 @@
  */
 package org.joing.pde.apps.YAFE;
 
-import javax.swing.event.TreeSelectionEvent;
-import java.awt.Event;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.IOException;
 import javax.swing.AbstractAction;
-import javax.swing.Action;
+import javax.swing.event.TreeSelectionEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.desktopAPI.pane.DeskFrame;
-import org.joing.common.desktopAPI.StandardImage;
 import org.joing.pde.joingswingtools.tree.JoingFileSystemTree;
 import org.joing.pde.joingswingtools.tree.TreeNodeFile;
 
@@ -71,7 +62,7 @@ public class YAFE extends javax.swing.JPanel implements DeskComponent
         
         split.setLeftComponent( new JScrollPane( tree ) );
         split.setRightComponent( new JScrollPane( table ) );
-        split.setResizeWeight( .3d );
+        split.setResizeWeight( .4d );
         
         showInFrame();
     }
@@ -81,7 +72,7 @@ public class YAFE extends javax.swing.JPanel implements DeskComponent
     private void showInFrame()
     {
         DesktopManager dm   = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
-        ImageIcon      icon = new ImageIcon( getClass().getResource( "images/yafe.png" ) );
+        ImageIcon      icon = new ImageIcon( getClass().getResource( "yafe.png" ) );
         
         // Show this panel in a frame created by DesktopManager Runtime.
         DeskFrame frame = dm.getRuntime().createFrame();
@@ -94,9 +85,8 @@ public class YAFE extends javax.swing.JPanel implements DeskComponent
     
     private void initToolBarAndPopupMenu()
     {
-        Action[]   actions = getActions();
-        JPopupMenu popup   = new JPopupMenu();
-        
+        AbstractAction[] actions = tree.getActions();
+        JPopupMenu       popup   = new JPopupMenu();
         
         for( int n = 0; n < actions.length; n++ )
         {
@@ -115,153 +105,6 @@ public class YAFE extends javax.swing.JPanel implements DeskComponent
         tree.setComponentPopupMenu( popup );
     }
     
-    private Action[] getActions()
-    {
-        ImageIcon iconHome   = new ImageIcon( getClass().getResource( "images/home.png" ) );
-        ImageIcon iconLoad   = new ImageIcon( getClass().getResource( "images/reload.png" ));
-        ImageIcon iconRename = new ImageIcon( getClass().getResource( "images/rename.png" ));
-        
-        AbstractAction actHome = new MyAction( "Home", iconHome.getImage(), 'H' )
-        {
-            public void actionPerformed( ActionEvent ae )
-            {
-                DefaultMutableTreeNode node = tree.search( null, new File( System.getProperty( "user.home" ) ) );
-                
-                if( node != null )
-                    tree.setSelected( node );
-            }
-        };
-        
-        AbstractAction actReload = new MyAction( "Reload", iconLoad.getImage(), 'L', "Reload current node [Ctrl-L] (with Shift, whole tree)" )
-        {
-            public void actionPerformed( ActionEvent ae )
-            {
-                if( (ae.getModifiers() & ActionEvent.SHIFT_MASK) != 0 )
-                    tree.reloadAll();
-                else
-                    tree.reloadSelected();
-            }
-        };
-        
-        AbstractAction actNewDir = new MyAction( "New folder", StandardImage.FOLDER, 'F' )
-        {
-            public void actionPerformed( ActionEvent ae )
-            {
-                try
-                {
-                    tree.createDir();
-                }
-                catch( IOException exc )
-                {
-                    org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showException( exc, null );
-                }
-            }
-        };
-        
-        AbstractAction actNewFile = new MyAction( "New file", StandardImage.NEW, 'I' )
-        {
-            public void actionPerformed( ActionEvent ae )
-            {
-                tree.createFile();
-            }
-        };
-        
-        AbstractAction actCut = new MyAction( "Cut", StandardImage.CUT, 'X' )
-        {
-            public void actionPerformed( ActionEvent ae )
-            {
-                tree.cut();
-            }
-        };
-
-        AbstractAction actCopy = new MyAction( "Copy", StandardImage.COPY, 'C' )
-        {
-            public void actionPerformed( ActionEvent ae )
-            {
-                tree.copy();
-            }
-        };
-        
-        AbstractAction actPaste = new MyAction( "Paste", StandardImage.PASTE, 'V' )
-        {
-            public void actionPerformed( ActionEvent ae )
-            {
-                if( ! tree.paste() )
-                    org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog(
-                            "Error pasteing", "Can't paste one or more selected entities." );
-            }
-        };
-        
-        AbstractAction actRename = new MyAction( "Rename", iconRename.getImage(), 'R' )
-        {
-            public void actionPerformed( ActionEvent ae )
-            {
-                if( ! tree.rename() )
-                    org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog(
-                            "Error renaming", "Can't rename selected entity." );
-            }
-        };
-        
-        AbstractAction actDelete = new MyAction( "Delete", StandardImage.TRASHCAN, 'D' )
-        {
-            public void actionPerformed( ActionEvent ae )
-            {
-                if( ! tree.deleteAllSelected() )
-                    org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog(
-                            "Error deleting", "Can't delete one or more selected files or directories." );
-            }
-        };
-        
-        AbstractAction actProperties = new MyAction( "Properties", StandardImage.PROPERTIES, 'P' )
-        {
-            public void actionPerformed( ActionEvent ae )
-            {
-                if( ! tree.rename() )
-                    org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog(
-                            "Error editing properties", "Can't edit properties for selected entity." );
-            }
-        };
-        
-        return (new Action[] { actHome, actReload, null, actNewDir, actNewFile, null, 
-                              actCut, actCopy, actPaste, null, actRename, actProperties, null, actDelete });
-    }
-    
-    //------------------------------------------------------------------------//
-    // INNER CLASS
-    //------------------------------------------------------------------------//
-    
-    private abstract class MyAction extends AbstractAction
-    {
-        private MyAction( String sText, StandardImage img, char character )
-        {
-            this( sText, 
-                  org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( img ),
-                  character );
-        }
-
-        private MyAction( String sText, Image image, char character )
-        {
-            this( sText, image, character, null );
-        }
-
-        private MyAction( String sText, Image image, char character, String sToolTip )
-        {
-            super( sText );
-            
-            KeyStroke stroke   = KeyStroke.getKeyStroke( character, Event.CTRL_MASK );
-            
-            if( sToolTip == null )
-                sToolTip = sText +" [Ctrl-"+ Character.toString( character ) +"]";
-            
-            putValue( SMALL_ICON       , new ImageIcon( image.getScaledInstance( 18, 18, Image.SCALE_SMOOTH ) ) );
-            putValue( LARGE_ICON_KEY   , new ImageIcon( image.getScaledInstance( 24, 24, Image.SCALE_SMOOTH ) ) );
-            putValue( ACCELERATOR_KEY  , stroke   );
-            putValue( TOOL_TIP_TEXT_KEY, sToolTip );
-            putValue( SHORT_DESCRIPTION, sToolTip );
-            putValue( LONG_DESCRIPTION , sToolTip );
-        }
-    }
-    
     //------------------------------------------------------------------------//
     
     /** This method is called from within the constructor to
@@ -278,6 +121,9 @@ public class YAFE extends javax.swing.JPanel implements DeskComponent
         lblBreadcrumb = new javax.swing.JLabel();
         toolbar = new javax.swing.JToolBar();
 
+        split.setContinuousLayout(true);
+        split.setOneTouchExpandable(true);
+
         pnlBreadcrumb.setBackground(new java.awt.Color(253, 253, 222));
 
         javax.swing.GroupLayout pnlBreadcrumbLayout = new javax.swing.GroupLayout(pnlBreadcrumb);
@@ -288,7 +134,7 @@ public class YAFE extends javax.swing.JPanel implements DeskComponent
         );
         pnlBreadcrumbLayout.setVerticalGroup(
             pnlBreadcrumbLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblBreadcrumb, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE)
+            .addComponent(lblBreadcrumb, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
         );
 
         toolbar.setRollover(true);
@@ -308,7 +154,7 @@ public class YAFE extends javax.swing.JPanel implements DeskComponent
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlBreadcrumb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(split, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE))
+                .addComponent(split, javax.swing.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

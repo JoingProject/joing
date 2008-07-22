@@ -5,6 +5,7 @@
 
 package org.joing.pde.joingswingtools.tree;
 
+import java.util.Enumeration;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -28,21 +29,24 @@ public class JoingSwingTree extends JTree
      */
     private DefaultMutableTreeNode getSibling( DefaultMutableTreeNode node )
     {
-        //get previous sibling
         DefaultMutableTreeNode sibling = node.getPreviousSibling();
 
         if( sibling == null )
             sibling = node.getNextSibling();
         
         return sibling;
-    } 
+    }
     
     /**
-     * Force to reload (by invalidating) the whole tree.
+     * Reloads the whole tree.
      */
     public void reloadAll()
     {
-        // FIXME: Colapsar los hijos de root y luego borrar los nietos de root
+        DefaultTreeModel       model = (DefaultTreeModel) getModel();
+        DefaultMutableTreeNode node  = (DefaultMutableTreeNode) model.getRoot();
+        
+        model.reload( node );
+        setSelected( node );
     }
     
     /**
@@ -58,7 +62,7 @@ public class JoingSwingTree extends JTree
     }
     
     /**
-     * Makes the node selected (highlighted) and visible.
+     * Makes passed node selected (highlighted) and visible.
      * 
      * @param Node to became selected. Can't be null.
      */
@@ -69,38 +73,35 @@ public class JoingSwingTree extends JTree
         if( ! isPathSelected( path ) )
             setSelectionPath( path );
         
-        if( ! isVisible( path ) )
-            scrollPathToVisible( path );
+        scrollPathToVisible( path );   // Don't use if( ! isVisible( path ) ) because this isVisible is for other things
     }
     
     /**
-     * Searches for a node that represents (corresponds) passed object.
+     * Searches for a node in the tree.
      *  
-     * @param nodeStart A node extracted from the tree (if null, root is taken)
-     * @param f File to be searched.
+     * @param nodeStart A tree node (can't be null).
+     * @param oSearch User-object (see DefaultMutableTreeNode) to be searched.
      * @return The node if object was found, otherwise, null.
      */
-    public DefaultMutableTreeNode search( DefaultMutableTreeNode nodeStart, Object oSearch )
+    public DefaultMutableTreeNode search( DefaultMutableTreeNode node, Object oSearch )
     {
-        // TODO: No va
-        DefaultMutableTreeNode nodeCheck;
+        Enumeration e = ((DefaultMutableTreeNode) getModel().getRoot()).depthFirstEnumeration();
         
-        if( nodeStart == null )
-            nodeStart = (DefaultMutableTreeNode) getModel().getRoot();
-        
-        for( int n = 0; n < nodeStart.getChildCount(); n++ )
+        while( e.hasMoreElements() )
         {
-            nodeCheck = (DefaultMutableTreeNode) nodeStart.getChildAt( n );
+            node = (DefaultMutableTreeNode) e.nextElement();
             
-            if( nodeCheck.getUserObject() != null && nodeCheck.getUserObject().equals( oSearch ) )
-                return nodeCheck;
-            else
-                if( nodeCheck.getChildCount() > 0 )
-                    search( nodeCheck, oSearch );
+            if( node.getUserObject() != null && node.getUserObject().equals( oSearch ) )
+                return node;
         }
         
         return null;
     }
+    
+    //------------------------------------------------------------------------//
+    // Protected scope: as these methods only affect to the visual parte of the
+    // tree, they should be used always in conjunction with other that will 
+    // affect the "physical" (UserObject) part of the tree.
     
     /**
      * Append passed node to selected node.
@@ -109,7 +110,7 @@ public class JoingSwingTree extends JTree
      * 
      * @param child Node to be appended.
      */
-    public void add( DefaultMutableTreeNode child )
+    protected void add( DefaultMutableTreeNode child )
     {
         DefaultMutableTreeNode parent = (DefaultMutableTreeNode) getLastSelectedPathComponent();
         
@@ -117,7 +118,7 @@ public class JoingSwingTree extends JTree
             add( child, parent, parent.getChildCount() );
     }
     
-    public void add( DefaultMutableTreeNode child, DefaultMutableTreeNode parent, int nIndex )
+    protected void add( DefaultMutableTreeNode child, DefaultMutableTreeNode parent, int nIndex )
     {        
         ((DefaultTreeModel) getModel()).insertNodeInto( child, parent, nIndex );
         setSelected( child );
@@ -128,7 +129,7 @@ public class JoingSwingTree extends JTree
      * <p>
      * If there is no node selected, tha action is not taken.
      */
-    public void delete()
+    protected void delete()
     {
         TreePath[] aPath = getSelectionPaths();
         
@@ -144,7 +145,7 @@ public class JoingSwingTree extends JTree
         }
     }
     
-    public void delete( DefaultMutableTreeNode node )
+    protected void delete( DefaultMutableTreeNode node )
     {
         DefaultMutableTreeNode parent = (DefaultMutableTreeNode) node.getParent();
         
