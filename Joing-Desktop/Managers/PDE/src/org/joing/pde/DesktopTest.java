@@ -7,7 +7,13 @@ package org.joing.pde;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -18,7 +24,7 @@ import javax.swing.event.InternalFrameEvent;
 
 /**
  *
- * @author fmorero
+ * @author Francisco Morero Peyrona
  */
 
 // See: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6506360
