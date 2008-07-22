@@ -63,7 +63,7 @@ public class TreeCellRendererSimple implements TreeCellRenderer
     {
         lblText.setFont( tree.getFont() );
         lblText.setOpaque( selected );
-
+        
         if( selected )
         {
             lblText.setForeground( UIManager.getColor( "Tree.selectionForeground" ) );
