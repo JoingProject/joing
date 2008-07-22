@@ -318,6 +318,9 @@ private void onSelectAppButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
             txtName.setText( app.getName() );
             txtDescription.setText( app.getDescription() );
             txtApplication.setText( Integer.toString( app.getId() ) );
+            
+            if( app.getIconPixel().length > 0 )
+               btnIcon.setIcon( new ImageIcon( app.getIconPixel() ) );
         }
 }//GEN-LAST:event_onSelectAppButton
 

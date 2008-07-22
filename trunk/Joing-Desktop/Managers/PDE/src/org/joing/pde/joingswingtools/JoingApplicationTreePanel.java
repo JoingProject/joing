@@ -164,8 +164,6 @@ public class JoingApplicationTreePanel extends JPanel implements DeskComponent
             }
             
             lblText.setText( sName );
-            lblText.setToolTipText( sDesc );
-            lblIcon.setToolTipText( sDesc );
             
             if( aByte != null )
             {
@@ -175,6 +173,10 @@ public class JoingApplicationTreePanel extends JPanel implements DeskComponent
                     icon.setImage( icon.getImage().getScaledInstance( 18, 18, Image.SCALE_SMOOTH ) );
                 
                 lblIcon.setIcon( icon );
+            }
+            else
+            {
+                lblIcon.setIcon( null );    // Must do it explicitly
             }
             
             return super.getTreeCellRendererComponent( tree, value, selected, expanded, leaf, row, hasFocus );
