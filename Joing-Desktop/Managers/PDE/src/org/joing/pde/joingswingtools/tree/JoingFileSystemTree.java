@@ -13,14 +13,13 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 import javax.swing.SwingWorker;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
-import javax.swing.event.TreeModelEvent;
-import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -57,7 +56,7 @@ public class JoingFileSystemTree extends JoingSwingTree
         bOnlyDirs = false;
         
         setEditable( true );
-        setRootVisible( false );
+        setRootVisible( true );
         setShowsRootHandles( true );
         setModel( new DefaultTreeModel( new TreeNodeFile() ) );  // root is the only node that does not have a File as user-object
         addTreeExpansionListener( new MyTreeExpansionListener() );
@@ -69,50 +68,48 @@ public class JoingFileSystemTree extends JoingSwingTree
             }
         } );
         
-        getModel().addTreeModelListener( new TreeModelListener()
-        {
-            public void treeNodesChanged( TreeModelEvent tme )
-            {
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode) tme.getTreePath().getLastPathComponent();
-
-                
-                org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog(
-                                "Error renaming", "Can't rename selected entity." );
-                
-            }
-
-            public void treeNodesInserted( TreeModelEvent tme )
-            {
-            }
-            
-            public void treeNodesRemoved( TreeModelEvent tme )
-            {
-            }
-            
-            public void treeStructureChanged( TreeModelEvent tme )
-            {
-            }
-        } );        
+//        getModel().addTreeModelListener( new TreeModelListener()
+//        {
+//            public void treeNodesChanged( TreeModelEvent tme )
+//            {
+//                DefaultMutableTreeNode node = (DefaultMutableTreeNode) tme.getTreePath().getLastPathComponent();
+//
+//                
+//                org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog(
+//                                "Error renaming", "Can't rename selected entity." );
+//                
+//            }
+//            
+//            public void treeNodesInserted( TreeModelEvent tme )     { }
+//            public void treeNodesRemoved( TreeModelEvent tme )      { }
+//            public void treeStructureChanged( TreeModelEvent tme )  { }
+//        } );
         
         // Add one node per each File Systems (local and remote) to root node
-        SwingWorker sw = new SwingWorker<Void,Void>()
+        SwingWorker sw = new SwingWorker<Void,TreeNodeFile>()
         {
             protected Void doInBackground() throws Exception
             {
-                DefaultTreeModel model   = (DefaultTreeModel) JoingFileSystemTree.this.getModel();
-                TreeNodeFile     root    = (TreeNodeFile) model.getRoot();
-                File[]           afRoots = JoingFileSystemView.getFileSystemView().getRoots();
+                File[] afRoots = JoingFileSystemView.getFileSystemView().getRoots();
                 
                 for( int n = 0; n < afRoots.length; n++ )
-                    model.insertNodeInto( new TreeNodeFile( afRoots[n] ), root, root.getChildCount() );
+                    publish( new TreeNodeFile( afRoots[n] ) );
                         
                 return null;
             }
             
+            protected void process( List<TreeNodeFile> lstNodes )
+            {
+                DefaultTreeModel model = (DefaultTreeModel) JoingFileSystemTree.this.getModel();
+                TreeNodeFile     root  = (TreeNodeFile) model.getRoot();
+                
+                for( TreeNodeFile node : lstNodes )
+                    model.insertNodeInto( node, root, root.getChildCount() );
+            }
+            
             protected void done() 
             {
-                if( ! isCancelled() )
-                    JoingFileSystemTree.this.updateActionsEnableStatus();
+                JoingFileSystemTree.this.updateActionsEnableStatus();
             }
         };
         sw.execute();
@@ -351,8 +348,8 @@ public class JoingFileSystemTree extends JoingSwingTree
                 public void actionPerformed( ActionEvent ae )
                 {
                     if( ! JoingFileSystemTree.this.paste() )
-                        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog(
-                                "Error pasteing", "Can't paste one or more selected entities." );
+                        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
+                                showMessageDialog( "Error pasteing", "Can't paste one or more selected entities." );
                 }
             };
         }
@@ -399,8 +396,8 @@ public class JoingFileSystemTree extends JoingSwingTree
                 public void actionPerformed( ActionEvent ae )
                 {
                     if( ! JoingFileSystemTree.this.deleteAllSelected() )
-                        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog(
-                                "Error deleting", "Can't delete one or more selected files or directories." );
+                        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
+                                showMessageDialog( "Error deleting", "Can't delete one or more selected files or directories." );
                 }
             };
         }
@@ -424,8 +421,8 @@ public class JoingFileSystemTree extends JoingSwingTree
                 public void actionPerformed( ActionEvent ae )
                 {
                     if( ! JoingFileSystemTree.this.properties() )
-                        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog(
-                                "Error editing properties", "Can't edit properties for selected entity." );
+                        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
+                                showMessageDialog( "Error editing properties", "Can't edit properties for selected entity." );
                 }
             };
         }
@@ -708,7 +705,7 @@ public class JoingFileSystemTree extends JoingSwingTree
                 }
             }
         }
-
+        
         public void treeCollapsed( TreeExpansionEvent tee )
         {
             TreeNodeFile node = (TreeNodeFile) tee.getPath().getLastPathComponent();

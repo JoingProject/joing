@@ -21,7 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.MenuSelectionManager;
 import org.joing.pde.desktop.taskbar.PDETaskBarComponent;
 import org.joing.pde.joingswingtools.JoingSwingUtilities;
-import org.joing.pde.swing.ImageHighlightFilter;
+import org.joing.pde.joingswingtools.ImageHighlightFilter;
 
 /**
  *

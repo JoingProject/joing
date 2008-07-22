@@ -32,7 +32,7 @@ import org.joing.pde.media.PDEColorSchema;
 import org.joing.pde.PDEManager;
 import org.joing.pde.apps.EditUser;
 import org.joing.pde.joingswingtools.JoingSwingUtilities;
-import org.joing.pde.swing.JScrollablePopupMenu;
+import org.joing.pde.joingswingtools.JScrollablePopupMenu;
 
 /**
  *

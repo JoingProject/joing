@@ -103,7 +103,7 @@ public class PDEColorSchema implements ColorSchema
         // NEXT esto en lugar de hacerlo así habría que leerlo de la configuración
         //      de usuario y cargar el conjunto de colores preferidos, 
         //      p.ej.: "dessert" o "blue",...
-        desktopBackground = new Color( 255, 255, 220 );
+        desktopBackground = new Color( 244, 250, 252 );
         taskbarBackground = new Color( 230, 230, 221 );
         
         deskLauncherTextBackground           = new Color( 128, 145, 153 );

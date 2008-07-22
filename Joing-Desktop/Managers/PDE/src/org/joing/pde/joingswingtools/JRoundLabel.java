@@ -8,7 +8,7 @@
  * License: {license}
  */
 
-package org.joing.pde.swing;
+package org.joing.pde.joingswingtools;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;

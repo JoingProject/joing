@@ -1,10 +1,11 @@
 /*
- * ApplicationTreePanel.java
+ * JoingApplicationTreePanel.java
  *
  * Created on 3 de julio de 2008, 20:27
  */
-package org.joing.pde.swing;
+package org.joing.pde.joingswingtools;
 
+import org.joing.pde.joingswingtools.tree.TreeCellRendererSimple;
 import java.awt.Component;
 import java.awt.Image;
 import java.util.List;
@@ -26,15 +27,15 @@ import org.joing.common.dto.app.AppGroupKey;
  *
  * @author  fmorero
  */
-public class ApplicationTreePanel extends JPanel implements DeskComponent
+public class JoingApplicationTreePanel extends JPanel implements DeskComponent
 {
     private JTree     tree;
     private JTextArea text;
     
     //------------------------------------------------------------------------//
     
-    /** Creates new form ApplicationTreePanel */
-    public ApplicationTreePanel()
+    /** Creates new form JoingApplicationTreePanel */
+    public JoingApplicationTreePanel()
     {
         initComponents();
         
