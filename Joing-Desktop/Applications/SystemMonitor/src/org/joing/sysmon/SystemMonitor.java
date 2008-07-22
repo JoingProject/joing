@@ -65,6 +65,12 @@ public class SystemMonitor extends JPanel implements DeskComponent
         
         showInFrame();
     }
+    //------------------------------------------------------------------------//
+    
+    public static void main( String[] asArg )
+    {
+        new SystemMonitor();
+    }
     
     //------------------------------------------------------------------------//
     
