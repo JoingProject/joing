@@ -1,5 +1,6 @@
 package org.joing.server.jsf.account;
 
+import ejb.Constant;
 import ejb.session.SessionManagerLocal;
 import ejb.user.UserManagerLocal;
 import java.util.logging.Level;
@@ -7,7 +8,6 @@ import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import org.joing.common.Constant;
 import org.joing.common.dto.user.User;
 import org.joing.common.exception.JoingServerException;
 import org.joing.server.jsf.ManagedBean;
