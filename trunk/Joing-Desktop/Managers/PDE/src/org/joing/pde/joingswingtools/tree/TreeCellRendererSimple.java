@@ -7,6 +7,7 @@ package org.joing.pde.joingswingtools.tree;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTree;
@@ -42,9 +43,9 @@ import javax.swing.tree.TreeCellRenderer;
  */
 public class TreeCellRendererSimple implements TreeCellRenderer
 {
-    private   JPanel panel;
-    protected JLabel lblIcon;
-    protected JLabel lblText;
+    private JPanel panel;
+    private JLabel lblIcon;
+    private JLabel lblText;
     
     //------------------------------------------------------------------------//
     
@@ -56,6 +57,26 @@ public class TreeCellRendererSimple implements TreeCellRenderer
         panel.setOpaque( false );
         panel.add( lblIcon, BorderLayout.WEST   );
         panel.add( lblText, BorderLayout.CENTER );
+    }
+
+    public ImageIcon getIcon()
+    {
+        return (ImageIcon) lblIcon.getIcon();
+    }
+
+    public void setIcon( ImageIcon icon )
+    {
+        this.lblIcon.setIcon( icon );
+    }
+
+    public String getText()
+    {
+        return lblText.getText();
+    }
+
+    public void setText( String sText )
+    {
+        this.lblText.setText( sText );
     }
     
     public Component getTreeCellRendererComponent( JTree tree, Object value, boolean selected, 

@@ -1,5 +1,5 @@
 /*
- * JoingApplicationTreePanel.java
+ * JoingApplicationChooser.java
  *
  * Created on 3 de julio de 2008, 20:27
  */
@@ -24,18 +24,21 @@ import org.joing.common.dto.app.AppGroup;
 import org.joing.common.dto.app.AppGroupKey;
 
 /**
- *
- * @author  fmorero
+ * A panel with a tree showing applications that user has access to.
+ * 
+ * @author  Francisco Morero Peyrona
  */
-public class JoingApplicationTreePanel extends JPanel implements DeskComponent
+public class JoingApplicationChooser extends JPanel implements DeskComponent
 {
     private JTree     tree;
     private JTextArea text;
     
     //------------------------------------------------------------------------//
     
-    /** Creates new form JoingApplicationTreePanel */
-    public JoingApplicationTreePanel()
+    /** 
+     * Creates new JoingApplicationChooser panel.
+     */
+    public JoingApplicationChooser()
     {
         initComponents();
         
@@ -66,6 +69,13 @@ public class JoingApplicationTreePanel extends JPanel implements DeskComponent
            } );
     }
     
+    /**
+     * Return the <code>org.joing.common.dto.app.AppDescriptor</code> that
+     * corresponds to selected node in the tree or <code>null</code> if no node 
+     * is selected.
+     * 
+     * @return An instance of <code>AppDescriptor</code> or <code>null</code>.
+     */
     public AppDescriptor getSelectedApplication()
     {
         DefaultMutableTreeNode nodeSelected = (DefaultMutableTreeNode) tree.getSelectionPath().getLastPathComponent();
@@ -77,6 +87,23 @@ public class JoingApplicationTreePanel extends JPanel implements DeskComponent
         return appDesc;
     }
     
+    /**
+     * Open a dialog showing in a tree all installed applications for current
+     * user.
+     * 
+     * @return An instance of <code>org.joing.common.dto.app.AppDescriptor</code>
+     *         if user selected an application or <code>null</code> if cancelled.
+     */
+    public static AppDescriptor showDialog()
+    {
+        AppDescriptor           app = null;
+        JoingApplicationChooser atp = new JoingApplicationChooser();
+        
+        if( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showAcceptCancelDialog( "Select Application", atp ) )
+            app = atp.getSelectedApplication();
+        
+        return app;
+    }
     //------------------------------------------------------------------------//
     
     private void createText()
@@ -163,7 +190,7 @@ public class JoingApplicationTreePanel extends JPanel implements DeskComponent
                 sName = objUser.toString();
             }
             
-            lblText.setText( sName );
+            setText( sName );
             
             if( aByte != null )
             {
@@ -172,11 +199,11 @@ public class JoingApplicationTreePanel extends JPanel implements DeskComponent
                 if( icon.getIconWidth() != 18 || icon.getIconHeight() != 18 )
                     icon.setImage( icon.getImage().getScaledInstance( 18, 18, Image.SCALE_SMOOTH ) );
                 
-                lblIcon.setIcon( icon );
+                setIcon( icon );
             }
             else
             {
-                lblIcon.setIcon( null );    // Must do it explicitly
+                setIcon( null );    // Must do it explicitly
             }
             
             return super.getTreeCellRendererComponent( tree, value, selected, expanded, leaf, row, hasFocus );
