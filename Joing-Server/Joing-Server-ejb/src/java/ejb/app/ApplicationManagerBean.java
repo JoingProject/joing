@@ -221,15 +221,15 @@ public class ApplicationManagerBean
                         currentGroupKey = theKeyInRS;
 
                         AppGroup group = new AppGroup( currentGroupKey );
-                        group.setName( rs.getString( "GROUP_NAME" ) );
-                        group.setDescription( rs.getString( "GROUP_DESC" ) );
+                                 group.setName( rs.getString( "GROUP_NAME" ) );
+                                 group.setDescription( rs.getString( "GROUP_DESC" ) );
                         // TODO: añadirle los iconos Pixel y Vector al grupo
 
                         lstGroups.add( group );
                     }
 
                     Query query = em.createNamedQuery( "ApplicationEntity.findByIdApplication" );
-                    query.setParameter( "idApplication", rs.getInt( "APP_ID" ) );
+                          query.setParameter( "idApplication", rs.getInt( "APP_ID" ) );
 
                     AppDescriptor app = AppDTOs.createAppDescriptor( (ApplicationEntity) query.getSingleResult() );
 

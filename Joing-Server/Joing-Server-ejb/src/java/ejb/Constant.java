@@ -157,14 +157,20 @@ public class Constant
         }
         catch( Exception exc )
         {
+            String sHome = System.getProperty( "user.home" );
+            char   cDir  = File.separatorChar;
+            
+            if( sHome.charAt( sHome.length() - 1 ) != cDir )
+                sHome += cDir;
+            
             // Initialise properties instance with default values
             props.setProperty( sSYSTEM_NAME    , "joing.org" );
-            props.setProperty( sBASE_DIR       , "/home/fmorero/proyectos/Joing/base_dir" );
+            props.setProperty( sBASE_DIR       , cDir +"joing" );
             props.setProperty( sEMAIL_SRV      , "localhost" );
             props.setProperty( sSESSION_TIMEOUT, Long.toString(nTimeOut) );
         }
         
-        sVersion = "0.0"; // It's better to hardcode this property than to store it in a file
+        sVersion = "0.1"; // It's better to hardcode this property than to store it in a file
         sSysName = props.getProperty( sSYSTEM_NAME );
         fBaseDir = new File( props.getProperty( sBASE_DIR ) );
         fUserDir = new File( fBaseDir, "users" );
