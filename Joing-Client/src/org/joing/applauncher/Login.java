@@ -6,67 +6,76 @@
 package org.joing.applauncher;
 
 import java.awt.Cursor;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
+import java.util.Properties;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 import org.joing.common.clientAPI.runtime.AppBridge;
 import org.joing.common.dto.session.LoginResult;
 import org.joing.common.exception.JoingServerException;
 import org.joing.common.clientAPI.runtime.Bridge2Server;
 import org.joing.common.dto.app.AppDescriptor;
+import org.joing.jvmm.RuntimeEnum;
 import org.joing.jvmm.RuntimeFactory;
 
 /**
  *
  * @author  Francisco Morero Peyrona
  */
-public class Login extends JDialog
+class Login extends JDialog
 {
     private int     nTries = 0; // Number of failed tries to login
     private boolean bValid = false;
 
     //------------------------------------------------------------------------//
     /** Creates new form Login */
-    public Login()
+    Login()
     {
         super( (JFrame) null, true );
         
         initComponents();
-        fillDesktopComboBox();
 
         getRootPane().setDefaultButton( btnOk );
         setLocationRelativeTo( null );
         setDefaultCloseOperation( JDialog.DISPOSE_ON_CLOSE );
         setIconImage( (new ImageIcon( getClass().getResource( "resources/joing_icon.png" ) )).getImage() );
         
+        // These two methods are executed in separated threads to increase speed
+        fillServerURL();
+        fillDesktopComboBox();
+        
         // FIXME: Quitar esto
         txtAccount.setText( "peyrona@joing.org" );
         txtPassword.setText( "admin" );
+        // TODO: Hacerlo editable y usar su valor
+        txtServerURL.setEditable( false );
         //--------------------------------
     }
 
-    public boolean wasSuccessful()
+    boolean isLoginSuccessful()
     {
         return bValid;
     }
 
-    public boolean isFullScreenRequested()
+    boolean isFullScreenRequested()
     {
         return chkFullScreen.isSelected();
     }
 
-// Not currently used
-//    public AppDescriptor getApplicationDescriptor()
-//    {
-//        String sDesktop = (String) cmbDesktop.getSelectedItem();
-//        AppDescriptor appDesc = (AppDescriptor) cmbDesktop.getClientProperty( sDesktop );
-//
-//        return appDesc;
-//    }
+    AppDescriptor getApplicationDescriptor()
+    {
+        String sDesktop = (String) cmbDesktop.getSelectedItem();
+        AppDescriptor appDesc = (AppDescriptor) cmbDesktop.getClientProperty( sDesktop );
+
+        return appDesc;
+    }
     
-    public Integer getDesktopApplicationId()
+    Integer getDesktopApplicationId()
     {
         String sDesktop = (String) cmbDesktop.getSelectedItem();
 
@@ -75,17 +84,55 @@ public class Login extends JDialog
 
     //------------------------------------------------------------------------//
     
+    private void fillServerURL()
+    {
+        SwingWorker sw = new SwingWorker<Void,Void>()
+        {
+            private URL urlHost = null;
+            
+            protected Void doInBackground() throws Exception
+            {
+                
+                InputStream is = getClass().getResourceAsStream( "/client.properties" );
+                Properties  pp = new Properties();
+                            pp.load( is );
+                            is.close();
+                
+                urlHost = new URL( pp.getProperty( RuntimeEnum.JOING_SERVER_URL.getKey() ) );
+                return null;
+            }
+            
+            protected void done() 
+            {
+                Login.this.txtServerURL.setText( urlHost.getHost() );
+            }
+        };
+        sw.execute();
+    }
+    
     private void fillDesktopComboBox()
     {
-        AppBridge bridge = RuntimeFactory.getPlatform().getBridge().getAppBridge();
-
-        List<AppDescriptor> desktops = bridge.getAvailableDesktops();
-
-        for( AppDescriptor app : desktops )
+        SwingWorker sw = new SwingWorker<Void,Void>()
         {
-            cmbDesktop.addItem( app.getName() );
-            cmbDesktop.putClientProperty( app.getName(), app.getId() );
-        }
+            private List<AppDescriptor> desktops;
+            
+            protected Void doInBackground() throws Exception
+            {
+                AppBridge bridge = RuntimeFactory.getPlatform().getBridge().getAppBridge();
+                desktops = bridge.getAvailableDesktops();        
+                return null;
+            }
+            
+            protected void done()
+            {
+                for( AppDescriptor app : desktops )
+                {
+                    Login.this.cmbDesktop.addItem( app.getName() );
+                    Login.this.cmbDesktop.putClientProperty( app.getName(), app.getId() );
+                }
+            }
+        };
+        sw.execute();        
     }
 
     /** This method is called from within the constructor to
@@ -106,6 +153,8 @@ public class Login extends JDialog
         chkFullScreen = new javax.swing.JCheckBox();
         cmbDesktop = new javax.swing.JComboBox();
         javax.swing.JLabel lblDesktop = new javax.swing.JLabel();
+        txtServerURL = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Join'g :: Login");
@@ -146,33 +195,42 @@ public class Login extends JDialog
         lblDesktop.setText("Desktop");
         lblDesktop.setFocusable(false);
 
+        jLabel1.setText("Server URL");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblPassword)
+                    .addComponent(lblAccount)
+                    .addComponent(jLabel1)
+                    .addComponent(lblDesktop))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtAccount, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                    .addComponent(txtPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                    .addComponent(txtServerURL, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmbDesktop, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(95, 95, 95)
+                .addComponent(chkFullScreen)
+                .addContainerGap(25, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(116, Short.MAX_VALUE)
                 .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCancel)
                 .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblPassword)
-                    .addComponent(lblAccount)
-                    .addComponent(lblDesktop))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(chkFullScreen)
-                    .addComponent(txtPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
-                    .addComponent(txtAccount, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
-                    .addComponent(cmbDesktop, javax.swing.GroupLayout.Alignment.TRAILING, 0, 182, Short.MAX_VALUE))
-                .addContainerGap())
+            .addComponent(lblLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnCancel, btnOk});
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cmbDesktop, txtAccount, txtPassword, txtServerURL});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -186,13 +244,17 @@ public class Login extends JDialog
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPassword)
                     .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(11, 11, 11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cmbDesktop, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblDesktop))
-                .addGap(17, 17, 17)
+                    .addComponent(jLabel1)
+                    .addComponent(txtServerURL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblDesktop)
+                    .addComponent(cmbDesktop, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(chkFullScreen)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCancel)
                     .addComponent(btnOk))
@@ -276,8 +338,10 @@ public class Login extends JDialog
     private javax.swing.JButton btnOk;
     private javax.swing.JCheckBox chkFullScreen;
     private javax.swing.JComboBox cmbDesktop;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lblLogo;
     private javax.swing.JTextField txtAccount;
     private javax.swing.JPasswordField txtPassword;
+    private javax.swing.JTextField txtServerURL;
     // End of variables declaration//GEN-END:variables
 }

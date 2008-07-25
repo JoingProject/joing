@@ -55,7 +55,6 @@ class PlatformImpl implements Platform {
     private final AppManager appManager = new AppManagerImpl();
     private final AppContext context = new AppContext();
     private final Thread mainThread = Thread.currentThread();
-    private final PlatformRuntime runtime = PlatformRuntime.getRuntime();
     private final Bridge2Server bridge = new Bridge2ServerImpl();
     private DesktopManager desktopManager = null;
     private Properties clientProp = null;
