@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingWorker;
 import javax.swing.event.TreeExpansionEvent;
@@ -34,10 +35,10 @@ import org.joing.runtime.vfs.VFSFile;
  * @author Francisco Morero Peyrona
  */
 public class JoingFileSystemTree extends JoingSwingTree
-{    
+{
     private boolean bOnlyDirs;
     
-    // Actions (are created lazily)
+    // Actions (created lazily to save memory)
     private AbstractAction actHome       = null;
     private AbstractAction actReload     = null;
     private AbstractAction actNewFolder  = null;
@@ -68,6 +69,7 @@ public class JoingFileSystemTree extends JoingSwingTree
             }
         } );
         
+// TODO: QUIZAS SE PUEDE USAR ESTO PARA EL RENAME
 //        getModel().addTreeModelListener( new TreeModelListener()
 //        {
 //            public void treeNodesChanged( TreeModelEvent tme )
@@ -135,6 +137,15 @@ public class JoingFileSystemTree extends JoingSwingTree
     public boolean isOnlyDirs()
     {
         return bOnlyDirs;
+    }
+    
+    public TreeNodeFile setSelected( File node )
+    {
+        TreeNodeFile nodeSelected = getSelectedNode();
+        
+        // TODO: hacerlo
+        JOptionPane.showMessageDialog( this, "Option not yet implemented" );
+        return nodeSelected;
     }
     
     //------------------------------------------------------------------------//
@@ -284,7 +295,7 @@ public class JoingFileSystemTree extends JoingSwingTree
                 }
             };
         }
-
+        
         return actNewFile;
     }
     
@@ -306,7 +317,7 @@ public class JoingFileSystemTree extends JoingSwingTree
                 }
             };
         }
-
+        
         return actCut;
     }
     
@@ -328,7 +339,7 @@ public class JoingFileSystemTree extends JoingSwingTree
                 }
             };
         }
-
+        
         return actCopy;
     }
     
@@ -377,7 +388,7 @@ public class JoingFileSystemTree extends JoingSwingTree
                 }
             };
         }
-
+        
         return actRename;
     }
         
@@ -401,7 +412,7 @@ public class JoingFileSystemTree extends JoingSwingTree
                 }
             };
         }
-
+        
         return actDelete;
     }
         
@@ -574,11 +585,14 @@ public class JoingFileSystemTree extends JoingSwingTree
             }
         } );
         
-        // Sort directories before files
-        if( afChildren != null )    // Needed or NPE when afChildren == null
+        if( afChildren == null )    // Yes, afChildren can be null
+        {
+            afChildren = new File[0];
+        }
+        else                        // Sort directories before files
         {
             Arrays.sort( afChildren, new Comparator<File>()
-            {   
+            {
                 public int compare( File f1, File f2 )
                 {
                     if( f1.isDirectory() && ! f2.isDirectory() )       return -1;

@@ -12,6 +12,7 @@ import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.dto.app.AppDescriptor;
+import org.joing.pde.joingswingtools.JoingApplicationChooser;
 import org.joing.pde.joingswingtools.JoingSwingUtilities;
 
 /**
@@ -311,7 +312,7 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
     }//GEN-LAST:event_btnIconActionPerformed
 
 private void onSelectAppButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onSelectAppButton
-        AppDescriptor app = JoingSwingUtilities.selectApplication();
+        AppDescriptor app = JoingApplicationChooser.showDialog();
         
         if( app != null )
         {

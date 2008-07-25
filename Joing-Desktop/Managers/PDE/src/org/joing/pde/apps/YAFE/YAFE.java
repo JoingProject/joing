@@ -18,6 +18,8 @@
  */
 package org.joing.pde.apps.YAFE;
 
+import java.awt.Insets;
+import java.io.File;
 import javax.swing.AbstractAction;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.ImageIcon;
@@ -28,6 +30,7 @@ import javax.swing.event.TreeSelectionListener;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.desktopAPI.pane.DeskFrame;
+import org.joing.pde.joingswingtools.JoingSwingUtilities;
 import org.joing.pde.joingswingtools.tree.JoingFileSystemTree;
 import org.joing.pde.joingswingtools.tree.TreeNodeFile;
 
@@ -51,7 +54,9 @@ public class YAFE extends javax.swing.JPanel implements DeskComponent
             public void valueChanged( TreeSelectionEvent tse )
             {
                 TreeNodeFile node = (TreeNodeFile) tse.getPath().getLastPathComponent();
-                YAFE.this.lblBreadcrumb.setText( node.getFile().toString() );
+                
+                if( node != null )
+                    YAFE.this.txtBreadcrumb.setText( node.getFile().toString() );
             }
         } );
         
@@ -59,6 +64,9 @@ public class YAFE extends javax.swing.JPanel implements DeskComponent
         
         initComponents();
         initToolBarAndPopupMenu();
+        
+        btnGoto.setIcon( JoingSwingUtilities.getIcon( this, "goto.png", 18,18 ) );
+        btnGoto.setMargin( new Insets( 2,2,2,2 ) );
         
         split.setLeftComponent( new JScrollPane( tree ) );
         split.setRightComponent( new JScrollPane( table ) );
@@ -117,34 +125,40 @@ public class YAFE extends javax.swing.JPanel implements DeskComponent
     private void initComponents() {
 
         split = new javax.swing.JSplitPane();
-        pnlBreadcrumb = new javax.swing.JPanel();
-        lblBreadcrumb = new javax.swing.JLabel();
         toolbar = new javax.swing.JToolBar();
+        txtBreadcrumb = new javax.swing.JTextField();
+        btnGoto = new javax.swing.JButton();
 
         split.setContinuousLayout(true);
         split.setOneTouchExpandable(true);
 
-        pnlBreadcrumb.setBackground(new java.awt.Color(253, 253, 222));
-
-        javax.swing.GroupLayout pnlBreadcrumbLayout = new javax.swing.GroupLayout(pnlBreadcrumb);
-        pnlBreadcrumb.setLayout(pnlBreadcrumbLayout);
-        pnlBreadcrumbLayout.setHorizontalGroup(
-            pnlBreadcrumbLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblBreadcrumb, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE)
-        );
-        pnlBreadcrumbLayout.setVerticalGroup(
-            pnlBreadcrumbLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblBreadcrumb, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
-        );
-
         toolbar.setRollover(true);
+
+        txtBreadcrumb.setFont(txtBreadcrumb.getFont().deriveFont(txtBreadcrumb.getFont().getSize()+1f));
+        txtBreadcrumb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtBreadcrumActionPerformed(evt);
+            }
+        });
+
+        btnGoto.setMaximumSize(new java.awt.Dimension(28, 28));
+        btnGoto.setMinimumSize(new java.awt.Dimension(22, 22));
+        btnGoto.setPreferredSize(new java.awt.Dimension(24, 24));
+        btnGoto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGotoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(toolbar, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE)
-            .addComponent(pnlBreadcrumb, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(txtBreadcrumb, javax.swing.GroupLayout.DEFAULT_SIZE, 568, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnGoto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addComponent(split, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -152,16 +166,29 @@ public class YAFE extends javax.swing.JPanel implements DeskComponent
             .addGroup(layout.createSequentialGroup()
                 .addComponent(toolbar, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlBreadcrumb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnGoto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtBreadcrumb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(split, javax.swing.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE))
+                .addComponent(split, javax.swing.GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+private void btnGotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGotoActionPerformed
+    String sPath = txtBreadcrumb.getText();
+    
+    if( sPath.length() > 0 )
+        tree.setSelected( new File( sPath ) );
+}//GEN-LAST:event_btnGotoActionPerformed
+
+private void txtBreadcrumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBreadcrumActionPerformed
+    btnGotoActionPerformed( null );
+}//GEN-LAST:event_txtBreadcrumActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel lblBreadcrumb;
-    private javax.swing.JPanel pnlBreadcrumb;
+    private javax.swing.JButton btnGoto;
     private javax.swing.JSplitPane split;
     private javax.swing.JToolBar toolbar;
+    private javax.swing.JTextField txtBreadcrumb;
     // End of variables declaration//GEN-END:variables
 }

@@ -22,8 +22,6 @@ import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.desktopAPI.workarea.WorkArea;
-import org.joing.common.dto.app.AppDescriptor;
-import org.joing.pde.joingswingtools.JoingApplicationTreePanel;
 
 /**
  * Extra functions used internally by PDE.
@@ -129,24 +127,6 @@ public class JoingSwingUtilities
         Image image = getIcon( null, "cursors/"+ sImageName ).getImage();
         
         return Toolkit.getDefaultToolkit().createCustomCursor( image, pHotSpot, sName );        
-    }
-    
-    /**
-     * Open a dialog showing in a tree all installed applications for current
-     * user.
-     * 
-     * @return An instance of <code>org.joing.common.dto.app.Application</code>
-     *         if user selected one or <code>null</code> if cancelled.
-     */
-    public static AppDescriptor selectApplication()
-    {
-        AppDescriptor        app = null;
-        JoingApplicationTreePanel atp = new JoingApplicationTreePanel();
-        
-        if( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showAcceptCancelDialog( "Select Application", atp ) )
-            app = atp.getSelectedApplication();
-        
-        return app;
     }
     
     /**
