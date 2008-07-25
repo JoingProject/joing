@@ -26,7 +26,6 @@ import java.io.IOException;
 import javax.swing.Icon;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileSystemView;
-import org.joing.common.Constant;
 
 /**
  * A FileSystemView that works with Join'g VFS.
@@ -263,7 +262,7 @@ public class VFSView extends FileSystemView
             sName = fVFS.getName();
 
             if( isRoot( fVFS ) )
-                sName += " ("+ Constant.getSystemName() +")";
+                sName += " ("+ "n/a" +")";   // FIXME Averiguar de dónde sacar el nombre del sistema
             else if( fVFS.isLink() )
                 sName += " ^";
         }

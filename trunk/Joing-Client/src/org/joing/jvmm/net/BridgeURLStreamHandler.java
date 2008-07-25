@@ -5,14 +5,16 @@
 package org.joing.jvmm.net;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
+import java.util.Properties;
 import org.joing.common.clientAPI.runtime.Bridge2Server;
+import org.joing.jvmm.RuntimeEnum;
 import org.joing.jvmm.RuntimeFactory;
 
 /**
@@ -43,11 +45,22 @@ public class BridgeURLStreamHandler extends URLStreamHandler {
     }
 
     @Override
-    protected synchronized InetAddress getHostAddress(URL u) {
-        // always returns localhost
-        try {
-            return InetAddress.getByName("127.0.0.1");
-        } catch (Exception e) {
+    protected synchronized InetAddress getHostAddress(URL u) 
+    {
+        try
+        {
+            InputStream is = getClass().getResourceAsStream( "/client.properties" );
+            Properties  pp = new Properties();
+                        pp.load( is );
+                        is.close();
+                        
+            String sHost = pp.getProperty( RuntimeEnum.JOING_SERVER_URL.getKey() );
+            URL    url   = new URL( sHost );
+            
+            return InetAddress.getByName( url.getHost() );
+        }
+        catch( Exception e )
+        {
             return null;
         }
     }

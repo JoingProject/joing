@@ -212,7 +212,7 @@ public class Bootstrap {
             Login login = new Login();
             login.setVisible(true);
 
-            if (login.wasSuccessful()) {
+            if (login.isLoginSuccessful()) {
                 DesktopManager deskmgr =
                         getDesktopManagerInstance(login.getDesktopApplicationId());
 
