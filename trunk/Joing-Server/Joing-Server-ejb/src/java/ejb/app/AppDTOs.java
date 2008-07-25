@@ -78,8 +78,8 @@ class AppDTOs
             
             try
             {
-                java.io.File  fJAR = createFileForJAR( appEntity.getExtraPath(), appEntity.getExecutable() );
-                              jar  = new JarFile( fJAR );
+                java.io.File       fJAR = createFileForJAR( appEntity.getExtraPath(), appEntity.getExecutable() );
+                                   jar  = new JarFile( fJAR );
                 JoingManifestEntry jm   = new JoingManifestEntry( jar.getManifest() );
                 
                 String sAppName = jm.getAppName();
