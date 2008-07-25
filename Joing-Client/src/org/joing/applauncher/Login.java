@@ -24,7 +24,7 @@ import org.joing.jvmm.RuntimeFactory;
  */
 public class Login extends JDialog
 {
-    private int nTries = 0; // Number of failed tries to login
+    private int     nTries = 0; // Number of failed tries to login
     private boolean bValid = false;
 
     //------------------------------------------------------------------------//
@@ -32,7 +32,7 @@ public class Login extends JDialog
     public Login()
     {
         super( (JFrame) null, true );
-
+        
         initComponents();
         fillDesktopComboBox();
 
@@ -41,8 +41,10 @@ public class Login extends JDialog
         setDefaultCloseOperation( JDialog.DISPOSE_ON_CLOSE );
         setIconImage( (new ImageIcon( getClass().getResource( "resources/joing_icon.png" ) )).getImage() );
         
+        // FIXME: Quitar esto
         txtAccount.setText( "peyrona@joing.org" );
         txtPassword.setText( "admin" );
+        //--------------------------------
     }
 
     public boolean wasSuccessful()
@@ -55,7 +57,7 @@ public class Login extends JDialog
         return chkFullScreen.isSelected();
     }
 
-// Not used currently
+// Not currently used
 //    public AppDescriptor getApplicationDescriptor()
 //    {
 //        String sDesktop = (String) cmbDesktop.getSelectedItem();
