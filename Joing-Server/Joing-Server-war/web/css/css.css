@@ -217,6 +217,11 @@ div.input_text span input {
   height: 29px;
   margin-top: 5px;
   cursor: pointer;
+  
+  text-decoration: none;
+  text-align: center;
+  padding-top: 6px;
+
 }
 .web_form .web_start {
   background-image: url('../img/web_start_btn.png');
