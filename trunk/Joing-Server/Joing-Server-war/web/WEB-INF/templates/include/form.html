@@ -9,22 +9,20 @@
 	<h:form id="start_create_account">
 	<h2>Create an account</h2>
 	
-	<div class="field">
-	  <h:outputLabel for="user_name" value="User"/>
-	  <div class="input_text"><span><h:inputText
+        <table cellpadding="0" cellspacing="5" border="0">
+            <tr><td><h:outputLabel for="user_name" value="User"/></td>
+            <td><div class="input_text"><span><h:inputText
 		id="user_name"
 		value="#{CreateAccount.account}"
-		maxlength="32"/></span></div>
-	</div>
-	<div class="field">
-	  <h:outputLabel for="user_email" value="e-mail"/>
-	  <div class="input_text"><span><h:inputText
+		maxlength="32"/></span></div></td></tr>
+            <tr><td><h:outputLabel for="user_email" value="e-mail"/></td>
+            <td><div class="input_text"><span><h:inputText
 		id="user_email"
 		maxlength="64"
-		value="#{CreateAccount.email}"/></span></div>
-	</div>
+		value="#{CreateAccount.email}"/></span></div></td></tr>
+        </table>
 	<div class="field">
-	    <h:commandButton
+	    <h:commandLink
 		styleClass="submit"
 		value="Create"
 		action="#{CreateAccount.gotoForm}"/>
@@ -34,7 +32,7 @@
             Registered users can launch Join'g
           </p>
           <div>
-            <input type="button" class="web_start" value="Start" onclick="alert('Start Join\'g');"/>
+              <a href="client/launch_client.jnlp" class="web_start">Start</a>
             <br style="clear: both;"/><h:outputText value="&amp;nbsp;" escape="false"/>
           </div>
        </div>
