@@ -41,31 +41,30 @@ class Login extends JDialog
         super( (JFrame) null, true );
         
         initComponents();
-
+        fillDesktopComboBox();
+        
         getRootPane().setDefaultButton( btnOk );
         setLocationRelativeTo( null );
         setDefaultCloseOperation( JDialog.DISPOSE_ON_CLOSE );
         setIconImage( (new ImageIcon( getClass().getResource( "resources/joing_icon.png" ) )).getImage() );
-        
-        fillDesktopComboBox();
         
         // FIXME: Quitar esto
         txtAccount.setText( "peyrona@joing.org" );
         txtPassword.setText( "admin" );
         //--------------------------------
     }
-
+    
     boolean isLoginSuccessful()
     {
         return bValid;
     }
-
+    
     boolean isFullScreenRequested()
     {
         return chkFullScreen.isSelected();
     }
-
-    void disposeSplah()
+    
+    void disposeSplash()
     {
         if( wndSplash != null )
             wndSplash.dispose();
@@ -88,10 +87,13 @@ class Login extends JDialog
     
     private void fillDesktopComboBox()
     {
+        btnOk.setEnabled( false );   // Can't be enabled until combobox is filled
+        btnOk.setText( "Wait" );
+        
         // This method is executed in a separated thread to increase speed
         SwingWorker sw = new SwingWorker<Void,Void>()
         {
-            private List<AppDescriptor> desktops;
+            private List<AppDescriptor> desktops = null;
             
             protected Void doInBackground() throws Exception
             {
@@ -102,10 +104,21 @@ class Login extends JDialog
             
             protected void done()
             {
-                for( AppDescriptor app : desktops )
+                if( desktops == null )    // An exception happened in doInBackground()
                 {
-                    Login.this.cmbDesktop.addItem( app.getName() );
-                    Login.this.cmbDesktop.putClientProperty( app.getName(), app );
+                    JOptionPane.showMessageDialog( Login.this, "A fatal error ocurred: can't continue." );
+                    Login.this.dispose();
+                }
+                else
+                {
+                    for( AppDescriptor app : desktops )
+                    {
+                        Login.this.cmbDesktop.addItem( app.getName() );
+                        Login.this.cmbDesktop.putClientProperty( app.getName(), app );
+                    }
+
+                    btnOk.setText( "Ok" );
+                    btnOk.setEnabled( true );
                 }
             }
         };
@@ -148,7 +161,6 @@ class Login extends JDialog
         lblLogo.setFocusable(false);
         lblLogo.setOpaque(true);
 
-        btnOk.setMnemonic('O');
         btnOk.setText("Ok");
         btnOk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -156,7 +168,6 @@ class Login extends JDialog
             }
         });
 
-        btnCancel.setMnemonic('C');
         btnCancel.setText("Cancel");
         btnCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
