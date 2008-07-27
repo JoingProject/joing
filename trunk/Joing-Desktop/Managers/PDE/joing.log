@@ -1,0 +1,46 @@
+[2008-07-27 21:00][INFO]: Joing Successfully Initialized.
+[2008-07-27 21:00][INFO]: Main Thread Id is 1
+[2008-07-27 21:00][DEBUG_CACHE]: Cache Miss, key=1
+[2008-07-27 21:00][DEBUG_CACHE]: Cache Store, key=1, executable=PDE.jar
+[2008-07-27 22:34][INFO]: Joing Successfully Initialized.
+[2008-07-27 22:34][INFO]: Main Thread Id is 1
+[2008-07-27 22:34][INFO]: Terminated, bad username/password.
+[2008-07-27 22:35][INFO]: Joing Successfully Initialized.
+[2008-07-27 22:35][INFO]: Main Thread Id is 1
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Miss, key=1
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Store, key=1, executable=PDE.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Miss, key=6
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Store, key=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_JVMM]: Main Class: org.joing.pacman.PacMan
+[2008-07-27 22:35][DEBUG_JVMM]: ClassLoader: org.joing.jvmm.BridgeClassLoader@5f1ae9
+[2008-07-27 22:35][DEBUG_JVMM]: Starting new ExecutionThread with Id 25 and ThreadGroup JoingThreadGroup_fdc04cc2-1865-436a-8926-2cb5a7302f31 from a SwingWorker
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=6, executable=Pacman.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Miss, key=5
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Store, key=5, executable=Tetris.jar
+[2008-07-27 22:35][DEBUG_JVMM]: Main Class: org.joing.tetris.Tetris
+[2008-07-27 22:35][DEBUG_JVMM]: ClassLoader: org.joing.jvmm.BridgeClassLoader@cfad31
+[2008-07-27 22:35][DEBUG_JVMM]: Starting new ExecutionThread with Id 33 and ThreadGroup JoingThreadGroup_0296e367-e9d4-4433-90ee-135887d4c11a from a SwingWorker
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=5, executable=Tetris.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=5, executable=Tetris.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=5, executable=Tetris.jar
+[2008-07-27 22:35][DEBUG_CACHE]: Cache Hit, appId=5, executable=Tetris.jar
