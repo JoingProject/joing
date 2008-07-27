@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" codebase="http://peyrona.dnsalias.com:8080/Joing-Server-war/client/" 
+                      href="http://peyrona.dnsalias.com:8080/Joing-Server-war/client/launch_client.jnlp">
+    <information>
+        <title>Join'g Client Bootstrap</title>
+        <vendor>Join'g Project Team</vendor>
+        <homepage href="http://www.joing.org"/>
+        <description>Join'g Client Bootstrap</description>
+        <description kind="short">Joing-Client</description>
+        <icon href="/Joing-Server-war/client/joing_icon.png" kind="default"/>
+        <offline-allowed/>
+    </information>
+    <security>
+        <all-permissions/>
+    </security>
+    <resources>
+        <j2se version="1.6+"/>
+        <jar href="/Joing-Server-war/client/Joing-Client.jar" main="true" download="eager"/>
+        <jar href="/Joing-Server-war/client/lib/Joing-Common.jar" download="eager"/>
+    </resources>
+    <application-desc main-class="org.joing.Main">
+    </application-desc>
+</jnlp>
