@@ -5,8 +5,6 @@
  */
 package org.joing.pde.swing;
 
-import org.joing.common.Constant;
-
 /**
  *
  * @author  fmorero
@@ -18,7 +16,7 @@ public class PDEAboutPanel extends javax.swing.JPanel
     {
         initComponents();
         
-        lblVersion.setText( "Version "+ Constant.getVersion() );
+        lblVersion.setText( "Version "+ "n/a" );   // TODO: Avertiguar la versión y otros datos (hayq ue plantearse de dónde leerlos)
     }
 
     public String getCopyright()

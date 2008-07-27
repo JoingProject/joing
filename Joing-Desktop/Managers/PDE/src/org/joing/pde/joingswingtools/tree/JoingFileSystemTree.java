@@ -36,7 +36,7 @@ import org.joing.runtime.vfs.VFSFile;
  */
 public class JoingFileSystemTree extends JoingSwingTree
 {
-    private boolean bOnlyDirs;
+    private boolean bOnlyDirs = false;
     
     // Actions (created lazily to save memory)
     private AbstractAction actHome       = null;
@@ -54,8 +54,6 @@ public class JoingFileSystemTree extends JoingSwingTree
     
     public JoingFileSystemTree()
     {
-        bOnlyDirs = false;
-        
         setEditable( true );
         setRootVisible( true );
         setShowsRootHandles( true );
