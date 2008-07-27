@@ -17,8 +17,6 @@ import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
@@ -65,7 +63,7 @@ public class Bootstrap {
         }
 
 
-        URL u = Bootstrap.class.getResource("resources/java32.png");
+        URL u = Bootstrap.class.getResource("resources/joing_icon.png");
         Image image = Toolkit.getDefaultToolkit().getImage(u);
 
         ActionListener exitListener = new ActionListener() {
@@ -160,46 +158,44 @@ public class Bootstrap {
             logger.addLevel(Levels.DEBUG_DESKTOP);
         }
         
-        String logFile = clientProps.getProperty("LogFile", null);
-        if (logFile != null) {
-            logger.addListener(new FileLogListenerImpl(logFile, true));
-        }
-
         URL.setURLStreamHandlerFactory(new JoingURLStreamHandlerFactory());
 
         // user dir
-        String userHome = System.getProperty("user.home");
-        userHome = userHome + "/.joing/";
-        File f = new File(userHome);
-        if (f.exists() == false) {
-            f.mkdir();
+        String userHome = System.getProperty("user.home") + "/.joing/";
+        File fJoingDir = new File(userHome);
+        if (fJoingDir.exists() == false) {
+            fJoingDir.mkdir();
         }
-        String joingClient = userHome + "joing-client.properties";
-        f = new File(joingClient);
-        Properties joingProperties = new Properties();
-        try {
-            if (f.exists() == true) {
-                FileInputStream fis = new FileInputStream(f);
-                joingProperties.load(fis);
-            }
-        } catch (IOException ioe) {
-            logger.warning("Exception caught while loading client properties: {0}",
-                    ioe.getMessage());
-        }
+        
+        // Join'g Log file (created inside {user.home}.joing directory)
+        File fLog = new File( fJoingDir, "joing.log" );
+        logger.addListener(new FileLogListenerImpl( fLog.getAbsolutePath(), true) );
+        
+        // TODO: ANTONIO, creo que esto no se utiliza nunca
+//        String joingClient = userHome + "joing-client.properties";
+//        fJoingDir = new File(joingClient);
+//        Properties joingProperties = new Properties();
+//        try {
+//            if (fJoingDir.exists() == true) {
+//                FileInputStream fis = new FileInputStream(fJoingDir);
+//                joingProperties.load(fis);
+//            }
+//        } catch (IOException ioe) {
+//            logger.warning("Exception caught while loading client properties: {0}",
+//                    ioe.getMessage());
+//        }
 
         System.setSecurityManager(new JoingSecurityManager());
         logger.info("Join'g Successfully Initialized.");
         logger.info("Main Thread Id is {0}",
                 String.valueOf(RuntimeFactory.getPlatform().getMainThreadId()));
 
-        
         // Debera ser invokeAndWait?
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 setupTrayIcon();
             }
         });
-              
     }
 
 
@@ -224,7 +220,7 @@ public class Bootstrap {
                     deskmgr.showInFrame();
                 }
                 
-                login.disposeSplah();
+                login.disposeSplash();
             } else {
                 logger.info("Terminated, bad username/password.");
                 platform.halt();
