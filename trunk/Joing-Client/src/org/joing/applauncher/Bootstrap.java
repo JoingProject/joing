@@ -223,6 +223,8 @@ public class Bootstrap {
                 } else {
                     deskmgr.showInFrame();
                 }
+                
+                login.disposeSplah();
             } else {
                 logger.info("Terminated, bad username/password.");
                 platform.halt();
