@@ -37,7 +37,7 @@ public interface Runtime
      */
     void    showMessageDialog( String sTitle, String sMessage );
     /**
-     * Shows a confimation modal dialog.
+     * Shows a confimation modal dialog with buttons [Accept] and [Cancel].
      * 
      * @param sTitle    Dialog window title (if <code>null</code> or empty string passed, title will be empty)
      * @param sMessage  Message to ask confirmation about
@@ -45,8 +45,8 @@ public interface Runtime
      */
     boolean showAcceptCancelDialog( String sTitle, DeskComponent panel );
     /**
-     * Shows a dialog with buttons [Accept] and [Cancel] and optionally chanes
-     * the text for these buttons.
+     * Shows a confimation modal dialog with buttons [{sAcceptText}] and 
+     * [{sCancelText}].
      * 
      * @param sTitle Dialog title. If null an empty title will be used.
      * @param content Panel to be shown.
@@ -54,21 +54,20 @@ public interface Runtime
      * @param sCancelText New text to be shown in Cancel button (null will not change)
      * @return true if dialog was closed via [Accpet] button and false otherwise.
      */
-    boolean showBasicDialog( String sTitle, DeskComponent content, String sAcceptText, String sCancelText );
+    boolean showAcceptCancelDialog( String sTitle, DeskComponent content, 
+                                    String sAcceptText, String sCancelText );
     /**
-     * Shows a confimation modal dialog.
      * 
-     * @param sTitle    Dialog window title (if <code>null</code> or empty string passed, title will be empty)
-     * @param sMessage  Message to ask confirmation about
-     * @return <code>true</code> if 'YES' button pressed, otherwise ('NO' button or close dialog) return <code>false</code>
+     * @param sTitle Dialog title or null
+     * @param sMessage Messae to be shown
+     * @return true if dialog was closed via [Yes] button and false otherwise.
      */
-    boolean showYesNoDialog( String sTitle, String sMessage );
-    
+    public boolean showYesNoDialog( String sTitle, String sMessage );
     /**
      * Shows an error in a dialog.
      * 
      * @param exc Error to show
-     * @param sTitle Optional dialog frame title
+     * @param sTitle Optional dialog frame title or null.
      */
     void showException( Throwable exc, String sTitle );
     /**
@@ -78,7 +77,6 @@ public interface Runtime
      * @return The ImageIcon instance.
      */
     Image getImage( StandardImage image );
-    
     /**
      * Return an image from the standard collection with specified dimension.
      * 
@@ -88,7 +86,6 @@ public interface Runtime
      * @return The ImageIcon instance.
      */
     Image getImage( StandardImage image, int width, int height );
-    
     /**
      * Plays a sound in background.
      * 

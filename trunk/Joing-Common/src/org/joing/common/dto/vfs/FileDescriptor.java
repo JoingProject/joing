@@ -36,7 +36,7 @@ import java.util.Date;
  */
 public class FileDescriptor implements Serializable
 {
-    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo usando: serialver -show
     
     // PK --------------------
     private String  account;           // read-only
