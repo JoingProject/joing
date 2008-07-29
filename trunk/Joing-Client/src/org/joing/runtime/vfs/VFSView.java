@@ -24,8 +24,9 @@ package org.joing.runtime.vfs;
 import java.io.FileFilter;
 import java.io.IOException;
 import javax.swing.Icon;
-import javax.swing.UIManager;
 import javax.swing.filechooser.FileSystemView;
+import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.jvmm.RuntimeFactory;
 
 /**
  * A FileSystemView that works with Join'g VFS.
@@ -34,7 +35,7 @@ import javax.swing.filechooser.FileSystemView;
  * 
  * @author Francisco Morero Peyrona
  */
-public class VFSView extends FileSystemView
+public class VFSView
 {
     /**
      * The system-dependent default name-separator character.  This field is
@@ -72,9 +73,6 @@ public class VFSView extends FileSystemView
     public static final String pathSeparator = "" + pathSeparatorChar;
     
     //------------------------------------------------------------------------//
-
-    private static final String sNewFolder     = UIManager.getString( "FileChooser.other.newFolder" );
-    private static final String sNewFolderNext = UIManager.getString( "FileChooser.other.newFolder.subsequent" );
     
     private static VFSView   instance = null;
     private static VFSFile[] afRoot   = null;
@@ -88,13 +86,10 @@ public class VFSView extends FileSystemView
      * 
      * @return The only instance of this class.
      */
-    public static VFSView getFileSystemView()
+    public static synchronized VFSView getFileSystemView()
     {
-        synchronized( VFSView.class )
-        {
-            if( instance == null )
-                instance = new VFSView();
-        }
+        if( instance == null )
+            instance = new VFSView();
         
         return instance;
     }
@@ -103,23 +98,10 @@ public class VFSView extends FileSystemView
      * @see javax.swing.filechooser.FileSystemView#createFileObject( 
      *                                 java.io.File containingDir, String name )
      */
-    public VFSFile createFileObject( java.io.File parentDir, String name ) 
+    public VFSFile createFileObject( VFSFile vfsParentDir, String name ) 
     {
-        VFSFile vfs = null;
-        
-        if( parentDir != null )
-        {
-            if( parentDir instanceof VFSFile )
-                vfs = new VFSFile( (VFSFile) parentDir, name );
-            else
-                vfs = new VFSFile( parentDir.getAbsolutePath(), name );
-        }
-        else
-        {
-            vfs = new VFSFile( name );
-        }
-        
-        return vfs;
+        return ((vfsParentDir == null) ? new VFSFile( name ) : 
+                                         new VFSFile( vfsParentDir, name ));
     }
     
     /**
@@ -134,38 +116,54 @@ public class VFSView extends FileSystemView
      * @see javax.swing.filechooser.FileSystemView#createNewFolder( 
      *                                              java.io.File containingDir )
      */
-    public VFSFile createNewFolder( java.io.File parent ) throws IOException
+    public VFSFile createNewFolder( VFSFile vfsParentDir ) throws IOException
     {
-        if( parent == null )
-            throw new IOException( "Containing directory is null." );
+        if( vfsParentDir == null )
+            throw new IOException( "Parent directory is null." );
         
-        if( ! parent.isDirectory() )
+        if( ! vfsParentDir.isDirectory() )
             throw new IllegalArgumentException( "Parent is not a directory." );
         
         VFSFile vfsNewFolder = null;
         
-        if( ! parent.exists() )    // The directory itself does not exists
+        if( ! vfsParentDir.exists() )    // The directory itself does not exists
         {
-            vfsNewFolder = createFileObject( parent.getAbsolutePath() );
+            vfsNewFolder = createFileObject( vfsParentDir.getAbsolutePath() );
+            vfsNewFolder = (vfsNewFolder.mkdir() ? vfsNewFolder : null);
         }
         else                    // A new directory has to be created inside passed dir
         {
-            vfsNewFolder = createFileObject( parent, sNewFolder );
-            
-            if( vfsNewFolder.exists() )
-                vfsNewFolder = createFileObject( parent, sNewFolder +"."+ System.currentTimeMillis() );  // This name can't exists
+            // For speed, this operation has to be done on the server side
+            String         sParent  = vfsParentDir.getAbsolutePath();
+            FileDescriptor fdNewDir = RuntimeFactory.getPlatform().getBridge().getFileBridge().createDirectory( sParent, null );
+            vfsNewFolder = new VFSFile( fdNewDir );
         }
         
-        return (vfsNewFolder.mkdir() ? vfsNewFolder : null);
+        return vfsNewFolder;
+    }
+    
+    // "Normal" (local) files are created in a wired way: an instance of File is 
+    // creted but the physical file is not created until needed. But Virtual
+    // files must exists after invocation to the server; that's why I add this 
+    // new method (therefore it is used only by VFS).
+    public VFSFile createNewFile( VFSFile vfsParentDir ) throws IOException
+    {
+        if( vfsParentDir == null )
+            throw new IOException( "Parent directory is null." );
+        
+        String         sParent   = vfsParentDir.getAbsolutePath();
+        FileDescriptor fdNewFile = RuntimeFactory.getPlatform().getBridge().getFileBridge().createFile( sParent, null );
+        
+        return new VFSFile( fdNewFile );
     }
     
     /**
      * @see javax.swing.filechooser.FileSystemView#getChild(java.io.File parent,
      *                                                      String fileName)
      */
-    public java.io.File getChild( java.io.File parent, String fileName )
+    public VFSFile getChild( VFSFile vfsParentDir, String fileName )
     {
-        return createFileObject( parent, fileName );
+        return createFileObject( vfsParentDir, fileName );
     }
     
     /**
@@ -181,19 +179,14 @@ public class VFSView extends FileSystemView
      *                           java.io.File directory, boolean useFileHiding )
      */
     // IMPORTANT: It is needed to return an empty array instead of null.
-    public VFSFile[] getFiles( java.io.File directory, boolean bIncludeHidden )
+    public VFSFile[] getFiles( VFSFile vfsParentDir, boolean bIncludeHidden )
     {
         VFSFile[] aFiles = null;
-        
-        if( directory instanceof VFSFile )
-        {
-            VFSFile fVFS = (VFSFile) directory;
             
-            if( bIncludeHidden )
-                aFiles = fVFS.listFiles();
-            else
-                aFiles = fVFS.listFiles( new FilterExcludeHidden() );
-        }
+        if( bIncludeHidden )
+            aFiles = vfsParentDir.listFiles();
+        else
+            aFiles = vfsParentDir.listFiles( new FilterExcludeHidden() );
         
         return (aFiles == null ? new VFSFile[0] : aFiles);
     }
@@ -210,14 +203,12 @@ public class VFSView extends FileSystemView
      * @see javax.swing.filechooser.FileSystemView#getParentDirectory( 
      *                                                  java.io.File directory )
      */
-    public VFSFile getParentDirectory( java.io.File directory )
+    public VFSFile getParentDirectory( VFSFile dir )
     {
         VFSFile fParent = null;
         
-        if( directory != null )
+        if( dir != null )
         {
-            VFSFile dir = (VFSFile) directory;
-            
             if( isRoot( dir ) )
                 fParent = dir;
             else
@@ -251,19 +242,17 @@ public class VFSView extends FileSystemView
     /**
      * @see javax.swing.filechooser.FileSystemView#getSystemDisplayName( java.io.File f )
      */
-    public String getSystemDisplayName( java.io.File file )
+    public String getSystemDisplayName( VFSFile file )
     {
-        String  sName = null;
+        String sName = null;
         
         if( file != null )
         {
-            VFSFile fVFS  = (VFSFile) file;
+            sName = file.getName();
 
-            sName = fVFS.getName();
-
-            if( isRoot( fVFS ) )
-                sName += " ("+ "n/a" +")";   // FIXME Averiguar de dónde sacar el nombre del sistema
-            else if( fVFS.isLink() )
+            if( isRoot( file ) )
+                sName += " ("+ "n/a" +")";   // FIXME: Averiguar de dónde sacar el nombre del sistema
+            else if( file.isLink() )
                 sName += " ^";
         }
         
@@ -271,36 +260,36 @@ public class VFSView extends FileSystemView
     }
     
     // NEXT: Si quiero, puedo poner mis propios iconos para los fic de Joing
-    public Icon getSystemIcon( java.io.File f )
+    public Icon getSystemIcon( VFSFile vfs )
     {
-        return super.getSystemIcon( f );
+        return FileSystemView.getFileSystemView().getSystemIcon( new java.io.File( vfs.getAbsolutePath() ) );
     }
     
-    public String getSystemTypeDescription( java.io.File file ) 
+    public String getSystemTypeDescription( VFSFile vfs ) 
     {
-        return file.getAbsolutePath();
+        return vfs.getAbsolutePath();
     }
     
     /**
      * @see javax.swing.filechooser.FileSystemView#isComputerNode( java.io.File dir )
      */
-    public boolean isComputerNode( java.io.File dir )
+    public boolean isComputerNode( VFSFile vfsDir )
     {
-        return isRoot( dir );
+        return isRoot( vfsDir );
     }
     
     /**
      * @see javax.swing.filechooser.FileSystemView#isDrive( java.io.File dir )
      */
-    public boolean isDrive( java.io.File dir )
+    public boolean isDrive( VFSFile file )
     {
-        return false;  // FIXME: Mirar si es mejor devolver false o esto: isRoot( dir );
+        return isRoot( file );
     }
     
     /**
      * @see javax.swing.filechooser.FileSystemView#isFileSystem( java.io.File f )
      */
-    public boolean isFileSystem( java.io.File f )
+    public boolean isFileSystem( VFSFile file )
     {
         return true;    // In VFS all files are "real"
     }
@@ -308,23 +297,23 @@ public class VFSView extends FileSystemView
     /**
      * @see javax.swing.filechooser.FileSystemView#isFileSystemRoot( java.io.File dir )
      */
-    public boolean isFileSystemRoot( java.io.File dir )
+    public boolean isFileSystemRoot( VFSFile file )
     {
-        return isRoot( dir );
+        return isRoot( file );
     }
     
     /**
      * @see javax.swing.filechooser.FileSystemView#isFloppyDrive( java.io.File dir )
      */
-    public boolean isFloppyDrive( java.io.File dir )
+    public boolean isFloppyDrive( VFSFile file )
     {
-        return false;    // In VFS there is no "drive"
+        return false;    // In VFS there is no "drives": there is only one file system
     }
     
     /**
      * @see javax.swing.filechooser.FileSystemView#isHiddenFile(java.io.File file)
      */
-    public boolean isHiddenFile( java.io.File file )
+    public boolean isHiddenFile( VFSFile file )
     {
         return file.isHidden();
     }
@@ -332,7 +321,7 @@ public class VFSView extends FileSystemView
     /**
      * @see javax.swing.filechooser.FileSystemView#isParent( java.io.File folder, java.io.File file )
      */
-    public boolean isParent( java.io.File folder, java.io.File file )
+    public boolean isParent( VFSFile folder, VFSFile file )
     {
         boolean bParent = false;
         
@@ -350,18 +339,15 @@ public class VFSView extends FileSystemView
     /**
      * @see javax.swing.filechooser.FileSystemView#isRoot( java.io.File file )
      */
-    public boolean isRoot( java.io.File file )
+    public boolean isRoot( VFSFile file )
     {
-        if( file != null )
-            return ((VFSFile) file).getParent() == null;
-        
-        return false;
+        return ((file != null) && (file.getParent() == null));
     }
     
     /**
      * @see javax.swing.filechooser.FileSystemView#isTraversable( java.io.File file )
      */
-    public Boolean isTraversable( java.io.File file )
+    public Boolean isTraversable( VFSFile file )
     {
 	return Boolean.valueOf( file.isDirectory() );
     }

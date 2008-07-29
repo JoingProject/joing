@@ -86,7 +86,7 @@ public class BridgeURLConnection extends URLConnection {
      * @return Integer value with the id
      * @throws java.io.IOException
      */
-    public static Integer getAppId(URL url) throws IOException {
+    public static synchronized Integer getAppId(URL url) throws IOException {
         String q = url.getQuery();
         
         if (q == null) {

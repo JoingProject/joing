@@ -108,14 +108,14 @@ public class VFSBridgeSocketImpl
         return false;
     }
 
-    public boolean delete(int[] anFileId)
+    public int[] delete(int[] anFileId)
     {
-        return false;
+        return new int[0];
     }
 
-    public boolean delete(int nFileId)
+    public int[] delete(int nFileId)
     {
-        return false;
+        return new int[0];
     }
 
     //------------------------------------------------------------------------//

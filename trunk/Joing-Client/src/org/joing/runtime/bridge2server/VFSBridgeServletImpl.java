@@ -222,32 +222,32 @@ public class VFSBridgeServletImpl
         return bSuccess;
     }
 
-    public boolean delete( int[] anFileId )
+    public int[] delete( int[] anFileId )
            throws JoingServerException
     {
-        boolean bSuccess = false;
+        int[] anError = null;
         
         Channel channel = new Channel( VFS_DELETE );
                 channel.write( platform.getBridge().getSessionBridge().getSessionId() );
                 channel.write( anFileId );
-        bSuccess = (Boolean) channel.read();
+        anError = (int[]) channel.read();
                 channel.close();
 
-        return bSuccess;
+        return anError;
     }
 
-    public boolean delete( int nFileId )
+    public int[] delete( int nFileId )
            throws JoingServerException
     {
-        boolean bSuccess = false;
+        int[] anError = null;
         
         Channel channel = new Channel( VFS_DELETE );
                 channel.write( platform.getBridge().getSessionBridge().getSessionId() );
                 channel.write( nFileId );
-        bSuccess = (Boolean) channel.read();
+        anError = (int[]) channel.read();
                 channel.close();
         
-        return bSuccess;
+        return anError;
     }
 
     //------------------------------------------------------------------------//

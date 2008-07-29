@@ -87,7 +87,7 @@ public class VFSFile extends File
     
     //------------------------------------------------------------------------//
     
-    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo usando: serialver -show
     
     private static long nTotalDiskSpace = -1;
     
@@ -132,8 +132,7 @@ public class VFSFile extends File
      */
     public VFSFile( VFSFile parent, String child ) throws JoingServerVFSException
     {
-        super( buildFullPath( (parent == null ? "" : parent.getAbsolutePath()), 
-                              child ) );
+        super( buildFullPath( (parent == null ? "" : parent.getAbsolutePath()), child ) );
         
         if( parent == null )
             throw new NullPointerException( "Parent directory can't be null." );
@@ -184,7 +183,7 @@ public class VFSFile extends File
         if( exists() )
         {
             Bridge2Server b2s = RuntimeFactory.getPlatform().getBridge();
-            bSuccess = b2s.getFileBridge().delete( fd.getId() );
+            bSuccess = b2s.getFileBridge().delete( fd.getId() ).length == 0;   // NEXT: Se pueden guardar los Ids de error en una var de la clase y recogerla mediante un método cuando éste metodo devuelve false
         }
         
         return bSuccess;
@@ -219,7 +218,7 @@ public class VFSFile extends File
     @Override
     public boolean exists()
     {
-        return fd != null;
+        return (fd != null);
     }
     
     /**
@@ -240,7 +239,7 @@ public class VFSFile extends File
     @Override
     public String getAbsolutePath()
     {
-        return (exists() ? fd.getAbsolutePath() : super.getAbsolutePath() +" [file does not exists]");
+        return (exists() ? fd.getAbsolutePath() : "[Should not happen: file does not exists]" );
     }
     
     /**
@@ -656,7 +655,7 @@ public class VFSFile extends File
      * @see java.io.File#listRoots()
      */
     // By contract has to return null instead of empty array
-    public static VFSFile[] listRoots() throws JoingServerVFSException
+    public static synchronized VFSFile[] listRoots() throws JoingServerVFSException
     {
         List<FileDescriptor> lstRoots   = RuntimeFactory.getPlatform().getBridge().getFileBridge().getRoots();
         VFSFile              vfsRoots[] = new VFSFile[ lstRoots.size() ];
@@ -822,7 +821,7 @@ public class VFSFile extends File
     //------------------------------------------------------------------------//
     
     // Used only internally
-    private VFSFile( FileDescriptor fd )
+    protected VFSFile( FileDescriptor fd )
     {
         super( fd.getAbsolutePath() );
         this.fd = fd;

@@ -20,7 +20,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-
 package org.joing.runtime.bridge2server;
 
 import org.joing.common.clientAPI.runtime.AppBridge;
@@ -30,25 +29,22 @@ import org.joing.common.clientAPI.runtime.UserBridge;
 import org.joing.common.clientAPI.runtime.VFSBridge;
 
 /**
- *
- * @author antoniovl
+ * Communications from Client to Server.
+ * 
+ * Note: Classes can not be loaded permanently in memory to avoid synchronize
+ * modifier. In this way, each time a communication will happen, a new instance
+ * will be created.
+ * 
+ * @author Francisco Morero Peyrona
  */
-public class Bridge2ServerImpl implements Bridge2Server {
-
+public class Bridge2ServerImpl implements Bridge2Server
+{
     private static final int VIA_SERVLETS = 1;
     private static final int VIA_SOCKETS  = 2;
     
-    private int    nVia       = 0;
-    
-    // Note: SessionBridge.class is used only at begining and ending of session:
-    //       it is not loaded permanently in memory to save resources (memory).
-    //       Something similar happens with UserBridge.class (it's used rarely).
-    
-    private AppBridge  app  = null;  // Loaded permanently for speed
-    private VFSBridge  vfs  = null;  // Loaded permanently for speed
+    private int nVia = 0;
     
     //------------------------------------------------------------------------//
-    
     
     @Override
     public SessionBridge getSessionBridge()
@@ -91,56 +87,44 @@ public class Bridge2ServerImpl implements Bridge2Server {
     @Override
     public AppBridge getAppBridge()
     {
-        if( app == null )
+        AppBridge app = null;
+        
+        switch( nVia )
         {
-            switch( nVia )
-            {
-                case VIA_SERVLETS:
-                    app = new AppBridgeServletImpl();
-                    break;
-                    
-                case VIA_SOCKETS:
-                    app = new AppBridgeSocketImpl();
-                    break;
-            }
+            case VIA_SERVLETS:
+                app = new AppBridgeServletImpl();
+                break;
+
+            case VIA_SOCKETS:
+                app = new AppBridgeSocketImpl();
+                break;
         }
         
-        return this.app;
+        return app;
     }
     
     @Override
     public VFSBridge getFileBridge()
     {
-        if( vfs == null )
+        VFSBridge vfs = null;
+        
+        switch( nVia )
         {
-            switch( nVia )
-            {
-                case VIA_SERVLETS:
-                    vfs = new VFSBridgeServletImpl();
-                    break;
-                    
-                case VIA_SOCKETS:
-                    vfs = new VFSBridgeSocketImpl();
-                    break;
-            }
+            case VIA_SERVLETS:
+                vfs = new VFSBridgeServletImpl();
+                break;
+
+            case VIA_SOCKETS:
+                vfs = new VFSBridgeSocketImpl();
+                break;
         }
         
-        return this.vfs;
+        return vfs;
     }
     
-
     //------------------------------------------------------------------------//
-    // PACKAGE SCOPE
     
-//    void setSessionId( String sSessionId )
-//    {
-//        this.sSessionId = sSessionId;
-//    }
-    
-    //------------------------------------------------------------------------//
-    //
-    
-    // TODO: El constructor de Bridge2ServerImpl debe ser package scope.
+    // TODO: El constructor de Bridge2ServerImpl debiera ser package scope.
     public Bridge2ServerImpl()
     {
 //        if (Thread.currentThread().getId() != Platform.getInstance().getMainId()) {
@@ -151,5 +135,4 @@ public class Bridge2ServerImpl implements Bridge2Server {
                  implementación directa (sockets) o la de Servlets o cualquier otra */
         nVia = VIA_SERVLETS;
     }
-    
 }
