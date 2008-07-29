@@ -17,9 +17,10 @@ import org.joing.common.dto.user.User;
  *
  * @author Francisco Morero Peyrona
  */
+// NEXT: Esta clase habría que hacerla con constructor en lugar de como métodos static para poder crear múltiples instancias y que el servidor escale mejor
 class UserDTOs
 {
-    static Local createLocal( LocaleEntity localeEntity )
+    static synchronized Local createLocal( LocaleEntity localeEntity )
     {
         Local local = new Local();
         
@@ -30,7 +31,7 @@ class UserDTOs
         return local;
     }
     
-    static User createUser( UserEntity userEntity )
+    static synchronized User createUser( UserEntity userEntity )
     {
         User user = new User();
         
@@ -39,7 +40,7 @@ class UserDTOs
         return user;
     }
     
-    static UserEntity createUserEntity( User user )
+    static synchronized UserEntity createUserEntity( User user )
     {
         UserEntity userEntity = new UserEntity();
         
@@ -48,7 +49,7 @@ class UserDTOs
         return userEntity;
     }
     
-    static void transfer( User fromUser, UserEntity toUserEntity )
+    static synchronized void transfer( User fromUser, UserEntity toUserEntity )
     {
         LocaleEntity _locale = new LocaleEntity();
                      _locale.setIdLocale( fromUser.getIdLocale() );
@@ -63,7 +64,7 @@ class UserDTOs
         toUserEntity.setIdLocale( _locale );
     }
     
-    static void transfer( UserEntity fromUserEntity, User toUser )
+    static synchronized void transfer( UserEntity fromUserEntity, User toUser )
     {        
         toUser.setAccount( fromUserEntity.getAccount() );
         toUser.setEmail( fromUserEntity.getEmail() );

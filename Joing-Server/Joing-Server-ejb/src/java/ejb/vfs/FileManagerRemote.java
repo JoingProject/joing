@@ -74,7 +74,7 @@ public interface FileManagerRemote
      * File and directory names must follow these rules:
      * <ul>
      *    <li>These characters are not accepted: 
-     *     //TODO: buscarlos
+     *     // TODO: buscarlos
      *    <li>Maximum name length is 255 characters
      *    <li>Minimum name length is 1 character
      *    <li>Can not be duplicated (already existing)
@@ -82,7 +82,8 @@ public interface FileManagerRemote
      *  
      * @param sSessionId The session ID assigned to client at login
      * @param sPath Dir path from root excluding dir name.
-     * @param sDirName Name of the directory to be created.
+     * @param sDirName Name of the directory to be created (if null an automatic 
+     *                 one is generated).
      * @return An instance of class <code>File</code> or <code>null</code> if
      *         something goes wrong.
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 
@@ -98,7 +99,7 @@ public interface FileManagerRemote
      * File and directory names must follow these rules:
      * <ul>
      *    <li>These characters are not accepted: 
-     *     //TODO: buscarlos
+     *     // TODO: buscarlos
      *    <li>Maximum name length is 255 characters
      *    <li>Minimum name length is 1 character
      *    <li>Can not be duplicated (already existing)
@@ -106,7 +107,8 @@ public interface FileManagerRemote
      *
      * @param sSessionId The session ID assigned to client at login
      * @param sPath File path from root excluding file name.
-     * @param sFileName Name of the file to be created.
+     * @param sFileName Name of the file to be created (if null an automatic one
+     *                  is generated).
      * @return An instance of class <code>File</code> or <code>null</code> if
      *         something goes wrong.
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 

@@ -32,12 +32,13 @@ import javax.persistence.Query;
  * 
  * @author Francisco Morero Peyrona
  */
+ // NEXT: Esta clase habría que hacerla con constructor en lugar de como métodos static para poder crear múltiples instancias y que el servidor escale mejor
 class VFSTools
 {
     private final static String sROOT = "/";     // 4 speed
     
     // Note: a file exists even if it is in the trashcan ('cause it can be moved back)
-    static boolean existsName( EntityManager em, String sAccount, String sPath, String sName )
+    static synchronized boolean existsName( EntityManager em, String sAccount, String sPath, String sName )
     {
         String sFullName = sPath + (sPath.equals( sROOT ) ? "" : sROOT) + sName;
         
@@ -57,10 +58,9 @@ class VFSTools
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
-    static FileEntity path2File( EntityManager em, String sAccount, String sFullName )
+    static synchronized FileEntity path2File( EntityManager em, String sAccount, String sFullName )
            throws JoingServerVFSException
     {
-        
         FileEntity _file = null;
         String     sPath = null;
         String     sName = null;
@@ -142,7 +142,7 @@ class VFSTools
      * @return
      * @throws org.joing.common.exception.JoingServerVFSException
      */
-    static List<FileEntity> getChilds( EntityManager em, String sAccount, FileEntity _file )
+    static synchronized List<FileEntity> getChilds( EntityManager em, String sAccount, FileEntity _file )
             throws JoingServerVFSException
     {
         if( _file.getIsDir() == 0 )
@@ -168,29 +168,17 @@ class VFSTools
      * 
      * @return Path from root, including file name.
      */
-    static String getAbsolutePath( FileEntity fe )
+    static synchronized String getAbsolutePath( FileEntity fe )
     {
         // TODO: posiblemente aquí haya que tener en cuenta cosas como si está 
         //       en la Trashcan o si es un Link a otro fichero
         
-        String        sName = fe.getFileName();   // Can't be null and is already trimmed
-        StringBuilder sb    = new StringBuilder( 256 );
+        // fe.getFileName() can't be null and is already trimmed
         
-        if( sName.equals( sROOT ) )
-        {
-            sb.append( sName );
-        }
+        if( fe.getFileName().equals( sROOT ) )
+            return fe.getFileName();
         else
-        {
-            sb.append( fe.getFilePath() );
-                          
-            if( ! fe.getFilePath().endsWith( sROOT ) )
-                sb.append( '/' );
-
-            sb.append( sName );
-        }
-        
-        return sb.toString();
+            return fe.getFilePath().concat( sROOT ).concat( fe.getFileName() );
     }
     
     //------------------------------------------------------------------------//
