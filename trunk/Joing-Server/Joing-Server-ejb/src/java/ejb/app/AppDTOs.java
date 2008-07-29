@@ -36,9 +36,10 @@ import org.joing.common.exception.JoingServerException;
  *
  * @author Francisco Morero Peyrona
  */
+// NEXT: Esta clase habría que hacerla con constructor en lugar de como métodos static para poder crear múltiples instancias y que el servidor escale mejor
 class AppDTOs
 {
-    static AppDescriptor createAppDescriptor( ApplicationEntity appEntity )
+    static synchronized AppDescriptor createAppDescriptor( ApplicationEntity appEntity )
     {
         AppDescriptor appDTO = new AppDescriptor();
         
@@ -47,7 +48,7 @@ class AppDTOs
         return appDTO;
     }
     
-    static Application createApplication( ApplicationEntity appEntity )
+    static synchronized Application createApplication( ApplicationEntity appEntity )
     {
         Application app = new Application();
         

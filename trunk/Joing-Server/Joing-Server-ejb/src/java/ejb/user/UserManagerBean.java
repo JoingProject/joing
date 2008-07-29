@@ -56,7 +56,7 @@ import javax.persistence.Query;
 public class UserManagerBean
     implements UserManagerLocal, Serializable
 {
-    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo usando: serialver -show
     
     // These vars are also in JoingServerUserException: changes must be done in both sides
     private static final int nMIN_LEN =  6;   // For account and password

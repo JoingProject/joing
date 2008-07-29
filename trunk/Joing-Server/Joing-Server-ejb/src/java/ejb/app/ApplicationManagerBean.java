@@ -46,7 +46,7 @@ import org.joing.common.exception.JoingServerException;
 public class ApplicationManagerBean
         implements ApplicationManagerLocal, Serializable
 {
-    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo usando: serialver -show
     private static final int APPS_ALL = 0;
     private static final int APPS_INSTALLED = 1;
     private static final int APPS_NOT_INSTALLED = 2;

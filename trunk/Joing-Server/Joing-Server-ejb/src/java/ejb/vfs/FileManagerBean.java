@@ -38,6 +38,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.swing.UIManager;
 import org.joing.common.dto.user.User;
 import org.joing.common.dto.vfs.FileBinary;
 import org.joing.common.dto.vfs.FileDescriptor;
@@ -57,7 +58,7 @@ import org.joing.common.exception.JoingServerVFSException;
 public class FileManagerBean 
        implements FileManagerLocal, Serializable 
 {
-    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo usando: serialver -show
     
     @PersistenceContext
     private EntityManager em;
@@ -164,12 +165,18 @@ public class FileManagerBean
     public FileDescriptor createDirectory( String sSessionId, String sPath, String sDirName )
            throws JoingServerVFSException
     {
+        if( sDirName == null )
+            sDirName = getGeneratedName( sSessionId, sPath, true );
+        
         return createEntry( sSessionId, sPath, sDirName, true );
     }
     
     public FileDescriptor createFile( String sSessionId, String sPath, String sFileName )
            throws JoingServerVFSException
     {
+        if( sFileName == null )
+            sFileName = getGeneratedName( sSessionId, sPath, false );
+        
         return createEntry( sSessionId, sPath, sFileName, false );
     }
 
@@ -655,7 +662,7 @@ public class FileManagerBean
                 for( FileEntity _f : _fChilds )
                     fileErrors.addAll( _delete( sAccount, _f.getIdFile() ) );
                 
-                // Si borrase el _file y algunos fics no se pudieron borrar, se quedarán en el limbo para siempre
+                // Si borrase el _file y algunos fics no se pudieron borrar, se quedarían en el limbo para siempre
                 if( fileErrors.size() == 0 )
                     em.remove( _file );   // Deletes table row (directories only exist in table FILES not in FS)
             }
@@ -681,15 +688,15 @@ public class FileManagerBean
     }
     
     // Creates a new entry: either a directory or a _file
-    private FileDescriptor createEntry( String sSessionId, String sPath, String sChild, boolean bIsDir )
+    private FileDescriptor createEntry( String sSessionId, String sParent, String sChild, boolean bIsDir )
             throws JoingServerVFSException
     {
-        FileDescriptor file     = null;
+        FileDescriptor fileDesc = null;
         String         sAccount = sessionManagerBean.getUserAccount( sSessionId );
         
         if( sAccount != null )
         {            
-            FileEntity _feParent = VFSTools.path2File( em, sAccount, sPath );
+            FileEntity _feParent = VFSTools.path2File( em, sAccount, sParent );
 
             if( _feParent == null )
                 throw new JoingServerVFSException( JoingServerVFSException.PARENT_DIR_NOT_EXISTS );
@@ -707,7 +714,7 @@ public class FileManagerBean
             if( sNameErrors.length() > 0 )
                 throw new JoingServerVFSException( sNameErrors );
             
-            if( VFSTools.existsName( em, sAccount, sPath, sChild ) )
+            if( VFSTools.existsName( em, sAccount, sParent, sChild ) )
                 throw new JoingServerVFSException( (_feParent.getIsDir() == 1 ? 
                                                         JoingServerVFSException.DIR_ALREADY_EXISTS :
                                                         JoingServerVFSException.FILE_ALREADY_EXISTS) );
@@ -715,14 +722,15 @@ public class FileManagerBean
             {
                 // Owner of parent directory is System => Do not inherit parent properties
                 boolean bOwnerIsSystem = Constant.getSystemAccount().equals( _feParent.getOwner() ) ;
+                Date    date           = new Date();
                 
-                // When the EntityManager persists the entity, it first create a new record,
+                // When the EntityManager persists the entity, it first creates a new record,
                 // and the record has the values defined in "DEFAULT" clause in "CREATE TABLE",
-                // but after that EntityManager overwrited these values because it copies all
+                // but after that, EntityManager overwrites these values because it copies all
                 // the object field values to the table columns.
                 // So, to make things more clear, I specify all object field values.
-                // Another thing: If parent is not root _file (a very special one), 
-                // the _file or _file inherites its attributes from parent.
+                // Another thing: if parent is not a System _file, child will inherit its 
+                // attributes from parent.
                 
                 FileEntity _file = new FileEntity();
                            _file.setIdOriginal( null );
@@ -741,16 +749,18 @@ public class FileManagerBean
                            _file.setIsDuplicable( (bOwnerIsSystem ? (short) 1 : _feParent.getIsDuplicable()) );
                            _file.setIsAlterable(  (bOwnerIsSystem ? (short) 1 : _feParent.getIsAlterable())  );
                            _file.setIsInTrashcan( (bOwnerIsSystem ? (short) 0 : _feParent.getIsInTrashcan()) );
-                           _file.setCreated(  new Date() );
-                           _file.setModified( new Date() );
-                           _file.setAccessed( new Date() );
+                           _file.setCreated(  date );
+                           _file.setModified( date );
+                           _file.setAccessed( date );
                            
                 em.persist( _file );
+                em.flush();
+                em.refresh( _file );
                 
-                if( ! bIsDir )  // Files exist in FILES table and in host FS, dirs only in FILES
+                if( ! bIsDir )  // Files exist in FILES table and in host FS, dirs only in FILES table
                     NativeFileSystemTools.createFile( sAccount, _file.getIdFile() );
                     
-                file = FileDTOs.createFileDescriptor( _file );
+                fileDesc = FileDTOs.createFileDescriptor( _file );
             }
             catch( RuntimeException exc )
             {
@@ -769,7 +779,7 @@ public class FileManagerBean
             }
         }
         
-        return file;
+        return fileDesc;
     }
  
     // Recursively rename all passed directory childs 
@@ -817,6 +827,26 @@ public class FileManagerBean
         }
         
         return false;
+    }
+    
+    private String getGeneratedName( String sSessionId, String sParent, boolean bForDir )
+    {
+        String sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        String sName    = null;
+        // TODO: hacerlo mejor: usando un contador y buscando nombres existentes
+        if( sAccount != null )
+        {
+            if( bForDir )
+            {
+                sName = UIManager.getString( "FileChooser.other.newFolder" ) +"_"+ System.currentTimeMillis();
+            }
+            else
+            {
+                sName = "New file_"+ System.currentTimeMillis();
+            }
+        }
+        
+        return sName;
     }
     
     // Is this a valid name for a _file or directory?

@@ -36,7 +36,7 @@ import java.util.Date;
  */
 public class FileDescriptor implements Serializable
 {
-    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo usando: serialver -show
     
     // PK --------------------
     private String  account;           // hidden
@@ -378,9 +378,7 @@ public class FileDescriptor implements Serializable
         
         sFailedToChangeAttributeReason = null;
         
-        if( isAlterable()  ||
-            account.equals( owner ) )   // TODO: el account tiene que estar en el modo
-                                        //       <name>@<server> o algo así para poder compararlos
+        if( isAlterable() || account.equals( owner ) )
         {
             // TODO: hacerlo
             switch( nWhich )

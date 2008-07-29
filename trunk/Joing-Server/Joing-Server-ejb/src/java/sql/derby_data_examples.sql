@@ -141,27 +141,4 @@ insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
 insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
      values ('peyrona@joing.org', 10, 1);
 
--- ------------------------------------------------------------------
-
-insert into files ( ID_ORIGINAL, ACCOUNT, OWNER, FILE_NAME, FILE_PATH, LOCKED_BY, 
-                    IS_DIR, IS_HIDDEN, IS_PUBLIC, IS_READABLE, IS_MODIFIABLE, IS_DELETEABLE, 
-                    IS_EXECUTABLE, IS_DUPLICABLE, IS_ALTERABLE, IS_IN_TRASHCAN, NOTES )
-           values ( NULL, 'peyrona@joing.org', 'system@joing.org', '/', '', NULL, 
-                    1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 
-                   'Root & Home Directory');
-
-insert into files ( ID_ORIGINAL, ACCOUNT, OWNER, FILE_NAME, FILE_PATH, LOCKED_BY, 
-                    IS_DIR, IS_HIDDEN, IS_PUBLIC, IS_READABLE, IS_MODIFIABLE, IS_DELETEABLE, 
-                    IS_EXECUTABLE, IS_DUPLICABLE, IS_ALTERABLE, IS_IN_TRASHCAN, NOTES )
-           values ( NULL, 'peyrona@joing.org', 'system@joing.org', 'Desktop', '/', NULL,
-                    1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 
-                   'The desktop');
-
-insert into files ( ID_ORIGINAL, ACCOUNT, OWNER, FILE_NAME, FILE_PATH, LOCKED_BY, 
-                    IS_DIR, IS_HIDDEN, IS_PUBLIC, IS_READABLE, IS_MODIFIABLE, IS_DELETEABLE, 
-                    IS_EXECUTABLE, IS_DUPLICABLE, IS_ALTERABLE, IS_IN_TRASHCAN, NOTES )
-           values ( NULL, 'peyrona@joing.org', 'peyrona@joing.org', 'The very 1st file', '/', NULL, 
-                    0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 
-                   'The very first file (not dir). Originaly stored in root dir');
-
 -- *****************************************   EOF  *******************************************************************

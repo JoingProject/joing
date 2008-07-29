@@ -32,7 +32,7 @@ import javax.persistence.EntityManager;
 public class SessionManagerBean
        implements SessionManagerLocal, Serializable
 {
-    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo usando: serialver -show
     
     @PersistenceContext
     private EntityManager em;

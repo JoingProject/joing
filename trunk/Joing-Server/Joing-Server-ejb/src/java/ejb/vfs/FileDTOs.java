@@ -23,9 +23,10 @@ import org.joing.common.dto.vfs.FileText;
  *
  * @author Francisco Morero Peyrona
  */
+// NEXT: Esta clase habría que hacerla con constructor en lugar de como métodos static para poder crear múltiples instancias y que el servidor escale mejor
 class FileDTOs
 {
-    static FileDescriptor createFileDescriptor( FileEntity fileEntity  )
+    static synchronized FileDescriptor createFileDescriptor( FileEntity fileEntity  )
     {
         FileDescriptor fileDescriptor = new FileDescriptor();
         
@@ -34,7 +35,7 @@ class FileDTOs
         return fileDescriptor;
     }
     
-    static FileEntity createFileEntity( FileDescriptor fileDescriptor )
+    static synchronized FileEntity createFileEntity( FileDescriptor fileDescriptor )
     {
         FileEntity fileEntity = new FileEntity();
         
@@ -43,7 +44,7 @@ class FileDTOs
         return fileEntity;
     }
     
-    static FileText createFileText( FileEntity fileEntity ) 
+    static synchronized FileText createFileText( FileEntity fileEntity ) 
            throws IOException, FileNotFoundException
     {
         FileText fileText = new FileText();
@@ -55,7 +56,7 @@ class FileDTOs
         return fileText;
     }
     
-    static FileBinary createFileBinary( FileEntity fileEntity ) 
+    static synchronized FileBinary createFileBinary( FileEntity fileEntity ) 
            throws IOException
     {
         FileBinary fileBinary = new FileBinary();
@@ -66,7 +67,7 @@ class FileDTOs
         return fileBinary;
     }
     
-    static void transfer( FileEntity fromFileEntity, FileDescriptor toFileDescriptor )
+    static synchronized void transfer( FileEntity fromFileEntity, FileDescriptor toFileDescriptor )
     {
         long nSize = 0;
         
@@ -101,7 +102,7 @@ class FileDTOs
         toFileDescriptor.setSize(       nSize );
     }
     
-    static void transfer( FileDescriptor fromFileDescriptor, FileEntity toFileEntity )
+    static synchronized void transfer( FileDescriptor fromFileDescriptor, FileEntity toFileEntity )
     {
         toFileEntity.setIdFile(     fromFileDescriptor.getId() );
         toFileEntity.setIdOriginal( (fromFileDescriptor.getIdOriginal() == -1 ? null : fromFileDescriptor.getIdOriginal()) );

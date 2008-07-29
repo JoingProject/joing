@@ -33,7 +33,7 @@ import org.joing.common.exception.JoingServerVFSException;
 public class ListManagerBean 
        implements ListManagerLocal, Serializable
 {
-    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo usando: serialver -show
     
     @PersistenceContext
     private EntityManager em;

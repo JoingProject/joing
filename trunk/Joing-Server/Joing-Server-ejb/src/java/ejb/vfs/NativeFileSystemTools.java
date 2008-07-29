@@ -31,6 +31,7 @@ import java.io.IOException;
  *
  * @author Francisco Morero Peyrona
  */
+// TODO: Esta clase habría que hacerla con constructor en lugar de como métodos static para poder crear múltiples instancias y que el servidor escale mejor
 public class NativeFileSystemTools
 {
     /**
@@ -39,7 +40,7 @@ public class NativeFileSystemTools
      * @param sAccount Account to be created.
      * @return <code>true</code> if everything goes fine.
      */
-    public static boolean createAccount( String sAccount )
+    public static synchronized boolean createAccount( String sAccount )
            throws IOException
     {
         boolean bSuccess = getUserHome( sAccount ).mkdirs();
@@ -56,7 +57,7 @@ public class NativeFileSystemTools
      * @param sAccount Account to be deleted.
      * @return <code>true</code> if everything goes fine.
      */
-    public static boolean removeAccount( String sAccount )
+    public static synchronized boolean removeAccount( String sAccount )
     {
         return deepDelete( getUserHome( sAccount ) );
     }
@@ -67,7 +68,7 @@ public class NativeFileSystemTools
      * @param sAccount A valid user account
      * @param nFileId  The file Id (it is used as file name) 
      */
-    public static void createFile( String sAccount, int nFileId  ) 
+    public static synchronized void createFile( String sAccount, int nFileId  ) 
            throws IOException
     {
         java.io.File fNew = _getUserFile( sAccount, nFileId  );
@@ -84,7 +85,7 @@ public class NativeFileSystemTools
      * @param sAccount      A valid user account
      * @param nFileId       The file Id (it is used as file name) 
      */
-    public static java.io.File getFile( String sAccount, int nFileId  )
+    public static synchronized java.io.File getFile( String sAccount, int nFileId  )
     {        
         return _getUserFile( sAccount, nFileId  );
     }
@@ -94,7 +95,7 @@ public class NativeFileSystemTools
      * 
      * @param sAppName Full app name including path (if any) from Apps base dir.
      */
-    public static java.io.File getApplication( String sAppName )
+    public static synchronized java.io.File getApplication( String sAppName )
     {
         return new java.io.File( Constant.getAppDir(), sAppName );
     }
@@ -105,7 +106,7 @@ public class NativeFileSystemTools
      * @param sAccount An user account
      * @param nFileId  A File Id
      */
-    public static boolean deleteFile( String sAccount, int nFileId )
+    public static synchronized boolean deleteFile( String sAccount, int nFileId )
     {
         return _getUserFile( sAccount, nFileId ).delete();
     }
@@ -120,7 +121,7 @@ public class NativeFileSystemTools
      * @param nFileId  A File Id
      * @return The length, in bytes, or 0L if the file does not exist.
      */
-    public static long getFileSize( String sAccount, int nFileId )
+    public static synchronized long getFileSize( String sAccount, int nFileId )
     {
         return _getUserFile( sAccount, nFileId ).length();
     }
@@ -131,7 +132,7 @@ public class NativeFileSystemTools
      * @param sAccount An user account
      * @return The sum of all files size owned by passed account.
      */
-    public static long getUsedSpace( String sAccount )
+    public static synchronized long getUsedSpace( String sAccount )
     {
         long nAmount = 0;
         // For some reason we're having a null pointer exception here,
