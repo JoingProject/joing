@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.joing.pde.swing;
+package org.joing.pde.joingswingtools;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -37,6 +37,15 @@ import org.joing.pde.desktop.container.PDEFrame;
  */
 public class FrameAcceptCancel extends PDEFrame
 {
+    public static final int ACCEPTED  = 1;
+    public static final int CANCELLED = 0;
+    
+    private boolean bExitWithAccept = false;
+    private JButton btnAccept       = new JButton();
+    private JButton btnCancel       = new JButton();
+            
+    //------------------------------------------------------------------------//
+    
     /**
      * Class constructor.
      * <p>
@@ -53,23 +62,23 @@ public class FrameAcceptCancel extends PDEFrame
     {
         super();
         
-        JButton btnAccept = new JButton( "Accept" );
-                btnAccept.addActionListener( new ActionListener()
+        btnAccept = new JButton( "Accept" );
+        btnAccept.addActionListener( new ActionListener()
+            {
+                public void actionPerformed( ActionEvent ae )
                 {
-                    public void actionPerformed( ActionEvent ae )
-                    {
-                        onAccept();
-                    }
-                } );
+                    onAccept();
+                }
+            } );
 
-        JButton btnCancel = new JButton( "Cancel" );
-                btnCancel.addActionListener( new ActionListener()
+        btnCancel = new JButton( "Cancel" );
+        btnCancel.addActionListener( new ActionListener()
+            {
+                public void actionPerformed( ActionEvent ae )
                 {
-                    public void actionPerformed( ActionEvent ae )
-                    {
-                        onCancel();
-                    }
-                } );
+                    onCancel();
+                }
+            } );
 
         JPanel  pnlButtons = new JPanel( new FlowLayout( FlowLayout.TRAILING, 5, 0 ) );
                 pnlButtons.setBorder( new EmptyBorder( 0, 10, 10, 10 ) );
@@ -82,11 +91,29 @@ public class FrameAcceptCancel extends PDEFrame
         getContentPane().add( pnlContent, BorderLayout.CENTER );
         setDefaultCloseOperation( JInternalFrame.DISPOSE_ON_CLOSE );
         getRootPane().setDefaultButton( btnAccept );
-        setTitle( sTitle );
+        setTitle( (sTitle == null) ? "" : sTitle );
     }
-        
+    
+    public void setAcceptText( String sAcceptText )
+    {
+        if( sAcceptText != null )
+            btnAccept.setText( sAcceptText );
+    }
+
+    public void setCancelText( String sCancelText )
+    {
+        if( sCancelText != null )
+            btnCancel.setText( sCancelText );
+    }
+    
+    /**
+     * 
+     * Note: if this method is overwritten, you better call super, otherwise the
+     * exit status value will not be the correct one and the frame will no close.
+     */
     public void onAccept()
     {
+        FrameAcceptCancel.this.bExitWithAccept = true;
         close();
     }
 

@@ -7,9 +7,13 @@ package org.joing.pde.desktop.container;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyVetoException;
+import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.event.InternalFrameEvent;
+import javax.swing.plaf.basic.BasicInternalFrameUI;
 import org.joing.common.desktopAPI.pane.DeskFrame;
 
 /**
@@ -26,7 +30,7 @@ import org.joing.common.desktopAPI.pane.DeskFrame;
  * @author Francisco Morero Peyrona
  */
 public class PDEFrame extends PDEWindow implements DeskFrame
-{
+{   
     private boolean bAlwaysOnTop = false;
     
     //------------------------------------------------------------------------//
@@ -37,19 +41,10 @@ public class PDEFrame extends PDEWindow implements DeskFrame
         
         setDefaultCloseOperation( JInternalFrame.DISPOSE_ON_CLOSE );
         
-        /* TODO: hacer que funcione
+        // To show a popup menu when mouse right clicked on title bar or
+        // left clicked on title-bar icon.
         JComponent pane = ((BasicInternalFrameUI) getUI()).getNorthPane();
-        
-        pane.addMouseListener( new MouseAdapter()
-        {// TODO: hacer que click con el btn izq sobre el icono de la barra de título abra el popup
-            
-            // Note: In this context, isPopupTrigger() does not work
-            public void mousePressed( MouseEvent me )
-            {
-                if( me.getButton() == MouseEvent.BUTTON2 || me.getButton() == MouseEvent.BUTTON3 )
-                    showPopupMenu( me.getPoint() );
-            }
-        } );*/
+                   pane.addMouseListener( new MyMouseListener() );
     }
     
     //------------------------------------------------------------------------//
@@ -134,7 +129,7 @@ public class PDEFrame extends PDEWindow implements DeskFrame
     public void setAlwaysOnTop( boolean b )
     {
         this.bAlwaysOnTop = b;   // In PDE this property is handled by the WorkArea
-        // TODO: Hay que lanzar un ChangedProperyEvent y hacer que el WorkArea lo escuche para que la quite del top
+        // TODO: Hay que lanzar un ChangedProperyEvent y hacer que el WorkArea lo escuche para que la quite ponga y la quite del top
     }
     
     //------------------------------------------------------------------------//
@@ -207,5 +202,39 @@ public class PDEFrame extends PDEWindow implements DeskFrame
         // And in this way, we also save memory (it exists in memory only while needed).
         FramePopupMenu popup = new FramePopupMenu( this );            
                        popup.show( this, p.x, p.y );
+    }
+    
+    //------------------------------------------------------------------------//
+    //
+    //------------------------------------------------------------------------//
+    private final class MyMouseListener implements MouseListener
+    {
+        public void mouseClicked( MouseEvent e )
+        {
+        }
+
+        // Note: In this context, isPopupTrigger() does not work
+        public void mousePressed( MouseEvent me )
+        {
+            /*
+            // TODO: hacer que click con el btn izq sobre el icono de la barra de 
+            //       título o el dcho en cualquier parte de la barra, abra el popup
+            
+            if( me.getButton() == MouseEvent.BUTTON2 || me.getButton() == MouseEvent.BUTTON3 )
+                showPopupMenu( me.getPoint() );
+             */
+        }
+        
+        public void mouseReleased( MouseEvent e )
+        {
+        }
+
+        public void mouseEntered( MouseEvent e )
+        {
+        }
+
+        public void mouseExited( MouseEvent e )
+        {
+        }
     }
 }

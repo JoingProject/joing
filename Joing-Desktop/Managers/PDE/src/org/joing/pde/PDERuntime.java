@@ -7,22 +7,15 @@
  */
 package org.joing.pde;
 
+import org.joing.pde.joingswingtools.DialogAcceptCancel;
 import java.applet.Applet;
 import java.applet.AudioClip;
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URL;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.StandardSound;
@@ -37,7 +30,7 @@ import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
 import org.joing.pde.media.images.ImagesUtil;
 import org.joing.pde.media.sounds.SoundsUtil;
-import org.joing.pde.swing.JErrorPanel;
+import org.joing.pde.joingswingtools.JErrorPanel;
 
 /**
  * The Runtime class.
@@ -125,22 +118,18 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
     
     public boolean showAcceptCancelDialog( String sTitle, DeskComponent content )
     {
-        BasicDialog dialog = new BasicDialog( sTitle, (JComponent) content );
-        
-        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
-        
-        return dialog.bExitWithAccept;
+        return showAcceptCancelDialog( sTitle, content, null, null );
     }
     
-    public boolean showBasicDialog( String sTitle, DeskComponent content, String sAcceptText, String sCancelText )
+    public boolean showAcceptCancelDialog( String sTitle, DeskComponent content, String sAcceptText, String sCancelText )
     {
-        BasicDialog dialog = new BasicDialog( sTitle, (JComponent) content );
-                    dialog.setAcceptText( sAcceptText );
-                    dialog.setCancelText( sCancelText );
+        DialogAcceptCancel dialog = new DialogAcceptCancel( sTitle, (JComponent) content );
+                           dialog.setAcceptText( sAcceptText );
+                           dialog.setCancelText( sCancelText );
         
         org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
         
-        return dialog.bExitWithAccept;
+        return dialog.getExitStatus() == DialogAcceptCancel.ACCEPTED;
     }
     
     public boolean showYesNoDialog( String sTitle, String sMessage )
@@ -162,65 +151,5 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
                   dialog.add( (DeskComponent) new JErrorPanel( exc ) );
                   
         org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
-    }
-    
-    
-    //------------------------------------------------------------------------//
-    // INNER CLASS: Basic Dialog
-    //------------------------------------------------------------------------//
-    private static final class BasicDialog extends PDEDialog
-    {
-        private boolean bExitWithAccept = false;
-        private JButton btnAccept       = new JButton();
-        private JButton btnCancel       = new JButton();
-        
-        private BasicDialog( String sTitle, JComponent content )
-        {
-            super();
-            
-            btnAccept.setText( "Accept" );
-            btnAccept.addActionListener( new ActionListener()
-            {
-                public void actionPerformed( ActionEvent e )
-                {
-                    BasicDialog.this.bExitWithAccept = true;
-                    BasicDialog.this.close();
-                }
-            } );
-            
-            btnCancel.setText( "Cancel" );
-            btnCancel.addActionListener( new ActionListener()
-            {
-                public void actionPerformed( ActionEvent e )
-                {
-                    BasicDialog.this.close();
-                }
-            } );
-                    
-            JPanel  pnlButtons = new JPanel( new FlowLayout( FlowLayout.TRAILING, 5, 0 ) );
-                    pnlButtons.setBorder( new EmptyBorder( 0, 10, 10, 10 ) );
-                    pnlButtons.add( btnAccept );
-                    pnlButtons.add( btnCancel );
-            JPanel  pnlContent = new JPanel( new BorderLayout() );
-                    pnlContent.add( content   , BorderLayout.CENTER );
-                    pnlContent.add( pnlButtons, BorderLayout.SOUTH  );
-            
-            getContentPane().add( pnlContent, BorderLayout.CENTER );
-            setDefaultCloseOperation( JInternalFrame.DISPOSE_ON_CLOSE );
-            getRootPane().setDefaultButton( btnAccept );
-            setTitle( (sTitle == null) ? "" : sTitle );
-        }
-        
-        private void setAcceptText( String sAcceptText )
-        {
-            if( sAcceptText != null )
-                btnAccept.setText( sAcceptText );
-        }
-        
-        private void setCancelText( String sCancelText )
-        {
-            if( sCancelText != null )
-                btnCancel.setText( sCancelText );
-        }
     }
 }

@@ -96,14 +96,22 @@ public class JoingApplicationChooser extends JPanel implements DeskComponent
      */
     public static AppDescriptor showDialog()
     {
-        AppDescriptor           app = null;
-        JoingApplicationChooser atp = new JoingApplicationChooser();
+        AppDescriptor app = null;
         
-        if( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showAcceptCancelDialog( "Select Application", atp ) )
-            app = atp.getSelectedApplication();
+        synchronized( JoingApplicationChooser.class )
+        {
+            JoingApplicationChooser atp = new JoingApplicationChooser();
+        
+            if( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
+                    showAcceptCancelDialog( "Select Application", atp ) )
+            {
+                app = atp.getSelectedApplication();
+            }
+        }
         
         return app;
     }
+    
     //------------------------------------------------------------------------//
     
     private void createText()

@@ -238,7 +238,8 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     // TODO: Creo que estas actions no pertencen al DeskLauncher, 
     //       sino a la WorkArea: hay que pensar en ello.
     //       Estas son lanzadas desde el popup y quizás lo que deberían hacer es 
-    //       llamar al container (WorkArea)
+    //       lanzar un evento indicando que quieren ser borradas y el evento 
+    //       capturarlo el container (WorkArea)
     public void delete()
     {
         DesktopManager dm = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();

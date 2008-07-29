@@ -250,12 +250,9 @@ public class FrameList extends PDETaskBarPanel
     
     private class TheDesktopListener implements  DesktopListener
     {
-        public void taskBarAdded( TaskBar tb )
-        {
-        }
-        public void taskBarRemoved( TaskBar tb )
-        {
-        }
+        public void taskBarAdded( TaskBar tb )    { /* Nothing to do */ }
+        public void taskBarRemoved( TaskBar tb )  { /* Nothing to do */ }
+        
         public void workAreaAdded( WorkArea wa )
         {
             wa.addWorkAreaListener( FrameList.this.twal );
