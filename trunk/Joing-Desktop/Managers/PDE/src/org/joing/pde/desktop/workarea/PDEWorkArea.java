@@ -204,7 +204,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
                     &&
                     obj instanceof Cloneable )
                 {
-                    // @FIXME Arreglarlo: imagino q habrá q hacerlo con reflection: bsuacndo si hay un método public llamado clone()
+                    // FIXME: Arreglarlo: imagino q habrá q hacerlo con reflection: bsuacndo si hay un método public llamado clone()
                 }
             }
             
@@ -526,7 +526,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     //------------------------------------------------------------------------//
     // FIXME: Estoy usando JDialog enlugar de JInternalframe hasta que solucione 
     //        el problema con LWModal
-    // Este método es el que uso para probar PDEDialog cuando hereda de JDialog
+    // Este método es el que uso cuando PDEDialog hereda de JDialog (en lugar de PDEWindow, que es lo suyo)
     private void addDialog( PDEDialog dialog, boolean bAutoArrange )
     {
         if( bAutoArrange )
@@ -539,7 +539,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         fireComponentAdded( dialog );
         dialog.setVisible( true );
     }
-    /* Esta es la que usaba cuando PDEDialog hereda de PDEWindow
+    /* Este método es el que hay que usar cuando PDEDialog hereda de PDEWindow
     private void addDialog( PDEDialog dialog, boolean bAutoArrange )
     {
         if( bAutoArrange )

@@ -33,7 +33,7 @@ import org.joing.common.desktopAPI.workarea.WorkArea;
  */
 public class JoingSwingUtilities
 {    
-    public static byte[] icon2ByteArray( ImageIcon icon )
+    public static synchronized byte[] icon2ByteArray( ImageIcon icon )
     {
         byte[] image = null;
         
@@ -66,7 +66,7 @@ public class JoingSwingUtilities
      * @return        The icon or the standard one <code>StandardImage.NO_IMAGE</code>
      *                if the requested was not found.
      */
-    public static ImageIcon getIcon( Object invoker, String sName )
+    public static synchronized ImageIcon getIcon( Object invoker, String sName )
     {
         URL       url  = null;
         ImageIcon icon = null;
@@ -100,7 +100,7 @@ public class JoingSwingUtilities
      * @return        The icon or an standard one <code>StandardImage.NO_IMAGE</code>
      *                if the requested was not found.
      */
-    public static ImageIcon getIcon( Object invoker, String sName, int nWidth, int nHeight  )
+    public static synchronized ImageIcon getIcon( Object invoker, String sName, int nWidth, int nHeight  )
     {
         ImageIcon icon = getIcon( invoker, sName  );
         
@@ -119,7 +119,7 @@ public class JoingSwingUtilities
      * @param sName
      * @return
      */
-    public static Cursor createCursor( String sImageName, Point pHotSpot, String sName )
+    public static synchronized Cursor createCursor( String sImageName, Point pHotSpot, String sName )
     {
         if( sImageName.indexOf( '.' ) == -1 )
             sImageName += ".png";
@@ -133,7 +133,7 @@ public class JoingSwingUtilities
      * 
      * @param dl
      */
-    public static void launch( DeskLauncher dl )
+    public static synchronized void launch( DeskLauncher dl )
     {
         launch( dl.getType(), dl.getTarget(), dl.getArguments() );
     }
@@ -144,7 +144,7 @@ public class JoingSwingUtilities
      * @param sTarget See DeskLauncher
      * @param sArguments Arguments to be passed if any, otherwise null.
      */
-    public static void launch( DeskLauncher.Type type, String sTarget, String sArguments )
+    public static synchronized void launch( DeskLauncher.Type type, String sTarget, String sArguments )
     {
         DesktopManager dm = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
         
@@ -158,11 +158,11 @@ public class JoingSwingUtilities
                 {
                     org.joing.jvmm.RuntimeFactory.getPlatform().start( Integer.valueOf( sTarget ) );
                 }
-
                 catch( ApplicationExecutionException exc )
                 {
                     dm.getRuntime().showException( exc, null );
-                }                catch( NumberFormatException nfe )
+                }                
+                catch( NumberFormatException nfe )
                 {
                     // If it is not an app Id (a number), it has to be an app name
                     // TODO: hacerlo
@@ -179,9 +179,7 @@ public class JoingSwingUtilities
         }
     }
     
-    //------------------------------------------------------------------------//
-    
-    public static WorkArea findWorkAreaFor( DeskComponent comp )
+    public static synchronized WorkArea findWorkAreaFor( DeskComponent comp )
     {
         List<WorkArea> lstWA = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getWorkAreas();
         

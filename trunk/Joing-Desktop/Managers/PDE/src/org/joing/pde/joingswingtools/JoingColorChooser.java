@@ -23,6 +23,8 @@ public class JoingColorChooser extends JColorChooser implements DeskComponent
     public static Color showDialog( Component parent, String title, Color initialColor ) 
            throws HeadlessException
     {
+        // FIXME: ponerla symchronized
+        
         JColorChooser pane = new JColorChooser( initialColor != null ? initialColor : Color.white );
 
         ColorTracker okListener = new ColorTracker( pane );
@@ -39,7 +41,9 @@ public class JoingColorChooser extends JColorChooser implements DeskComponent
         return showDialog( (Component) parent, title, initialColor );
     }
     
-    public static DeskDialog createDialog4Joing( Component parent, String title, boolean modal, 
+    //------------------------------------------------------------------------//
+    
+    private static DeskDialog createDialog4Joing( Component parent, String title, boolean modal, 
                                                  JColorChooser chooserPane, 
                                                  ActionListener okListener, ActionListener cancelListener  )
            throws HeadlessException 

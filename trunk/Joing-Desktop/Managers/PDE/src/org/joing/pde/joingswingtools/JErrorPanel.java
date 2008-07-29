@@ -4,7 +4,7 @@
  * Created on 5 de julio de 2008, 19:00
  */
 
-package org.joing.pde.swing;
+package org.joing.pde.joingswingtools;
 
 import java.awt.Image;
 import javax.swing.ImageIcon;

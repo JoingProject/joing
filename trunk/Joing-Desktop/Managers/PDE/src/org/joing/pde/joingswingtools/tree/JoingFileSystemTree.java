@@ -137,12 +137,25 @@ public class JoingFileSystemTree extends JoingSwingTree
         return bOnlyDirs;
     }
     
+    /**
+     * 
+     * @param node
+     * @return An instace of TreeNodeFile if file exists, null otherwise. 
+     */
     public TreeNodeFile setSelected( File node )
     {
-        TreeNodeFile nodeSelected = getSelectedNode();
+        TreeNodeFile nodeSelected = null;
         
-        // TODO: hacerlo
+        if( node.exists() )
+        {
+            // TODO: hacerlo
+            //       Si el fic existe, hay que ir traceando (y cargando si fuera 
+            //       necesario) uno a uno todos los nodos hasta completar la ruta.
+            // OJO: el fichero puede estar en local o en uno de los remotos
+        }
+        
         JOptionPane.showMessageDialog( this, "Option not yet implemented" );
+        
         return nodeSelected;
     }
     
@@ -289,7 +302,14 @@ public class JoingFileSystemTree extends JoingSwingTree
             {
                 public void actionPerformed( ActionEvent ae )
                 {
-                    JoingFileSystemTree.this.createFile();
+                    try
+                    {
+                        JoingFileSystemTree.this.createFile();
+                    }
+                    catch( IOException exc )
+                    {
+                        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showException( exc, null );
+                    }
                 }
             };
         }
@@ -444,13 +464,16 @@ public class JoingFileSystemTree extends JoingSwingTree
     
     /**
      * Create a new directory as child of highlighted node.
-     * @return <code>true</code> if operation was successfull.
+     * @return A reference to new created directory if operation was successfull
+     *         or null otherwise.
      */
     public File createDir() throws IOException
     {
-        File fDir = JoingFileSystemView.getFileSystemView().createNewFolder( (File) getSelectedNode().getUserObject() );
+        File fParent = (File) getSelectedNode().getUserObject();
+        File fDir    = JoingFileSystemView.getFileSystemView().createNewFolder( fParent );
         
-        add( new TreeNodeFile( fDir ) );
+        if( fDir != null )
+            add( new TreeNodeFile( fDir ) );
         
         return fDir;
     }
@@ -459,11 +482,11 @@ public class JoingFileSystemTree extends JoingSwingTree
      * Create a new file as child of highlighted node.
      * @return <code>true</code> if operation was successfull.
      */
-    public File createFile()
+    public File createFile() throws IOException
     {
         File fParent = (File) getSelectedNode().getUserObject();
-        File fNew    = JoingFileSystemView.getFileSystemView().createFileObject( fParent, 
-                                                                                 getNextNewFileName( fParent ) );
+        File fNew    = JoingFileSystemView.getFileSystemView().createNewFile( fParent );
+        
         add( new TreeNodeFile( fNew ) );
         
         return fNew;
@@ -479,18 +502,19 @@ public class JoingFileSystemTree extends JoingSwingTree
         boolean bAll = true;   // Where all selected files deleted?
         
         if( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
-            showYesNoDialog( "Confirm deletion", "Deleted entities can't be recovered.\nPlease confirm to delete." ) )
+                showYesNoDialog( "Confirm deletion", "Deleted entities can't be recovered.\nPlease confirm to delete." ) )
         {
             TreePath[] aPath = getSelectionPaths();
-
+            
             for( int n = 0; n < aPath.length; n++ )
             {
                 TreeNodeFile node = (TreeNodeFile) aPath[n].getLastPathComponent();
-
-                if( deepDelete( node.getFile() ) )
+                File         file = node.getFile();
+                
+                bAll = ((file instanceof VFSFile) ? file.delete() : deepDeleteLocalFS( file ));
+                
+                if( bAll )
                     delete( node );
-                else
-                    bAll = false;
             }
         }
         
@@ -605,7 +629,7 @@ public class JoingFileSystemTree extends JoingSwingTree
     
     // If passed file is a directory, recursively deletes it an all its files.
     // If passed file is just a file, deletes it.
-    private boolean deepDelete( java.io.File f )
+    private boolean deepDeleteLocalFS( java.io.File f )
     {
         boolean bSuccess = false;
         
@@ -619,7 +643,7 @@ public class JoingFileSystemTree extends JoingSwingTree
                 for( int n = 0; n < files.length; n++ )
                 {
                     if( files[n].isDirectory() )
-                        bSuccess = bSuccess && deepDelete( files[n] );
+                        bSuccess = bSuccess && deepDeleteLocalFS( files[n] );
                     else
                         bSuccess = bSuccess && files[n].delete();
                 }
@@ -629,15 +653,6 @@ public class JoingFileSystemTree extends JoingSwingTree
         }
         
         return bSuccess;
-    }
-    
-    private String getNextNewFileName( File fParent )
-    {
-        // TODO: Hacerlo bien: buscar el último: NewFileN y añadirle 1
-        String sBase = "NewFile";
-        String sTime = String.valueOf( System.currentTimeMillis() );
-        
-        return sBase + sTime.substring( 10 ); 
     }
     
     private void updateActionsEnableStatus()

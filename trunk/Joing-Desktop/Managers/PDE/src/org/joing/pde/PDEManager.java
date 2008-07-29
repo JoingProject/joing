@@ -29,7 +29,10 @@ import javax.swing.Timer;
 import org.joing.pde.desktop.PDEDesktop;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.io.InputStream;
 import java.util.Locale;
 import java.util.jar.Manifest;
@@ -244,6 +247,20 @@ public class PDEManager extends JApplet implements DesktopManager
                 public void windowIconified( WindowEvent we )   {}
                 public void windowOpened( WindowEvent we )      {}
             } );
+            frame.addComponentListener( new ComponentListener()
+            {   // Set minimum size to 640x480
+                public void componentResized( ComponentEvent ce )
+                {
+                    Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+                    JFrame    frm = (JFrame) ce.getSource();
+                              frm.setSize( Math.max( frm.getWidth() , dim.width  / 2 ),
+                                           Math.max( frm.getHeight(), dim.height / 2 ) );
+                }
+                
+                public void componentMoved( ComponentEvent ce )   {  }
+                public void componentShown( ComponentEvent ce )   {  }
+                public void componentHidden( ComponentEvent ce )  {  }
+            } );
         }
         
         return frame;
@@ -256,9 +273,8 @@ public class PDEManager extends JApplet implements DesktopManager
             public void run()
             {
                 GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-                // NEXT: When bug is fixed
                 // Due to a bug in Ubuntu and also in JDK, gs.isFullScreenSupported() always return false.
-                // When fixed, use gsisFullScreenSupported().
+                // NEXT: When fixed, use gsisFullScreenSupported().
                 boolean bFull = bFullScreen; ///&& gs.isFullScreenSupported();
                 
                 try
@@ -312,7 +328,7 @@ public class PDEManager extends JApplet implements DesktopManager
             panel.add( txtPassword, BorderLayout.CENTER );
             
             if( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
-                    showBasicDialog( "Enter your password", (DeskComponent) panel, "Unlock", "Lock" ) )
+                    showAcceptCancelDialog( "Enter your password", (DeskComponent) panel, "Unlock", "Lock" ) )
             {
                 String sPassword = String.valueOf( txtPassword.getPassword() );
                 
