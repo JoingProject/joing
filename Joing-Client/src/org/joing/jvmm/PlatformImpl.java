@@ -517,7 +517,7 @@ class PlatformImpl implements Platform {
     @Override
     public void shutdown() {
         if (getDesktopManager() != null) {
-            getDesktopManager().shutdown();  // Antonio, he añadido esta línea (peyrona)
+            getDesktopManager().shutdown();  // Needed to close DesktopManager gently.
         }
         halt(); // fix this.
     }

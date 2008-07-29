@@ -41,41 +41,41 @@ import org.joing.jvmm.RuntimeFactory;
 public class BridgeServletBaseImpl
 {
     // SESSION
-    static final String SESSION_LOGIN  = "session/Login";
-    static final String SESSION_LOGOUT = "session/Logout";
+    protected static final String SESSION_LOGIN  = "session/Login";
+    protected static final String SESSION_LOGOUT = "session/Logout";
     
     // USER
-    static final String USER_GET_USER    = "user/GetUser";
-    static final String USER_UPDATE_USER = "user/UpdateUser";
-    static final String USER_LOCALS      = "user/GetAvailableLocales";
+    protected static final String USER_GET_USER    = "user/GetUser";
+    protected static final String USER_UPDATE_USER = "user/UpdateUser";
+    protected static final String USER_LOCALS      = "user/GetAvailableLocales";
     
     // APPLICATIONS
-    static final String APP_GET_AVAILABLES    = "app/GetAvailableForUser";
-    static final String APP_GET_NOT_INSTALLED = "app/GetNotInstalledForUser";
-    static final String APP_GET_INSTALLED     = "app/GetInstalledForUser";
-    static final String APP_INSTALL           = "app/Install";
-    static final String APP_UNINSTALL         = "app/Uninstall";
-    static final String APP_GET_PREFERRED     = "app/GetPreferredForType";
-    static final String APP_GET_APPLICATION   = "app/GetApplication";
-    static final String APP_SERVLET = "ApplicationServlet";
+    protected static final String APP_GET_AVAILABLES    = "app/GetAvailableForUser";
+    protected static final String APP_GET_NOT_INSTALLED = "app/GetNotInstalledForUser";
+    protected static final String APP_GET_INSTALLED     = "app/GetInstalledForUser";
+    protected static final String APP_INSTALL           = "app/Install";
+    protected static final String APP_UNINSTALL         = "app/Uninstall";
+    protected static final String APP_GET_PREFERRED     = "app/GetPreferredForType";
+    protected static final String APP_GET_APPLICATION   = "app/GetApplication";
+    protected static final String APP_SERVLET = "ApplicationServlet";
     
     // VFS
-    static final String VFS_GET_FILE          = "vfs/GetFile";
-    static final String VFS_CREATE_DIR        = "vfs/CreateDirectory";
-    static final String VFS_CREATE_FILE       = "vfs/CreateFile";
-    static final String VFS_READ_TEXT_FILE    = "vfs/ReadTextFile";
-    static final String VFS_READ_BINARY_FILE  = "vfs/ReadBinaryFile";
-    static final String VFS_WRITE_TEXT_FILE   = "vfs/WriteTextFile";
-    static final String VFS_WRITE_BINARY_FILE = "vfs/WriteBinaryFile";
-    static final String VFS_UPDATE            = "vfs/UpdateFile";
-    static final String VFS_COPY              = "vfs/Copy";
-    static final String VFS_MOVE              = "vfs/Move";
-    static final String VFS_TRASHCAN          = "vfs/Trashcan";
-    static final String VFS_DELETE            = "vfs/Delete";
-    static final String VFS_GET_ROOTS         = "vfs/GetRoots";
-    static final String VFS_GET_CHILDS        = "vfs/GetChilds";
-    static final String VFS_GET_BY_NOTES      = "vfs/GetByNotes";
-    static final String VFS_GET_TRASHCAN      = "vfs/GetTrashcan";
+    protected static final String VFS_GET_FILE          = "vfs/GetFile";
+    protected static final String VFS_CREATE_DIR        = "vfs/CreateDirectory";
+    protected static final String VFS_CREATE_FILE       = "vfs/CreateFile";
+    protected static final String VFS_READ_TEXT_FILE    = "vfs/ReadTextFile";
+    protected static final String VFS_READ_BINARY_FILE  = "vfs/ReadBinaryFile";
+    protected static final String VFS_WRITE_TEXT_FILE   = "vfs/WriteTextFile";
+    protected static final String VFS_WRITE_BINARY_FILE = "vfs/WriteBinaryFile";
+    protected static final String VFS_UPDATE            = "vfs/UpdateFile";
+    protected static final String VFS_COPY              = "vfs/Copy";
+    protected static final String VFS_MOVE              = "vfs/Move";
+    protected static final String VFS_TRASHCAN          = "vfs/Trashcan";
+    protected static final String VFS_DELETE            = "vfs/Delete";
+    protected static final String VFS_GET_ROOTS         = "vfs/GetRoots";
+    protected static final String VFS_GET_CHILDS        = "vfs/GetChilds";
+    protected static final String VFS_GET_BY_NOTES      = "vfs/GetByNotes";
+    protected static final String VFS_GET_TRASHCAN      = "vfs/GetTrashcan";
     
     // CLASS VARIABLES
     protected Platform platform;

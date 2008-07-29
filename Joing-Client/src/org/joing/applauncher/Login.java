@@ -48,7 +48,7 @@ class Login extends JDialog
         setDefaultCloseOperation( JDialog.DISPOSE_ON_CLOSE );
         setIconImage( (new ImageIcon( getClass().getResource( "resources/joing_icon.png" ) )).getImage() );
         
-        // FIXME: Quitar esto
+        // DEPLOY: Quitar esto
         txtAccount.setText( "peyrona@joing.org" );
         txtPassword.setText( "admin" );
         //--------------------------------

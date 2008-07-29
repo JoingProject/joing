@@ -57,10 +57,10 @@ public class JoingFileSystemView extends FileSystemView
      * @see javax.swing.filechooser.FileSystemView#createFileObject( 
      *                                 java.io.File containingDir, String name )
      */
-    public java.io.File createFileObject( java.io.File dir, String name  )
+    public java.io.File createFileObject( java.io.File dir, String name )
     {
         if( dir instanceof VFSFile )
-            return remoteView.createFileObject( dir, name );
+            return remoteView.createFileObject( (VFSFile) dir, name );
         else
             return localView.createFileObject( dir, name );
     }
@@ -82,13 +82,37 @@ public class JoingFileSystemView extends FileSystemView
      * @see javax.swing.filechooser.FileSystemView#createNewFolder( 
      *                                              java.io.File containingDir )
      */
-    public java.io.File createNewFolder( java.io.File dir ) throws IOException
+    public java.io.File createNewFolder( java.io.File fParentDir ) throws IOException
     {
-        if( dir instanceof VFSFile )
-            return remoteView.createNewFolder( dir );
+        if( fParentDir instanceof VFSFile )
+            return remoteView.createNewFolder( (VFSFile) fParentDir );
         else
-            return localView.createNewFolder( dir );
+            return localView.createNewFolder( fParentDir );
     }
+    
+    //------------------------------------------------------------------------//
+    // Added methods not existing in javax.swing.filechooser.FileSystemView
+    
+    /**
+     * Creates a new empty file with default name in the VFS.
+     * 
+     * @param fParentDir Parent directory
+     * @return The VFSFile instance for the just created file.
+     * @throws java.io.IOException
+     */
+    // "Normal" (local) files are created in a wired way: an instance of File is 
+    // creted but the physical file is not created until needed. But Virtual
+    // files must exists after invocation to the server; that's why I add this 
+    // new method (therefore it is used only by VFS).
+    public java.io.File createNewFile( java.io.File fParentDir ) throws IOException
+    {
+        if( fParentDir instanceof VFSFile )
+            return remoteView.createNewFile( (VFSFile) fParentDir );
+        else
+            throw new IOException( "Error creating file: this invocation should not happen." );
+    }
+    
+    //------------------------------------------------------------------------//
     
     /**
      * @see javax.swing.filechooser.FileSystemView#getChild(java.io.File parent,
@@ -114,7 +138,7 @@ public class JoingFileSystemView extends FileSystemView
     public java.io.File[] getFiles( java.io.File dir, boolean useFileHiding )
     {
         if( dir instanceof VFSFile )
-            return remoteView.getFiles( dir, useFileHiding );
+            return remoteView.getFiles( (VFSFile) dir, useFileHiding );
         else
             return localView.getFiles( dir, useFileHiding );
     }
@@ -137,7 +161,7 @@ public class JoingFileSystemView extends FileSystemView
     public java.io.File getParentDirectory( java.io.File dir )
     {
         if( dir instanceof VFSFile )
-            return remoteView.getParentDirectory( dir );
+            return remoteView.getParentDirectory( (VFSFile) dir );
         else
             return localView.getParentDirectory( dir );
     }
@@ -151,7 +175,7 @@ public class JoingFileSystemView extends FileSystemView
         VFSFile[]      afRemote = remoteView.getRoots();
         java.io.File[] afAll    = new java.io.File[ afLocal.length + afRemote.length ];
         
-        // FIXME: user este cuando esté corregido el bug
+        // FIXME: usar este cuando esté corregido el bug
         //System.arraycopy( afRemote, 0, afAll,               0, afRemote.length );
         //System.arraycopy( afLocal , 0, afAll, afRemote.length, afLocal.length );
         
@@ -168,7 +192,7 @@ public class JoingFileSystemView extends FileSystemView
     public String getSystemDisplayName( java.io.File file )
     {
         if( file instanceof VFSFile )
-            return remoteView.getSystemDisplayName( file );
+            return remoteView.getSystemDisplayName( (VFSFile) file );
         else
             return localView.getSystemDisplayName( file );
     }
@@ -176,7 +200,7 @@ public class JoingFileSystemView extends FileSystemView
     public Icon getSystemIcon( java.io.File file  )
     {
         if( file instanceof VFSFile )
-            return remoteView.getSystemIcon( file  );
+            return remoteView.getSystemIcon( (VFSFile) file  );
         else
             return localView.getSystemIcon( file  );
     }
@@ -184,7 +208,7 @@ public class JoingFileSystemView extends FileSystemView
     public String getSystemTypeDescription( java.io.File file ) 
     {
         if( file instanceof VFSFile )
-            return remoteView.getSystemTypeDescription( file );
+            return remoteView.getSystemTypeDescription( (VFSFile) file );
         else
             return localView.getSystemTypeDescription( file );
     }
@@ -195,7 +219,7 @@ public class JoingFileSystemView extends FileSystemView
     public boolean isComputerNode( java.io.File dir )
     {
         if( dir instanceof VFSFile )
-            return remoteView.isComputerNode( dir );
+            return remoteView.isComputerNode( (VFSFile) dir );
         else
             return localView.isComputerNode( dir );
     }
@@ -206,7 +230,7 @@ public class JoingFileSystemView extends FileSystemView
     public boolean isDrive( java.io.File dir )
     {
         if( dir instanceof VFSFile )
-            return remoteView.isDrive( dir );
+            return remoteView.isDrive( (VFSFile) dir );
         else
             return localView.isDrive( dir );
     }
@@ -217,7 +241,7 @@ public class JoingFileSystemView extends FileSystemView
     public boolean isFileSystem( java.io.File file )
     {
         if( file instanceof VFSFile )
-            return remoteView.isFileSystem( file );
+            return remoteView.isFileSystem( (VFSFile) file );
         else
             return localView.isFileSystem( file );
     }
@@ -228,7 +252,7 @@ public class JoingFileSystemView extends FileSystemView
     public boolean isFileSystemRoot( java.io.File dir )
     {
         if( dir instanceof VFSFile )
-            return remoteView.isFileSystemRoot( dir );
+            return remoteView.isFileSystemRoot( (VFSFile) dir );
         else
             return localView.isFileSystemRoot( dir );
     }
@@ -239,7 +263,7 @@ public class JoingFileSystemView extends FileSystemView
     public boolean isFloppyDrive( java.io.File dir )
     {
         if( dir instanceof VFSFile )
-            return remoteView.isFloppyDrive( dir );
+            return remoteView.isFloppyDrive( (VFSFile) dir );
         else
             return localView.isFloppyDrive( dir );
     }
@@ -250,7 +274,7 @@ public class JoingFileSystemView extends FileSystemView
     public boolean isHiddenFile( java.io.File file )
     {
         if( file instanceof VFSFile )
-            return remoteView.isHiddenFile( file );
+            return remoteView.isHiddenFile( (VFSFile) file );
         else
             return localView.isHiddenFile( file );
     }
@@ -261,7 +285,7 @@ public class JoingFileSystemView extends FileSystemView
     public boolean isParent( java.io.File folder, java.io.File file )
     {
         if( folder instanceof VFSFile )
-            return remoteView.isParent( folder, file );
+            return remoteView.isParent( (VFSFile) folder, (VFSFile) file );
         else
             return localView.isParent( folder, file );
     }
@@ -272,7 +296,7 @@ public class JoingFileSystemView extends FileSystemView
     public boolean isRoot( java.io.File file )
     {
         if( file instanceof VFSFile )
-            return remoteView.isRoot( file );
+            return remoteView.isRoot( (VFSFile) file );
         else
             return localView.isRoot( file );
     }
@@ -283,7 +307,7 @@ public class JoingFileSystemView extends FileSystemView
     public Boolean isTraversable( java.io.File file )
     {
 	if( file instanceof VFSFile )
-            return remoteView.isTraversable( file );
+            return remoteView.isTraversable( (VFSFile) file );
         else
             return localView.isTraversable( file );
     }
