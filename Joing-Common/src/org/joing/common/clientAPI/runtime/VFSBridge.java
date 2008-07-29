@@ -42,9 +42,9 @@ public interface VFSBridge {
     
     boolean trashcan( int nFileID, boolean bInTrashCan );
     
-    boolean delete( int[] anFileId );
+    int[] delete( int[] anFileId );
     
-    boolean delete( int nFileId );
+    int[] delete( int nFileId );
     
     //------------------------------------------------------------------------//
     // VfsListRemote

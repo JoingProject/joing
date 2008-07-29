@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class AppDescriptor implements Serializable
 {
-    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo usando: serialver -show
     
     private int          id;
     private String       name;

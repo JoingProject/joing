@@ -27,7 +27,7 @@ package org.joing.common.exception;
  */
 public class JoingServerVFSException extends JoingServerException
 {
-    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo usando: serialver -show
     
     public final static String INVALID_OWNER         = "Operation can not be performed because\nthe account does not ownes the file.";
     public final static String FILE_NOT_EXISTS       = "File does not exists.";

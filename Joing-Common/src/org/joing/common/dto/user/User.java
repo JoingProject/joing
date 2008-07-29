@@ -18,7 +18,7 @@ import java.util.Locale;
  */
 public class User implements Serializable
 {
-    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo usando: serialver -show
     
     private String  account;      // read-only
     private String  email;

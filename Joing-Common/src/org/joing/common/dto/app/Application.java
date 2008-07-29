@@ -35,7 +35,7 @@ import org.joing.common.exception.JoingServerAppException;
  */
 public class Application extends AppDescriptor implements Serializable
 {
-    private static final long serialVersionUID = 1L;    // TODO: cambiarlo por un nº apropiado
+    private static final long serialVersionUID = 1L;    // TODO: cambiarlo usando: serialver -show
     
     private byte[] btContent = null;
     
