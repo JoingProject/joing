@@ -7,8 +7,10 @@ Version: 0.0
 IconPixel: org/joing/yace/images/yace.png
 IconVector: 
 Description: A mockup to show how could look like an application to communicate with the Join'g community
+WebSite: www.joing.org
+Author: Francisco Morero Peyrona
+Vendor: Join'g Team
+License: GPL-V3
+CallSyntax: 
 Arguments: 
 FileTypes: 
-Author: Francisco Morero Peyrona
-Vendor: 
-License: GPL-V3
