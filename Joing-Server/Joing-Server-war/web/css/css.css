@@ -273,7 +273,10 @@ div.input_text span input {
   margin-top: -50px;
   line-height: 30px;
 }
-
+.footer_text .visitor_statistics {
+    float:right;
+    margin-right: 25px;
+}
 .messages {
   list-style-type: none;
   margin: 0px;
