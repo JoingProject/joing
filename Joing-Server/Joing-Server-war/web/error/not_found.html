@@ -1,0 +1,19 @@
+<ui:composition
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    template="/WEB-INF/templates/template.html">
+
+<ui:define name="meta">
+    <meta http-equiv="refresh" content="5;#{Util.path['index.html']}"></meta>
+</ui:define>
+
+<ui:define name="title">Error</ui:define>
+
+<ui:define name="content">
+    <p>We are sorry, but we can not found the document you are asking for.</p>
+    <p>Make sure the URL you just entered is right.</p>
+    <p>You will be redirected to the home in five seconds.</p>
+</ui:define>
+
+</ui:composition>

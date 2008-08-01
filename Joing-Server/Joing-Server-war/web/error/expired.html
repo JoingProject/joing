@@ -1,0 +1,18 @@
+<ui:composition
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    template="/WEB-INF/templates/template.html">
+
+<ui:define name="meta">
+    <meta http-equiv="refresh" content="3;#{Util.path['index.html']}"></meta>
+</ui:define>
+
+<ui:define name="title">Error</ui:define>
+
+<ui:define name="content">
+    <p>Your session has expired.</p>
+    <p>You will be redirected to the home in three seconds.</p>
+</ui:define>
+
+</ui:composition>
