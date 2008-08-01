@@ -202,7 +202,7 @@ div.input_text span input {
   background-repeat: repeat-x;
   background-position: top left;
   height: 19px;
-  border: none;
+  border: 0px;
   width: 100px;
 }
 .web_form * {
@@ -212,7 +212,7 @@ div.input_text span input {
 .web_form .submit, .web_form .web_start {
   display: block;
   float: right;
-  border: none;
+  border: 0px;
   width: 102px;
   height: 29px;
   margin-top: 5px;
@@ -322,7 +322,7 @@ dl.form dt, dl.form dd {
     , .create_user_modify {
 
     margin-left: 10px;
-    border: none;
+    border: 0px;
     background: url('../img/button_white_background.png');
     background-color: none;
     background-repeat: no-repeat;
