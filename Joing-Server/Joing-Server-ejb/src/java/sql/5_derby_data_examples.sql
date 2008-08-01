@@ -2,15 +2,22 @@
 --     WebPC - SERVER - DATA
 -- ********************************************************************************************************************
 
+-- Add new language: Spanish of Spain
 insert into locales (IDIOM, COUNTRY)  -- ID_LOCALE = 2
      values ('es', 'ES');
 
 -- ------------------------------------------------------------------
 
+-- Add new user
 insert into users (ACCOUNT, PASSWORD, EMAIL, FIRST_NAME, SECOND_NAME, ID_LOCALE, IS_MALE, QUOTA)
      values('peyrona@joing.org','admin','peyrona@gmail.com', 'Francisco','Morero Peyrona', 2, 1, 0);
 
--- For inf about ID_APP_GROUP, refer to -> org.joing.common.dto.app.AppGroup.java
+-- And add home directory for the new user
+insert into files (ACCOUNT, OWNER, FILE_PATH, FILE_NAME, IS_DIR, IS_PUBLIC, IS_MODIFIABLE, IS_DELETEABLE, IS_DUPLICABLE, IS_ALTERABLE)
+     values('peyrona@joing.org', 'system@joing.org', '', '/', 1, 0, 0, 0, 0, 0 );
+
+-- Add descriptions for application groups in Spanish
+-- Note: For inf about ID_APP_GROUP, refer to -> org.joing.common.dto.app.AppGroup.java
 
 insert into app_group_descriptions (ID_APP_GROUP, ID_LOCALE, GROUP_NAME)
      values (1, 2, 'Accesorios');
@@ -47,6 +54,8 @@ insert into app_group_descriptions (ID_APP_GROUP, ID_LOCALE, GROUP_NAME)
 
 -- -----------------------------------------------------------------------------
 
+-- Add some basic applications and default desktop (PDE)
+
 insert into applications (EXTRA_PATH, EXECUTABLE)
      values ('desktops', 'PDE.jar');
 
@@ -72,7 +81,7 @@ insert into applications (EXTRA_PATH, EXECUTABLE)
      values ('system', 'SystemMonitor.jar');
 
 insert into applications (EXTRA_PATH, EXECUTABLE)
-     values ('accessories', 'TinyExplorer.jar');
+     values ('accessories', 'YAFE.jar');
 
 insert into applications (EXTRA_PATH, EXECUTABLE)
      values ('accessories', 'YACE.jar');
