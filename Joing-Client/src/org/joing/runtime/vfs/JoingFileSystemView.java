@@ -23,6 +23,7 @@ package org.joing.runtime.vfs;
 
 import java.io.IOException;
 import javax.swing.Icon;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileSystemView;
 
 /**
@@ -70,12 +71,16 @@ public class JoingFileSystemView extends FileSystemView
      */
     public java.io.File createFileObject( String path )
     {
-        java.io.File fLocal = new java.io.File( path );
+        java.io.File file = new java.io.File( path );
         
-        javax.swing.JOptionPane.showMessageDialog( null, "Invocado: JoingFileSystemView::createFileObject( String path )");
-        
-        // FIXME: hacerlo
-        return new java.io.File( path );
+        if( path != null                              && 
+            path.charAt( 0 ) == VFSView.separatorChar && 
+            ! file.exists() )
+        { // Assuming it refers to remote FS
+            file = remoteView.createFileObject( path );
+        }
+        JOptionPane.showMessageDialog( null, "llamada a: createFileObject( String path )" );
+        return file;
     }
     
     /**
@@ -175,13 +180,8 @@ public class JoingFileSystemView extends FileSystemView
         VFSFile[]      afRemote = remoteView.getRoots();
         java.io.File[] afAll    = new java.io.File[ afLocal.length + afRemote.length ];
         
-        // FIXME: usar este cuando esté corregido el bug
-        //System.arraycopy( afRemote, 0, afAll,               0, afRemote.length );
-        //System.arraycopy( afLocal , 0, afAll, afRemote.length, afLocal.length );
-        
-        // FIXME: Quitarlo cuando esté corregido el bug
-        System.arraycopy( afLocal , 0, afAll,              0, afLocal.length );
-        System.arraycopy( afRemote, 0, afAll, afLocal.length, afRemote.length );
+        System.arraycopy( afRemote, 0, afAll,               0, afRemote.length );
+        System.arraycopy( afLocal , 0, afAll, afRemote.length, afLocal.length );
         
         return afAll;
     }
@@ -197,12 +197,9 @@ public class JoingFileSystemView extends FileSystemView
             return localView.getSystemDisplayName( file );
     }
     
-    public Icon getSystemIcon( java.io.File file  )
+    public Icon getSystemIcon( java.io.File file )
     {
-        if( file instanceof VFSFile )
-            return remoteView.getSystemIcon( (VFSFile) file  );
-        else
-            return localView.getSystemIcon( file  );
+        return (new VFSIconMapper()).getIcon( file );   // I use this class for both FS: local and virtual
     }
     
     public String getSystemTypeDescription( java.io.File file ) 

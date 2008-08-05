@@ -109,6 +109,15 @@ public class VFSView
      */
     public VFSFile createFileObject( String path )
     {
+        /*TODO: decidir qué hacer con esto
+        int    nIndex  = path.lastIndexOf( VFSView.pathSeparatorChar );
+        String sFolder = path.;
+        String  sName  = path.;
+
+        FileDescriptor fdNewFile = RuntimeFactory.getPlatform().getBridge().getFileBridge().createFile( sFolder, null );
+                       fdNewFile.setName( sName );
+                       fdNewFile = RuntimeFactory.getPlatform().getBridge().getFileBridge().update( fdNewFile );*/
+        
         return new VFSFile( path );
     }
     
@@ -259,10 +268,9 @@ public class VFSView
         return sName;
     }
     
-    // NEXT: Si quiero, puedo poner mis propios iconos para los fic de Joing
     public Icon getSystemIcon( VFSFile vfs )
     {
-        return FileSystemView.getFileSystemView().getSystemIcon( new java.io.File( vfs.getAbsolutePath() ) );
+        return (new VFSIconMapper()).getIcon( vfs );
     }
     
     public String getSystemTypeDescription( VFSFile vfs ) 
@@ -357,6 +365,8 @@ public class VFSView
     private VFSView()
     {
     }
+    
+    //------------------------------------------------------------------------//
     
     private final class FilterExcludeHidden implements FileFilter
     {
