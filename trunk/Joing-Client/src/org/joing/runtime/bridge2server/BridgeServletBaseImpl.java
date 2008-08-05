@@ -31,6 +31,8 @@ import java.net.URLConnection;
 import java.rmi.RemoteException;
 import org.joing.common.exception.JoingServerException;
 import org.joing.common.clientAPI.jvmm.Platform;
+import org.joing.common.clientAPI.log.JoingLogger;
+import org.joing.common.clientAPI.log.SimpleLoggerFactory;
 import org.joing.jvmm.RuntimeFactory;
 
 /**
@@ -189,8 +191,7 @@ public class BridgeServletBaseImpl
             }
             catch( ClassNotFoundException exc )
             {
-                RuntimeFactory.getPlatform().showException( 
-                        "This exception should not happen", exc );
+                SimpleLoggerFactory.getLogger( JoingLogger.ID ).critical( "This exception should not happen", exc.getException() );
             }
             
             return obj;
