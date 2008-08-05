@@ -163,7 +163,7 @@ public class JoingSwingUtilities
                     public void run()
                     {
                         Image imgLaunch = dm.getRuntime().getImage( StandardImage.LAUNCHER );
-                        int   nIdNote   = nIdNote = dm.getDesktop().showNotification( "Launching application", imgLaunch );
+                        int   nIdNote   = dm.getDesktop().showNotification( "Launching application", imgLaunch );
                         int   nApp      = -1;
                         
                         try{ nApp = Integer.valueOf( sTarget ); }
