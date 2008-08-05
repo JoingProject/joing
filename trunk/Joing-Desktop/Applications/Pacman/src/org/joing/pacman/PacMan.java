@@ -146,7 +146,6 @@ public class PacMan extends JPanel implements DeskComponent
         setRequestFocusEnabled( true );
         grabFocus();
         requestFocusInWindow();
-        showInFrame();
     }
     
     public void startAnimation()
@@ -846,7 +845,7 @@ public class PacMan extends JPanel implements DeskComponent
     
     //------------------------------------------------------------------------//
     
-    private void showInFrame()
+    public void showInFrame()
     {
         DesktopManager dm   = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
         ImageIcon      icon = new ImageIcon( getClass().getResource( "pacman.png" ) );
@@ -891,6 +890,6 @@ public class PacMan extends JPanel implements DeskComponent
     
     public static void main( String[] asArg )
     {
-        new PacMan();
+        (new PacMan()).showInFrame();
     }
 }
