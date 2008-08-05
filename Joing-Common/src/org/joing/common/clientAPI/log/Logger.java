@@ -115,7 +115,7 @@ public class Logger {
         write(Levels.DEBUG_JVMM, format, args);
     }
     
-    public void printStackStrace(Exception e) {
+    public void printStackTrace(Exception e) {
         
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(baos);
