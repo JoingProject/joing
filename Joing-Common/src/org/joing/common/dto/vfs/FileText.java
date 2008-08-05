@@ -22,9 +22,10 @@
 
 package org.joing.common.dto.vfs;
 
-import java.io.BufferedReader;
 import java.io.CharArrayReader;
+import java.io.Reader;
 import java.io.Serializable;
+import java.io.Writer;
 
 /**
  * A subclass of FileDescritor that contains the native file contents 
@@ -34,18 +35,22 @@ import java.io.Serializable;
  */
 public class FileText extends FileDescriptor implements Serializable
 {
-    private char[] chContent;
-    private String sEncoding;
-    private String sMimeType;
+    private char[] chContent = "".toCharArray();
+    private String sEncoding = "UTF-8";
+    private String sMimeType = "text/plain";
     
     //------------------------------------------------------------------------//
     
-    public BufferedReader getContent()
+    public Reader getContent()
     {
         CharArrayReader reader = new CharArrayReader( chContent );
-        BufferedReader  br     = new BufferedReader( reader );
         
-        return br;
+        return reader;
+    }
+    
+    public void setContent( Writer writer )
+    {
+        //writer.
     }
     
     public String getEncoding()
@@ -74,9 +79,11 @@ public class FileText extends FileDescriptor implements Serializable
     {
     }
     
-    public void setContents( char[] chContent )
+    public void setContent( char[] chContent )
     {
-        this.chContent = chContent;    // TODO: hacer copia defensiva
+        this.chContent = new char[ chContent.length ];
+        
+        System.arraycopy( chContent, 0, this.chContent, 0, chContent.length );
     }
     
     // TODO: este metodo no es usado: mirar dónde usarlo

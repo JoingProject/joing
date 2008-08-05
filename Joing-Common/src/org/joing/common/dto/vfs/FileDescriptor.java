@@ -1,8 +1,4 @@
 /*
- * File.java
- *
- * Created on 21 de mayo de 2007, 14:50
- *
  * Copyright (C) 2007 Francisco Morero Peyrona
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +20,7 @@ package org.joing.common.dto.vfs;
 
 import java.io.Serializable;
 import java.util.Date;
-// FIXME: reparsar todos los permisos viendo cuándo se puede o no cambiar algo.
+// FIXME: repasar todos los permisos viendo cuándo se puede o no cambiar algo.
 /**
  * DTO class for FileDescriptor.
  * <p>
@@ -432,7 +428,7 @@ public class FileDescriptor implements Serializable
     public FileDescriptor()
     {
     }
-   
+    
     public void setAccount( String account )
     {
         this.account = account;

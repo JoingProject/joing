@@ -14,10 +14,19 @@ import org.joing.common.dto.vfs.FileText;
  *
  * @author antoniovl
  */
-public interface VFSBridge {
-//------------------------------------------------------------------------//
+public interface VFSBridge
+{
+    //------------------------------------------------------------------------//
     // VfsFileRemote
     
+    /**
+     * Returns a Join'g VFS FileDescriptor instance for passed path.
+     * <p>
+     * It is assumed 
+     * 
+     * @param sFilePath
+     * @return
+     */
     FileDescriptor getFile( String sFilePath );
     
     FileDescriptor createDirectory( String sPath, String sDirName );
