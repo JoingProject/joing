@@ -46,7 +46,6 @@ class Calculator extends JSplitPane implements ActionListener, DeskComponent
     {
         init();
         calc.addActionListener( this );
-        showInFrame();
     }
 
     /**
@@ -64,9 +63,7 @@ class Calculator extends JSplitPane implements ActionListener, DeskComponent
             this.paper.addLine( sCmd );
     }
     
-    //------------------------------------------------------------------------//
-    
-    private void showInFrame()
+    public void showInFrame()
     {
         DesktopManager dm   = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
         ImageIcon      icon = new ImageIcon( getClass().getResource( "images/calculator.png" ) );
@@ -92,6 +89,8 @@ class Calculator extends JSplitPane implements ActionListener, DeskComponent
         }
     }
     
+    //------------------------------------------------------------------------//
+    
     private void init()
     {
         setLeftComponent( paper );
@@ -104,6 +103,6 @@ class Calculator extends JSplitPane implements ActionListener, DeskComponent
     
     public static void main( String[] args )
     {
-        new Calculator();
+        (new Calculator()).showInFrame();
     }
 }
