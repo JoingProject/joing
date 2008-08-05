@@ -47,18 +47,16 @@ public class YACE extends javax.swing.JPanel implements DeskComponent
         initToolBarsAndPopupMenu();
         
         spTree.getViewport().add( tree );
-        
-        showInFrame();
     }
     
     //------------------------------------------------------------------------//
     
     public static void main( String[] args )
     {
-        new YACE();
+        (new YACE()).showInFrame();
     }
     
-    private void showInFrame()
+    public void showInFrame()
     {
         DesktopManager dm   = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
         ImageIcon      icon = new ImageIcon( getClass().getResource( "images/yace.png" ) );
@@ -82,6 +80,8 @@ public class YACE extends javax.swing.JPanel implements DeskComponent
             dm.getDesktop().getActiveWorkArea().add( frame );
         }
     }
+    
+    //------------------------------------------------------------------------//
     
     private void initToolBarsAndPopupMenu()
     {
