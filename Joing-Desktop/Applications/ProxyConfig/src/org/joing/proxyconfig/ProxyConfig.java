@@ -42,19 +42,11 @@ public class ProxyConfig extends JPanel implements DeskComponent
     {
         initComponents();
         initComponentsValues();
-        showInFrame();
     }
     
     //------------------------------------------------------------------------//
     
-    public static void main( String[] asArg )
-    {
-        new ProxyConfig();
-    }
-    
-    //------------------------------------------------------------------------//
-    
-    private void showInFrame()
+    public void showInFrame()
     {
         DesktopManager dm   = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
         ImageIcon      icon = new ImageIcon( getClass().getResource( "proxy_config.png" ) );
@@ -67,6 +59,13 @@ public class ProxyConfig extends JPanel implements DeskComponent
         
         dm.getDesktop().getActiveWorkArea().add( frame );
     }
+    
+    public static void main( String[] asArg )
+    {
+        (new ProxyConfig()).showInFrame();;
+    }
+    
+    //------------------------------------------------------------------------//
     
     private void initComponentsValues()
     {
