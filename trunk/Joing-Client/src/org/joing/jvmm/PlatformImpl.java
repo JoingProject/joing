@@ -364,7 +364,6 @@ class PlatformImpl implements Platform {
 
             executionThread.start();
         }
-
     }
     
     
