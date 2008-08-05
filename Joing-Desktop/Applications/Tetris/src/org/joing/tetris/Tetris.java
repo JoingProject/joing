@@ -41,12 +41,9 @@ public class Tetris extends JPanel implements DeskComponent
     {
         game = new Game();
         add( game.getComponent() );
-        showInFrame();
     }
     
-    //------------------------------------------------------------------------//
-    
-    private void showInFrame()
+    public void showInFrame()
     {
         DesktopManager dm   = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
         ImageIcon      icon = new ImageIcon( getClass().getResource( "tetris.png" ) );
@@ -94,6 +91,6 @@ public class Tetris extends JPanel implements DeskComponent
      */
     public static void main( String[] args )
     {
-        new Tetris();
+        (new Tetris()).showInFrame();
     }
 }
