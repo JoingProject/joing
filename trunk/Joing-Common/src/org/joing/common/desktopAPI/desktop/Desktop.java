@@ -55,7 +55,7 @@ public interface Desktop extends Closeable
      *                 an animated GIF image.
      * @return A handle to the message GUI to be closed when the trade is over.
      */
-    int  showNotification( String sMessage, Image icon, boolean bAnimated );
+    int  showNotification( String sMessage, Image icon );
     /**
      * Hides a notification previously opended via showNotification(...)
      * 

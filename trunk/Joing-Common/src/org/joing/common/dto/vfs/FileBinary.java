@@ -34,8 +34,8 @@ import java.io.Serializable;
  */
 public class FileBinary extends FileDescriptor implements Serializable
 {
-    private byte[] btContent;
-    private String sMimeType;
+    private byte[] btContent = new byte[0];
+    private String sMimeType = "application/octet-stream";
     
     //------------------------------------------------------------------------//
     
@@ -64,10 +64,12 @@ public class FileBinary extends FileDescriptor implements Serializable
     public FileBinary()
     {
     }
-
-    public void setContents( byte[] btContent )
+    
+    public void setContent( byte[] btContent )
     {
-        this.btContent = btContent;    // TODO: hacer copia defensiva
+        this.btContent = new byte[ btContent.length ];
+        
+        System.arraycopy( btContent, 0, this.btContent, 0, btContent.length );
     }
     
     // TODO: este metodo no se usa: mirar dónde usarlo

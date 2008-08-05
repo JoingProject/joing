@@ -20,6 +20,7 @@ public enum StandardImage
     DELETE      ,
     DESKTOP     ,   // Desktop logo
     FOLDER      , 
+    FILE        ,
     INFO        ,
     JOING       ,
     LAUNCHER    ,
