@@ -62,19 +62,15 @@ public class SystemMonitor extends JPanel implements DeskComponent
         tabbedPane.addTab( "Properties", propertiesPanel );
         tabbedPane.addTab( "Log"       , logPanel        );
         tabbedPane.addTab( "About"     , aboutPanel      );
-        
-        showInFrame();
     }
     //------------------------------------------------------------------------//
     
     public static void main( String[] asArg )
     {
-        new SystemMonitor();
+        (new SystemMonitor()).showInFrame();
     }
     
-    //------------------------------------------------------------------------//
-    
-    private void showInFrame()
+    public void showInFrame()
     {
         DesktopManager dm   = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
         ImageIcon      icon = new ImageIcon( getClass().getResource( "system_monitor.png" ) );
