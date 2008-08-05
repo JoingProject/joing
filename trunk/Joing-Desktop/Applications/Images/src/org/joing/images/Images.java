@@ -74,8 +74,31 @@ public class Images extends JPanel implements DeskComponent
         add( toolbar, BorderLayout.NORTH  );
         add( tabs   , BorderLayout.CENTER );
         add( status , BorderLayout.SOUTH  );
+    }
+    
+    public void showInFrame()
+    {
+        DesktopManager dm   = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+        ImageIcon      icon = new ImageIcon( getClass().getResource( "images/images.png" ) );
         
-        showInFrame();
+        if( dm != null )
+        {
+            // Show this panel in a frame created by DesktopManager Runtime.
+            DeskFrame frame = dm.getRuntime().createFrame();
+                      frame.setTitle( "Images" );
+                      frame.setIcon( icon.getImage() );
+                      frame.add( (DeskComponent) this );
+                      
+            dm.getDesktop().getActiveWorkArea().add( frame );
+        }
+        else
+        {
+            javax.swing.JFrame frame = new javax.swing.JFrame();
+                               frame.add( this );
+                               frame.pack();
+                               frame.setDefaultCloseOperation( javax.swing.JFrame.EXIT_ON_CLOSE );
+                               frame.setVisible( true );
+        }
     }
     
     //------------------------------------------------------------------------//
@@ -207,37 +230,10 @@ public class Images extends JPanel implements DeskComponent
     }
     
     //------------------------------------------------------------------------//
-    
-    private void showInFrame()
-    {
-        DesktopManager dm   = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
-        ImageIcon      icon = new ImageIcon( getClass().getResource( "images/images.png" ) );
-        
-        if( dm != null )
-        {
-            // Show this panel in a frame created by DesktopManager Runtime.
-            DeskFrame frame = dm.getRuntime().createFrame();
-                      frame.setTitle( "Images" );
-                      frame.setIcon( icon.getImage() );
-                      frame.add( (DeskComponent) this );
-                      
-            dm.getDesktop().getActiveWorkArea().add( frame );
-        }
-        else
-        {
-            javax.swing.JFrame frame = new javax.swing.JFrame();
-                               frame.add( this );
-                               frame.pack();
-                               frame.setDefaultCloseOperation( javax.swing.JFrame.EXIT_ON_CLOSE );
-                               frame.setVisible( true );
-        }
-    }
-    
-    //------------------------------------------------------------------------//
     // Application entering point
     
     public static void main( String[] asArg ) throws IOException
     {
-        new Images();
+        (new Images()).showInFrame();
     }
 }
