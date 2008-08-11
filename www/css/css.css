@@ -1,3 +1,10 @@
+.joing * {
+  font-family: Arial, sans-serif;
+  color: #2E2E2E;
+  font-size: .75em;
+  line-height: 1.6em;
+}
+
 .joing h1, .joing h1 span, .joing h1 span span {
   display: block;
   height: 45px;
