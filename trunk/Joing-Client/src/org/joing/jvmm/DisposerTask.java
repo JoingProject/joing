@@ -8,7 +8,6 @@ package org.joing.jvmm;
 import org.joing.common.clientAPI.jvmm.App;
 import org.joing.common.clientAPI.jvmm.AppManager;
 import org.joing.common.clientAPI.log.JoingLogger;
-import org.joing.common.clientAPI.log.Levels;
 import org.joing.common.clientAPI.log.Logger;
 import org.joing.common.clientAPI.log.SimpleLoggerFactory;
 
@@ -39,8 +38,8 @@ public class DisposerTask implements Runnable {
         
         appManager.removeApp(application);
         
-        logger.debugJVMM("Disposing AppContext.");
         if (appContext != null) {
+            logger.debugJVMM("Disposing AppContext.");
             try {
                 appContext.dispose();
             } catch (Exception e) {
