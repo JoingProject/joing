@@ -19,12 +19,14 @@
   background-repeat: no-repeat;
   background-position: top left;
   padding-left: 25px;
+  font-size: 18px;
 }
 .joing  h1 span {
   background-image: url('../img/title_right.png');
   background-repeat: no-repeat;
   background-position: top right;
   padding-right: 25px;
+  font-size: 18px;
 }
 .joing h1 span span {
   display: block;
