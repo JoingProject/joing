@@ -23,7 +23,6 @@ public interface Platform {
     boolean isHalted();
     void shutdown();
     
-//    PlatformRuntime getRuntime();
     Bridge2Server getBridge();
     
     // Temporal.
@@ -31,13 +30,9 @@ public interface Platform {
     
     boolean isInitialized();
     String getServerBaseURL();
-    boolean isAutoHandlingExceptions();
-    void setAutoHandlingExceptions( boolean bAutoHandleExceptions );
-    
-    void showException( Throwable exc );
-    void showException( String sTitle, Throwable exc );
     
     long getMainThreadId();
+    Thread getMainThread();
     JThreadGroup getJThreadGroup();
     Map<Object, ClassLoader> getClassLoaderCache();
     AppManager getAppManager();
@@ -51,7 +46,7 @@ public interface Platform {
     void start(final Application application, String[] args, OutputStream out, 
             OutputStream err) throws ApplicationExecutionException;
     /**
-     * Base method for starting application. 
+     * Base method for application launch. 
      * @param classPath Array of URL Objects with the class path for loading
      * classes and resources. 
      * @param application Application object to be Launched.
