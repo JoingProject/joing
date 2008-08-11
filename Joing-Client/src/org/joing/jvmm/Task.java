@@ -50,7 +50,7 @@ public class Task implements Runnable {
                     ite.getCause() != null ? ite.getCause().getMessage() : 
                         "null");
             logger.critical("StackTrace will follow.");
-            logger.printStackStrace(ite);
+            logger.printStackTrace(ite);
             throw new ExecutionTaskException("InvocationTargetException", ite);
         } catch (NullPointerException npe) {
             logger.critical("NullPointerException: {0}", npe.getMessage());

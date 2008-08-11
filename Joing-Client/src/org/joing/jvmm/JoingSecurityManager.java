@@ -9,10 +9,12 @@
 
 package org.joing.jvmm;
 
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import org.joing.jvmm.RuntimeFactory;
 import org.joing.common.clientAPI.jvmm.JThreadGroup;
+import org.joing.common.clientAPI.jvmm.Platform;
 import org.joing.common.clientAPI.log.JoingLogger;
-import org.joing.common.clientAPI.log.Levels;
 import org.joing.common.clientAPI.log.Logger;
 import org.joing.common.clientAPI.log.SimpleLoggerFactory;
 
@@ -41,9 +43,24 @@ public class JoingSecurityManager extends SecurityManager {
 
             if (className.equals("java.lang.System") && methodName.equals("exit")) {
 
-                JThreadGroup tg = RuntimeFactory.getPlatform().getJThreadGroup();
+                Platform platform = RuntimeFactory.getPlatform();
+                
+                final JThreadGroup tg = RuntimeFactory.getPlatform().getJThreadGroup();
+
                 if (tg != null) {
-                    tg.close();
+                    if (SwingUtilities.isEventDispatchThread()) {
+                        SwingWorker worker = new SwingWorker() {
+
+                            @Override
+                            protected Object doInBackground() throws Exception {
+                                tg.close();
+                                return null;
+                            }
+                        };
+                        worker.execute();
+                    } else {
+                        tg.close();
+                    }
                     throw new RuntimeException("exit");
                 }
                 break;

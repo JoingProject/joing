@@ -21,6 +21,8 @@ public class ExecutionThread extends Thread {
     private App application;
     private Task executionTask;
     final private Logger logger = SimpleLoggerFactory.getLogger(JoingLogger.ID);
+    
+    private boolean sharedAWTContext = false;
 
     public ExecutionThread(AppManager appManager,
             App application, Task executionTask) {
@@ -31,6 +33,11 @@ public class ExecutionThread extends Thread {
         this.executionTask = executionTask;
     }
 
+    public void setSharedAWTContext(boolean b) {
+        this.sharedAWTContext = b;
+    }
+    
+    
     @Override
     public void run() {
 
@@ -43,12 +50,17 @@ public class ExecutionThread extends Thread {
                 application.getThreadGroup().getName());
         DisposerThread disposerThread = new DisposerThread(dtg);
         
-        sun.awt.AppContext appContext = 
-                sun.awt.SunToolkit.createNewAppContext();
-        
-        disposerThread.setDisposerTask(
-                new DisposerTask(appManager, application, appContext)
-        );
+        if (!this.sharedAWTContext) {
+            sun.awt.AppContext appContext =
+                    sun.awt.SunToolkit.createNewAppContext();
+
+            disposerThread.setDisposerTask(
+                    new DisposerTask(appManager, application, appContext));
+        } else {
+            // The DisposerThread does not disposes main Context
+            disposerThread.setDisposerTask(
+                    new DisposerTask(appManager, application, null));
+        }
         
 //        DisposerTask disposerTask =
 //                new DisposerTask(appManager, application, appContext);
@@ -66,7 +78,6 @@ public class ExecutionThread extends Thread {
         }
 
         try {
-            
             ///SwingUtilities.invokeAndWait(executionTask);
             executionTask.run();
 
@@ -77,7 +88,7 @@ public class ExecutionThread extends Thread {
             sb.append("Exception caught in ExecutionThread for App '{0}; ");
             logger.critical(sb.toString(), application.getApplication().getName());
             logger.critical("StackTrace will follow.");
-            logger.printStackStrace(e);
+            logger.printStackTrace(e);
         }
     }
 }

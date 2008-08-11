@@ -227,7 +227,7 @@ public class Bootstrap {
             }
         } catch (Exception e) {
             logger.critical("Error en start: {0}", e.getMessage());
-            logger.printStackStrace(e);
+            logger.printStackTrace(e);
         }
     }
     
@@ -258,7 +258,7 @@ public class Bootstrap {
         } catch (Exception e) {
             logger.critical("Exception Caught while getting the Desktop Instance",
                     e.getMessage());
-            logger.printStackStrace(e);
+            logger.printStackTrace(e);
             
             throw new RuntimeException(e.getMessage());
         }

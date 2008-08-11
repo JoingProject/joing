@@ -9,6 +9,8 @@
 package org.joing.jvmm;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +18,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,7 +49,7 @@ import org.joing.jvmm.net.URLFormat;
 import org.joing.runtime.bridge2server.Bridge2ServerImpl;
 
 /**
- *
+ * Concrete implementation for interface Platform.
  * @author Antonio Varela Lizardi <antonio@icon.net.mx>
  */
 class PlatformImpl implements Platform {
@@ -64,32 +67,57 @@ class PlatformImpl implements Platform {
     private final Logger logger = SimpleLoggerFactory.getLogger(JoingLogger.ID);
     private boolean sharedAWTContext = false;
     private boolean halted = false;
+    
+    private final String propsFileName = "joing-client.properties";
 
     public PlatformImpl() {
 
         clientProp = new Properties();
+        Properties customProps = new Properties();
 
+        // The properties file it's loaded on the first place from the
+        // classpath. Then it will be loaded from the user dir, overriding
+        // any default setting.
         // Looks in classpath
         InputStream is =
-                Main.class.getClassLoader().getResourceAsStream("client.properties");
+                Main.class.getClassLoader().getResourceAsStream(propsFileName);
 
         if (is != null) {
             try {
                 clientProp.load(is);
             } catch (IOException ioe) {
-                logger.write(Levels.CRITICAL, "IOException: {0}",
-                        ioe.getMessage());
-                // At this point and with this implementation, an error getting
-                // the clientProperties leaves us with no way to know the
-                // servletUrl. We can not go further.
-                throw new RuntimeException("Unable to find properties file.");
+                logger.critical("IOException: {0}", ioe.getMessage());
+                // Let's hope the user have defined custom properties...
             }
+        } else {
+            logger.warning("No default properties found.");
+        }
+        
+        String usrHome = System.getProperty("user.home") + "/.joing/";
+        
+        File usrHomeDir = new File(usrHome);
+        
+        if (usrHomeDir.exists() && usrHomeDir.isDirectory()) {
+            File customPropsFile = new File(usrHomeDir, "joing-client.properties");
+            try {
+                FileInputStream fis = new FileInputStream(customPropsFile);
+                customProps.load(fis);
+            } catch (FileNotFoundException fnfe) {
+                // not necessarily an error...
+            } catch (IOException ioe) {
+                logger.critical("Error loading custom properties: {0}",
+                        ioe.getMessage());
+            }
+        }
+        
+        for (String p : customProps.stringPropertyNames()) {
+            clientProp.setProperty(p, customProps.getProperty(p));
         }
 
         //        getRuntime().init(clientProp);
         // establecer la URL del servlet aqui
         this.serverBaseUrl =
-                clientProp.getProperty(RuntimeEnum.JOING_SERVER_URL.getKey());
+                clientProp.getProperty(RuntimeEnum.JOING_SERVER_URL.getKey(), null);
         if (this.serverBaseUrl == null) {
             this.initialized = false;
         }
@@ -120,32 +148,6 @@ class PlatformImpl implements Platform {
         return this.serverBaseUrl;
     }
 
-    @Override
-    public boolean isAutoHandlingExceptions() {
-        return this.autoHandlingExceptions;
-    }
-
-    @Override
-    public void setAutoHandlingExceptions(boolean autoHandleExceptions) {
-        this.autoHandlingExceptions = autoHandleExceptions;
-    }
-
-    @Override
-    public void showException(Throwable exc) {
-        showException("Error", exc);
-    }
-
-    @Override
-    public void showException(String sTitle, Throwable exc) {
-        exc.printStackTrace();
-
-    /*  TODO: hacer q JShowException herede de JDesktopDialog y q actue en consecuencia:
-     *  Nota: utilizar getLocalizedMessage()
-    JShowException dialog = new JShowException( sTitle, exc );
-    dialog.setLocationRelativeTo( getDesktop() );
-    dialog.setVisible( true );*/
-    }
-
     /**
      * Regresa el id único del Thread padre. El Thread Padre
      * es el que inició la ejecución de Platform.
@@ -156,7 +158,8 @@ class PlatformImpl implements Platform {
     }
     
     // This property is for debugging purposes
-    public final Thread getMainThread() {
+    @Override
+    public Thread getMainThread() {
         return this.mainThread;
     }
 
@@ -296,12 +299,13 @@ class PlatformImpl implements Platform {
 
         synchronized (classLdrCache) {
             try {
+                List<URL> listClassPath = Arrays.asList(classPath);
                 BridgeClassLoader loader =
-                        (BridgeClassLoader) classLdrCache.get(classPath);
+                        (BridgeClassLoader) classLdrCache.get(listClassPath);
                 if (loader == null) {
                     loader = new BridgeClassLoader(bridge, classPath,
                             Main.class.getClassLoader());
-                    classLdrCache.put(classPath, loader);
+                    classLdrCache.put(listClassPath, loader);
 
                 }
                 classLoader = loader;
@@ -334,6 +338,9 @@ class PlatformImpl implements Platform {
         // Este thread es quien ejecuta la tarea.
         final ExecutionThread executionThread =
                 new ExecutionThread(getAppManager(), app, executionTask);
+        
+        logger.debugJVMM("start(): ThreadName = {0}", 
+                Thread.currentThread().getName());
         
         if (SwingUtilities.isEventDispatchThread()) {
              SwingWorker worker = new SwingWorker<Void, Void>() {

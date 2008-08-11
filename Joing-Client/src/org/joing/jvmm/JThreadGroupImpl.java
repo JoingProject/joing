@@ -11,6 +11,8 @@ package org.joing.jvmm;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import org.joing.common.clientAPI.jvmm.JThreadGroup;
 import org.joing.common.clientAPI.log.JoingLogger;
 import org.joing.common.clientAPI.log.Logger;
@@ -66,12 +68,25 @@ public class JThreadGroupImpl extends JThreadGroup {
 
         err = null;
         // Esta transformación es amigable al Garbage Collector
-        Thread t = disposer;
+        final Thread t = disposer;
         disposer = null;
 
         if (t != null) {
             logger.debugJVMM("Launching disposer Thread...");
-            t.start();
+            if (SwingUtilities.isEventDispatchThread()) {
+                SwingWorker worker = new SwingWorker() {
+
+                    @Override
+                    protected Object doInBackground() throws Exception {
+                        t.start();
+                        return null;
+                    }
+                    
+                };
+                worker.execute();
+            } else {
+                t.start();
+            }
         }
     }
 }

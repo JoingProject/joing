@@ -62,7 +62,7 @@ public class Main {
 //        initWorker.start();
         Bootstrap.init();
 
-        boolean noGUI = false;    
+        boolean useGUI = true;
         
         final List<URL> urls = new ArrayList<URL>();
         final Logger logger = SimpleLoggerFactory.getLogger(JoingLogger.ID);
@@ -72,7 +72,7 @@ public class Main {
         for (String arg : args) {
             if ("-nogui".equals(arg)) {
                 // No presentaremos el dialogo Login
-                noGUI = true;
+                useGUI = false;
             } else {
                 // URLs que ejecutaremos en modo standalone
                 try {
@@ -84,15 +84,8 @@ public class Main {
             }
         }
         
-        if (noGUI == false) {
-            // LoginDialog blocks the current thread
-            // LoginDialog blocks the *EDT*....
-//            Thread loginWorker = new Thread(new Runnable() {
-//                public void run() {
-//                    Bootstrap.loginDialog();
-//                }
-//            }, "LoginDialog-Thread");
-//            loginWorker.start();
+        if (useGUI) {
+ 
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     Bootstrap.loginDialog();
@@ -100,7 +93,7 @@ public class Main {
             });
         }
         
-        if ((urls.size() == 0) && (noGUI)) {
+        if ((urls.size() == 0) && (!useGUI)) {
             logger.info("No standalone jars launched, nothing to do.");
         } else {
             Thread auxWorker = new Thread(new Runnable() {
@@ -125,9 +118,10 @@ public class Main {
                 }
             }, "Joing-StandaloneLauncher-Thread");
             auxWorker.start();
+            
+            Bootstrap.mainLoop();
         }
         
-        Bootstrap.mainLoop();
         
     }
     
