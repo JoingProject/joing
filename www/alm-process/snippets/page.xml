@@ -6,7 +6,7 @@
             <filename>index.html</filename>
         </component>
         <component visibility="1" type="ProjectMetadata" order="2">
-            <title localize="false"></title>
+            <title localize="false">Project details</title>
         </component>
         <component visibility="1" type="Subproject" order="3">
             <title localize="true">Subprojects</title>
