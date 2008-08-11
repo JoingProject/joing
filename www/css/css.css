@@ -1,0 +1,71 @@
+.joing h1, .joing h1 span, .joing h1 span span {
+  display: block;
+  height: 45px;
+  padding: 0px;
+  margin: 0px;
+}
+.joing h1, .joing h1 *, .joing h1 span span, .joing h1 span span span {
+    color: #FFFFFF;
+}
+.joing h1 {
+  background-image: url('../img/title_left.png');
+  background-repeat: no-repeat;
+  background-position: top left;
+  padding-left: 25px;
+}
+.joing  h1 span {
+  background-image: url('../img/title_right.png');
+  background-repeat: no-repeat;
+  background-position: top right;
+  padding-right: 25px;
+}
+.joing h1 span span {
+  display: block;
+  background-image: url('../img/title_middle.png');
+  background-repeat: repeat-x;
+  background-position: top;
+  font-size: 18px;
+  padding-top: 10px;
+}
+.joing h3 {
+  color: #1E375E;
+  font-size: 14px;
+  margin: 0px;
+  padding: 0px;
+}
+.joing strong {
+  color: #1E375E;
+}
+.joing p, .joing div.paragraph {
+  margin-left: 20px;
+  margin-right: 10px;
+}
+.joing .logo {
+  display: block;
+  position: absolute;
+  left: 41px;
+  top: 28px;
+  background-image: url('../img/logo.png');
+  background-repeat: no-repeat;
+  width: 285px;
+  height: 135px;
+  
+}
+
+.joing .catchphrases {
+  position: absolute;
+  top: 37px;
+  left: 327px;
+  padding-right: 26px;
+  min-width: 342px;
+}
+.joing .catchphrases ul {
+  list-style-position: outside;
+  list-style-type: none;
+  line-height: 20px;
+}
+
+.joing a {
+    color: #1E375E;
+}
+
