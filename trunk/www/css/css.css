@@ -52,7 +52,8 @@
 }
 .joing .catchphrases {
   float: right;
-  margin: 10px 0px 30px 30px;
+  margin: 10px 0px 20px 0px;
+  padding-bottom: 30px;
   background-image: url('../img/logo.png');
   background-repeat: no-repeat;
   padding-top: 135px;
