@@ -21,7 +21,7 @@ public interface UserManagerRemote
      * @param  sSessionId An existing SessionId
      * @return User A DTO representing the UserEntity that holds this Session,
      *         or <code>null</code> if sSessionId was not found.
-     * @throws JoingServerVFSException if any prerequisite was not satisfied or 
+     * @throws JoingServerUserException if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
     User getUser( String sSessionId )
@@ -33,7 +33,7 @@ public interface UserManagerRemote
      * @param sSessionId An existing SessionId
      * @param user The user to be updated
      * @return The user after update process
-     * @throws JoingServerVFSException if any prerequisite was not satisfied or 
+     * @throws JoingServerUserException if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
     User updateUser( String sSessionId, User user )
@@ -44,7 +44,7 @@ public interface UserManagerRemote
      *
      * @param  sSessionId An existing SessionId
      * @return All available locales or null if something goes wrong.
-     * @throws JoingServerVFSException if any prerequisite was not satisfied or 
+     * @throws JoingServerUserException if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
     List<Local> getAvailableLocales( String sSessionId )

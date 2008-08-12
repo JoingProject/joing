@@ -30,15 +30,18 @@ public interface SessionManagerRemote
      * @return String A valid new SessionId that will be used from now and on
      *                meanwhile the session is alive. Or <code>null</null> if the
      *                Account and/or Password were invalid.
+     * @throws JoingServerSessionException If something goes wrong.
      */
     LoginResult login( String sAccount, String sPassword )
                 throws JoingServerSessionException;
     
     /**
-     * Closes an existing session.
-     *
+     * Peform a logout for an existing session.
+     * <p>
+     * Note: This method silently performs the logout and does not report 
+     * an exception to client.
+     * 
      * @param sSessionId An existing Session ID.
      */
-    void logout( String sSessionId )
-         throws JoingServerSessionException;
+    void logout( String sSessionId );
 }
