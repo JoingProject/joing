@@ -14,9 +14,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JWindow;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.LineBorder;
-import org.joing.common.clientAPI.runtime.AppBridge;
 import org.joing.common.dto.session.LoginResult;
 import org.joing.common.exception.JoingServerException;
 import org.joing.common.clientAPI.runtime.Bridge2Server;
@@ -87,8 +87,14 @@ class Login extends JDialog
     
     private void fillDesktopComboBox()
     {
-        btnOk.setEnabled( false );   // Can't be enabled until combobox is filled
-        btnOk.setText( "Wait" );
+        SwingUtilities.invokeLater( new Runnable()
+        {
+            public void run()
+            {
+                btnOk.setEnabled( false );   // Can't be enabled until combobox is filled
+                btnOk.setText( "Wait" );
+            }
+        } );
         
         // This method is executed in a separated thread to increase speed
         SwingWorker sw = new SwingWorker<Void,Void>()
@@ -97,8 +103,7 @@ class Login extends JDialog
             
             protected Void doInBackground() throws Exception
             {
-                AppBridge bridge = RuntimeFactory.getPlatform().getBridge().getAppBridge();
-                desktops = bridge.getAvailableDesktops();        
+                desktops = RuntimeFactory.getPlatform().getBridge().getAppBridge().getAvailableDesktops();
                 return null;
             }
             
@@ -106,7 +111,7 @@ class Login extends JDialog
             {
                 if( desktops == null )    // An exception happened in doInBackground()
                 {
-                    JOptionPane.showMessageDialog( Login.this, "A fatal error ocurred: can't continue." );
+                    JOptionPane.showMessageDialog( Login.this, "Fatal error: can't find a desktop to be used.\nCan't continue." );
                     Login.this.dispose();
                 }
                 else

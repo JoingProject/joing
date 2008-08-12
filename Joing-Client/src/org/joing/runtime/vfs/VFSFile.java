@@ -45,7 +45,7 @@ public class VFSFile extends File
     //       se hagan siempre que sea posible en base al ID_PARENT en lugar de
     //       en base al Path.
     //       También habría que hacer un caché de ficheros descargados para no
-    //       tener que estar contínuamente leyendo del servidor que puede ser muy
+    //       tener que estar contínuamente leyendo del servidor, que puede ser muy
     //       lento.
  
     /**
@@ -183,7 +183,7 @@ public class VFSFile extends File
         if( exists() )
         {
             Bridge2Server b2s = RuntimeFactory.getPlatform().getBridge();
-            bSuccess = b2s.getFileBridge().delete( fd.getId() ).length == 0;   // NEXT: Se pueden guardar los Ids de error en una var de la clase y recogerla mediante un método cuando éste metodo devuelve false
+            bSuccess = (b2s.getFileBridge().delete( fd ).size() == 0);   // NEXT: Se pueden devolver los Ids de error: delete(...) los devuelve
         }
         
         return bSuccess;
@@ -682,8 +682,10 @@ public class VFSFile extends File
     @Override
     public boolean mkdirs() throws JoingServerVFSException
     {
-        // TODO Hacerlo
-        throw new UnsupportedOperationException( "Not supported yet." );
+        FileDescriptor descriptor = RuntimeFactory.getPlatform().getBridge().getFileBridge().
+                                createDirectories( fd.getAbsolutePath() );
+        
+        return descriptor != null;
     }
     
     @Override
@@ -849,7 +851,7 @@ public class VFSFile extends File
             throw new IllegalArgumentException( "Name must be absolute (starting with '/')." );
         
         // If fd == null, then file or dir not exists
-        return RuntimeFactory.getPlatform().getBridge().getFileBridge().getFile( sFullName );
+        return RuntimeFactory.getPlatform().getBridge().getFileBridge().getFileDescriptor( sFullName, false );
     }
     
     /**
@@ -875,7 +877,7 @@ public class VFSFile extends File
             if( bAsDir )
                 fdNew = RuntimeFactory.getPlatform().getBridge().getFileBridge().createDirectory( sParent, sChild );
             else
-                fdNew = RuntimeFactory.getPlatform().getBridge().getFileBridge().createFile( sParent, sChild );
+                fdNew = RuntimeFactory.getPlatform().getBridge().getFileBridge().createFile( sParent, sChild, false );
         }
         
         return fdNew;
@@ -886,7 +888,7 @@ public class VFSFile extends File
         List<FileDescriptor> list = new ArrayList<FileDescriptor>();
         
         if( exists() && fd.isDirectory() )
-            list = RuntimeFactory.getPlatform().getBridge().getFileBridge().getChilds( fd.getId() );
+            list = RuntimeFactory.getPlatform().getBridge().getFileBridge().getChilds( fd );
         
         return list;
     }

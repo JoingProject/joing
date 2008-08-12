@@ -27,6 +27,7 @@ import org.joing.common.dto.user.Local;
 import org.joing.common.dto.user.User;
 
 import org.joing.common.clientAPI.runtime.UserBridge;
+import org.joing.common.exception.JoingServerUserException;
 
 /**
  *
@@ -47,18 +48,18 @@ public class UserBridgeSocketImpl
         super();
     }
 
-    public User getUser()
+    public User getUser() throws JoingServerUserException
     {
-        return null;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
-    public User updateUser( User user )
+    public User updateUser( User user ) throws JoingServerUserException
     {
-        return null;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
-    public List<Local> getAvailableLocales()
+    public List<Local> getAvailableLocales() throws JoingServerUserException
     {
-        return null;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 }
