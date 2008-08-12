@@ -23,7 +23,6 @@ package org.joing.runtime.vfs;
 
 import java.io.IOException;
 import javax.swing.Icon;
-import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileSystemView;
 
 /**
@@ -79,7 +78,11 @@ public class JoingFileSystemView extends FileSystemView
         { // Assuming it refers to remote FS
             file = remoteView.createFileObject( path );
         }
-        JOptionPane.showMessageDialog( null, "llamada a: createFileObject( String path )" );
+        else
+        {
+            file = localView.createFileObject( path );
+        }
+        
         return file;
     }
     
@@ -155,7 +158,7 @@ public class JoingFileSystemView extends FileSystemView
     {
         // In Local File System View it would be:
         // return createFileObject( System.getProperty("user.home") );
-        // But a Joing user normally want to use the Remote FS
+        // But a Join'g user normally wants to use the Remote FS
 	return localView.getHomeDirectory();   // FIXME: cambiarlo por remoteView cuando esté corregido el bug
     }
     

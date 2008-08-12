@@ -145,6 +145,11 @@ public class VFSFile extends File
     
     //------------------------------------------------------------------------//
     
+    public FileDescriptor getFileDescriptor()
+    {
+        return fd;   // Hacer fd clonable y devolver un clon
+    }
+    
     @Override
     public int compareTo( File pathname )
     {
@@ -360,7 +365,7 @@ public class VFSFile extends File
     @Override
     public int hashCode()
     {
-        return (exists() ? fd.getId() : -23);
+        return (exists() ? fd.getId() : -23);  // TOTO: Hacerlo bien
     }
     
     @Override
@@ -648,7 +653,6 @@ public class VFSFile extends File
         }
         
         return aFile;
-        //throw new UnsupportedOperationException( "Not supported yet." );
     }
     
     /**
