@@ -15,16 +15,16 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="spStackTrace" alignment="0" pref="390" max="32767" attributes="0"/>
+                  <Group type="102" alignment="1" attributes="0">
                       <Component id="lblIcon" min="-2" pref="50" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="spMessage" pref="322" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="spStackTrace" alignment="0" pref="390" max="32767" attributes="0"/>
-                  <Component id="lblDetails" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnDetails" alignment="1" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -39,10 +39,10 @@
                   <Component id="lblIcon" alignment="0" pref="50" max="32767" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="lblDetails" min="-2" max="-2" attributes="0"/>
+              <Component id="btnDetails" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="spStackTrace" pref="130" max="32767" attributes="0"/>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <Component id="spStackTrace" pref="191" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -101,10 +101,13 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JLabel" name="lblDetails">
+    <Component class="javax.swing.JButton" name="btnDetails">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Details"/>
+        <Property name="text" type="java.lang.String" value="Details "/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="onDetails"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

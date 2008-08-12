@@ -14,7 +14,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JWindow;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.LineBorder;
 import org.joing.common.dto.session.LoginResult;
@@ -40,7 +39,7 @@ class Login extends JDialog
     {
         super( (JFrame) null, true );
         
-        initComponents();
+        initComponents();        
         fillDesktopComboBox();
         
         getRootPane().setDefaultButton( btnOk );
@@ -87,19 +86,13 @@ class Login extends JDialog
     
     private void fillDesktopComboBox()
     {
-        SwingUtilities.invokeLater( new Runnable()
-        {
-            public void run()
-            {
-                btnOk.setEnabled( false );   // Can't be enabled until combobox is filled
-                btnOk.setText( "Wait" );
-            }
-        } );
+        btnOk.setEnabled( false );   // Can't be enabled until combobox is filled
+        btnOk.setText( "Wait" );
         
         // This method is executed in a separated thread to increase speed
         SwingWorker sw = new SwingWorker<Void,Void>()
         {
-            private List<AppDescriptor> desktops = null;
+             private List<AppDescriptor> desktops = null;
             
             protected Void doInBackground() throws Exception
             {

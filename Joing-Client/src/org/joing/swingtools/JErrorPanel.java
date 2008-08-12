@@ -7,7 +7,10 @@
 package org.joing.swingtools;
 
 import java.awt.Image;
+import java.awt.Window;
 import javax.swing.ImageIcon;
+import javax.swing.JInternalFrame;
+import javax.swing.SwingUtilities;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.StandardImage;
 
@@ -30,10 +33,14 @@ public class JErrorPanel extends javax.swing.JPanel implements DeskComponent
         
         initComponents();
         
-        Image image = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.ALERT, 50, 50 );
+        Image  image   = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.ALERT, 50, 50 );
+        String sExcMsg = exc.getLocalizedMessage();
+        
+        if( sExcMsg == null || sExcMsg.length() == 0 )
+            sExcMsg = exc.getMessage();
         
         lblIcon.setIcon( new ImageIcon( image ) );
-        txtMessage.setText( exc.getLocalizedMessage() );
+        txtMessage.setText( sExcMsg );
         
         StringBuffer        sb     = new StringBuffer( 1024 );
         StackTraceElement[] aStack = exc.getStackTrace();
@@ -42,6 +49,8 @@ public class JErrorPanel extends javax.swing.JPanel implements DeskComponent
             sb.append( aStack[n].toString() ).append( '\n' );
         
         txtStackTrace.setText( sb.toString() );
+        txtStackTrace.setCaretPosition( 0 );
+        onDetails( null );
     }
 
     /** This method is called from within the constructor to
@@ -58,7 +67,7 @@ public class JErrorPanel extends javax.swing.JPanel implements DeskComponent
         txtStackTrace = new javax.swing.JTextArea();
         spMessage = new javax.swing.JScrollPane();
         txtMessage = new javax.swing.JTextArea();
-        lblDetails = new javax.swing.JLabel();
+        btnDetails = new javax.swing.JButton();
 
         txtStackTrace.setColumns(20);
         txtStackTrace.setRows(5);
@@ -80,21 +89,26 @@ public class JErrorPanel extends javax.swing.JPanel implements DeskComponent
         txtMessage.setOpaque(false);
         spMessage.setViewportView(txtMessage);
 
-        lblDetails.setText("Details");
+        btnDetails.setText("Details ");
+        btnDetails.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onDetails(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(spStackTrace, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(spMessage, javax.swing.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE))
-                    .addComponent(spStackTrace, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
-                    .addComponent(lblDetails))
+                    .addComponent(btnDetails))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -105,15 +119,39 @@ public class JErrorPanel extends javax.swing.JPanel implements DeskComponent
                     .addComponent(spMessage, 0, 0, Short.MAX_VALUE)
                     .addComponent(lblIcon, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblDetails)
+                .addComponent(btnDetails)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spStackTrace, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+                .addComponent(spStackTrace, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
+private void onDetails(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onDetails
+    String sText = btnDetails.getText();
+           sText = sText.substring( 0, sText.indexOf( ' ' ) + 1 );    // Gets the "Details " part (one thing less for i18n)
+           
+    spStackTrace.setVisible( ! spStackTrace.isVisible() );
+    btnDetails.setText( sText + (spStackTrace.isVisible() ? "<<" : ">>") );
+    getLayout().layoutContainer( this );
+    
+    // Now we do our best to find window parent (to invoke pack() on it)
+    Window window = (Window) SwingUtilities.getAncestorOfClass( Window.class, this );
+    
+    if( window != null )
+    {
+        window.pack();
+    }
+    else
+    {
+        JInternalFrame iframe = (JInternalFrame) SwingUtilities.getAncestorOfClass( JInternalFrame.class, this );
+        
+        if( iframe != null)
+            iframe.pack();
+    }
+}//GEN-LAST:event_onDetails
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel lblDetails;
+    private javax.swing.JButton btnDetails;
     private javax.swing.JLabel lblIcon;
     private javax.swing.JScrollPane spMessage;
     private javax.swing.JScrollPane spStackTrace;
