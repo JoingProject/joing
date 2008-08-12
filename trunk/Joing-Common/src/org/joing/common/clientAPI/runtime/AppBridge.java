@@ -14,6 +14,7 @@ import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.app.Application;
 import org.joing.common.dto.app.AppGroup;
 import org.joing.common.dto.app.AppGroupKey;
+import org.joing.common.exception.JoingServerAppException;
 
 /**
  *
@@ -21,17 +22,23 @@ import org.joing.common.dto.app.AppGroupKey;
  */
 public interface AppBridge
 {
-    List<AppGroup> getAvailableForUser( AppGroupKey groupKey );
+    List<AppGroup> getAvailableForUser( AppGroupKey groupKey )
+            throws JoingServerAppException;
     
-    List<AppGroup> getNotInstalledForUser( AppGroupKey groupKey );
+    List<AppGroup> getNotInstalledForUser( AppGroupKey groupKey )
+            throws JoingServerAppException;
     
-    List<AppGroup> getInstalledForUser( AppGroupKey groupKey );
+    List<AppGroup> getInstalledForUser( AppGroupKey groupKey )
+            throws JoingServerAppException;
     
-    boolean install( AppDescriptor app );
+    boolean install( AppDescriptor app )
+            throws JoingServerAppException;
     
-    boolean uninstall( AppDescriptor app );
+    boolean uninstall( AppDescriptor app )
+            throws JoingServerAppException;
     
-    AppDescriptor getPreferredForType( String sFileExtension );
+    AppDescriptor getPreferredForType( String sFileExtension )
+            throws JoingServerAppException;
     
     /**
      * Abstract method to get an application from the Joing Server. The concrete
@@ -40,9 +47,12 @@ public interface AppBridge
      * @param nAppId Application Id.
      * @return Application instance.
      */
-    Application getApplication( int nAppId );
+    Application getApplication( int nAppId )
+            throws JoingServerAppException;
     
-    Application getApplicationByName(String executableName);
+    Application getApplicationByName( String executableName )
+            throws JoingServerAppException;
     
-    List<AppDescriptor> getAvailableDesktops();
+    List<AppDescriptor> getAvailableDesktops()
+            throws JoingServerAppException;
 }

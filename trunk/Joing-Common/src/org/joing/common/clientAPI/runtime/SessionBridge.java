@@ -10,6 +10,7 @@
 package org.joing.common.clientAPI.runtime;
 
 import org.joing.common.dto.session.LoginResult;
+import org.joing.common.exception.JoingServerSessionException;
 
 /**
  *
@@ -18,18 +19,30 @@ import org.joing.common.dto.session.LoginResult;
 public interface SessionBridge
 {
     /**
-     *
+     * Performs the login.
+     * 
      * @param sAccount
      * @param sPassword
      * @return <code>true</code> if login was ok.
+     * @throws org.joing.common.exception.JoingServerSessionException
      */
-    LoginResult login( String sAccount, String sPassword );
+    LoginResult login( String sAccount, String sPassword )
+            throws JoingServerSessionException;
     
+    /**
+     * Peform a logout for current session.
+     * <p>
+     * Note: This method silently performs the logout and does not report 
+     * an exception.    
+     */
     void logout();
     
     /**
-     * Gets the current session Id. The concrete implementation should
-     * set this value internally an not let anyone else to change it.
+     * Gets the current session Id.
+     * <p>
+     * Every concrete implementation should set this value internally an not let 
+     * anyone else to change it.
+     * 
      * @return The session ID String.
      */
     public String getSessionId();
