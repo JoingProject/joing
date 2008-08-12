@@ -35,8 +35,7 @@ public interface SessionManagerLocal extends SessionManagerRemote
      * @return String <code>User.Account</code> (the User ID) or 
      *                <code>null</code> if SessionId does not exists.
      */
-    String getUserAccount( String sSessionId )
-           throws JoingServerSessionException;
+    String getUserAccount( String sSessionId );
     
     /**
      * If passed account is "einstein", on system "joing.peyrona.com", this 

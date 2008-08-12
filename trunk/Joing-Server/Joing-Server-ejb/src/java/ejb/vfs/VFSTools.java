@@ -37,12 +37,37 @@ class VFSTools
 {
     private final static String sROOT = "/";     // 4 speed
     
-    // Note: a file exists even if it is in the trashcan ('cause it can be moved back)
-    static synchronized boolean existsName( EntityManager em, String sAccount, String sPath, String sName )
+    /**
+     * Finds if a file or directory already exists.
+     * <p>
+     * Note: a file exists even if it is in the trashcan ('cause it can be moved back)
+     * 
+     * @param em An instance of EntityManager.
+     * @param sAccount The user account.
+     * @param sParent  Must start from root ('/')
+     * @param sName Name to check existence.
+     * @return true if file or directory already exists, false oterwise.
+     */
+    static synchronized boolean existsName( EntityManager em, String sAccount, String sParent, String sName )
     {
-        String sFullName = sPath + (sPath.equals( sROOT ) ? "" : sROOT) + sName;
+        boolean bExists = false;
         
-        return( path2File( em, sAccount, sFullName ) != null );
+        Query qryFindFile = em.createNamedQuery( "FileEntity.findByPathAndName" );
+              qryFindFile.setParameter( "account", sAccount );
+              qryFindFile.setParameter( "path"   , sParent  );
+              qryFindFile.setParameter( "name"   , sName    );
+              
+        try
+        {
+            FileEntity _file = (FileEntity) qryFindFile.getSingleResult();
+            bExists = (_file != null);
+        }
+        catch( NoResultException exc )
+        {
+            // Nothing to do
+        }
+        
+        return bExists;
     }
     
     /**
@@ -161,6 +186,41 @@ class VFSTools
             Constant.getLogger().throwing( VFSTools.class.getName(), "getChilds(...)", exc );
             throw new JoingServerVFSException( JoingServerVFSException.ACCESS_DB, exc );
         }
+    }
+    
+    /**
+     * Is this a valid name for a _file or directory?
+     * 
+     * @param sName Name to check
+     * @return Empty String if name is valid or a String with information about
+     *         the problems with the name.
+     */
+    public static synchronized String validateName( String sName )
+    {
+        StringBuilder sbError = new StringBuilder();
+        
+        if( sName == null )
+            sbError.append( "\nCan not be null." );
+        
+        if( sName.length() == 0 )
+            sbError.append( "\nCan not be empty." );
+        
+        if( sName.length() > 255 )
+            sbError.append( "\nCan not be longer than 255 characters." );
+        
+        if( sName.indexOf( '/' ) > -1 )   // Can't contain path separator
+            sbError.append( "\nInvalid character '/'." );
+        
+        if( sName.charAt( 0 ) == ' ' )    // can't start with space
+            sbError.append( "\nCan not start with blank space." );
+        
+        if( sName.charAt( sName.length() - 1 ) == ' ' )   // can't end with space
+            sbError.append( "\nCan not end with blank space." );
+        
+        if( sbError.length() > 0 )
+            sbError.insert( 0, "Invalid file name:" );
+        
+        return sbError.toString();
     }
     
     /**

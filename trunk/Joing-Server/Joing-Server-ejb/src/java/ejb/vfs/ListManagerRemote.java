@@ -69,30 +69,6 @@ public interface ListManagerRemote
             throws JoingServerVFSException;
     
     /**
-     * Get all files in passed directory.
-     * <p>
-     * <code>sBaseDir</code> is assumed to be a valid directory: has to be a
-     * directory and the route has to be complete (starting at root "/"). 
-     * Otherwise, <code>null</code> will be returned.
-     * <p>
-     * To get files in root ("/") directory, pass <code>null</code> or empry 
-     * ("") or root ("/") string.
-     * <p>
-     * Note: whenever possible, use the method 
-     * <code>getChilds( String sSessionId, Integer nFileId )</code>
-     * instead of this one (the other one is much faster).
-     *
-     * @param sSessionId The client session ID
-     * @param sDirPath A path (from root) representing a directory entry
-     * @return All files in passed directory or <code>null</code> if
-     *         sSessionId and/or sDirPath are invalid.
-     * @throws if any prerequisite was not satisfied or 
-     *         a wrapped third-party exception if something went wrong.
-     */
-    List<FileDescriptor> getChilds( String sSessionId, String sDirPath )
-            throws JoingServerVFSException;
-    
-    /**
      * Searches files that contain passed string in the 'Notes' associated field.
      * <p>
      * It searches even in hidden files and files in trashcan.
@@ -102,10 +78,13 @@ public interface ListManagerRemote
      *
      * @param sSessionId The client session ID
      * @param sSubString Sub-string to be searched in 'Notes' field
+     * @param bGlobal If true searches in all public files on all users of the
+     *        same community, if false searches on all files (public or not) of
+     *        current user only.
      * @throws If any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
-    List<FileDescriptor> getByNotes( String sSessionId, String sSubString )
+    List<FileDescriptor> getByNotes( String sSessionId, String sSubString, boolean bGlobal )
             throws JoingServerVFSException; 
 
     /**

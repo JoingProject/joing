@@ -86,7 +86,6 @@ public class SessionManagerBean
     }
     
     public void logout( String sSessionId )
-           throws JoingServerSessionException
     {
         if( sSessionId != null )
         { // FIXME: este método no funciona: arreglarlo
@@ -100,7 +99,7 @@ public class SessionManagerBean
             catch( RuntimeException exc )
             {
                 Constant.getLogger().throwing( getClass().getName(), "logout(...)", exc );
-                throw new JoingServerSessionException( JoingServerException.ACCESS_DB, exc );
+                // Does not report exception to client: this method silently logout client.
             }
         }
     }

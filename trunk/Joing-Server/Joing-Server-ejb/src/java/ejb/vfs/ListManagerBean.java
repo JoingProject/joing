@@ -56,7 +56,7 @@ public class ListManagerBean
             FileEntity _file = VFSTools.path2File( em, sAccount, "/" );
             
             roots = new ArrayList<FileDescriptor>();
-            roots.add( FileDTOs.createFileDescriptor( _file ) );
+            roots.add( (new FileDTOs( _file )).createFileDescriptor() );
         }
         
         return roots;
@@ -65,18 +65,32 @@ public class ListManagerBean
     public List<FileDescriptor> getChilds( String sSessionId, int nFileDirId )
            throws JoingServerVFSException
     {
-        return getChilds( sSessionId, (Object) new Integer( nFileDirId ) );
+        List<FileDescriptor> files    = null;
+        String               sAccount = sessionManagerBean.getUserAccount( sSessionId );
+
+        if( sAccount != null )
+        {
+            FileEntity _file = em.find( FileEntity.class, nFileDirId );
+            
+            if( _file != null )
+            {
+                if( _file.getAccount().equals( sAccount ) )
+                    files = fromEntity2DTO( VFSTools.getChilds( em, sAccount, _file ) );
+                else
+                    throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );  // File is not in user files space
+            }
+            else
+            {
+                throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );      // File does not exists
+            }
+        }
+        
+        return files;
     }
     
-    public List<FileDescriptor> getChilds( String sSessionId, String sDirPath )
+    public List<FileDescriptor> getByNotes( String sSessionId, String sSubString, boolean bGlobal )
            throws JoingServerVFSException
-    {
-        return getChilds( sSessionId, (Object) sDirPath );
-    }
-    
-    public List<FileDescriptor> getByNotes( String sSessionId, String sSubString )
-           throws JoingServerVFSException
-    {
+    {// TODO: Implemetar el bGlobal (ver javadoc)
         String               sAccount = sessionManagerBean.getUserAccount( sSessionId );
         List<FileDescriptor> files    = null;
         
@@ -136,38 +150,7 @@ public class ListManagerBean
         List<FileDescriptor> files = new ArrayList<FileDescriptor>( fes.size() );
         
         for( FileEntity fe : fes )
-            files.add( FileDTOs.createFileDescriptor( fe )  );
-        
-        return files;
-    }
-    
-    private List<FileDescriptor> getChilds( String sSessionId, Object param )
-           throws JoingServerVFSException
-    {
-        List<FileDescriptor> files    = null;
-        String               sAccount = sessionManagerBean.getUserAccount( sSessionId );
-
-        if( sAccount != null )
-        {
-            FileEntity _file = null;
-            
-            if( param instanceof String )
-                _file = VFSTools.path2File( em, sAccount, (String) param );
-            else
-                _file = em.find( FileEntity.class, (Integer) param );
-            
-            if( _file != null )
-            {
-                if( _file.getAccount().equals( sAccount ) )   
-                    files = fromEntity2DTO( VFSTools.getChilds( em, sAccount, _file ) );
-                else
-                    throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );   // File is not in user files space
-            }
-            else
-            {
-                throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );       // File does not exists
-            }
-        }
+            files.add( (new FileDTOs( fe )).createFileDescriptor() );
         
         return files;
     }

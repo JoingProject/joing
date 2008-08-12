@@ -94,7 +94,7 @@ CREATE TABLE FILES(               -- 'FILE' is a reserved SQL word
    IS_DELETEABLE   SMALLINT      DEFAULT 1,  -- File can be deleted
    IS_EXECUTABLE   SMALLINT      DEFAULT 0,  -- It is an executable file
    IS_DUPLICABLE   SMALLINT      DEFAULT 1,  -- Copies of this file are allowed (by the owner and other users), otherwise only a link is allowed
-   IS_ALTERABLE    SMALLINT      DEFAULT 1,  -- Allow other users than owner to change its attributes
+   IS_ALTERABLE    SMALLINT      DEFAULT 1,  -- Allow other users than owner to change its attributes and contents
    IS_IN_TRASHCAN  SMALLINT      DEFAULT 0,  -- Is the file in the trash can?
    CREATED         TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,  -- When was created
    MODIFIED        TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,  -- Last time it was modified
