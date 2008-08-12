@@ -48,10 +48,9 @@ public class GetRoots extends HttpServlet
         {
             // Read from client (desktop)
             String sSessionId = (String) reader.readObject();
-            List<FileDescriptor> roots = null;
             
             // Process request
-            roots = listManagerBean.getRoots( sSessionId );
+            List<FileDescriptor> roots = listManagerBean.getRoots( sSessionId );
             
             // Write to Client (desktop)
             writer.writeObject( roots );

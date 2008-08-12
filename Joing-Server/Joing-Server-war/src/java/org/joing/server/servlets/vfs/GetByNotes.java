@@ -44,12 +44,12 @@ public class GetByNotes extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String               sSessionId = (String) reader.readObject();
-            String               sSubString = (String) reader.readObject();
-            List<FileDescriptor> files      = null;
+            String  sSessionId = (String)  reader.readObject();
+            String  sSubString = (String)  reader.readObject();
+            boolean bGlobal    = (Boolean) reader.readObject();
             
             // Process request
-            files = listManagerBean.getByNotes( sSessionId, sSubString );
+            List<FileDescriptor> files = listManagerBean.getByNotes( sSessionId, sSubString, bGlobal );
             
             // Write to Client (desktop)
             writer.writeObject( files );

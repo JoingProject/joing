@@ -23,7 +23,6 @@ package org.joing.server.servlets.app;
 
 import ejb.app.ApplicationManagerLocal;
 import java.io.*;
-import java.net.*;
 import java.rmi.RemoteException;
 import javax.ejb.EJB;
 import javax.servlet.*;
@@ -63,7 +62,7 @@ public class GetApplication extends HttpServlet
             Application app = applicationManagerBean.getApplication( sSessionId, nAppId );
             
             // Write to Client (desktop)
-            writer.writeObject( (org.joing.common.dto.app.Application) app );
+            writer.writeObject( app );
             writer.flush();
         }
         catch( JoingServerException exc )

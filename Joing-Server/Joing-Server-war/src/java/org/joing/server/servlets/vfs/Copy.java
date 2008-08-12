@@ -8,11 +8,15 @@ package org.joing.server.servlets.vfs;
 
 import org.joing.common.exception.JoingServerServletException;
 import ejb.vfs.FileManagerLocal;
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.List;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.exception.JoingServerException;
 
 /**
@@ -40,15 +44,15 @@ public class Copy extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String sSessionId = (String)  reader.readObject();
-            int    nFileId    = (Integer) reader.readObject();
-            int    nToDirId   = (Integer) reader.readObject();
+            String sSessionId   = (String)  reader.readObject();
+            int    nFileOrDirId = (Integer) reader.readObject();
+            int    nToDirId     = (Integer) reader.readObject();
             
             // Process request
-            Boolean bSuccess = new Boolean( fileManagerBean.copy( sSessionId, nFileId, nToDirId ) );
+            List<FileDescriptor> errors = fileManagerBean.copy( sSessionId, nFileOrDirId, nToDirId );
             
             // Write to Client (desktop)
-            writer.writeObject( bSuccess );
+            writer.writeObject( errors );
             writer.flush();
         }
         catch( JoingServerException exc )

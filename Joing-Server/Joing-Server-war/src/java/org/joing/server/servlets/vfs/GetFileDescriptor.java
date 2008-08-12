@@ -1,11 +1,12 @@
 /*
- * WriteBinaryFile.java
+ * GetFileDescriptor.java
  *
- * Created on 1 de julio de 2007, 20:49
+ * Created on 1 de julio de 2007, 19:14
  */
 
 package org.joing.server.servlets.vfs;
 
+import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.exception.JoingServerServletException;
 import ejb.vfs.FileManagerLocal;
 import java.io.IOException;
@@ -15,8 +16,6 @@ import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import org.joing.common.dto.vfs.FileBinary;
-import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.exception.JoingServerException;
 
 /**
@@ -24,7 +23,7 @@ import org.joing.common.exception.JoingServerException;
  * @author Francisco Morero Peyrona
  * @version
  */
-public class WriteBinaryFile extends HttpServlet
+public class GetFileDescriptor extends HttpServlet
 {
     @EJB()
     private FileManagerLocal fileManagerBean;
@@ -36,7 +35,6 @@ public class WriteBinaryFile extends HttpServlet
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
               throws ServletException, IOException
     {
-        // Response is binary because the answer is a serialized object
         response.setContentType( "application/octet-stream" );
         
         ObjectInputStream  reader = new ObjectInputStream(  request.getInputStream()   );
@@ -45,12 +43,15 @@ public class WriteBinaryFile extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String         sSessionId = (String)     reader.readObject();
-            FileBinary     fileBinary = (FileBinary) reader.readObject();
-            FileDescriptor fileDescr  = fileManagerBean.writeBinaryFile( sSessionId, fileBinary );
+            String  sSessionId = (String)  reader.readObject();
+            String  sPath      = (String)  reader.readObject();
+            boolean bCreate    = (Boolean) reader.readObject();    // Create file if not exsists
             
-            // Write to Client (desktop) the result of the operation
-            writer.writeObject( fileDescr );
+            // Process request
+            FileDescriptor fileDesc = fileManagerBean.getFileDescriptor( sSessionId, sPath, bCreate );
+            
+            // Write to Client (desktop)
+            writer.writeObject( fileDesc );
             writer.flush();
         }
         catch( JoingServerException exc )
@@ -61,6 +62,7 @@ public class WriteBinaryFile extends HttpServlet
         catch( Exception exc )
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
+            exc.printStackTrace();
             // Makes the exception to be contained into a JoingServerServletException
             JoingServerServletException jsse = new JoingServerServletException( getClass(), exc );
             writer.writeObject( jsse );

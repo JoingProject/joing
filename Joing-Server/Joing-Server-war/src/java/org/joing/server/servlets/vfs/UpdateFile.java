@@ -45,7 +45,7 @@ public class UpdateFile extends HttpServlet
             FileDescriptor file       = (FileDescriptor) reader.readObject();
             
             // Process request
-            file = fileManagerBean.updateFile( sSessionId, file );
+            file = fileManagerBean.updateFileDescriptor( sSessionId, file );
             
             // Write to Client (desktop)
             writer.writeObject( file );

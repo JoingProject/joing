@@ -43,14 +43,10 @@ public class GetTrashcan extends HttpServlet
         
         try
         {
-            // Read from client (desktop)
-            String               sSessionId = (String) reader.readObject();
-            List<FileDescriptor> files      = null;
+            String sSessionId = (String) reader.readObject();
             
-            // Process request
-            files = fileManagerBean.getTrashCan( sSessionId );
+            List<FileDescriptor> files = fileManagerBean.getTrashCan( sSessionId );
             
-            // Write to Client (desktop)
             writer.writeObject( files );
             writer.flush();
         }

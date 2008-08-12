@@ -8,7 +8,6 @@ package org.joing.server.servlets.session;
 
 import ejb.session.SessionManagerLocal;
 import java.io.*;
-import java.net.*;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
@@ -35,7 +34,7 @@ public class Logout extends HttpServlet
     protected void processRequest( HttpServletRequest request, HttpServletResponse response )
               throws ServletException, IOException
     {
-        ObjectInputStream reader  = new ObjectInputStream( request.getInputStream() );
+        ObjectInputStream reader = new ObjectInputStream( request.getInputStream() );
         
         try
         {

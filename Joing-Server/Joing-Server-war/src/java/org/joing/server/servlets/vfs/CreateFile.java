@@ -43,13 +43,13 @@ public class CreateFile extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String         sSessionId = (String) reader.readObject();
-            String         sPath      = (String) reader.readObject();
-            String         sFileName  = (String) reader.readObject();
-            FileDescriptor file       = null;
+            String  sSessionId     = (String)  reader.readObject();
+            String  sPath          = (String)  reader.readObject();
+            String  sFileName      = (String)  reader.readObject();
+            boolean bCreateParents = (Boolean) reader.readObject();
             
             // Process request
-            file = fileManagerBean.createFile( sSessionId, sPath, sFileName );
+            FileDescriptor file = fileManagerBean.createFile( sSessionId, sPath, sFileName, bCreateParents );
             
             // Write to Client (desktop)
             writer.writeObject( file );

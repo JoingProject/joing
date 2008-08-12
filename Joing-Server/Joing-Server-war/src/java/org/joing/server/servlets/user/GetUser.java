@@ -42,14 +42,11 @@ public class GetUser extends HttpServlet
         
         try
         {
-            // Read from client (desktop)
             String sSessionId = (String) reader.readObject();
             
-            // Process request
             User user = userManagerBean.getUser( sSessionId );
             
-            // Write to Client (desktop)
-            writer.writeObject( (org.joing.common.dto.user.User) user );
+            writer.writeObject( user );
             writer.flush();
         }
         catch( JoingServerException exc )

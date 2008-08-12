@@ -43,26 +43,11 @@ public class GetChilds extends HttpServlet
         
         try
         {
-            // Read from client (desktop)
-            String               sSessionId = (String) reader.readObject();
-            Object               o2ndParam  =          reader.readObject();
-            List<FileDescriptor> files      = null;
+            String sSessionId = (String)  reader.readObject();
+            int    nFileDirId = (Integer) reader.readObject();
             
-            // Process request
-            if( o2ndParam instanceof Integer )
-            {
-                Integer nFileDirId = (Integer) o2ndParam;
-                
-                files = listManagerBean.getChilds( sSessionId, nFileDirId );
-            }
-            else
-            {
-                String sDirPath = (String) o2ndParam;
-                
-                files = listManagerBean.getChilds( sSessionId, sDirPath );
-            }
+            List<FileDescriptor> files = listManagerBean.getChilds( sSessionId, nFileDirId );
             
-            // Write to Client (desktop)
             writer.writeObject( files );
             writer.flush();
         }

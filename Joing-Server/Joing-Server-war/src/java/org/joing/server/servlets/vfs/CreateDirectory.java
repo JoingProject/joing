@@ -42,16 +42,23 @@ public class CreateDirectory extends HttpServlet
         
         try
         {
-            // Read from client (desktop)
             String         sSessionId = (String) reader.readObject();
-            String         sPath      = (String) reader.readObject();
-            String         sDirName   = (String) reader.readObject();
             FileDescriptor file       = null;
             
-            // Process request
-            file = fileManagerBean.createDirectory( sSessionId, sPath, sDirName );
+            if( request.getParameterMap().size() == 2 )    // NEXT: Debe haber un modo más simple de saber cuántos parámetros se han enviado en la request
+            {
+                String sPath = (String) reader.readObject();
+                
+                file = fileManagerBean.createDirectories( sSessionId, sPath );
+            }
+            else
+            {
+                String sParent  = (String) reader.readObject();
+                String sDirName = (String) reader.readObject();
+                
+                file = fileManagerBean.createDirectory( sSessionId, sParent, sDirName );
+            }
             
-            // Write to Client (desktop)
             writer.writeObject( file );
             writer.flush();
         }
