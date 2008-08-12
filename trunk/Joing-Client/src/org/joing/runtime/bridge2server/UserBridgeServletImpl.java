@@ -25,8 +25,8 @@ package org.joing.runtime.bridge2server;
 import java.util.List;
 import org.joing.common.dto.user.Local;
 import org.joing.common.dto.user.User;
-import org.joing.common.exception.JoingServerException;
 import org.joing.common.clientAPI.runtime.UserBridge;
+import org.joing.common.exception.JoingServerUserException;
 
 /**
  *
@@ -48,7 +48,7 @@ public class UserBridgeServletImpl
     }
     
     public User getUser()
-           throws JoingServerException
+           throws JoingServerUserException
     {
         User user = null;
  
@@ -61,7 +61,7 @@ public class UserBridgeServletImpl
     }
     
     public User updateUser( User user )
-           throws JoingServerException
+           throws JoingServerUserException
     {
         User user2Ret = null;
         
@@ -75,7 +75,7 @@ public class UserBridgeServletImpl
     }
     
     public List<Local> getAvailableLocales()
-           throws JoingServerException
+           throws JoingServerUserException
     {
         List<Local> list = null;
         

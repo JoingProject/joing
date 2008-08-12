@@ -22,13 +22,13 @@
 
 package org.joing.runtime.bridge2server;
 
-import java.util.ArrayList;
 import org.joing.common.clientAPI.runtime.AppBridge;
 import java.util.List;
 import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.app.Application;
 import org.joing.common.dto.app.AppGroup;
 import org.joing.common.dto.app.AppGroupKey;
+import org.joing.common.exception.JoingServerAppException;
 
 /**
  *
@@ -37,10 +37,7 @@ import org.joing.common.dto.app.AppGroupKey;
  */
 public class AppBridgeSocketImpl
        extends BridgeSocketBaseImpl
-       implements AppBridge
-        
-// NEXT: Implementar esta clase
-        
+       implements AppBridge        
 {    
     /** 
      * Creates a new instance of AppBridgeDirectImpl 
@@ -52,46 +49,48 @@ public class AppBridgeSocketImpl
         super();
     }
 
-    public List<AppGroup> getAvailableForUser( AppGroupKey groupKey )
+    public List<AppGroup> getAvailableForUser( AppGroupKey groupKey ) throws JoingServerAppException
     {
-        return null;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
-    public List<AppGroup> getNotInstalledForUser( AppGroupKey groupKey )
+    public List<AppGroup> getNotInstalledForUser( AppGroupKey groupKey ) throws JoingServerAppException
     {
-        return null;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
-    public List<AppGroup> getInstalledForUser( AppGroupKey groupKey )
+    public List<AppGroup> getInstalledForUser( AppGroupKey groupKey ) throws JoingServerAppException
     {
-        return null;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
-    public boolean install( AppDescriptor app )
+    public boolean install( AppDescriptor app ) throws JoingServerAppException
     {
-        return false;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
-    public boolean uninstall( AppDescriptor app )
+    public boolean uninstall( AppDescriptor app ) throws JoingServerAppException
     {
-        return false;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
-    public AppDescriptor getPreferredForType(String sFileExtension)
+    public AppDescriptor getPreferredForType( String sFileExtension ) throws JoingServerAppException
     {
-        return null;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
-    public Application getApplication( int nAppId )
+    public Application getApplication( int nAppId ) throws JoingServerAppException
     {
-        return null;
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
-    public Application getApplicationByName(String executableName) {
-        return null;
+    public Application getApplicationByName( String executableName ) throws JoingServerAppException
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
-    public List<AppDescriptor> getAvailableDesktops() {
-        return new ArrayList<AppDescriptor>();
+    public List<AppDescriptor> getAvailableDesktops() throws JoingServerAppException
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 }

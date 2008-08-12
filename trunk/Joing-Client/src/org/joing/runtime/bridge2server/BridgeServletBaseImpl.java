@@ -62,22 +62,20 @@ public class BridgeServletBaseImpl
     protected static final String APP_SERVLET = "ApplicationServlet";
     
     // VFS
-    protected static final String VFS_GET_FILE          = "vfs/GetFile";
-    protected static final String VFS_CREATE_DIR        = "vfs/CreateDirectory";
-    protected static final String VFS_CREATE_FILE       = "vfs/CreateFile";
-    protected static final String VFS_READ_TEXT_FILE    = "vfs/ReadTextFile";
-    protected static final String VFS_READ_BINARY_FILE  = "vfs/ReadBinaryFile";
-    protected static final String VFS_WRITE_TEXT_FILE   = "vfs/WriteTextFile";
-    protected static final String VFS_WRITE_BINARY_FILE = "vfs/WriteBinaryFile";
-    protected static final String VFS_UPDATE            = "vfs/UpdateFile";
-    protected static final String VFS_COPY              = "vfs/Copy";
-    protected static final String VFS_MOVE              = "vfs/Move";
-    protected static final String VFS_TRASHCAN          = "vfs/Trashcan";
-    protected static final String VFS_DELETE            = "vfs/Delete";
-    protected static final String VFS_GET_ROOTS         = "vfs/GetRoots";
-    protected static final String VFS_GET_CHILDS        = "vfs/GetChilds";
-    protected static final String VFS_GET_BY_NOTES      = "vfs/GetByNotes";
-    protected static final String VFS_GET_TRASHCAN      = "vfs/GetTrashcan";
+    protected static final String VFS_GET_FILE_DESCRIPTOR = "vfs/GetFileDescriptor";
+    protected static final String VFS_CREATE_DIR          = "vfs/CreateDirectory";
+    protected static final String VFS_CREATE_FILE         = "vfs/CreateFile";
+    protected static final String VFS_GET_FILE            = "vfs/ReadFileToArray";
+    protected static final String VFS_WRITE_FILE          = "vfs/WriteFileFromArray";
+    protected static final String VFS_UPDATE              = "vfs/UpdateFile";
+    protected static final String VFS_COPY                = "vfs/Copy";
+    protected static final String VFS_MOVE                = "vfs/Move";
+    protected static final String VFS_TRASHCAN            = "vfs/Trashcan";
+    protected static final String VFS_DELETE              = "vfs/Delete";
+    protected static final String VFS_GET_ROOTS           = "vfs/GetRoots";
+    protected static final String VFS_GET_CHILDS          = "vfs/GetChilds";
+    protected static final String VFS_GET_BY_NOTES        = "vfs/GetByNotes";
+    protected static final String VFS_GET_TRASHCAN        = "vfs/GetTrashcan";
     
     // CLASS VARIABLES
     protected Platform platform;
@@ -177,13 +175,11 @@ public class BridgeServletBaseImpl
 
                 // antoniovl: This is added to support RemoteException without
                 // change in the handle() method.
-                if (obj instanceof RemoteException) {
+                if (obj instanceof RemoteException)
                     obj = new JoingServerException(((RemoteException)obj).getMessage());
-                }
                 
                 if( obj instanceof JoingServerException )
                     handle( (JoingServerException) obj );
-                
             }
             catch( IOException exc )
             {

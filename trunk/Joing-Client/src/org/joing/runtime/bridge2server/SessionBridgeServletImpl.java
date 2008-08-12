@@ -24,7 +24,7 @@ package org.joing.runtime.bridge2server;
 
 import org.joing.common.clientAPI.runtime.SessionBridge;
 import org.joing.common.dto.session.LoginResult;
-import org.joing.common.exception.JoingServerException;
+import org.joing.common.exception.JoingServerSessionException;
 
 /**
  * Access the Server (EJBs) by using WebServices.
@@ -37,7 +37,6 @@ public class SessionBridgeServletImpl
        extends BridgeServletBaseImpl
        implements SessionBridge
 {
-    
     private static String sSessionId = null;
         
     /**
@@ -50,7 +49,7 @@ public class SessionBridgeServletImpl
     }
     
     public LoginResult login( String sAccount, String sPassword )
-           throws JoingServerException
+           throws JoingServerSessionException
     {
         LoginResult result = null;
         
@@ -68,7 +67,6 @@ public class SessionBridgeServletImpl
     }
     
     public void logout()
-           throws JoingServerException
     {
         if (sSessionId != null)
         {

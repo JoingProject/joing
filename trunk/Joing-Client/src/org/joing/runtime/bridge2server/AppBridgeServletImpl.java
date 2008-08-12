@@ -28,7 +28,7 @@ import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.app.Application;
 import org.joing.common.dto.app.AppGroup;
 import org.joing.common.dto.app.AppGroupKey;
-import org.joing.common.exception.JoingServerException;
+import org.joing.common.exception.JoingServerAppException;
 import org.joing.common.pkt.app.ApplicationReply;
 import org.joing.common.pkt.app.ApplicationRequest;
 
@@ -54,7 +54,7 @@ public class AppBridgeServletImpl
     }
 
     public List<AppGroup> getAvailableForUser( AppGroupKey groupKey )
-            throws JoingServerException
+            throws JoingServerAppException
     {
         List<AppGroup> apps = null;
 
@@ -68,7 +68,7 @@ public class AppBridgeServletImpl
     }
 
     public List<AppGroup> getNotInstalledForUser( AppGroupKey groupKey )
-            throws JoingServerException
+            throws JoingServerAppException
     {
         List<AppGroup> apps = null;
 
@@ -82,7 +82,7 @@ public class AppBridgeServletImpl
     }
 
     public List<AppGroup> getInstalledForUser( AppGroupKey groupKey )
-            throws JoingServerException
+            throws JoingServerAppException
     {
         List<AppGroup> apps = null;
 
@@ -96,7 +96,7 @@ public class AppBridgeServletImpl
     }
 
     public boolean install( AppDescriptor app )
-            throws JoingServerException
+            throws JoingServerAppException
     {
         boolean bSuccess = false;
 
@@ -110,7 +110,7 @@ public class AppBridgeServletImpl
     }
 
     public boolean uninstall( AppDescriptor app )
-            throws JoingServerException
+            throws JoingServerAppException
     {
         boolean bSuccess = false;
 
@@ -124,7 +124,7 @@ public class AppBridgeServletImpl
     }
 
     public AppDescriptor getPreferredForType( String sFileExtension )
-            throws JoingServerException
+            throws JoingServerAppException
     {
         AppDescriptor appDescriptor = null;
 
@@ -138,7 +138,7 @@ public class AppBridgeServletImpl
     }
 
     public Application getApplication( int nAppId )
-            throws JoingServerException
+            throws JoingServerAppException
     {
         Application application = null;
 
@@ -161,7 +161,7 @@ public class AppBridgeServletImpl
     }
 
     public Application getApplicationByName( String executableName )
-            throws JoingServerException
+            throws JoingServerAppException
     {
 
         Application application = null;
@@ -202,7 +202,7 @@ public class AppBridgeServletImpl
     }
 
     public List<AppDescriptor> getAvailableDesktops()
-            throws JoingServerException
+            throws JoingServerAppException
     {
         Channel            channel = new Channel( APP_SERVLET );
         ApplicationRequest req     = new ApplicationRequest();

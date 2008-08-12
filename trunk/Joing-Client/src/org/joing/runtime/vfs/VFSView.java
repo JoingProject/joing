@@ -161,7 +161,7 @@ public class VFSView
             throw new IOException( "Parent directory is null." );
         
         String         sParent   = vfsParentDir.getAbsolutePath();
-        FileDescriptor fdNewFile = RuntimeFactory.getPlatform().getBridge().getFileBridge().createFile( sParent, null );
+        FileDescriptor fdNewFile = RuntimeFactory.getPlatform().getBridge().getFileBridge().createFile( sParent, null, false );
         
         return new VFSFile( fdNewFile );
     }

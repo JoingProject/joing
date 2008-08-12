@@ -26,6 +26,7 @@ import org.joing.common.clientAPI.runtime.SessionBridge;
 import org.joing.common.dto.session.LoginResult;
 
 // NEXT: Implementar esta clase
+import org.joing.common.exception.JoingServerSessionException;
 
 /**
  * Access directrly to EJBs.
@@ -48,20 +49,19 @@ public class SessionBridgeSocketImpl
     {
         super();
     }
-    
-    @Override
-    public LoginResult login( String sAccount, String sPassword )
+
+    public LoginResult login( String sAccount, String sPassword ) throws JoingServerSessionException
     {
-        return null;
-    }
-    
-    @Override
-    public void logout()
-    {
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
-    @Override
-    public String getSessionId() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void logout()
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+    public String getSessionId()
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 }

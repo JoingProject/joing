@@ -32,7 +32,7 @@ import org.joing.swingtools.fsviewer.FileSystemJobs;
 public class JoingFileSystemTree extends JoingSwingTree implements FileSystemActionable
 {
     private FileSystemJobs fsworks    = null;
-    private boolean         bShowFiles = false;
+    private boolean        bShowFiles = true;   // TODO: ponerlo a false
     
     //------------------------------------------------------------------------//
     
