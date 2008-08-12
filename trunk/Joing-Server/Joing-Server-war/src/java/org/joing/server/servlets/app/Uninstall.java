@@ -41,7 +41,7 @@ public class Uninstall extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String      sSessionId  = (String)      reader.readObject();
+            String        sSessionId  = (String)        reader.readObject();
             AppDescriptor application = (AppDescriptor) reader.readObject();
             
             // Process request

@@ -54,7 +54,7 @@ public class GetAvailableLocales extends HttpServlet
             List<org.joing.common.dto.user.Local> listToSend = new ArrayList<org.joing.common.dto.user.Local>();
             
             for( Local l : locals )
-                listToSend.add( (org.joing.common.dto.user.Local) l );
+                listToSend.add( l );
             
             // Write to Client (desktop)
             writer.writeObject( listToSend );

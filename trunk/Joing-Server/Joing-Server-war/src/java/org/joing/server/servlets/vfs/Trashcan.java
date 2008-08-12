@@ -8,11 +8,15 @@ package org.joing.server.servlets.vfs;
 
 import org.joing.common.exception.JoingServerServletException;
 import ejb.vfs.FileManagerLocal;
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.List;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.exception.JoingServerException;
 
 /**
@@ -43,22 +47,23 @@ public class Trashcan extends HttpServlet
             String  sSessionId = (String)  reader.readObject();
             Object  o2ndParam  =           reader.readObject();
             boolean bInTashcan = (Boolean) reader.readObject();
-            int[]   anIdError  = null;     // Files ID that could not be deleted
+            
+            List<FileDescriptor> errors = null;     // FileDescriptors that were not sent to trashcan
             
             // Process request
             if( o2ndParam instanceof Integer )
             {
                 int nFileId = (Integer) o2ndParam;
-                anIdError = fileManagerBean.trashcan( sSessionId, nFileId, bInTashcan );
+                errors = fileManagerBean.trashcan( sSessionId, nFileId, bInTashcan );
             }
             else
             {
                 int[] anFileIds = (int[]) o2ndParam;
-                anIdError = fileManagerBean.trashcan( sSessionId, anFileIds, bInTashcan );
+                errors = fileManagerBean.trashcan( sSessionId, anFileIds, bInTashcan );
             }
             
             // Write to Client (desktop)
-            writer.writeObject( anIdError );
+            writer.writeObject( errors );
             writer.flush();
         }
         catch( JoingServerException exc )

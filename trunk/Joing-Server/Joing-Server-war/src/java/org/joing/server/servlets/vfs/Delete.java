@@ -8,11 +8,15 @@ package org.joing.server.servlets.vfs;
 
 import org.joing.common.exception.JoingServerServletException;
 import ejb.vfs.FileManagerLocal;
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.List;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.exception.JoingServerException;
 
 /**
@@ -40,24 +44,25 @@ public class Delete extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String sSessionId = (String)  reader.readObject();
-            Object o2ndParam  =           reader.readObject();
-            int[]  anIdError  = null;     // Files ID that could not be deleted
+            String sSessionId = (String) reader.readObject();
+            Object o2ndParam  =          reader.readObject();
+            
+            List<FileDescriptor> errors = null;   // FileDescriptros failed not be deleted
             
             // Process request
             if( o2ndParam instanceof Integer )
             {
                 int nFileId = (Integer) o2ndParam;
-                anIdError = fileManagerBean.delete( sSessionId, nFileId );
+                errors = fileManagerBean.delete( sSessionId, nFileId );
             }
             else
             {
                 int[] anFileIds = (int[]) o2ndParam;
-                anIdError = fileManagerBean.delete( sSessionId, anFileIds);
+                errors = fileManagerBean.delete( sSessionId, anFileIds);
             }
             
             // Write to Client (desktop)
-            writer.writeObject( anIdError );
+            writer.writeObject( errors );
             writer.flush();
         }
         catch( JoingServerException exc )

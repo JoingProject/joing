@@ -8,7 +8,6 @@ package org.joing.server.servlets.user;
 
 import ejb.user.UserManagerLocal;
 import java.io.*;
-import java.net.*;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
@@ -43,15 +42,12 @@ public class UpdateUser extends HttpServlet
         
         try
         {
-            // Read from client (desktop)
             String sSessionId = (String) reader.readObject();
             User   user       = (User)   reader.readObject();
             
-            // Process request
             user = userManagerBean.updateUser( sSessionId, user );
             
-            // Write to Client (desktop)
-            writer.writeObject( (org.joing.common.dto.user.User) user );
+            writer.writeObject( user );
             writer.flush();
         }
         catch( JoingServerException exc )

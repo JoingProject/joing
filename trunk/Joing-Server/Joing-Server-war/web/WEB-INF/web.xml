@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <display-name>Join'g</display-name>
+    
     <!-- ******************************************************************* -->
-    <!-- SERVLET NAME -->
+    <!-- CONTEXT PARAM -->
     <context-param>
         <param-name>com.sun.faces.verifyObjects</param-name>
         <param-value>false</param-value>
@@ -31,17 +32,12 @@
 	<param-name>javax.faces.DEFAULT_SUFFIX</param-name>
 	<param-value>.html</param-value>
     </context-param>
+    
+    <!-- ******************************************************************* -->
+    <!-- SERVLET NAME -->
     <servlet>
         <servlet-name>Login</servlet-name>
         <servlet-class>org.joing.server.servlets.session.Login</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ReadTextFile</servlet-name>
-        <servlet-class>org.joing.server.servlets.vfs.ReadTextFile</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ReadBinaryFile</servlet-name>
-        <servlet-class>org.joing.server.servlets.vfs.ReadBinaryFile</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GetUser</servlet-name>
@@ -96,8 +92,8 @@
         <servlet-class>org.joing.server.servlets.vfs.GetTrashcan</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>GetFile</servlet-name>
-        <servlet-class>org.joing.server.servlets.vfs.GetFile</servlet-class>
+        <servlet-name>GetFileDescriptor</servlet-name>
+        <servlet-class>org.joing.server.servlets.vfs.GetFileDescriptor</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>UpdateFile</servlet-name>
@@ -116,6 +112,14 @@
         <servlet-class>org.joing.server.servlets.vfs.Copy</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>ReadFileToArray</servlet-name>
+        <servlet-class>org.joing.server.servlets.vfs.ReadFileToArray</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>WriteFileFromArray</servlet-name>
+        <servlet-class>org.joing.server.servlets.vfs.WriteFileFromArray</servlet-class>
+    </servlet>    
+    <servlet>
         <servlet-name>Move</servlet-name>
         <servlet-class>org.joing.server.servlets.vfs.Move</servlet-class>
     </servlet>
@@ -126,14 +130,6 @@
     <servlet>
         <servlet-name>Delete</servlet-name>
         <servlet-class>org.joing.server.servlets.vfs.Delete</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>WriteBinaryFile</servlet-name>
-        <servlet-class>org.joing.server.servlets.vfs.WriteBinaryFile</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>WriteTextFile</servlet-name>
-        <servlet-class>org.joing.server.servlets.vfs.WriteTextFile</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GetApplication</servlet-name>
@@ -147,32 +143,28 @@
         <servlet-name>ApplicationServlet</servlet-name>
         <servlet-class>org.joing.server.servlets.app.ApplicationServlet</servlet-class>
     </servlet>
-    <!-- ******************************************************************* -->
-    <!-- SERVLET MAPPING -->
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    <!-- ******************************************************************* -->
+    <!-- SERVLET MAPPING -->
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
         <url-pattern>/servlets/session/Login</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ReadTextFile</servlet-name>
-        <url-pattern>/servlets/vfs/ReadTextFile</url-pattern>
+        <servlet-name>Logout</servlet-name>
+        <url-pattern>/servlets/session/Logout</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ReadBinaryFile</servlet-name>
-        <url-pattern>/servlets/vfs/ReadBinaryFile</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
+     <servlet-mapping>
         <servlet-name>GetUser</servlet-name>
         <url-pattern>/servlets/user/GetUser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>Logout</servlet-name>
-        <url-pattern>/servlets/session/Logout</url-pattern>
+        <servlet-name>UpdateUser</servlet-name>
+        <url-pattern>/servlets/user/UpdateUser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GetAvailableLocales</servlet-name>
@@ -181,10 +173,6 @@
     <servlet-mapping>
         <servlet-name>GetAvailableForUser</servlet-name>
         <url-pattern>/servlets/app/GetAvailableForUser</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UpdateUser</servlet-name>
-        <url-pattern>/servlets/user/UpdateUser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GetNotInstalledForUser</servlet-name>
@@ -219,8 +207,8 @@
         <url-pattern>/servlets/vfs/GetTrashCan</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>GetFile</servlet-name>
-        <url-pattern>/servlets/vfs/GetFile</url-pattern>
+        <servlet-name>GetFileDescriptor</servlet-name>
+        <url-pattern>/servlets/vfs/GetFileDescriptor</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>UpdateFile</servlet-name>
@@ -249,14 +237,14 @@
     <servlet-mapping>
         <servlet-name>Delete</servlet-name>
         <url-pattern>/servlets/vfs/Delete</url-pattern>
+    </servlet-mapping>    
+    <servlet-mapping>
+        <servlet-name>ReadFileToArray</servlet-name>
+        <url-pattern>/servlets/vfs/ReadFileToArray</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>WriteBinaryFile</servlet-name>
-        <url-pattern>/servlets/vfs/WriteBinaryFile</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>WriteTextFile</servlet-name>
-        <url-pattern>/servlets/vfs/WriteTextFile</url-pattern>
+        <servlet-name>WriteFileFromArray</servlet-name>
+        <url-pattern>/servlets/vfs/WriteFileFromArray</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GetApplication</servlet-name>
