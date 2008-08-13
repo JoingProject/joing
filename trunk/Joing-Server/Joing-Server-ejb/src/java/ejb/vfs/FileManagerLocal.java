@@ -38,4 +38,11 @@ public interface FileManagerLocal extends FileManagerRemote
      * @return A FileEntity that represents the root directory for the passed
      */
     public FileEntity createRootEntity( String sAccount );
+    
+    /**
+     * Creates a directory named "Examples" and some files in it.
+     * 
+     * @param sAccount User Account to create examples to.
+     */
+    public void createExamples( String sAccount );
 }

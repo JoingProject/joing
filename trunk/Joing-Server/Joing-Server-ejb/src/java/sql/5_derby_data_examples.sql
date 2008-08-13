@@ -1,5 +1,5 @@
 -- ********************************************************************************************************************
---     WebPC - SERVER - DATA
+--     Join'g - SERVER - DATA
 -- ********************************************************************************************************************
 
 -- Add new language: Spanish of Spain
@@ -7,14 +7,6 @@ insert into locales (IDIOM, COUNTRY)  -- ID_LOCALE = 2
      values ('es', 'ES');
 
 -- ------------------------------------------------------------------
-
--- Add new user
-insert into users (ACCOUNT, PASSWORD, EMAIL, FIRST_NAME, SECOND_NAME, ID_LOCALE, IS_MALE, QUOTA)
-     values('peyrona@joing.org','admin','peyrona@gmail.com', 'Francisco','Morero Peyrona', 2, 1, 0);
-
--- And add home directory for the new user
-insert into files (ACCOUNT, OWNER, FILE_PATH, FILE_NAME, IS_DIR, IS_PUBLIC, IS_MODIFIABLE, IS_DELETEABLE, IS_DUPLICABLE, IS_ALTERABLE)
-     values('peyrona@joing.org', 'system@joing.org', '', '/', 1, 0, 0, 0, 0, 0 );
 
 -- Add descriptions for application groups in Spanish
 -- Note: For inf about ID_APP_GROUP, refer to -> org.joing.common.dto.app.AppGroup.java
@@ -117,37 +109,5 @@ insert into apps_with_groups (ID_APPLICATION, ID_APP_GROUP)
 
 insert into apps_with_groups (ID_APPLICATION, ID_APP_GROUP)
      values (10, 1);   -- App 'Community Explorer' belongs to Group 'Accesories'
-
--- ------------------------------------------------------------------
-
-insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.org', 1, 1);
- 
-insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.org', 2, 1);
-
-insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.org', 3, 1);
-
-insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.org', 4, 1);
-
-insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.org', 5, 1);
-
-insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.org', 6, 1);
-
-insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.org', 7, 0);
-
-insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.org', 8, 0);
-
-insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.org', 9, 1);
-
-insert into users_with_apps (ACCOUNT, ID_APPLICATION, ALLOW_REMOTE)
-     values ('peyrona@joing.org', 10, 1);
 
 -- *****************************************   EOF  *******************************************************************

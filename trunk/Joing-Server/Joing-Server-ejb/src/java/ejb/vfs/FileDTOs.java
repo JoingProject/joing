@@ -19,7 +19,7 @@ class FileDTOs
 {
     private FileEntity fileEntity;
     
-    FileDTOs( FileEntity fileEntity)
+    FileDTOs( FileEntity fileEntity )
     {
         this.fileEntity = fileEntity;
     }
