@@ -28,7 +28,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.joing.common.dto.vfs.FileOverArray;
 import org.joing.common.exception.JoingServerException;
 import org.joing.common.exception.JoingServerServletException;
 
@@ -61,10 +60,10 @@ public class ReadFileToArray extends HttpServlet
             String sSessionId = (String)  reader.readObject();
             int    nFileId    = (Integer) reader.readObject();
             
-            InputStream   is  = fileManagerBean.readFile( sSessionId, nFileId );
-            FileOverArray foa = new FileOverArray( is );
+            InputStream is = fileManagerBean.readFile( sSessionId, nFileId );
+            byte[]      ab = readFileContent( is );    // For efficency only the array is sent to client
             
-            writer.writeObject( foa );
+            writer.writeObject( ab );
             writer.flush();
         }
         catch( JoingServerException exc )
@@ -88,6 +87,41 @@ public class ReadFileToArray extends HttpServlet
             if( writer != null )
                 try{ writer.close(); } catch( IOException exc ) { }
         }
+    }
+    
+    private byte[] readFileContent( InputStream is )
+    {
+        byte[] abContent = new byte[0];
+        byte[] abBuffer  = new byte[1024*8];
+        int    nReaded   = 0;
+        
+        try
+        {
+            while( nReaded != -1 )
+            {
+                nReaded = is.read( abBuffer );
+                
+                if( nReaded != -1 )
+                {
+                    // Create a temp array with enought space for btContent and new bytes readed
+                    byte[] abTemp = new byte[ abContent.length + nReaded ];
+                    // Copy btContent to new array
+                    System.arraycopy( abContent, 0, abTemp, 0, abContent.length );
+                    // Copy readed bytes at tail of new array
+                    System.arraycopy( abBuffer, 0, abTemp, abContent.length, nReaded );
+                    // Changes btContent reference to temp array
+                    abContent = abTemp;
+                }
+            }
+            
+            is.close();
+        }
+        catch( IOException exc )
+        {
+            abContent = null;
+        }
+        
+        return abContent;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
