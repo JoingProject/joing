@@ -30,6 +30,11 @@ import org.joing.common.exception.JoingServerVFSException;
 
 /**
  * This is the business interface for VfsFileManager enterprise bean.
+ * <p>
+ * Note: All methods here recieve Strings (instead of FileDescriptor instances).
+ * It is because I believe it is faster to find a file in DB on the Server side 
+ * than to serialize at Client side an instance of FileDescritor, send it over 
+ * the Internet and deserialize it at Server side.
  */
 @Remote
 public interface FileManagerRemote

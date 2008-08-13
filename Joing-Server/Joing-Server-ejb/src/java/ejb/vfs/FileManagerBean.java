@@ -28,6 +28,7 @@ import ejb.user.UserManagerLocal;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -450,6 +451,8 @@ public class FileManagerBean
     
     public FileEntity createRootEntity( String sAccount )
     {
+        Date dNow = new Date();
+        
         // All fields must be set
         FileEntity _file = new FileEntity();
                    _file.setIdOriginal( null );
@@ -468,11 +471,48 @@ public class FileManagerBean
                    _file.setIsDuplicable( (short) 0 );
                    _file.setIsAlterable(  (short) 0 );
                    _file.setIsInTrashcan( (short) 0 );
-                   _file.setCreated(  _file.getAccessed() );
-                   _file.setModified( _file.getAccessed() );
-                   _file.setAccessed( new Date() );
+                   _file.setCreated(  dNow );
+                   _file.setModified( dNow );
+                   _file.setAccessed( dNow );
                    
        return _file;
+    }
+    
+    public void createExamples( String sAccount )
+    {
+        createEntry( sAccount, "/", "Examples", true );
+        
+        try
+        {
+            FileDescriptor fdWelcome = createEntry( sAccount, "/Examples", "welcome.txt"   , false );
+            java.io.File   fWelcome  = NativeFileSystemTools.getFile( sAccount, fdWelcome.getId() );
+            FileWriter writer = new FileWriter( fWelcome );
+                       writer.write( "Welcome to Join'g.\n\nThis is just a text file example.\nAmong other things, you can modify it and save back to server.");
+                       writer.close();
+        }
+        catch( IOException exc )
+        {
+            // Nothing to do
+        }
+        
+        try
+        {
+            FileDescriptor fdNasaPict = createEntry( sAccount, "/Examples", "HomeByNASA.jpg", false );
+            java.io.File   fNasaPict  = NativeFileSystemTools.getFile( sAccount, fdNasaPict.getId() );
+            
+            FileInputStream  fis = new FileInputStream( getClass().getResource( "homebynasa.jpg" ).getFile() );
+            FileOutputStream fos = new FileOutputStream( fNasaPict );
+            
+            while( fis.read() != -1 )
+                fos.write( fis.read() );
+
+            fos.close();
+            fis.close();
+        }
+        catch( IOException exc )
+        {
+            // Nothing to do
+        }
     }
     
     //------------------------------------------------------------------------//
@@ -610,9 +650,7 @@ public class FileManagerBean
                                                     JoingServerVFSException.FILE_ALREADY_EXISTS) );
         try
         {
-            // Owner of parent directory is System => Do not inherit parent properties
-            boolean bOwnerIsSystem = Constant.getSystemAccount().equals( _feParent.getOwner() ) ;
-            Date    date           = new Date();
+            Date date = new Date();
 // FIXME: Esto no va así: revisar le owner
             // When the EntityManager persists the entity, it first creates a new record,
             // and the record has the values defined in "DEFAULT" clause in "CREATE TABLE",
@@ -627,22 +665,22 @@ public class FileManagerBean
                        _file.setAccount( sAccount );
                        _file.setFilePath( VFSTools.getAbsolutePath( _feParent ) );
                        _file.setFileName( sChild );
-                       _file.setOwner( (bOwnerIsSystem ? sAccount : _feParent.getOwner()) );
+                       _file.setOwner( sAccount );
                        _file.setLockedBy( null );
                        _file.setIsDir( (short) (bIsDir ? 1 : 0) );
-                       _file.setIsHidden(     (bOwnerIsSystem ? (short) 0 : _feParent.getIsHidden())     );
-                       _file.setIsPublic(     (bOwnerIsSystem ? (short) 0 : _feParent.getIsPublic())     );
-                       _file.setIsReadable(   (bOwnerIsSystem ? (short) 1 : _feParent.getIsReadable())   );
-                       _file.setIsModifiable( (bOwnerIsSystem ? (short) 1 : _feParent.getIsModifiable()) );
-                       _file.setIsDeleteable( (bOwnerIsSystem ? (short) 1 : _feParent.getIsDeleteable()) );
-                       _file.setIsExecutable( (bOwnerIsSystem ? (short) 0 : _feParent.getIsExecutable()) );
-                       _file.setIsDuplicable( (bOwnerIsSystem ? (short) 1 : _feParent.getIsDuplicable()) );
-                       _file.setIsAlterable(  (bOwnerIsSystem ? (short) 1 : _feParent.getIsAlterable())  );
-                       _file.setIsInTrashcan( (bOwnerIsSystem ? (short) 0 : _feParent.getIsInTrashcan()) );
+                       _file.setIsHidden(     (short) 0 );
+                       _file.setIsPublic(     (short) 0 );
+                       _file.setIsReadable(   (short) 1 );
+                       _file.setIsModifiable( (short) 1 );
+                       _file.setIsDeleteable( (short) 1 );
+                       _file.setIsExecutable( (short) 0 );
+                       _file.setIsDuplicable( (short) 1 );
+                       _file.setIsAlterable(  (short) 1 );
+                       _file.setIsInTrashcan( (short) 0 );
                        _file.setCreated(  date );
                        _file.setModified( date );
                        _file.setAccessed( date );
-
+                       
             em.persist( _file );
             em.flush();
             em.refresh( _file );

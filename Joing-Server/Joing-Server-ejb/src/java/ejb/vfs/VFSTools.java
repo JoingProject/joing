@@ -233,12 +233,8 @@ class VFSTools
         // TODO: posiblemente aquí haya que tener en cuenta cosas como si está 
         //       en la Trashcan o si es un Link a otro fichero
         
-        // fe.getFileName() can't be null and is already trimmed
-        
-        if( fe.getFileName().equals( sROOT ) )
-            return fe.getFileName();
-        else
-            return fe.getFilePath().concat( sROOT ).concat( fe.getFileName() );
+        // Neither fe.getFilePath() nor fe.getFileName() can be null and are already trimmed
+        return fe.getFilePath().concat( fe.getFileName() );
     }
     
     //------------------------------------------------------------------------//

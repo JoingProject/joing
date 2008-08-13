@@ -229,6 +229,9 @@ public class UserManagerBean
             
             for( ApplicationEntity app : lstApps )
                 em.persist( new UsersWithAppsEntity( sAccount, app.getIdApplication() ) );
+            
+            // Creates "Examples" directory and its files
+            fileManagerBean.createExamples( sAccount );
         }
         catch( RuntimeException exc )
         {
