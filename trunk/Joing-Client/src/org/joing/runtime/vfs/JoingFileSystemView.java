@@ -108,7 +108,7 @@ public class JoingFileSystemView extends FileSystemView
      * @return The VFSFile instance for the just created file.
      * @throws java.io.IOException
      */
-    // "Normal" (local) files are created in a wired way: an instance of File is 
+    // Local files are created in a wired way: an instance of File is 
     // creted but the physical file is not created until needed. But Virtual
     // files must exists after invocation to the server; that's why I add this 
     // new method (therefore it is used only by VFS).
@@ -156,10 +156,9 @@ public class JoingFileSystemView extends FileSystemView
      */
     public java.io.File getHomeDirectory()
     {
-        // In Local File System View it would be:
-        // return createFileObject( System.getProperty("user.home") );
-        // But a Join'g user normally wants to use the Remote FS
-	return localView.getHomeDirectory();   // FIXME: cambiarlo por remoteView cuando esté corregido el bug
+        // A Join'g user normally wants to use the Remote FS
+	//return remoteView.getHomeDirectory();   // TODO: Cambiar la lin sig por esta cuando este corregido el problema
+        return localView.getHomeDirectory();
     }
     
     /**
@@ -183,8 +182,11 @@ public class JoingFileSystemView extends FileSystemView
         VFSFile[]      afRemote = remoteView.getRoots();
         java.io.File[] afAll    = new java.io.File[ afLocal.length + afRemote.length ];
         
-        System.arraycopy( afRemote, 0, afAll,               0, afRemote.length );
-        System.arraycopy( afLocal , 0, afAll, afRemote.length, afLocal.length );
+        // TODO: Cambiar el oren cuando haya solucionado el problema 
+        // System.arraycopy( afRemote, 0, afAll,               0, afRemote.length );
+        // System.arraycopy( afLocal , 0, afAll, afRemote.length, afLocal.length );
+        System.arraycopy( afLocal , 0, afAll,              0, afLocal.length  );
+        System.arraycopy( afRemote, 0, afAll, afLocal.length, afRemote.length );
         
         return afAll;
     }

@@ -62,7 +62,7 @@ public class VFSFile extends File
      * string for convenience.  This string contains a single character, namely
      * <code>{@link #separatorChar}</code>.
      */
-    public static final String separator         = "" + separatorChar;           // Not needed, but placed for clarity
+    public static final String separator         = "" + separatorChar;
     /**
      * The system-dependent path-separator character.  This field is
      * initialized to contain the first character of the value of the system
@@ -83,7 +83,7 @@ public class VFSFile extends File
      *
      * @see     java.lang.System#getProperty(java.lang.String)
      */
-    public static final String pathSeparator     = "" + pathSeparatorChar;      // Not needed, but placed for clarity
+    public static final String pathSeparator     = "" + pathSeparatorChar;
     
     //------------------------------------------------------------------------//
     
@@ -187,7 +187,7 @@ public class VFSFile extends File
         
         if( exists() )
         {
-            Bridge2Server b2s = RuntimeFactory.getPlatform().getBridge();
+            Bridge2Server b2s = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge();
             bSuccess = (b2s.getFileBridge().delete( fd ).size() == 0);   // NEXT: Se pueden devolver los Ids de error: delete(...) los devuelve
         }
         
@@ -826,10 +826,14 @@ public class VFSFile extends File
     
     //------------------------------------------------------------------------//
     
-    // Used only internally
+    /**
+     * Creates a new instance of <code>VFSFile</code>.
+     * 
+     * @param fd An instance of Join'g <code>org.joing.common.dto.vfs.FileDescriptor</code>
+     */
     protected VFSFile( FileDescriptor fd )
     {
-        super( fd.getAbsolutePath() );
+        super( fd == null ? "" : fd.getAbsolutePath() );
         this.fd = fd;
     }
     

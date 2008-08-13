@@ -26,8 +26,7 @@ import java.util.List;
 import org.joing.common.CallBackable;
 import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.clientAPI.runtime.VFSBridge;
-import org.joing.common.dto.vfs.File4IO;
-import org.joing.common.dto.vfs.FileOverArray;
+import org.joing.runtime.vfs.VFSFileOverArray;
 import org.joing.common.exception.JoingServerVFSException;
 
 /**
@@ -108,46 +107,45 @@ public class VFSBridgeServletImpl
         return file;
     }
     
-    public File4IO getFile( FileDescriptor fd )
+    public VFSFileOverArray getFile( FileDescriptor fd )
            throws JoingServerVFSException
     {
-        FileOverArray foa = null;
+        VFSFileOverArray foa = null;
         
         Channel channel = new Channel( VFS_GET_FILE );
                 channel.write( platform.getBridge().getSessionBridge().getSessionId() );
                 channel.write( fd.getId() );
-        foa = (FileOverArray) channel.read();
+        byte[] abContent = (byte[]) channel.read();
                 channel.close();
 
-        if( foa != null )
-        {   // Add a callback, so when the OutputStream returned by this method is closed, 
-            // the callback will be invoked and the file will be sent to Server to be stored.
-            foa.addCallBackListener( new CallBackable()
+        foa = new VFSFileOverArray( fd, abContent );
+        // Add a callback, so when the OutputStream returned by this method is closed, 
+        // the callback will be invoked and the file will be sent to Server to be stored.
+        foa.addCallBackListener( new CallBackable()
+        {
+            public void execute( Object sender )
             {
-                public void execute( Object sender )
-                {
-                     VFSBridgeServletImpl.this.writeFileFromArray( (FileOverArray) sender );
-                }
-            } );
-        }
-
+                 VFSBridgeServletImpl.this.writeFileFromArray( (VFSFileOverArray) sender );
+            }
+        } );
+        
         return foa;
     }
-
-    public FileDescriptor update( FileDescriptor file )
+    
+    public FileDescriptor update( FileDescriptor fd )
            throws JoingServerVFSException
     {
-        FileDescriptor file2Ret = null;
+        FileDescriptor fd2Ret = null;
         
         Channel channel = new Channel( VFS_UPDATE );
                 channel.write( platform.getBridge().getSessionBridge().getSessionId() );
-                channel.write( file );
-        file2Ret = (FileDescriptor) channel.read();
+                channel.write( fd );
+        fd2Ret = (FileDescriptor) channel.read();
                 channel.close();
 
-        return file2Ret;
+        return fd2Ret;
     }
-
+    
     public List<FileDescriptor> copy( FileDescriptor fdFromFileOrFolder, FileDescriptor fdToFolder )
            throws JoingServerVFSException
     {
@@ -162,7 +160,7 @@ public class VFSBridgeServletImpl
 
         return lstErrors;
     }
-
+    
     public List<FileDescriptor> move( FileDescriptor fdFromFileOrFolder, FileDescriptor fdToFolder )
            throws JoingServerVFSException
     {
@@ -177,7 +175,7 @@ public class VFSBridgeServletImpl
 
         return files;
     }
-
+    
     public List<FileDescriptor> trashcan( FileDescriptor fd, boolean bInTrashCan )
            throws JoingServerVFSException
     {
@@ -192,7 +190,7 @@ public class VFSBridgeServletImpl
         
         return lstErrors;
     }
-
+    
     public List<FileDescriptor> trashcan( List<FileDescriptor> list, boolean bInTrashCan )
            throws JoingServerVFSException
     {
@@ -251,20 +249,21 @@ public class VFSBridgeServletImpl
 
         return lstErrors;
     }
-
+    
     // To be used internally
-    private FileDescriptor writeFileFromArray( FileOverArray foa )
+    private FileDescriptor writeFileFromArray( VFSFileOverArray foa )
            throws JoingServerVFSException
     {
-        FileDescriptor file = null;
+        FileDescriptor fd = null;
         
         Channel channel = new Channel( VFS_WRITE_FILE );
                 channel.write( platform.getBridge().getSessionBridge().getSessionId() );
-                channel.write( foa );
-        file = (FileDescriptor) channel.read();
+                channel.write( foa.getFileDescriptor().getId() );
+                channel.write( foa.intern() );
+        fd = (FileDescriptor) channel.read();
                 channel.close();
         
-        return file;
+        return fd;
     }
     
     //------------------------------------------------------------------------//
@@ -295,7 +294,7 @@ public class VFSBridgeServletImpl
         
         return files;
     }
-
+    
     public List<FileDescriptor> getByNotes( String sSubString, boolean bGlobal )
            throws JoingServerVFSException
     {
@@ -309,7 +308,7 @@ public class VFSBridgeServletImpl
         
         return files;
     }
-
+    
     public List<FileDescriptor> getTrashCan()
            throws JoingServerVFSException
     {

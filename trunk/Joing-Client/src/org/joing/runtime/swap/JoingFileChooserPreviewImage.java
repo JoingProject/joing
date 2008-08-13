@@ -66,10 +66,11 @@ public class JoingFileChooserPreviewImage extends JLabel implements PropertyChan
     }
     
     /**
+     * Return a filter to filter image files.
      * 
      * @return A filter to filter image files.
      */
-    public FileFilter getFilter()
+    public static FileFilter getFilter()
     {
         return new FileFilter() 
         {            
