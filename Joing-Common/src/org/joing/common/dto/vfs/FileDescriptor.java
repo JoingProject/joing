@@ -20,7 +20,7 @@ package org.joing.common.dto.vfs;
 
 import java.io.Serializable;
 import java.util.Date;
-// FIXME: repasar todos los permisos viendo cuándo se puede o no cambiar algo.
+
 /**
  * DTO class for FileDescriptor.
  * <p>
@@ -70,11 +70,6 @@ public class FileDescriptor implements Serializable
     public int getId()
     {
         return this.idFile;
-    }
-    
-    public void setId( int idFile )
-    {
-        this.idFile = idFile;
     }
     
     public int getIdOriginal()
@@ -493,7 +488,7 @@ public class FileDescriptor implements Serializable
     //------------------------------------------------------------------------//
     
     private boolean canChange()
-    {
+    {// FIXME: Faltan un montón de comprobaciones (repasar todos los permisos)
         boolean      bSuccess = true;
         StringBuffer sbReason = new StringBuffer( 512 );
         
@@ -517,6 +512,6 @@ public class FileDescriptor implements Serializable
         
         sFailedToChangeAttributeReason = ((sbReason.length() == 0) ? null : sbReason.toString());
         
-        return true;// FIXME: Cambiarlo por --> bSuccess;
+        return true;
     }
 }

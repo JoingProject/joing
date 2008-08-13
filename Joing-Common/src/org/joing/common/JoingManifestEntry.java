@@ -7,8 +7,8 @@ package org.joing.common;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -118,15 +118,7 @@ public class JoingManifestEntry
         String[] asRet = new String[0];
         
         if( sArguments != null )
-        {
-            List<String>    lst = new ArrayList<String>();
-            StringTokenizer st  = new StringTokenizer( sArguments );
-        
-            while( st.hasMoreTokens() )
-                lst.add( st.nextToken() );
-            
-            asRet = lst.toArray( asRet );
-        }
+            asRet = sArguments.split( " " );
         
         return asRet;
     }
@@ -146,12 +138,7 @@ public class JoingManifestEntry
         List<String> lst = new ArrayList<String>();
         
         if( sFileTypes != null )
-        {
-            StringTokenizer st  = new StringTokenizer( sFileTypes, ";" );
-            
-            while( st.hasMoreTokens() )
-                lst.add( st.nextToken() );
-        }
+            lst = Arrays.asList( sFileTypes.split( "," ) );
         
         return lst;
     }
