@@ -116,7 +116,7 @@ public class Images extends JPanel implements DeskComponent
     //------------------------------------------------------------------------//
     // THIS CLASS API 
     
-    public void addTab( URL url ) throws IOException 
+    public void addImage( URL url ) throws IOException 
     {
         String sName  = url.getPath();
         int    nIndex = sName.lastIndexOf( '/' );
@@ -124,10 +124,10 @@ public class Images extends JPanel implements DeskComponent
         if( nIndex > -1 )
             sName = sName.substring( nIndex + 1 );
         
-        addTab( sName, ImageIO.read( url ) );
+        addImage( sName, ImageIO.read( url ) );
     }
     
-    public void addTab( String sName, InputStream is )
+    public void addImage( String sName, InputStream is )
     {
         byte[] abImage  = new byte[0];
         byte[] abBuffer = new byte[1024*8];
@@ -162,11 +162,11 @@ public class Images extends JPanel implements DeskComponent
         if( abImage != null )
         {
             ImageIcon icon = new ImageIcon( abImage );
-            addTab( sName, icon.getImage() );
+            addImage( sName, icon.getImage() );
         }
     }
     
-    public void addTab( String sName, Image image )
+    public void addImage( String sName, Image image )
     {
         if( sName == null )
             sName = "Noname";
@@ -227,11 +227,11 @@ public class Images extends JPanel implements DeskComponent
                     VFSFile4IO vfs4IO = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().
                             getFileBridge().getFile( ((VFSFile) fImage).getFileDescriptor() );
 
-                    addTab( fImage.getName(), vfs4IO.getByteReader() );
+                    addImage( fImage.getName(), vfs4IO.getByteReader() );
                 }
                 else
                 {
-                    addTab( fImage.getName(), new FileInputStream( fImage ) );
+                    addImage( fImage.getName(), new FileInputStream( fImage ) );
                 }
             }
             catch( IOException exc )
