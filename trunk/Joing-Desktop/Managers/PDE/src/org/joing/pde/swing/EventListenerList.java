@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.joing.pde.swing;
 
 import java.io.*;
@@ -10,34 +6,35 @@ import java.lang.reflect.Array;
 
 /**
  * A class that holds a list of EventListeners.  A single instance
- * can be used to hold all listeners (of all types) for the instance
- * using the list.  It is the responsiblity of the class using the
+ * can be used to hold all listeners (of all types).<br>
+ * It is the responsiblity of the class using the
  * EventListenerList to provide type-safe API (preferably conforming
  * to the JavaBeans spec) and methods which dispatch event notification
  * methods to appropriate Event Listeners on the list.
- * 
+ * <p>
  * The main benefits that this class provides are that it is relatively
  * cheap in the case of no listeners, and it provides serialization for 
  * event-listener lists in a single place, as well as a degree of MT safety
  * (when used correctly).
- *
+ * <p>
  * Usage example:
- *    Say one is defining a class that sends out FooEvents, and one wants
+ * Say one is defining a class that sends out FooEvents, and one wants
  * to allow users of the class to register FooListeners and receive 
- * notification when FooEvents occur.  The following should be added
+ * notification when FooEvents occur. The following code should be added
  * to the class definition:
  * <pre>
  * EventListenerList listenerList = new EventListenerList();
- * FooEvent fooEvent = null;
+ * FooEvent          fooEvent     = null;
  *
- * public void addFooListener(FooListener l) {
+ * public void addFooListener(FooListener l)
+ * {
  *     listenerList.add(FooListener.class, l);
  * }
  *
- * public void removeFooListener(FooListener l) {
+ * public void removeFooListener(FooListener l)
+ * {
  *     listenerList.remove(FooListener.class, l);
  * }
- *
  *
  * // Notify all listeners that have registered interest for
  * // notification on this event type.  The event instance 
@@ -60,7 +57,7 @@ import java.lang.reflect.Array;
  * }
  * </pre>
  * foo should be changed to the appropriate name, and fireFooXxx to the
- * appropriate method name.  One fire method should exist for each
+ * appropriate method name. One fire method should exist for each
  * notification method in the FooListener interface.
  * <p>
  * <strong>Warning:</strong>

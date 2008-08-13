@@ -7,8 +7,10 @@ Version: 0.1
 IconPixel: org/joing/pde/media/images/pde.png
 IconVector: 
 Description: Peyrona Desktop Environment (PDE): A simple yet powerfull Swing desktop for Join'g
+WebSite: www.joing.org
+Author: Francisco Morero Peyrona
+Vendor: Join'g Team
+License: GPL-V3
+CallSyntax: 
 Arguments: 
 FileTypes: 
-Author: Francisco Morero Peyrona
-Vendor: 
-License: GPL-V3

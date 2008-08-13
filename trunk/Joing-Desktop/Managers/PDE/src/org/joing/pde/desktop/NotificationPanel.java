@@ -40,15 +40,12 @@ class NotificationPanel extends PDECanvas
     
     public NotificationPanel( String sMessage, Image icon )
     {
-        this( sMessage, icon, false );
-    }
-    
-    public NotificationPanel( String sMessage, Image icon, boolean bShowAnimation )
-    {
-        JLabel lblMessage = new JLabel();
-        JLabel lblIcon    = new JLabel();
-        JPanel panel      = new JPanel( new BorderLayout( 8,6 ) );
-        
+        JLabel       lblMessage = new JLabel();
+        JLabel       lblIcon    = new JLabel();
+        JPanel       panel      = new JPanel( new BorderLayout( 8,6 ) );
+        JProgressBar progress   = new JProgressBar();
+                     progress.setIndeterminate( true );
+                     
         if( sMessage == null )
             sMessage = "Operation in progress";
         
@@ -64,23 +61,11 @@ class NotificationPanel extends PDECanvas
         panel.setBorder( new EmptyBorder( 3,5,3,5 ) );
         panel.add( lblMessage, BorderLayout.CENTER );
         panel.add( lblIcon   , BorderLayout.WEST   );
+        panel.add( progress, BorderLayout.SOUTH  );    
         
-        if( bShowAnimation )
-        {
-            JProgressBar progress = new JProgressBar();
-                         progress.setIndeterminate( true );
-            panel.add( progress, BorderLayout.SOUTH  );    
-        }
-        
-        setTranslucency( 12 );
         setBorder( new LineBorder( Color.darkGray, 2 ) );
         setBounds();
         add( panel );
-    }
-    
-    public void animate()
-    {
-        // TODO: Hacer la animación
     }
     
     //------------------------------------------------------------------------//

@@ -7,7 +7,7 @@
  */
 package org.joing.pde;
 
-import org.joing.pde.joingswingtools.DialogAcceptCancel;
+import org.joing.pde.swing.DialogAcceptCancel;
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.Component;
@@ -30,7 +30,7 @@ import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
 import org.joing.pde.media.images.ImagesUtil;
 import org.joing.pde.media.sounds.SoundsUtil;
-import org.joing.pde.joingswingtools.JErrorPanel;
+import org.joing.swingtools.JErrorPanel;
 
 /**
  * The Runtime class.
@@ -151,5 +151,7 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
                   dialog.add( (DeskComponent) new JErrorPanel( exc ) );
                   
         org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
+        
+        exc.printStackTrace();
     }
 }

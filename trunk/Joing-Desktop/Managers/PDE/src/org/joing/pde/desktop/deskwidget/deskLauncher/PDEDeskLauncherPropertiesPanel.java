@@ -6,14 +6,19 @@
 package org.joing.pde.desktop.deskwidget.deskLauncher;
 
 import java.awt.Image;
+import java.io.File;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.dto.app.AppDescriptor;
-import org.joing.pde.joingswingtools.JoingApplicationChooser;
-import org.joing.pde.joingswingtools.JoingSwingUtilities;
+import org.joing.runtime.vfs.VFSFile;
+import org.joing.swingtools.JoingApplicationChooser;
+import org.joing.runtime.swap.JoingFileChooser;
+import org.joing.runtime.swap.JoingFileChooserPreviewImage;
+import org.joing.swingtools.JoingFolderChooser;
 
 /**
  *
@@ -35,12 +40,9 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
     {
         this( null );
         
-        if( bIsDir )
-            radDir.setSelected( true );
-        else
-            radApp.setSelected( true );
+        (bIsDir ? radDir : radApp).setSelected( true );
         
-        onSelectionChanged();
+        onSelectionChanged();        // Makes enable, dissable and default icon
     }
     
     /**
@@ -58,6 +60,21 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
         {
             txtName.setText( launcher.getText() );
             txtDescription.setText( launcher.getToolTipText() );
+
+            if( launcher.getType() == DeskLauncher.Type.DIRECTORY )
+            {
+                radDir.setSelected( true );
+                txtDirectory.setText( launcher.getTarget() );
+            }
+            else
+            {
+                radApp.setSelected( true );
+                txtApplication.setText( launcher.getTarget() );
+                txtArguments.setText( launcher.getArguments() );
+            }
+            
+            onSelectionChanged();    // Makes enable, dissable and default icon
+            setIcon4IconButton( launcher.getImage() );   // Last because onSelectionChanged() changes it
         }
         
         SwingUtilities.invokeLater( new Runnable() 
@@ -75,11 +92,14 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
      * @return A new Launcher.
      */
     public PDEDeskLauncher createLauncher()
-    {        
+    {
+        String sCaption = (txtName.getText().length() > 0) ? txtName.getText() :
+                          (txtApplication.getText().length() > 0) ? txtApplication.getText() : txtDirectory.getText();
+        
         if( launcher == null )
             launcher = new PDEDeskLauncher();
         
-        launcher.setText( txtName.getText() );
+        launcher.setText( sCaption );
         launcher.setDescription( txtDescription.getText() );
         launcher.setImage( ((ImageIcon) btnIcon.getIcon()).getImage() );
         
@@ -112,8 +132,14 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
         txtDirectory.setEnabled( radDir.isSelected() );
         btnSelectDirectory.setEnabled( radDir.isSelected() );
         
-        Image image = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( (radApp.isSelected() ? StandardImage.LAUNCHER : StandardImage.FOLDER) );
-        btnIcon.setIcon( new ImageIcon( image ) );
+        StandardImage si    = (radApp.isSelected() ? StandardImage.LAUNCHER : StandardImage.FOLDER);
+        Image         image = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( si, 48, 48 );
+        setIcon4IconButton( image );
+    }
+    
+    private void setIcon4IconButton( Image image )
+    {
+        btnIcon.setIcon( new ImageIcon( image.getScaledInstance( 48,48, Image.SCALE_SMOOTH ) ) );
     }
     
     /** This method is called from within the constructor to
@@ -146,7 +172,7 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
         btnIcon.setFocusPainted(false);
         btnIcon.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnIconActionPerformed(evt);
+                onSelectIcon(evt);
             }
         });
 
@@ -163,7 +189,7 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
         btnSelectApp.setText("...");
         btnSelectApp.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                onSelectAppButton(evt);
+                onSelectApplication(evt);
             }
         });
 
@@ -214,6 +240,11 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
         pnlDirectory.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         btnSelectDirectory.setText("...");
+        btnSelectDirectory.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onSelectFolder(evt);
+            }
+        });
 
         radButtonGroup.add(radDir);
         radDir.setText("Directory");
@@ -307,11 +338,21 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
         onSelectionChanged();
     }//GEN-LAST:event_radDirActionPerformed
 
-    private void btnIconActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIconActionPerformed
-        // TODO: hacerlo -> Seleccionar una imagen desde archivo
-    }//GEN-LAST:event_btnIconActionPerformed
+    private void onSelectIcon(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onSelectIcon
+        JoingFileChooserPreviewImage jfcpi = new JoingFileChooserPreviewImage();
+        JoingFileChooser             jfc = new JoingFileChooser();
+                                     jfc.setAccessory( jfcpi );
+                                     jfc.addChoosableFileFilter( jfcpi.getFilter() );
+                                     jfc.addPropertyChangeListener( jfcpi );
+                                     
+        if( jfc.showDialog( this ) == JFileChooser.APPROVE_OPTION )
+        {
+            File file = jfc.getSelectedFile();
+            setIcon4IconButton( new ImageIcon( file.getAbsolutePath() ).getImage() );
+        }
+}//GEN-LAST:event_onSelectIcon
 
-private void onSelectAppButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onSelectAppButton
+private void onSelectApplication(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onSelectApplication
         AppDescriptor app = JoingApplicationChooser.showDialog();
         
         if( app != null )
@@ -321,9 +362,24 @@ private void onSelectAppButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:even
             txtApplication.setText( Integer.toString( app.getId() ) );
             
             if( app.getIconPixel().length > 0 )
-               btnIcon.setIcon( new ImageIcon( app.getIconPixel() ) );
+            {
+                Image image = new ImageIcon( app.getIconPixel() ).getImage(); 
+                setIcon4IconButton( image );
+            }
         }
-}//GEN-LAST:event_onSelectAppButton
+}//GEN-LAST:event_onSelectApplication
+
+private void onSelectFolder(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_onSelectFolder
+    File fFolder = JoingFolderChooser.showDialog();
+    
+    if( fFolder != null )
+    {
+        String sPath = fFolder.getAbsolutePath();
+        txtName.setText( sPath );
+        txtDescription.setText( (fFolder instanceof VFSFile ? "Remote: " : "Local: ") + sPath );
+        txtDirectory.setText( sPath );
+    }
+}//GEN-LAST:event_onSelectFolder
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnIcon;

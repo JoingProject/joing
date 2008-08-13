@@ -31,8 +31,8 @@ import org.joing.common.dto.user.User;
 import org.joing.pde.media.PDEColorSchema;
 import org.joing.pde.PDEManager;
 import org.joing.pde.apps.EditUser;
-import org.joing.pde.joingswingtools.JoingSwingUtilities;
-import org.joing.pde.joingswingtools.JScrollablePopupMenu;
+import org.joing.swingtools.JoingSwingUtilities;
+import org.joing.swingtools.JScrollablePopupMenu;
 
 /**
  *
@@ -171,8 +171,8 @@ class StartMenu extends JScrollablePopupMenu
     }
     
     //------------------------------------------------------------------------//
-    // INNER CLASS: App menu item action listener
-    // To have only one instance for all app items
+    // INNER CLASS: App menu item action listener.
+    // To have only one instance for all app items (to save memory)
     //------------------------------------------------------------------------//
     private final class AppMenuItemListener implements ActionListener
     {

@@ -14,6 +14,7 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Image;
 import java.io.BufferedReader;
+import java.io.File;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -29,7 +30,6 @@ import org.joing.common.desktopAPI.desktop.DesktopListener;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.common.desktopAPI.taskbar.TaskBar;
-import org.joing.common.dto.vfs.FileText;
 import org.joing.pde.desktop.container.PDECanvas;
 import org.joing.pde.desktop.taskbar.PDETaskBar;
 import org.joing.pde.swing.EventListenerList;
@@ -47,7 +47,7 @@ public class PDEDesktop extends JPanel implements Desktop
     private JPanel   pnlWorkAreas;   // Where all W.A. are stored using CardLayout
     private WorkArea waActive;
     
-    private EventListenerList listenerList;
+    private EventListenerList listenerList;       // FIXME: Cambiar esto por la de JComponent
     
     private Hashtable<Integer, PDECanvas> htInfoPanels;
     
@@ -76,15 +76,15 @@ public class PDEDesktop extends JPanel implements Desktop
             protected Object doInBackground() throws Exception
             {
                 // Do not move next lines !
-                FileText ftSavedStatus = null;
+                File fSavedStatus = null;
         
-                if( ftSavedStatus == null )
+                if( fSavedStatus == null )
                     createDefaultDesktop();
-                else
-                    processSavedStatus( ftSavedStatus.getContent() );
-
+//                else
+//                    processSavedStatus( ftSavedStatus.getContent() );
+    
                 setActiveWorkArea( getWorkAreas().get( 0 ) );
-
+                
                 return null;
             }
         };
@@ -103,7 +103,7 @@ public class PDEDesktop extends JPanel implements Desktop
         for( int n = 0; n < 3; n++ )
             addWorkArea( new PDEWorkArea() );
         
-        Components4Testing.createTestComponents();
+        Testing.createTestComponents();
     }
     
     private void processSavedStatus( BufferedReader in )
@@ -334,16 +334,18 @@ public class PDEDesktop extends JPanel implements Desktop
     //------------------------------------------------------------------------//
     // OTHER THINGS
     
-    public int showNotification( String sMessage, Image icon, boolean bShowAnimation )
+    public int showNotification( String sMessage, Image icon )
     {   
-        NotificationPanel notification = new NotificationPanel( sMessage, icon, bShowAnimation );
+        NotificationPanel notification = new NotificationPanel( sMessage, icon );
+        int               nHandle      = notification.hashCode();
         
-        htInfoPanels.put( htInfoPanels.size() + 1, notification );
+        htInfoPanels.put( nHandle, notification );
         
+        // FIXME: Se muestra al mismo tiempo que la ventana a la que debe de servir de aviso
+        //        y debería mostrarse inmediatamente
         getActiveWorkArea().add( notification );
-        notification.animate();
         
-        return htInfoPanels.size();
+        return nHandle;
     }
     
     public void hideNotification( int nHandle )

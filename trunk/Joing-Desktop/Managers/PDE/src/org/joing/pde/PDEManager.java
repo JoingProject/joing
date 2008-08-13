@@ -52,7 +52,7 @@ import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.StandardSound;
 import org.joing.common.dto.user.User;
 import org.joing.jvmm.RuntimeFactory;
-import org.joing.pde.joingswingtools.JoingPanel;
+import org.joing.swingtools.JoingPanel;
 
 /**
  * DesktopManager interface implementation.

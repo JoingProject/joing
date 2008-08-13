@@ -20,8 +20,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.MenuSelectionManager;
 import org.joing.pde.desktop.taskbar.PDETaskBarComponent;
-import org.joing.pde.joingswingtools.JoingSwingUtilities;
-import org.joing.pde.joingswingtools.ImageHighlightFilter;
+import org.joing.swingtools.JoingSwingUtilities;
+import org.joing.swingtools.ImageHighlightFilter;
 
 /**
  *

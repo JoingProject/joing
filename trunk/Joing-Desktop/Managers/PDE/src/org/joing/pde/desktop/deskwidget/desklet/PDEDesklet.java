@@ -12,7 +12,7 @@ import javax.swing.event.AncestorListener;
 import org.joing.common.desktopAPI.Closeable;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.deskwidget.PDEDeskWidget;
-import org.joing.pde.joingswingtools.JoingSwingUtilities;
+import org.joing.swingtools.JoingSwingUtilities;
 
 /**
  * This is the base class to create DeskApplets: (normally) small applications

@@ -25,6 +25,7 @@ public class ImagesUtil
             case DELETE      : sFileName = "delete.png";       break;
             case DESKTOP     : sFileName = "pde.png";          break; // Desktop logo (in this case pde.png)
             case FOLDER      : sFileName = "folder.png";       break;
+            case FILE        : sFileName = "file.png";         break;
             case INFO        : sFileName = "info.png";         break;
             case JOING       : sFileName = "joing.png";        break;
             case LAUNCHER    : sFileName = "launcher.png";     break;
