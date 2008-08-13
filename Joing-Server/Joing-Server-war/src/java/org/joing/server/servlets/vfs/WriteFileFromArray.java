@@ -19,6 +19,7 @@
 package org.joing.server.servlets.vfs;
 
 import ejb.vfs.FileManagerLocal;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -28,7 +29,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.joing.common.dto.vfs.FileDescriptor;
-import org.joing.common.dto.vfs.FileOverArray;
 import org.joing.common.exception.JoingServerException;
 import org.joing.common.exception.JoingServerServletException;
 
@@ -56,10 +56,12 @@ public class WriteFileFromArray extends HttpServlet
         
         try
         {
-            String        sSessionId = (String)        reader.readObject();
-            FileOverArray foa        = (FileOverArray) reader.readObject();
+            String sSessionId = (String)  reader.readObject();
+            int    nFileId    = (Integer) reader.readObject();
+            byte[] ab         = (byte[])  reader.readObject();
             
-            FileDescriptor fileDescr  = fileManagerBean.writeFile( sSessionId, foa.getId(), foa.getReader() );
+            ByteArrayInputStream bais = new ByteArrayInputStream( ab );
+            FileDescriptor fileDescr  = fileManagerBean.writeFile( sSessionId, nFileId, bais );
             
             writer.writeObject( fileDescr );
             writer.flush();
