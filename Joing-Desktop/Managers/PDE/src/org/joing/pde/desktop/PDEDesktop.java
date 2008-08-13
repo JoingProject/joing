@@ -103,7 +103,7 @@ public class PDEDesktop extends JPanel implements Desktop
         for( int n = 0; n < 3; n++ )
             addWorkArea( new PDEWorkArea() );
         
-        Testing.createTestComponents();
+        Just4Testing.createTestComponents();
     }
     
     private void processSavedStatus( BufferedReader in )
