@@ -79,7 +79,7 @@
         <Property name="focusPainted" type="boolean" value="false"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnIconActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="onSelectIcon"/>
       </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="lblText">
@@ -165,7 +165,7 @@
             <Property name="text" type="java.lang.String" value="..."/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="onSelectAppButton"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="onSelectApplication"/>
           </Events>
         </Component>
         <Component class="javax.swing.JRadioButton" name="radApp">
@@ -235,6 +235,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="..."/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="onSelectFolder"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JRadioButton" name="radDir">
           <Properties>

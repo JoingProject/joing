@@ -21,8 +21,8 @@ public class SoundsUtil
                 
         switch( sound )
         {
-            case WELCOME  : sFile = "welcome.ogg"; break;
-            case GOODBYE  : sFile = "goodbye.ogg"; break;
+            case WELCOME  : sFile = "welcome.wavkk"; break;
+            case GOODBYE  : sFile = "goodbye.wavkk"; break;
           //case MAXIMIZE
           //case MINIMIZE
           //case RESTORE

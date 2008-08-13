@@ -7,13 +7,7 @@ package org.joing.pde;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -96,6 +90,10 @@ public class DesktopTest extends JFrame
     
     public static void main( String[] as )
     {
+        java.io.File f = new java.io.File( "/home/francisco/tusmulas" );
+        System.out.println( f + " exists = "+ f.exists() );
+        System.exit(0);
+        
         DesktopTest test = new DesktopTest();
                     test.setVisible( true );
                     test.setExtendedState( JFrame.MAXIMIZED_BOTH );   // setExtendedState(...) only works after made visible

@@ -32,12 +32,12 @@ import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncherListener;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.pde.desktop.deskwidget.PDEDeskWidget;
-import org.joing.pde.joingswingtools.JoingSwingUtilities;
+import org.joing.swingtools.JoingSwingUtilities;
 import org.joing.pde.media.PDEColorSchema;
 import org.joing.pde.swing.EventListenerList;
-import org.joing.pde.joingswingtools.ImageHighlightFilter;
-import org.joing.pde.joingswingtools.JRoundLabel;
-import org.joing.pde.joingswingtools.JRoundPanel;
+import org.joing.swingtools.ImageHighlightFilter;
+import org.joing.swingtools.JRoundLabel;
+import org.joing.swingtools.JRoundPanel;
 
 /**
  * This is the base class for all DeskLaunchers: Applications and Folders.
@@ -58,7 +58,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     private IconComponent icon;
     private TextComponent text;
     
-    private EventListenerList listenerList;
+    private EventListenerList listenerList;    // FIXME: Cambiar esto por la de JComponent
     
     //------------------------------------------------------------------------//
     

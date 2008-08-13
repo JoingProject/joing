@@ -15,7 +15,7 @@ import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.pane.DeskWindow;
 import org.joing.common.desktopAPI.workarea.WorkArea;
-import org.joing.pde.joingswingtools.JoingSwingUtilities;
+import org.joing.swingtools.JoingSwingUtilities;
 
 /**
  *

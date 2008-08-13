@@ -17,7 +17,7 @@ import org.joing.common.desktopAPI.Closeable;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.pane.DeskCanvas;
 import org.joing.common.desktopAPI.workarea.WorkArea;
-import org.joing.pde.joingswingtools.JoingSwingUtilities;
+import org.joing.swingtools.JoingSwingUtilities;
 
 /**
  * A very basic component.

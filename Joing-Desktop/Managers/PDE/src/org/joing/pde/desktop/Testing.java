@@ -15,12 +15,12 @@ import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
 import org.joing.pde.desktop.workarea.PDEWallpaper;
 
 // JUST FOR TESTING
-import org.joing.pde.joingswingtools.JoingColorChooser;
-import org.joing.pde.joingswingtools.JoingFileChooser;
+import org.joing.runtime.swap.JoingColorChooser;
+import org.joing.runtime.swap.JoingFileChooser;
 
 //------------------------------------------------------------------------//
 
-class Components4Testing
+class Testing
 {
     private static Desktop desktop = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop();
     
@@ -30,7 +30,6 @@ class Components4Testing
         {
             public void run()
             {
-                  new org.joing.pde.apps.YAFE.YAFE();
 //                wallPapers();
 //                launchers();
 //                InternalFrames();
@@ -121,10 +120,11 @@ class Components4Testing
     {
         JoingFileChooser jfc = new JoingFileChooser();
         
-        int nSelection = jfc.showDialog( null, null );
+        //int nSelection = jfc.showDialog( null, null );
+        int nSelection = jfc.showSaveDialog( null );
         
         if( nSelection == JoingFileChooser.APPROVE_OPTION )
-            System.out.println( jfc.getSelectedFile() );
+            System.out.println( jfc.getSelectedFile().getClass().getName() +" ["+ jfc.getSelectedFile() +"]");
     }
     
     private static void colorChooser()

@@ -21,8 +21,8 @@ import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncherPropertiesPanel;
-import org.joing.pde.joingswingtools.JoingSwingUtilities;
-import org.joing.pde.joingswingtools.FrameAcceptCancel;
+import org.joing.swingtools.JoingSwingUtilities;
+import org.joing.pde.swing.FrameAcceptCancel;
 
 /**
  * 

@@ -340,15 +340,15 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         {
             if(      component instanceof PDEDeskLauncher )  addDeskLauncher( (PDEDeskLauncher) dc );
             else if( component instanceof PDEDesklet      )  addDesklet( (PDEDesklet) component );
-            else if( component instanceof PDECanvas       )  super.add( component, LAYER_CANVAS );
+            else if( component instanceof PDECanvas       )  PDEWorkArea.super.add( component, LAYER_CANVAS );
             else if( component instanceof PDEFrame        )  addFrame( (PDEFrame) component, true );
-            else                                             super.add( component, LAYER_FRAME  );
+            else                                             PDEWorkArea.super.add( component, LAYER_FRAME  );
             
             fireComponentAdded( dc );    
         }
     }
     
-    public void add( DeskWindow window, boolean bAutoArrange  )
+    public void add( final DeskWindow window, final boolean bAutoArrange  )
     {
         if( window instanceof PDEDialog )
             addDialog( (PDEDialog) window, bAutoArrange );
