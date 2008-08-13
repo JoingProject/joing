@@ -26,8 +26,11 @@ public class CreateAccountForm extends ManagedBean {
     private String secondName = null;
     private Boolean male = null;
     
+    /** Default quota space for user accounts */
+    final private int DEFAULT_QUOTA = 0; // Quota in megabytes, 0 for no limit
+
     //TODO make it configurable
-    final private Integer quota = Integer.valueOf(10);
+    final private Integer quota = Integer.valueOf(DEFAULT_QUOTA);
 
     private @EJB UserManagerLocal userManager;
     private @EJB SessionManagerLocal sessionManager;
@@ -153,9 +156,6 @@ public class CreateAccountForm extends ManagedBean {
 
     }
     
-    /** Default quota space for user accounts */
-    final private int DEFAULT_QUOTA = 0; // Quota in megabytes, 0 for no limit
-    
     /**
      * <p>This method is invoked by the JSF framework (from the create-account 
      * form in index.jsp.</p>
@@ -176,7 +176,8 @@ public class CreateAccountForm extends ManagedBean {
 	    try {
 		User user =  userManager.createUser(account, password, email,
 			firstName, secondName, male.booleanValue(),
-			ctx.getViewRoot().getLocale(), DEFAULT_QUOTA);
+			ctx.getViewRoot().getLocale(),
+                        quota == null ? DEFAULT_QUOTA : quota.intValue());
 		
 		ok = user != null;
 		
@@ -287,6 +288,6 @@ public class CreateAccountForm extends ManagedBean {
     }
     
     public Integer getQuota() {
-	return quota;
+        return quota;
     }
 }
