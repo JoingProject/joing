@@ -153,6 +153,9 @@ public class CreateAccountForm extends ManagedBean {
 
     }
     
+    /** Default quota space for user accounts */
+    final private int DEFAULT_QUOTA = 0; // Quota in megabytes, 0 for no limit
+    
     /**
      * <p>This method is invoked by the JSF framework (from the create-account 
      * form in index.jsp.</p>
@@ -173,8 +176,7 @@ public class CreateAccountForm extends ManagedBean {
 	    try {
 		User user =  userManager.createUser(account, password, email,
 			firstName, secondName, male.booleanValue(),
-			ctx.getViewRoot().getLocale(),
-		    10);// 10 Megas (ponerlo en la web sólo para informar)
+			ctx.getViewRoot().getLocale(), DEFAULT_QUOTA);
 		
 		ok = user != null;
 		
