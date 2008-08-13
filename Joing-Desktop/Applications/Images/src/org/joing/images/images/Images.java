@@ -16,27 +16,38 @@
  * GNU Classpath; see the file COPYING.  If not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.joing.images;
+package org.joing.images.images;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JViewport;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManager;
+import org.joing.common.desktopAPI.pane.DeskDialog;
 import org.joing.common.desktopAPI.pane.DeskFrame;
+import org.joing.common.dto.vfs.VFSFile4IO;
+import org.joing.runtime.swap.JoingFileChooser;
+import org.joing.runtime.swap.JoingFileChooserPreviewImage;
+import org.joing.runtime.vfs.VFSFile;
+import org.joing.swingtools.JoingPanel;
 
 /**
  * A simple image viewer.
@@ -74,6 +85,7 @@ public class Images extends JPanel implements DeskComponent
         add( toolbar, BorderLayout.NORTH  );
         add( tabs   , BorderLayout.CENTER );
         add( status , BorderLayout.SOUTH  );
+        Images.this.toolbar.updateButtons();
     }
     
     public void showInFrame()
@@ -113,6 +125,45 @@ public class Images extends JPanel implements DeskComponent
             sName = sName.substring( nIndex + 1 );
         
         addTab( sName, ImageIO.read( url ) );
+    }
+    
+    public void addTab( String sName, InputStream is )
+    {
+        byte[] abImage  = new byte[0];
+        byte[] abBuffer = new byte[1024*8];
+        int    nReaded  = 0;
+        
+        try
+        {
+            while( nReaded != -1 )
+            {
+                nReaded = is.read( abBuffer );
+                
+                if( nReaded != -1 )
+                {
+                    // Create a temp array with enought space for btContent and new bytes readed
+                    byte[] abTemp = new byte[ abImage.length + nReaded ];
+                    // Copy btContent to new array
+                    System.arraycopy( abImage, 0, abTemp, 0, abImage.length  );
+                    // Copy readed bytes at tail of new array
+                    System.arraycopy( abBuffer, 0, abTemp, abImage.length, nReaded );
+                    // Changes btContent reference to temp array
+                    abImage = abTemp;
+                }
+            }
+            
+            is.close();
+        }
+        catch( IOException exc )
+        {
+            abImage = null;
+        }
+        
+        if( abImage != null )
+        {
+            ImageIcon icon = new ImageIcon( abImage );
+            addTab( sName, icon.getImage() );
+        }
     }
     
     public void addTab( String sName, Image image )
@@ -161,13 +212,41 @@ public class Images extends JPanel implements DeskComponent
     
     public void Open()
     {
-        // TODO hacerlo
-        Images.this.toolbar.updateButtons();
+        JoingFileChooser jfc = new JoingFileChooser();
+                         jfc.setAcceptAllFileFilterUsed( false );
+                         jfc.addChoosableFileFilter( JoingFileChooserPreviewImage.getFilter() );
+                                 
+        if( jfc.showDialog( this ) == JoingFileChooser.APPROVE_OPTION )
+        {
+            File fImage = jfc.getSelectedFile();
+            
+            try
+            {
+                if( fImage instanceof VFSFile )
+                {
+                    VFSFile4IO vfs4IO = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().
+                            getFileBridge().getFile( ((VFSFile) fImage).getFileDescriptor() );
+
+                    addTab( fImage.getName(), vfs4IO.getByteReader() );
+                }
+                else
+                {
+                    addTab( fImage.getName(), new FileInputStream( fImage ) );
+                }
+            }
+            catch( IOException exc )
+            {
+                org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().
+                        getRuntime().showException( exc, "Error opening file" );
+            }
+            
+            Images.this.toolbar.updateButtons();
+        }
     }
     
     public void Print()    
     {
-        // TODO hacerlo
+        JOptionPane.showMessageDialog( this, "Option not yet implemented." );
     }
     
     public void RotateLeft()    
@@ -219,14 +298,25 @@ public class Images extends JPanel implements DeskComponent
     public void About()    
     {
         JLabel        label  = new JLabel( "<html><body><b><div align=\"center\">Images</b><p>"+
-                                           "An images viewer application.</div>"+
-                                           "<p>Developed by <i>Francisco Morero Peyrona</i></p></body></html>" );
-        JPanel        panel  = new JPanel( new BorderLayout( 10,10 ) );
-                      panel.add( new JLabel( new ImageIcon( "images/images.png" ) ), BorderLayout.WEST );
+                                           "An images viewer application.<p>"+
+                                           "<p>Developed by<br> <i>Francisco Morero Peyrona</i></p></div></body></html>" );
+        
+        ImageIcon     icon   = new ImageIcon( getClass().getResource( "images/images.png" ) ); 
+        
+        JoingPanel    panel  = new JoingPanel();
+                      panel.setLayout( new BorderLayout( 10,10 ) );
+                      panel.add( new JLabel( icon ), BorderLayout.WEST );
                       panel.add( label, BorderLayout.CENTER );
-                      
-        /* TODO: hacerlo --> DesktopDialog dialog = new DesktopDialog( "About", panel, new String[] { "Ok" }, 0 );
-                      dialog.setVisible( true );*/
+                      panel.setBorder( new EmptyBorder( 7,7,7,7 ) );
+        
+        DeskDialog dialog = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().createDialog();
+                   dialog.setTitle( "About Notes" );
+                   dialog.add( (DeskComponent) panel );
+                   
+        if( icon != null )
+            dialog.setIcon( icon.getImage() );
+
+        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
     }
     
     //------------------------------------------------------------------------//
