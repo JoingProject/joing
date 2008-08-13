@@ -6,7 +6,7 @@
 package org.joing.common.clientAPI.runtime;
 
 import java.util.List;
-import org.joing.common.dto.vfs.File4IO;
+import org.joing.common.dto.vfs.VFSFile4IO;
 import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.exception.JoingServerVFSException;
 
@@ -102,10 +102,10 @@ public interface VFSBridge
      * write (InputStream) file contents.
      * 
      * @param fd FileDescriptor instace representing file to read from.
-     * @return An instance of File4IO.
+     * @return An instance of VFSFile4IO.
      * @throws org.joing.common.exception.JoingServerException
      */
-    File4IO getFile( FileDescriptor fd )
+    VFSFile4IO getFile( FileDescriptor fd )
             throws JoingServerVFSException; 
         
     /**
