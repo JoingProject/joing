@@ -502,9 +502,10 @@ public class FileManagerBean
             
             FileInputStream  fis = new FileInputStream( getClass().getResource( "homebynasa.jpg" ).getFile() );
             FileOutputStream fos = new FileOutputStream( fNasaPict );
+            int nByte = 0;
             
-            while( fis.read() != -1 )
-                fos.write( fis.read() );
+            while( (nByte = fis.read()) != -1 )   // NEXT: Really slow: use a buffer
+                fos.write( nByte );
 
             fos.close();
             fis.close();
