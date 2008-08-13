@@ -220,18 +220,9 @@ public class BridgeServletBaseImpl
             JoingServerException e;
 
             if( exc instanceof JoingServerException )
-            {
                 e = (JoingServerException) exc;
-            }
             else
-            {
-                String sMsg = exc.getLocalizedMessage();
-                
-                if( sMsg == null || sMsg.length() == 0 )
-                    sMsg = exc.getMessage();
-                
-                e = new JoingServerException( "External error: "+ sMsg, exc );
-            }
+                e = new JoingServerException( "External error", exc );
             
             throw e;
         }

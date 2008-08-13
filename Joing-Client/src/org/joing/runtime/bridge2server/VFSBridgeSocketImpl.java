@@ -23,7 +23,7 @@
 package org.joing.runtime.bridge2server;
 
 import java.util.List;
-import org.joing.common.dto.vfs.File4IO;
+import org.joing.common.dto.vfs.VFSFile4IO;
 import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.clientAPI.runtime.VFSBridge;
 // NEXT: Implementar esta clase
@@ -68,7 +68,7 @@ public class VFSBridgeSocketImpl
         throw new UnsupportedOperationException( "Not supported yet." );
     }
 
-    public File4IO getFile( FileDescriptor fd ) throws JoingServerVFSException
+    public VFSFile4IO getFile( FileDescriptor fd ) throws JoingServerVFSException
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }

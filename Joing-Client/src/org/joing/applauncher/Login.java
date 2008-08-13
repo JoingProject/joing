@@ -39,7 +39,7 @@ class Login extends JDialog
     {
         super( (JFrame) null, true );
         
-        initComponents();        
+        initComponents();
         fillDesktopComboBox();
         
         getRootPane().setDefaultButton( btnOk );
@@ -48,8 +48,8 @@ class Login extends JDialog
         setIconImage( (new ImageIcon( getClass().getResource( "resources/joing_icon.png" ) )).getImage() );
         
         // DEPLOY: Quitar esto
-        txtAccount.setText( "peyrona@joing.org" );
-        txtPassword.setText( "admin" );
+        txtAccount.setText( "peyrona" );
+        txtPassword.setText( "admin9" );
         //--------------------------------
     }
     
@@ -92,19 +92,32 @@ class Login extends JDialog
         // This method is executed in a separated thread to increase speed
         SwingWorker sw = new SwingWorker<Void,Void>()
         {
+             private String              sSrvName = null;
              private List<AppDescriptor> desktops = null;
+             
             
             protected Void doInBackground() throws Exception
             {
-                desktops = RuntimeFactory.getPlatform().getBridge().getAppBridge().getAvailableDesktops();
+                sSrvName = "joing.org"; // TODO: Preguntarle al Servidor su nombre
+                desktops    = RuntimeFactory.getPlatform().getBridge().getAppBridge().getAvailableDesktops();
                 return null;
             }
             
             protected void done()
             {
+                if( sSrvName == null )
+                {
+                    JOptionPane.showMessageDialog( Login.this, "Error: sever seems to be out of service.\nCan't continue." );
+                }
+                else
+                {
+                    txtAccount.setText( txtAccount.getText() +"@"+ sSrvName );
+                    txtAccount.setCaretPosition( 0 );
+                }
+                
                 if( desktops == null )    // An exception happened in doInBackground()
                 {
-                    JOptionPane.showMessageDialog( Login.this, "Fatal error: can't find a desktop to be used.\nCan't continue." );
+                    JOptionPane.showMessageDialog( Login.this, "Error: no desktop available.\nCan't continue." );
                     Login.this.dispose();
                 }
                 else
@@ -306,7 +319,7 @@ class Login extends JDialog
         {
             // Can't invoke org.joing.runtime.Runtime.getRuntime().showException( ... )
             // because the desktop does not exists yet.
-            JOptionPane.showMessageDialog( this, exc.getLocalizedMessage(), "Error during login", JOptionPane.ERROR_MESSAGE );
+            JOptionPane.showMessageDialog( this, exc.toString(), "Error during login", JOptionPane.ERROR_MESSAGE );
         }
         finally
         {

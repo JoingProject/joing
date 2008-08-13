@@ -260,7 +260,7 @@ public class VFSView
             sName = file.getName();
 
             if( isRoot( file ) )
-                sName += " ("+ "n/a" +")";   // FIXME: Averiguar de dónde sacar el nombre del sistema
+                sName += " (Remote)";   // TODO: Averiguar de dónde sacar el nombre del sistema
             else if( file.isLink() )
                 sName += " ^";
         }

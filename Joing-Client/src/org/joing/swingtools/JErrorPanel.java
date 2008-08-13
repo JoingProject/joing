@@ -33,14 +33,10 @@ public class JErrorPanel extends javax.swing.JPanel implements DeskComponent
         
         initComponents();
         
-        Image  image   = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.ALERT, 50, 50 );
-        String sExcMsg = exc.getLocalizedMessage();
-        
-        if( sExcMsg == null || sExcMsg.length() == 0 )
-            sExcMsg = exc.getMessage();
+        Image image = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.ALERT, 50, 50 );
         
         lblIcon.setIcon( new ImageIcon( image ) );
-        txtMessage.setText( sExcMsg );
+        txtMessage.setText( exc.toString() );
         
         StringBuffer        sb     = new StringBuffer( 1024 );
         StackTraceElement[] aStack = exc.getStackTrace();
