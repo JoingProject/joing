@@ -51,6 +51,10 @@ public class BridgeURLConnection extends URLConnection {
         connect();
 
         Application app = getApplication();
+        
+        if (app == null) {
+            throw new IOException("Could not fetch the application (got null).");
+        }
 
         if (app.getContent() == null) {
             throw new IOException("Null Data in Application.");
