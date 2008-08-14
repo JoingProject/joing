@@ -24,7 +24,7 @@ import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.desktopAPI.workarea.WorkArea;
-import org.joing.swingtools.fsviewer.FSExplorerPanel;
+import org.joing.swingtools.filesystem.fsviewer.FSExplorerPanel;
 
 /**
  * Extra functions used internally by PDE.

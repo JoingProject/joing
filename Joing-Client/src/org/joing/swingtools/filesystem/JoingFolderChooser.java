@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package org.joing.swingtools;
+package org.joing.swingtools.filesystem;
 
 import java.awt.BorderLayout;
 import java.io.File;
@@ -25,8 +25,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.swingtools.fsviewer.FileSystemJobs;
-import org.joing.swingtools.fsviewer.fstree.JoingFileSystemTree;
+import org.joing.swingtools.filesystem.fsviewer.FileSystemJobs;
+import org.joing.swingtools.filesystem.fsviewer.fstree.JoingFileSystemTree;
 
 /**
  * Allows users to select a folder.
