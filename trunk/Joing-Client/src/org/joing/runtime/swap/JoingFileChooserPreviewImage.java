@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Join'g Team Members.  All Rights Reserved.
+ * Copyright (C) 2007, 2008 Join'g Team Members. All Rights Reserved.  * Join'g Team Members are listed at project's home page. By the time of   * writting this at: https://joing.dev.java.net/servlets/ProjectMemberList.
  *
  * This file is part of Join'g project: www.joing.org
  *
@@ -27,6 +27,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.filechooser.FileFilter;
+import org.joing.runtime.vfs.VFSFile;
 
 /**
  *
@@ -51,14 +52,15 @@ public class JoingFileChooserPreviewImage extends JLabel implements PropertyChan
         {
             File fSelection = (File) pce.getNewValue();
             
-            if( fSelection != null && fSelection.exists() && fSelection.isFile() )
+            if( fSelection != null && fSelection.exists() && fSelection.isFile() && 
+                ! (fSelection instanceof VFSFile) )   // VFSFile preview is not affordable: too slow
             {
                 FileFilter filter = getFilter();
                 String     sPath  = fSelection.getAbsolutePath();
                 
                 if( sPath != null && filter.accept( fSelection ) )
                 {
-                    ImageIcon icon = new ImageIcon( sPath );  // FIXME: Mirar qué pasa cuando el file es VFSFile
+                    ImageIcon icon = new ImageIcon( sPath );
                     setIcon( scaleImage( icon ) );
                 }
             }

@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2007, 2008 Join'g Team Members.  All Rights Reserved.
+ * Copyright (C) 2007, 2008 Join'g Team Members. All Rights Reserved.  * Join'g Team Members are listed at project's home page. By the time of   * writting this at: https://joing.dev.java.net/servlets/ProjectMemberList.
  *
  * This file is part of Join'g project: www.joing.org
  *
@@ -76,7 +76,7 @@ public class FSExplorerPanel extends javax.swing.JPanel implements DeskComponent
         DeskFrame frame = dm.getRuntime().createFrame();
                   frame.setTitle( "File Explorer" );
                   frame.setIcon( icon.getImage() );
-                  frame.add( (DeskComponent) this );
+                  frame.add( (DeskComponent) FSExplorerPanel.this );
 
         dm.getDesktop().getActiveWorkArea().add( frame );
     }
@@ -137,6 +137,7 @@ public class FSExplorerPanel extends javax.swing.JPanel implements DeskComponent
         
         split.setLeftComponent( new JScrollPane( tree ) );
         split.setRightComponent( new JScrollPane( list ) );
+        split.setDividerLocation( 180 );
         split.setResizeWeight( .30d );
     }
     

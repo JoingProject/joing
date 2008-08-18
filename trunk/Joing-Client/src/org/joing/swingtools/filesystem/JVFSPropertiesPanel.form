@@ -23,10 +23,10 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="spNote" alignment="0" pref="332" max="32767" attributes="0"/>
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="lblName" min="-2" max="-2" attributes="0"/>
                           <Component id="lblPath" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -35,9 +35,9 @@
                       </Group>
                       <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="txtAccount" alignment="0" pref="259" max="32767" attributes="1"/>
-                          <Component id="txtPath" alignment="0" pref="259" max="32767" attributes="1"/>
-                          <Component id="txtName" alignment="0" pref="259" max="32767" attributes="1"/>
+                          <Component id="txtAccount" alignment="0" pref="259" max="32767" attributes="2"/>
+                          <Component id="txtPath" alignment="0" pref="259" max="32767" attributes="2"/>
+                          <Component id="txtName" alignment="0" pref="259" max="32767" attributes="2"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="chkExecutable" min="-2" max="-2" attributes="0"/>
@@ -55,7 +55,7 @@
                                   <Component id="chkReadable" alignment="0" min="-2" max="-2" attributes="1"/>
                               </Group>
                           </Group>
-                          <Component id="txtOwner" alignment="1" pref="259" max="32767" attributes="1"/>
+                          <Component id="txtOwner" alignment="1" pref="259" max="32767" attributes="2"/>
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
@@ -66,16 +66,16 @@
                       </Group>
                       <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="txtModified" alignment="0" pref="259" max="32767" attributes="1"/>
-                          <Component id="txtSize" alignment="1" pref="259" max="32767" attributes="1"/>
-                          <Component id="txtAccessed" alignment="0" pref="259" max="32767" attributes="1"/>
-                          <Component id="txtCreated" alignment="0" pref="259" max="32767" attributes="1"/>
+                          <Component id="txtModified" alignment="0" pref="259" max="32767" attributes="2"/>
+                          <Component id="txtSize" alignment="1" pref="259" max="32767" attributes="2"/>
+                          <Component id="txtAccessed" alignment="0" pref="259" max="32767" attributes="2"/>
+                          <Component id="txtCreated" alignment="0" pref="259" max="32767" attributes="2"/>
                       </Group>
                   </Group>
                   <Component id="lblSize" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="lblNotes" alignment="1" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>

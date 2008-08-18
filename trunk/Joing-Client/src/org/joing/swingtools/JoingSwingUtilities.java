@@ -17,7 +17,7 @@ import java.net.URL;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import org.joing.common.clientAPI.jvmm.ApplicationExecutionException;
 import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManager;
@@ -147,50 +147,15 @@ public class JoingSwingUtilities
      * @param sTarget See DeskLauncher
      * @param sArguments Arguments to be passed if any, otherwise null.
      */
-    public static synchronized void launch( final DeskLauncher.Type type, final String sTarget, final String sArguments )
+    public static synchronized void launch( DeskLauncher.Type type, String sTarget, String sArguments )
     {
         if( sTarget == null || sTarget.length() == 0 )
             return;
         
-        final DesktopManager dm = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
-        // FIXME: La notificación no va bien porque se muestra al mismo tiempo que la ventana: es como si la esperase
-        
         switch( type )
         {
-            case APPLICATION:                       
-                SwingUtilities.invokeLater( new Runnable()
-                {
-                    public void run()
-                    {
-                        Image imgLaunch = dm.getRuntime().getImage( StandardImage.LAUNCHER );
-                        int   nIdNote   = dm.getDesktop().showNotification( "Launching application", imgLaunch );
-                        int   nApp      = -1;
-                        
-                        try{ nApp = Integer.valueOf( sTarget ); }
-                        catch( NumberFormatException nfe )  {  }
-                        
-                        try
-                        { 
-                            if( nApp > -1)
-                            {
-                                org.joing.jvmm.RuntimeFactory.getPlatform().start( nApp );
-                            }
-                            else if( sTarget != null )
-                            {    
-                                // TODO: Hacerlo
-                                //    org.joing.jvmm.RuntimeFactory.getPlatform().start( 
-                            }
-                        }
-                        catch( ApplicationExecutionException exc )
-                        {
-                            dm.getRuntime().showException( exc, null );
-                        }
-                        finally
-                        {
-                            dm.getDesktop().hideNotification( nIdNote );
-                        }
-                    }
-                } );
+            case APPLICATION:
+                launchApp( sTarget );
                 break;
                 
              case DIRECTORY:
@@ -215,5 +180,57 @@ public class JoingSwingUtilities
         }
         
         return null;
-    }   
+    }
+    
+    //------------------------------------------------------------------------//
+    
+    private static void launchApp( final String sApp )
+    {
+        DesktopManager dm        = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+        Image          imgLaunch = dm.getRuntime().getImage( StandardImage.LAUNCHER );
+        final int      nIdNote   = dm.getDesktop().showNotification( "Launching application", imgLaunch );
+        
+        // Normally, launching applications is done from inside the EDT, a good place to invoke 
+        // showNotification(...), but a bad place to invoke Platform.
+        // That is why a SwingWorker() is created to invoke Platform.
+        
+        SwingWorker sw = new SwingWorker() 
+        {
+            protected Object doInBackground() throws Exception
+            {
+                int nApp = -1;
+                
+                try{ nApp = Integer.valueOf( sApp ); }
+                catch( NumberFormatException nfe ) { }
+                
+                try
+                { 
+                    if( nApp > -1)
+                    {
+                        org.joing.jvmm.RuntimeFactory.getPlatform().start( nApp );
+                    }
+                    else
+                    {    
+                        // TODO: Hacerlo: lanzar la app por su nombre
+                        //    org.joing.jvmm.RuntimeFactory.getPlatform().start( 
+                    }
+                }
+                catch( ApplicationExecutionException exc )
+                {
+                    org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().
+                            getRuntime().showException( exc, null );
+                }
+                
+                return null;
+            }
+
+            protected void done()
+            {
+                org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().
+                        getDesktop().hideNotification( nIdNote );
+            }
+        };
+        
+        sw.execute();
+    }
 }
