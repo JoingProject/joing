@@ -17,8 +17,9 @@ import org.joing.common.desktopAPI.DeskComponent;
  */
 public interface WorkAreaListener
 {
-    public void componentAdded( DeskComponent comp );
-    public void componentRemoved( DeskComponent comp );
+    public void componentAdded( DeskComponent dc );
+    public void componentRemoved( DeskComponent dc );
+    public void componentSelected( DeskComponent dcOldSelected, DeskComponent dcNewSelected );
     
     /**
      * wpNew can be <code>null</code> if wallpaper was removed
