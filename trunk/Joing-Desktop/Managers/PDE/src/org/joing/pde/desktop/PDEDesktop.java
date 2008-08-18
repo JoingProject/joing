@@ -1,17 +1,29 @@
 /*
- * DesktopImpl.java
+ * Copyright (C) 2007, 2008 Join'g Team Members. All Rights Reserved.
+ * Join'g Team Members are listed at project's home page. By the time of 
+ * writting this at: https://joing.dev.java.net/servlets/ProjectMemberList.
  *
- * Created on 9 de septiembre de 2007, 9:38
+ * This file is part of Join'g project: www.joing.org
  *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
+ * GNU Classpath is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the free
+ * Software Foundation; either version 3, or (at your option) any later version.
+ * 
+ * GNU Classpath is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * GNU Classpath; see the file COPYING.  If not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
 package org.joing.pde.desktop;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.File;
@@ -47,9 +59,9 @@ public class PDEDesktop extends JPanel implements Desktop
     private JPanel   pnlWorkAreas;   // Where all W.A. are stored using CardLayout
     private WorkArea waActive;
     
-    private EventListenerList listenerList;       // FIXME: Cambiar esto por la de JComponent
+    private EventListenerList listenerList;       // NEXT: Cambiar esto por la de JComponent
     
-    private Hashtable<Integer, PDECanvas> htInfoPanels;
+    private Hashtable<Integer, PDECanvas> htInfoPanels;   // Synchronized implementation
     
     //------------------------------------------------------------------------//
     
@@ -339,12 +351,15 @@ public class PDEDesktop extends JPanel implements Desktop
         NotificationPanel notification = new NotificationPanel( sMessage, icon );
         int               nHandle      = notification.hashCode();
         
-        htInfoPanels.put( nHandle, notification );
+        // Calculates size and postion
+        WorkArea  wa  = getActiveWorkArea();
+        Dimension dim = notification.getPreferredSize();
+        notification.setSize( dim );
+        notification.setLocation( wa.getWidth() - dim.width, wa.getHeight() - dim.height - 5 );   // NEXT: no sé por qué tengo que hacer el -5        
         
-        // FIXME: Se muestra al mismo tiempo que la ventana a la que debe de servir de aviso
-        //        y debería mostrarse inmediatamente
         getActiveWorkArea().add( notification );
         
+        htInfoPanels.put( nHandle, notification );
         return nHandle;
     }
     
@@ -352,7 +367,13 @@ public class PDEDesktop extends JPanel implements Desktop
     {
         if( htInfoPanels != null && htInfoPanels.containsKey( nHandle ) )
         {
-            htInfoPanels.get( nHandle ).close();
+            PDECanvas canvas = htInfoPanels.get( nHandle );
+            
+            synchronized( this )
+            {
+                canvas.close();
+            }
+            
             htInfoPanels.remove( nHandle );
         }
     }

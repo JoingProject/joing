@@ -1,13 +1,23 @@
 /*
- * AbstractWorkArea.java
+ * Copyright (C) 2007, 2008 Join'g Team Members. All Rights Reserved.
+ * Join'g Team Members are listed at project's home page. By the time of 
+ * writting this at: https://joing.dev.java.net/servlets/ProjectMemberList.
  *
- * Created on 10 de febrero de 2007, 19:05
+ * This file is part of Join'g project: www.joing.org
  *
- * (c) 2006 - Francisco Morero Peyrona
- *
- * License: {license}
+ * GNU Classpath is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the free
+ * Software Foundation; either version 3, or (at your option) any later version.
+ * 
+ * GNU Classpath is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * GNU Classpath; see the file COPYING.  If not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
 package org.joing.pde.desktop.workarea;
 
 import java.awt.Component;
@@ -72,7 +82,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     }
     
     //------------------------------------------------------------------------//
-    // Grid issues
+    // Grid issues: PDE extra-functionality (not part of WorkArea interface)
     //------------------------------------------------------------------------//
     
     public boolean isSnapToGrid()
@@ -84,7 +94,25 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     {
         this.bSnapToGrid = snapToGrid;
     }
-
+    
+    /**
+     * If needed, moves passed component to be aligned to grid.
+     * 
+     * @param comp
+     */
+    public void snapToGrid( Component comp )
+    {
+        if( isSnapToGrid() )
+        {
+            int nWidth  = getGridDimension().width;
+            int nHeight = getGridDimension().height;
+            
+            // + 5 para despegarlo de los bordes izquierdo y superior
+            comp.setLocation( Math.round( comp.getLocation().x / nWidth  ) * nWidth  + 5,
+                              Math.round( comp.getLocation().y / nHeight ) * nHeight + 5 );
+        }
+    }
+    
     public Dimension getGridDimension()
     {
         return this.gridDimension;
@@ -100,24 +128,6 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         this.gridDimension = gridDimension;
     }
     
-    /**
-     * If needed, moves passed component to be aligned to grid.
-     * 
-     * @param comp
-     */
-    public void alignToGrid( Component comp )
-    {
-        if( isSnapToGrid() )
-        {
-            int nWidth  = getGridDimension().width;
-            int nHeight = getGridDimension().height;
-            
-            // + 5 para despegarlo de los bordes izquierdo y superior
-            comp.setLocation( Math.round( comp.getLocation().x / nWidth  ) * nWidth  + 5,
-                              Math.round( comp.getLocation().y / nHeight ) * nHeight + 5 );
-        }
-    }
-        
     //------------------------------------------------------------------------//
     // PDEWorkAreaPopupMenu issues
     //------------------------------------------------------------------------//
@@ -267,22 +277,6 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     
     //------------------------------------------------------------------------//
     
-    protected Point findEmptyLocation( Component component )
-    {
-        // TODO: hacerlo mejor
-        
-        if( component instanceof PDEDeskLauncher )
-        {
-            return new Point( 0,0 );
-        }
-        else
-        {
-            return new Point( 0, 0 );
-        }
-    }
-    
-    //------------------------------------------------------------------------//
-    
     private void initGUI()
     {
         setLayout( null );
@@ -348,7 +342,12 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         }
     }
     
-    public void add( final DeskWindow window, final boolean bAutoArrange  )
+    public void add( DeskWindow window )
+    {
+        add( window, true );
+    }
+    
+    public void add( DeskWindow window, boolean bAutoArrange )
     {
         if( window instanceof PDEDialog )
             addDialog( (PDEDialog) window, bAutoArrange );
@@ -472,6 +471,15 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             al[n].componentRemoved( dc );
     }
     
+    protected void fireComponentSelected( DeskComponent dcOldSelected, DeskComponent dcNewSelected )
+    {
+         WorkAreaListener[] al = listenerList.getListeners( WorkAreaListener.class );
+        
+        // Process the listeners last to first, notifying
+        for( int n = al.length - 1; n >= 0; n-- )
+            al[n].componentSelected( dcOldSelected, dcNewSelected );
+    }
+    
     protected void fireWallpaperChanged( Wallpaper wpNew )
     {
          WorkAreaListener[] al = listenerList.getListeners( WorkAreaListener.class );
@@ -485,32 +493,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     
     private void addDesklet( PDEDesklet desklet )
     {
-        // TODO: comprobar que no es menor que el tamaño mínimo ni mayor que el máximo
-        
-       /* Dimension dim = getSize();
-        
-        if( dim.width > 0 && dim.height > 0 )       // WA is visible
-        {
-            Rectangle bounds = component.getBounds();
-
-            if( bounds.x < 0 || bounds.y < 0 || bounds.width <= 0 || bounds.height <= 0 )
-                throw new IndexOutOfBoundsException( "Component bounds are invalid" );
-
-            // Check size (has to be done before position)
-            if( bounds.width > dim.width )
-                component.setSize( new Dimension( dim.width, bounds.height ) );
-
-            if( bounds.height > dim.height )
-                component.setSize( new Dimension( bounds.width, dim.height ) );
-
-            // Check position
-            if( (bounds.x + bounds.width) > dim.width )
-                component.setLocation( 0, bounds.y );      // NEXT: esto es mejorable
-
-            if( (bounds.y + bounds.height) > dim.height )
-                component.setLocation( bounds.x, 0 );      // NEXT: esto es mejorable
-        }*/
-        
+        // NEXT: Check desklet bounds to ensure it is visible
         super.add( desklet, LAYER_LAUNCHER );
         validate();
     }
@@ -566,25 +549,24 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     }
     --------------------------------------------------------------------------*/
     
-    private void addFrame( PDEFrame frame, boolean bAutoArrange )
+    private void addFrame( final PDEFrame frame, final boolean bAutoArrange )
     {
         if( bAutoArrange )
-            frame.pack();
-        
+            frame.pack(); // Pack calls internally to validate()
+            
         adjustWindowBounds( frame );
         
         // Add to container
         if( frame.isAlwaysOnTop() )
-            super.add( frame, LAYER_FRAME + 1 );
+            PDEWorkArea.super.add( frame, LAYER_FRAME + 1 );
         else
-            super.add( frame, LAYER_FRAME  );
+            PDEWorkArea.super.add( frame, LAYER_FRAME );
         
         if( bAutoArrange )
             frame.center();
         
-        validate();  // Validate before make it visible
         // DeskFrame interface does not include setVisible(...)
-        frame.setVisible( true );  // 1st, must be visble, because this is the way to have a parent
+        frame.setVisible( true ); // 1st, must be visble, because this is the way to have a parent
         
         if( bAutoArrange )
         {
@@ -594,7 +576,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     }
     
     // Ensures that passed dialog or frame is not bigger than WorkArea
-    // (the same user can run Joing in many different-size devices)
+    // (the same user can run Join'g in many different-size devices)
     private void adjustWindowBounds( PDEWindow window )
     {
         Insets    insets = getInsets();
@@ -618,15 +600,29 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
     {
         public void selection( DeskLauncher dl )
         {
-            if( dl.isSelected() )  // If the event refers to a selected launcher that becomes to unselected, we are not interested
+            if( dl.isSelected() )  // If the event refers to a selected launcher that becomes unselected, we are not interested
             {
+                DeskComponent oldSel = null;
+                DeskComponent newSel = dl;
+                
+                moveToFront( dl );    // Moves to front inside its layer
+                
                 Component[] aComp = getComponents();
 
                 for( int n = 0; n < aComp.length; n++ )
                 {
                     if( aComp[n] instanceof PDEDeskLauncher )
-                        ((PDEDeskLauncher) aComp[n]).setSelected( aComp[n] == dl );
+                    {
+                        PDEDeskLauncher pdl = (PDEDeskLauncher) aComp[n];
+                        
+                        if( pdl.isSelected() )
+                            oldSel = pdl;
+                        
+                        pdl.setSelected( aComp[n] == dl );
+                    }
                 }
+                
+                PDEWorkArea.this.fireComponentSelected( oldSel, newSel );
             }
         }
         

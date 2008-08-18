@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2007, 2008 Join'g Team Members.  All Rights Reserved.
+ * Copyright (C) 2007, 2008 Join'g Team Members. All Rights Reserved.
+ * Join'g Team Members are listed at project's home page. By the time of 
+ * writting this at: https://joing.dev.java.net/servlets/ProjectMemberList.
  *
  * This file is part of Join'g project: www.joing.org
  *
@@ -16,7 +18,6 @@
  * GNU Classpath; see the file COPYING.  If not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
 package org.joing.pde.swing;
 
 import java.awt.BorderLayout;
