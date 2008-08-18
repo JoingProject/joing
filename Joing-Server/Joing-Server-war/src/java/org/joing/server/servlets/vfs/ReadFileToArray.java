@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2007, 2008 Join'g Team Members.  All Rights Reserved.
+ * Copyright (C) 2007, 2008 Join'g Team Members. All Rights Reserved.
+ * Join'g Team Members are listed at project's home page. By the time of 
+ * writting this at: https://joing.dev.java.net/servlets/ProjectMemberList.
  *
  * This file is part of Join'g project: www.joing.org
  *
