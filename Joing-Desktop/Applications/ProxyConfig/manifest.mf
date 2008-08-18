@@ -1,3 +1,17 @@
 Manifest-Version: 1.0
 X-COMMENT: Main-Class will be added automatically by build
 
+Name: Join'g
+AppName: Proxy Config
+Version: 0.1
+IconPixel: org/joing/proxyconfig/proxy_config.png
+IconVector: 
+Description: A basic Proxy configuration application
+WebSite: www.joing.org
+Author: Francisco Morero Peyrona
+Vendor: Join'g Team
+License: GPL-V3
+CallSyntax: 
+Arguments: 
+FileTypes: 
+
