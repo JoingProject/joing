@@ -1,7 +1,22 @@
 /*
- * PDEWorkAreaProperties.java
+ * Copyright (C) 2007, 2008 Join'g Team Members. All Rights Reserved.
+ * Join'g Team Members are listed at project's home page. By the time of 
+ * writting this at: https://joing.dev.java.net/servlets/ProjectMemberList.
  *
- * Created on 8 de diciembre de 2007, 8:12
+ * This file is part of Join'g project: www.joing.org
+ *
+ * GNU Classpath is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the free
+ * Software Foundation; either version 3, or (at your option) any later version.
+ * 
+ * GNU Classpath is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * GNU Classpath; see the file COPYING.  If not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 package org.joing.pde.desktop.workarea;
 
@@ -9,7 +24,10 @@ import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import org.joing.common.desktopAPI.workarea.WorkArea;
 
@@ -37,15 +55,46 @@ public class PDEWorkAreaProperties extends javax.swing.JPanel
         initValues();
     }
 
+    public void applyChanges()
+    {
+        // TODO: Aplicar cambios y escribir valores en el fichero de configuración
+        
+//        UIManager.LookAndFeelInfo lafi = (UIManager.LookAndFeelInfo) cmbLookAndFeel.getClientProperty( cmbLookAndFeel.getSelectedItem() );
+//        String sSelectedLAFClassName = lafi.getClassName();
+//        
+//        if( ! UIManager.getLookAndFeel().getClass().getName().equals( sSelectedLAFClassName ) )
+//        {
+//            JFrame frmMain = (JFrame) SwingUtilities.getAncestorOfClass( JFrame.class, this );
+//            try
+//            { 
+//                UIManager.setLookAndFeel( lafi.getClassName() );
+//            } 
+//            catch( Exception exc )
+//            {
+//                org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showException( exc, "Error" );
+//            }
+//            SwingUtilities.updateComponentTreeUI( frmMain );
+//            frmMain.pack();
+//        }
+    }
+    
     //------------------------------------------------------------------------//
     
     private void initValues()
     {   // TODO: leer los valores iniciales del workarea (porque el fichero es manejado desde la clase que invoca a esta)
+        UIManager.LookAndFeelInfo[] aLAF = UIManager.getInstalledLookAndFeels();
+        
+        for( UIManager.LookAndFeelInfo laf : aLAF  )
+        {
+            cmbLookAndFeel.addItem( laf.getName() );
+            cmbLookAndFeel.putClientProperty( laf.getName(), laf );
+        }
+        
         chkColorGradient.setSelected( false );
         radGradientHorizontal.setSelected( true );
         chkColorGradientActionPerformed( null );
     }
-
+    
     //------------------------------------------------------------------------//
     // INNER CLASS Special JLabel to paint gradient
     //------------------------------------------------------------------------//
@@ -126,6 +175,8 @@ public class PDEWorkAreaProperties extends javax.swing.JPanel
         lblGradientTopLeftToBottomRight = new javax.swing.JLabel();
         radGradientTopRightToBottomLeft = new javax.swing.JRadioButton();
         lblGradientTopRightToBottomLeft = new javax.swing.JLabel();
+        lblLookAndFeel = new javax.swing.JLabel();
+        cmbLookAndFeel = new javax.swing.JComboBox();
 
         lblName.setText("Name");
 
@@ -155,12 +206,12 @@ public class PDEWorkAreaProperties extends javax.swing.JPanel
                 .addGroup(pnlImageLayout.createSequentialGroup()
                     .addContainerGap()
                     .addComponent(btnImage, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(185, Short.MAX_VALUE)))
+                    .addContainerGap(227, Short.MAX_VALUE)))
         );
         pnlImageLayout.setVerticalGroup(
             pnlImageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlImageLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(14, Short.MAX_VALUE)
                 .addComponent(radImageCenter)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(radImageStretch)
@@ -170,7 +221,7 @@ public class PDEWorkAreaProperties extends javax.swing.JPanel
             .addGroup(pnlImageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(pnlImageLayout.createSequentialGroup()
                     .addGap(11, 11, 11)
-                    .addComponent(btnImage, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
+                    .addComponent(btnImage, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
                     .addGap(11, 11, 11)))
         );
 
@@ -279,7 +330,7 @@ public class PDEWorkAreaProperties extends javax.swing.JPanel
         pnlColorLayout.setVerticalGroup(
             pnlColorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlColorLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(14, Short.MAX_VALUE)
                 .addGroup(pnlColorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(btnColorFrom)
                     .addComponent(lblColorTo)
@@ -293,20 +344,27 @@ public class PDEWorkAreaProperties extends javax.swing.JPanel
 
         pnlColorLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btnColorFrom, btnColorTo});
 
+        lblLookAndFeel.setText("L&F");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(pnlImage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(pnlColor, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblName)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblName)
+                            .addComponent(lblLookAndFeel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtName))
-                    .addComponent(pnlImage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnlColor, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cmbLookAndFeel, 0, 295, Short.MAX_VALUE)
+                            .addComponent(txtName, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -315,9 +373,13 @@ public class PDEWorkAreaProperties extends javax.swing.JPanel
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblName)
                     .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblLookAndFeel)
+                    .addComponent(cmbLookAndFeel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addComponent(pnlImage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlColor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -355,12 +417,14 @@ public class PDEWorkAreaProperties extends javax.swing.JPanel
     private javax.swing.JButton btnColorTo;
     private javax.swing.JButton btnImage;
     private javax.swing.JCheckBox chkColorGradient;
+    private javax.swing.JComboBox cmbLookAndFeel;
     private javax.swing.JLabel lblColorFrom;
     private javax.swing.JLabel lblColorTo;
     private javax.swing.JLabel lblGradientHorizontal;
     private javax.swing.JLabel lblGradientTopLeftToBottomRight;
     private javax.swing.JLabel lblGradientTopRightToBottomLeft;
     private javax.swing.JLabel lblGradientVertical;
+    private javax.swing.JLabel lblLookAndFeel;
     private javax.swing.JLabel lblName;
     private javax.swing.JPanel pnlColor;
     private javax.swing.JPanel pnlGradientChooser;
