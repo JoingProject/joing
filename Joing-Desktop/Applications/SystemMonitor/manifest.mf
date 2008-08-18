@@ -1,3 +1,16 @@
 Manifest-Version: 1.0
 X-COMMENT: Main-Class will be added automatically by build
 
+Name: Join'g
+AppName: System Monitor
+Version: 0.1
+IconPixel: org/joing/sysmon/system_monitor.png
+IconVector: 
+Description: A simple yet powerfull System Monitor
+WebSite: www.joing.org
+Author: Francisco Morero Peyrona
+Vendor: Join'g Team
+License: GPL-V3
+CallSyntax: 
+Arguments: 
+FileTypes: 
