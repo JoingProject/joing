@@ -18,7 +18,7 @@
  * GNU Classpath; see the file COPYING.  If not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.joing.images.images;
+package org.joing.images;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -95,24 +95,13 @@ public class Images extends JPanel implements DeskComponent
         DesktopManager dm   = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
         ImageIcon      icon = new ImageIcon( getClass().getResource( "images/images.png" ) );
         
-        if( dm != null )
-        {
-            // Show this panel in a frame created by DesktopManager Runtime.
-            DeskFrame frame = dm.getRuntime().createFrame();
-                      frame.setTitle( "Images" );
-                      frame.setIcon( icon.getImage() );
-                      frame.add( (DeskComponent) this );
-                      
-            dm.getDesktop().getActiveWorkArea().add( frame );
-        }
-        else
-        {
-            javax.swing.JFrame frame = new javax.swing.JFrame();
-                               frame.add( this );
-                               frame.pack();
-                               frame.setDefaultCloseOperation( javax.swing.JFrame.EXIT_ON_CLOSE );
-                               frame.setVisible( true );
-        }
+        // Show this panel in a frame created by DesktopManager Runtime.
+        DeskFrame frame = dm.getRuntime().createFrame();
+                  frame.setTitle( "Images" );
+                  frame.setIcon( icon.getImage() );
+                  frame.add( (DeskComponent) this );
+
+        dm.getDesktop().getActiveWorkArea().add( frame );
     }
     
     //------------------------------------------------------------------------//

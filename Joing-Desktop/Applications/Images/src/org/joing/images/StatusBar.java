@@ -18,7 +18,7 @@
  * GNU Classpath; see the file COPYING.  If not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package org.joing.images.images;
+package org.joing.images;
 
 import java.awt.Dimension;
 import java.awt.Font;
