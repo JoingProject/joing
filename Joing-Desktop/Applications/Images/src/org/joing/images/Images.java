@@ -191,7 +191,12 @@ public class Images extends JPanel implements DeskComponent
         tabs.removeTabAt( nIndex );
         
         if( tabs.getTabCount() > 0 )
-            tabs.setSelectedIndex( nIndex - 1 );
+        {
+            if( nIndex == 0 )
+                tabs.setSelectedIndex( 0 );
+            else    
+                tabs.setSelectedIndex( nIndex - 1 );
+        }
     }
     
     public void setHelp( JComponent comp )
