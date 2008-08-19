@@ -338,7 +338,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
             else if( component instanceof PDEFrame        )  addFrame( (PDEFrame) component, true );
             else                                             PDEWorkArea.super.add( component, LAYER_FRAME  );
             
-            fireComponentAdded( dc );    
+            fireComponentAdded( dc );
         }
     }
     
@@ -558,9 +558,9 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
         
         // Add to container
         if( frame.isAlwaysOnTop() )
-            PDEWorkArea.super.add( frame, LAYER_FRAME + 1 );
+            super.add( frame, LAYER_FRAME + 1 );
         else
-            PDEWorkArea.super.add( frame, LAYER_FRAME );
+            super.add( frame, LAYER_FRAME );
         
         if( bAutoArrange )
             frame.center();

@@ -311,16 +311,16 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     private void initGUI()
     {
         // Sizes must be initialized prior to components (they use them)
-        setMinimumSize(   new Dimension( 62, 65 ) );
-        setMaximumSize(   new Dimension( 92,182 ) );
-        setPreferredSize( new Dimension( 72, 65 ) );
+        setMinimumSize(   new Dimension( 66, 66 ) );
+        setMaximumSize(   new Dimension( 96,188 ) );
+        setPreferredSize( new Dimension( 76, 48+11+2+10 ) );   // icon + font + vgap + border(5+5)
 
         // Initialising components
         icon = new IconComponent();
         
         text = new TextComponent();
         text.setFont( text.getFont().deriveFont( Font.BOLD, 11f ) );
-        /* TODO: mirar cómo hacer esto
+        /* NEXT: mirar cómo hacer esto
         int nPixelsWidth = SwingUtilities.computeStringWidth( text.getFontMetrics( text.getFont() ), "ABC" ) / 3;   // This line must be after setFont(...)
         text.setColumns( PDEDeskLauncher.this.getPreferredSize().width / nPixelsWidth );*/
         
@@ -328,8 +328,8 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
         pnlAll.setOpaque( false );
         pnlAll.setBackground( PDEColorSchema.getInstance().getDeskLauncherTextBackground() );
         pnlAll.setTransparency( 85 );
-        pnlAll.setLayout( new BorderLayout( 0,0 ) );
-        pnlAll.setBorder( new EmptyBorder( 3,3,3,3 ) );
+        pnlAll.setLayout( new BorderLayout( 0,2 ) );
+        pnlAll.setBorder( new EmptyBorder( 5,5,5,5 ) );
         pnlAll.add( icon, BorderLayout.CENTER );
         pnlAll.add( text, BorderLayout.SOUTH  );
         

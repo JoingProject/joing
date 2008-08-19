@@ -38,7 +38,6 @@ import java.io.IOException;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import org.joing.pde.desktop.PDEDesktop;
-import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -47,23 +46,18 @@ import java.awt.event.ComponentListener;
 import java.io.InputStream;
 import java.util.Locale;
 import java.util.jar.Manifest;
-import javax.swing.ImageIcon;
-import javax.swing.JApplet;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
 import org.joing.common.JoingManifestEntry;
 import org.joing.common.clientAPI.runtime.Bridge2Server;
-import org.joing.common.desktopAPI.DeskComponent;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.StandardSound;
 import org.joing.common.dto.user.User;
 import org.joing.jvmm.RuntimeFactory;
-import org.joing.swingtools.JoingPanel;
 
 /**
  * DesktopManager interface implementation.
@@ -77,7 +71,7 @@ import org.joing.swingtools.JoingPanel;
  * 
  * @author Francisco Morero Peyrona
  */
-public class PDEManager extends JApplet implements DesktopManager
+public class PDEManager implements DesktopManager
 {
     private PDEDesktop desktop;
     private PDERuntime runtime;
@@ -112,22 +106,6 @@ public class PDEManager extends JApplet implements DesktopManager
         
         runtime = new PDERuntime();   // Constructor is empty
         desktop = new PDEDesktop();   // Constructor not empty, but very fast
-        getContentPane().add( desktop, BorderLayout.CENTER );
-    }
-    
-    //------------------------------------------------------------------------//
-    // Methods from JApplet
-    
-    public void init()
-    {
-    }
-    
-    public void start()
-    {
-    }
-    
-    public void stop()
-    {
     }
     
     //------------------------------------------------------------------------//
@@ -156,26 +134,42 @@ public class PDEManager extends JApplet implements DesktopManager
     // Called from Platform: can't be used by PDEManager
     public void shutdown()
     {
-        runtime.play( StandardSound.GOODBYE );
-        getDesktop().close();
+        if( frame != null )   // It could be that frame was not yet built
+        {
+            runtime.play( StandardSound.GOODBYE );
+            getDesktop().close();
 
-        // TODO: Quizás, tras enviar la orden al Desktop para que cierre todas sus
-        //       WorkAreas, habría que crear aquí una thread (o un bucle) donde se comprueba
-        //       cada cierto tiempo que todas las Frames están cerradas, y si pasado
-        //       un tiempo máximo, las que aún no están cerradas, se cierran a las bravas.
+            // TODO: Quizás, tras enviar la orden al Desktop para que cierre todas sus
+            //       WorkAreas, habría que crear aquí una thread (o un bucle) donde se comprueba
+            //       cada cierto tiempo que todas las Frames están cerradas, y si pasado
+            //       un tiempo máximo, las que aún no están cerradas, se cierran a las bravas.
         
-        halt();
+            halt();
+        }
     }
     
     // Called from Platform: can't be used by PDEManager
     public void halt()
     {
-        if( frame != null )   // Can't call getFrame(), because this method constructs the frame
+        if( frame != null )   // It could be that frame was not yet built
             frame.dispose();
     }
     
+    public void lock()
+    {
+        if( frame != null )    // It could be that frame was not yet built
+        {
+            Component   previous = frame.getGlassPane();
+            MyGlassPane myGlass  = new MyGlassPane( previous, new AskForPassword() );
+            
+            frame.setGlassPane( myGlass );    
+            myGlass.lock();
+        }
+    }
+    
     //------------------------------------------------------------------------//
-    // exit() and lock() methods are called from the "start-menu" in the desktop
+    // exit() and lock() methods are called from the "start-menu" in the desktop.
+    // exit() is NOT part of DesktopManager interface
     
     /**
      * This method is inovked by start-menu item "Exit".<br>
@@ -185,46 +179,14 @@ public class PDEManager extends JApplet implements DesktopManager
     {
         org.joing.jvmm.RuntimeFactory.getPlatform().shutdown();   // Platform calls this::shutdown()
     }
-
-    /**
-     * This method is inovked by start-menu item "Lock".<br>
-     * It makes the desktop black and asks for password when user clicks on it.
-     */
-    public void lock()
-    {
-        Component   previous = (frame != null ? frame.getGlassPane() 
-                                              : getRootPane().getGlassPane());
-        MyGlassPane myGlass  = new MyGlassPane( previous, new AskForPassword() );
-        
-        if( frame != null )
-            frame.setGlassPane( myGlass );
-        else
-            getRootPane().setGlassPane( myGlass );
-        
-        myGlass.lock();
-    }
-    
-    public void unlock()
-    {
-        MyGlassPane myGlass = (MyGlassPane) (frame != null ? frame.getGlassPane()
-                                                           : getRootPane().getGlassPane());
-        myGlass.unlock();
-        
-        if( frame != null )
-            frame.setGlassPane( myGlass.getPreviousGlassPane() );
-        else
-            getRootPane().setGlassPane( myGlass.getPreviousGlassPane() );
-        
-        myGlass = null;
-    }
     
     //------------------------------------------------------------------------//
     
-    private JFrame getMainFrame()
+    private void showFrame( final boolean bFullScreen )
     {
         if( frame == null )
         {
-            String sPDE = "PDE";
+            String sTitle = "Join'g :: ";
             // FIXME: Esto no va: en lugar de coger el manifest de PDEManager, coje el de Joing-Common (su interface)
             InputStream is   = getClass().getResourceAsStream( "/META-INF/MANIFEST.MF" );
             
@@ -234,9 +196,9 @@ public class PDEManager extends JApplet implements DesktopManager
                 {
                     JoingManifestEntry manifest = new JoingManifestEntry( new Manifest( is ) );
                     
-                    sPDE = ((manifest.getAppName() != null ? manifest.getAppName() : sPDE) +
-                            " - Version " +
-                            (manifest.getVersion() != null ? manifest.getVersion() : "n/a" ));                    
+                    sTitle += ((manifest.getAppName() != null ? manifest.getAppName() : "PDE") +
+                              " - Version " +
+                              (manifest.getVersion() != null ? manifest.getVersion() : "n/a" ));                    
                 }
                 catch( IOException exc )
                 {
@@ -244,10 +206,10 @@ public class PDEManager extends JApplet implements DesktopManager
                 }
             }
             
-            frame = new JFrame( "Join'g :: "+ sPDE );
+            frame = new JFrame( sTitle );
             frame.setIconImage( getRuntime().getImage( StandardImage.DESKTOP ) );
             frame.setDefaultCloseOperation( JFrame.DO_NOTHING_ON_CLOSE );
-            frame.setContentPane( getContentPane() );
+            frame.getContentPane().add( desktop );
             frame.addWindowListener( new WindowListener()
             {
                 public void windowActivated( WindowEvent we )   {}
@@ -272,13 +234,8 @@ public class PDEManager extends JApplet implements DesktopManager
                 public void componentShown( ComponentEvent ce )   {  }
                 public void componentHidden( ComponentEvent ce )  {  }
             } );
-        }
+        }        
         
-        return frame;
-    }
-    
-    private void showFrame( final boolean bFullScreen )
-    {
         SwingUtilities.invokeLater( new Runnable()
         {
             public void run()
@@ -292,23 +249,23 @@ public class PDEManager extends JApplet implements DesktopManager
                 {
                     if( bFull )
                     {
-                        getMainFrame().setUndecorated( true );
-                        getMainFrame().setResizable( false );
+                        frame.setUndecorated( true );
+                        frame.setResizable( false );
                     }
                     
-                    getMainFrame().pack();
-                    getMainFrame().setVisible( true );
+                    frame.pack();
+                    frame.setVisible( true );
                     
                     if( bFull )
                     {
-                        gd.setFullScreenWindow( getMainFrame() );
+                        gd.setFullScreenWindow( frame );
                     }
                     else
                     {
                         if( Toolkit.getDefaultToolkit().isFrameStateSupported( Frame.MAXIMIZED_BOTH ) )
-                            getMainFrame().setExtendedState( Frame.MAXIMIZED_BOTH );
+                            frame.setExtendedState( Frame.MAXIMIZED_BOTH );
                         else
-                            getMainFrame().setSize( Toolkit.getDefaultToolkit().getScreenSize() );
+                            frame.setSize( Toolkit.getDefaultToolkit().getScreenSize() );
                     }
                     
                     runtime.play( StandardSound.WELCOME );
@@ -324,46 +281,48 @@ public class PDEManager extends JApplet implements DesktopManager
     
     //------------------------------------------------------------------------//
     // INNER CLASS: AskForPassword
+    // Note: Inside this class can't use Join'g dialog (instead, must use
+    //       JOptionPane) because in this moment, desktop is locked and adding a
+    //       Join'g dialog to the desktop will result in an invisible dialog.
     //------------------------------------------------------------------------//
     private final class AskForPassword implements Runnable
     {
         public void run()
         {
-            JoingPanel panel = new JoingPanel();
-            JLabel     lblPicture = new JLabel( new ImageIcon( getRuntime().getImage( StandardImage.USER_MALE, 32, 32 ) ) );
-                       lblPicture.setBorder( new EmptyBorder( 8,8,8,8 ) );
-                   
             JPasswordField txtPassword = new JPasswordField( 16 );
+            int n = JOptionPane.showConfirmDialog( frame, txtPassword, "Enter your password", JOptionPane.OK_CANCEL_OPTION );
             
-            panel.add( lblPicture , BorderLayout.WEST   );
-            panel.add( txtPassword, BorderLayout.CENTER );
-            
-            if( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
-                    showAcceptCancelDialog( "Enter your password", (DeskComponent) panel, "Unlock", "Lock" ) )
+            if( n == JOptionPane.OK_OPTION )
             {
                 String sPassword = String.valueOf( txtPassword.getPassword() );
                 
                 if( sPassword != null && sPassword.trim().length() > 0 )
                 {        
-                    JRootPane root = (frame != null ? frame.getRootPane() : getRootPane());
+                    JRootPane root   = frame.getRootPane();
                     Cursor    cursor = root.getCursor();
-
+                    
                     root.setCursor( new Cursor( Cursor.WAIT_CURSOR ) );
-
                     sPassword = sPassword.trim();
-
+                    
                     try
                     {
                         Bridge2Server b2s = RuntimeFactory.getPlatform().getBridge();
                         boolean       bOk = sPassword.length() > 0; // TODO: implementar un servicio en el servidor para comprobar la password
+                        
+                        if( bOk )    // Unlock the screen
+                        {
+                            MyGlassPane myGlass = (MyGlassPane) frame.getGlassPane();
+                                        myGlass.unlock();
 
-                        if( bOk )
-                            unlock();
+                            frame.setGlassPane( myGlass.getPreviousGlassPane() );
+                            myGlass = null;
+                        }
                     }
                     catch( Exception exc )
                     {
-                        // TODO: Informar que por falta de comunicación con el servidor no se puede comprobar la password
-                        //       y que el sistema tiene que seguir bloqueado.
+                        root.setCursor( cursor );
+                        JOptionPane.showMessageDialog( root, "Due to a lack of communication with Server,\n"+
+                                                             "password can not be confirmed. Please try later." );
                     }
                     finally
                     {
