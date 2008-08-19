@@ -4,9 +4,9 @@ X-COMMENT: Main-Class will be added automatically by build
 Name: Join'g
 AppName: Images
 Version: 0.1
-IconPixel: org/joing/images/images/images/images.png
+IconPixel: org/joing/images/images/images.png
 IconVector: 
-Description: Images file viewer
+Description: A very simple graphics file viewer
 WebSite: www.joing.org
 Author: Francisco Morero Peyrona
 Vendor: Join'g Team
