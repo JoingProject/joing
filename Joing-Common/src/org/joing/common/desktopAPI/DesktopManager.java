@@ -46,11 +46,12 @@ public interface DesktopManager
     Runtime getRuntime();
     
     /**
-     * Locks desktop
+     * Locks desktop.
+     * <p>
+     * Note: For security reasons, unlock does not exists because there should 
+     * not be an API (a programatically way) to unlock the screen.<br>
+     * Therefore, the lock module has to provide the mechanisim to unlock the 
+     * desktop.
      */
     void lock();
-    /**
-     * Unlocks dekstop
-     */
-    void unlock();
 }
