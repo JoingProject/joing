@@ -36,12 +36,12 @@ import org.joing.common.desktopAPI.pane.DeskFrame;
  */
 public class YACE extends javax.swing.JPanel implements DeskComponent
 {
-    private JoingCommunityEditable tree;
+    private JoingCommunityTree tree;
     
     /** Creates new form YACE */
     public YACE()
     {
-        tree = new JoingCommunityEditable();
+        tree = new JoingCommunityTree();
         
         initComponents();
         initToolBarsAndPopupMenu();
@@ -124,7 +124,7 @@ public class YACE extends javax.swing.JPanel implements DeskComponent
             }
         };
         
-         AbstractAction actTalk = new MyAction( "Talk", "act_talk" )
+        AbstractAction actTalk = new MyAction( "Talk", "act_talk" )
         {
             public void actionPerformed( ActionEvent ae )
             {
@@ -240,9 +240,10 @@ public class YACE extends javax.swing.JPanel implements DeskComponent
             super( sText );
             
             Image image = new ImageIcon( getClass().getResource( "images/"+ sIconName +".png" ) ).getImage();
-                    
-            putValue( SMALL_ICON, new ImageIcon( image.getScaledInstance( 18, 18, Image.SCALE_SMOOTH ) ) );
-            putValue( LARGE_ICON_KEY, new ImageIcon( image.getScaledInstance( 24, 24, Image.SCALE_SMOOTH ) ) );
+            
+            putValue( SMALL_ICON       , new ImageIcon( image.getScaledInstance( 18, 18, Image.SCALE_SMOOTH ) ) );
+            putValue( LARGE_ICON_KEY   , new ImageIcon( image.getScaledInstance( 26, 26, Image.SCALE_SMOOTH ) ) );
+            putValue( SHORT_DESCRIPTION, sText );   // Used for tooltips
         }
     }
     
@@ -260,8 +261,10 @@ public class YACE extends javax.swing.JPanel implements DeskComponent
         tbUsers = new javax.swing.JToolBar();
 
         tbComm.setRollover(true);
+        tbComm.setNextFocusableComponent(tbUsers);
 
         tbUsers.setRollover(true);
+        tbUsers.setNextFocusableComponent(spTree);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -274,11 +277,11 @@ public class YACE extends javax.swing.JPanel implements DeskComponent
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(tbComm, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tbComm, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tbUsers, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tbUsers, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spTree, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE))
+                .addComponent(spTree, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

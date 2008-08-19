@@ -28,7 +28,7 @@ import javax.swing.tree.DefaultTreeModel;
  *
  * @author Francisco Morero Peyrona
  */
-public class JoingCommunityTree extends JTree // TODO: Que herede deCambiarlo JoingSwingTree cuando JOingSwingTools sea una lib
+public class JoingCommunityTree extends JTree // TODO: Que herede de JoingSwingTree
 {
     private boolean bOnlyConnected;
     
