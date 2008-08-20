@@ -99,7 +99,7 @@ class Login extends JDialog
             protected Void doInBackground() throws Exception
             {
                 sSrvName = "joing.org"; // TODO: Preguntarle al Servidor su nombre
-                desktops    = RuntimeFactory.getPlatform().getBridge().getAppBridge().getAvailableDesktops();
+                desktops = RuntimeFactory.getPlatform().getBridge().getAppBridge().getAvailableDesktops();
                 return null;
             }
             
@@ -111,8 +111,10 @@ class Login extends JDialog
                 }
                 else
                 {
-                    txtAccount.setText( txtAccount.getText() +"@"+ sSrvName );
-                    txtAccount.setCaretPosition( 0 );
+                    String sText = txtAccount.getText() +"@"+ sSrvName;
+                    int    nPos  = sText.length() - sSrvName.length() - 1;
+                    txtAccount.setText( sText );
+                    txtAccount.setCaretPosition( Math.max( 0, Math.min( sText.length(), nPos ) ) );
                 }
                 
                 if( desktops == null )    // An exception happened in doInBackground()

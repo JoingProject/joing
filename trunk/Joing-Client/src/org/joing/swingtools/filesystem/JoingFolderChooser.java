@@ -45,6 +45,7 @@ public class JoingFolderChooser extends JPanel implements DeskComponent
     {
         tree = new JoingFileSystemTree();
         tree.setFileSystemWorks( new FileSystemJobs() );
+        tree.setShowingFiles( false );
         
         setBorder( new EmptyBorder( 4,4,4,4 ) );
         setLayout( new BorderLayout() );
