@@ -37,7 +37,8 @@ import org.joing.runtime.vfs.VFSFile;
 
 /**
  * To preservate independency of classes this one knows only about files and
- * file systems and JoingFileSystemTree knows only about to represent files.
+ * file systems and JoingFileSystemTree and JoingFileSystemTree knows only about 
+ * to represent files.
  * <p>
  * This class is used by classes implementing FileSystemActionable interface.
  * 
@@ -581,9 +582,7 @@ public class FileSystemJobs
             putValue( SMALL_ICON       , new ImageIcon( image.getScaledInstance( 18, 18, Image.SCALE_SMOOTH ) ) );
             putValue( LARGE_ICON_KEY   , new ImageIcon( image.getScaledInstance( 24, 24, Image.SCALE_SMOOTH ) ) );
             putValue( ACCELERATOR_KEY  , stroke   );
-            ///putValue( TOOL_TIP_TEXT_KEY, sToolTip );
-            putValue( SHORT_DESCRIPTION, sToolTip );
-            putValue( LONG_DESCRIPTION , sToolTip );
+            putValue( SHORT_DESCRIPTION, sToolTip );   // Used for tooltips
         }
     }
 }
