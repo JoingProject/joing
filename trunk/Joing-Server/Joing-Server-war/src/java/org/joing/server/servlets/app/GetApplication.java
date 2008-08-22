@@ -20,7 +20,7 @@
  */
 package org.joing.server.servlets.app;
 
-import ejb.app.ApplicationManagerLocal;
+import org.joing.server.ejb.app.ApplicationManagerLocal;
 import java.io.*;
 import java.rmi.RemoteException;
 import javax.ejb.EJB;

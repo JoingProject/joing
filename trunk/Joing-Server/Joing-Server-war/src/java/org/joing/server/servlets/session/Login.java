@@ -20,7 +20,7 @@
  */
 package org.joing.server.servlets.session;
 
-import ejb.session.SessionManagerLocal;
+import org.joing.server.ejb.session.SessionManagerLocal;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

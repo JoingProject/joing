@@ -20,7 +20,7 @@
  */
 package org.joing.server.servlets.vfs;
 
-import ejb.vfs.FileManagerLocal;
+import org.joing.server.ejb.vfs.FileManagerLocal;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
