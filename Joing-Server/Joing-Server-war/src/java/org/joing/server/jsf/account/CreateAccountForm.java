@@ -20,9 +20,9 @@
  */
 package org.joing.server.jsf.account;
 
-import ejb.Constant;
-import ejb.session.SessionManagerLocal;
-import ejb.user.UserManagerLocal;
+import org.joing.server.ejb.Constant;
+import org.joing.server.ejb.session.SessionManagerLocal;
+import org.joing.server.ejb.user.UserManagerLocal;
 import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;

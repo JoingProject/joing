@@ -25,7 +25,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.exception.JoingServerServletException;
-import ejb.vfs.FileManagerLocal;
+import org.joing.server.ejb.vfs.FileManagerLocal;
 import javax.ejb.EJB;
 
 import javax.servlet.*;

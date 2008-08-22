@@ -20,7 +20,7 @@
  */
 package org.joing.server.servlets.user;
 
-import ejb.user.UserManagerLocal;
+import org.joing.server.ejb.user.UserManagerLocal;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;

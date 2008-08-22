@@ -20,7 +20,7 @@
  */
 package org.joing.server.jsf.account;
 
-import ejb.user.UserManagerLocal;
+import org.joing.server.ejb.user.UserManagerLocal;
 import java.util.List;
 import java.util.Locale;
 import org.joing.common.dto.user.Local;

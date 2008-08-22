@@ -21,7 +21,7 @@
 package org.joing.server.servlets.app;
 
 import org.joing.common.dto.app.AppDescriptor;
-import ejb.app.ApplicationManagerLocal;
+import org.joing.server.ejb.app.ApplicationManagerLocal;
 import java.io.*;
 import javax.ejb.EJB;
 

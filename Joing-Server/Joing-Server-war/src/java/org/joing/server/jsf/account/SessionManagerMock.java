@@ -20,8 +20,8 @@
  */
 package org.joing.server.jsf.account;
 
-import ejb.Constant;
-import ejb.session.SessionManagerLocal;
+import org.joing.server.ejb.Constant;
+import org.joing.server.ejb.session.SessionManagerLocal;
 import org.joing.common.dto.session.LoginResult;
 import org.joing.common.exception.JoingServerSessionException;
 

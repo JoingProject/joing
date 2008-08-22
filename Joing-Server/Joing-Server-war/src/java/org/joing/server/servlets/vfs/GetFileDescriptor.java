@@ -22,7 +22,7 @@ package org.joing.server.servlets.vfs;
 
 import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.exception.JoingServerServletException;
-import ejb.vfs.FileManagerLocal;
+import org.joing.server.ejb.vfs.FileManagerLocal;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
