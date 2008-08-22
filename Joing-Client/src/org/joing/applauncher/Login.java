@@ -48,8 +48,8 @@ class Login extends JDialog
         setIconImage( (new ImageIcon( getClass().getResource( "resources/joing_icon.png" ) )).getImage() );
         
         // DEPLOY: Remove this
-        //txtAccount.setText( "peyrona" );
-        //txtPassword.setText( "admin9" );
+        txtAccount.setText( "peyrona" );
+        txtPassword.setText( "admin9" );
         //--------------------------------
     }
     

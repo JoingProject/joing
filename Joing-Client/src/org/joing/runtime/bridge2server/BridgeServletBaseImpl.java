@@ -114,6 +114,11 @@ public class BridgeServletBaseImpl
         private ObjectInputStream  reader;
         
         protected Channel( String sServletName )
+        {
+            this( sServletName, true, true );
+        }
+        
+        protected Channel( String sServletName, boolean bDoInput, boolean bDoOutput )
                   throws JoingServerException
         {
             try
@@ -123,8 +128,8 @@ public class BridgeServletBaseImpl
                 connServer = url.openConnection();
 
                 // Inform the connection that we will send output and accept input
-                connServer.setDoInput( true );
-                connServer.setDoOutput( true );
+                connServer.setDoInput( bDoInput );
+                connServer.setDoOutput( bDoOutput );
 
                 // Don't use a cached version of URL connection.
                 connServer.setUseCaches( false );
@@ -209,8 +214,8 @@ public class BridgeServletBaseImpl
         @Override
         protected void finalize() throws Throwable
         {
-            super.finalize();
             close();
+            super.finalize();
         }
         
         //--------------------------------------------------------------------//

@@ -72,6 +72,7 @@ public class SessionBridgeServletImpl
         {
             Channel channel = new Channel( SESSION_LOGOUT );
                     channel.write( sSessionId );
+                    channel.read();    // NEXT: I do not know why, but if I do not read something from Servlet, the Servlet is not invoked
                     channel.close();
         }
     }
