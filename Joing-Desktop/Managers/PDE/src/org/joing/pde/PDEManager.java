@@ -144,6 +144,9 @@ public class PDEManager implements DesktopManager
             //       cada cierto tiempo que todas las Frames están cerradas, y si pasado
             //       un tiempo máximo, las que aún no están cerradas, se cierran a las bravas.
         
+            // FIXME: Esto tiene que ir en PlatformImpl, no aquí
+            org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().getSessionBridge().logout();
+            
             halt();
         }
     }
@@ -188,7 +191,7 @@ public class PDEManager implements DesktopManager
         {
             String sTitle = "Join'g :: ";
             // FIXME: Esto no va: en lugar de coger el manifest de PDEManager, coje el de Joing-Common (su interface)
-            InputStream is   = getClass().getResourceAsStream( "/META-INF/MANIFEST.MF" );
+            InputStream is   = PDEManager.class.getResourceAsStream( "/META-INF/MANIFEST.MF" );
             
             if( is != null )
             {

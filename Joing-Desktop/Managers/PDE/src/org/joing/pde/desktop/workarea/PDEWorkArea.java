@@ -214,7 +214,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
                     &&
                     obj instanceof Cloneable )
                 {
-                    // FIXME: Arreglarlo: imagino q habrá q hacerlo con reflection: bsuacndo si hay un método public llamado clone()
+
                 }
             }
             

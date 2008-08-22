@@ -121,6 +121,6 @@ public class SysTray extends PDETaskBarPanel
     
     public void close()
     {
-        // FIXME: Llamar a close() en todos sus sub-comps 
+        // TODO: Llamar a close() en todos sus sub-comps 
     }
 }

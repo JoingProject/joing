@@ -150,7 +150,7 @@ public class PDETaskBar extends JPanel implements TaskBar
 
     public void close()
     {
-        // FIXME: hacerlo
+        // TODO: hacerlo
     }
     
     // Just to avoid accidental use of them  ---------------------------------------------------------
