@@ -99,7 +99,7 @@ public class SessionManagerBean
     public void logout( String sSessionId )
     {
         if( sSessionId != null )
-        { // FIXME: este método no funciona: arreglarlo
+        {
             try
             {
                 SessionEntity _session = em.find( SessionEntity.class, sSessionId );

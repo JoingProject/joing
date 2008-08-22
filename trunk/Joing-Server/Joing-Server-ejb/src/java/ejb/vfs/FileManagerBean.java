@@ -66,14 +66,14 @@ public class FileManagerBean
     
     //------------------------------------------------------------------------//
     
-    public FileDescriptor getFileDescriptor( String sSessionId, String sFullName, boolean bCreateIfNotExists )
+    public FileDescriptor getFileDescriptor( String sSessionId, String sFilePath, boolean bCreateIfNotExists )
     {
         FileDescriptor fdRet    = null;
         String         sAccount = sessionManagerBean.getUserAccount( sSessionId );
         
         if( sAccount != null )
         {
-            FileEntity _file = VFSTools.path2File( em, sAccount, sFullName );
+            FileEntity _file = VFSTools.path2File( em, sAccount, sFilePath );
             
             // It is not needed to check if isFileInUserSpace(...) because 
             // VFSTools.path2File(...) returns not null only if the _file is in user space.
@@ -84,10 +84,10 @@ public class FileManagerBean
             }
             else if( bCreateIfNotExists )
             {
-                int    nIndex    = sFullName.lastIndexOf( '/' );
-                String sParent   = ((nIndex == -1) ? "/" : sFullName.substring( 0, nIndex - 1 ) );
-                String sFileName = ((nIndex >= sFullName.length() - 1) ? getGeneratedName( sAccount, sParent, false ) :
-                                                                         sFullName.substring( nIndex + 1 ));
+                int    nIndex    = sFilePath.lastIndexOf( '/' );
+                String sParent   = ((nIndex == -1) ? "/" : sFilePath.substring( 0, nIndex - 1 ) );
+                String sFileName = ((nIndex >= sFilePath.length() - 1) ? getGeneratedName( sAccount, sParent, false ) :
+                                                                         sFilePath.substring( nIndex + 1 ));
                 mkDirs( sAccount, sParent );
                 fdRet = createEntry( sAccount, sParent, sFileName, false );
             }
@@ -389,13 +389,13 @@ public class FileManagerBean
     public List<FileDescriptor> trashcan( String sSessionId, int[] anFileId, boolean bInTrashCan )
             throws JoingServerVFSException
     {
-        String sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        String                    sAccount   = sessionManagerBean.getUserAccount( sSessionId );
         ArrayList<FileDescriptor> fileErrors = new ArrayList<FileDescriptor>();
         
         if( sAccount != null )
         {
             for( int n = 0; n <= anFileId.length; n++ )
-                fileErrors.addAll( _trashCan( sAccount, anFileId[n], bInTrashCan ) );
+                _trashCan( sAccount, anFileId[n], bInTrashCan, fileErrors );
         }
         
         return fileErrors;
@@ -409,7 +409,7 @@ public class FileManagerBean
         
         if( sAccount != null )
         {
-            fileErrors = _trashCan( sAccount, nFileId, bInTrashCan );
+            _trashCan( sAccount, nFileId, bInTrashCan, fileErrors );
         }
         
         return fileErrors;
@@ -424,7 +424,7 @@ public class FileManagerBean
         if( sAccount != null )
         {
             for( int n = 0; n <= anFileId.length; n++ )
-                fileErrors.addAll( _delete( sAccount, anFileId[n] ) );
+                _delete( sAccount, anFileId[n], fileErrors );
         }
         
         return fileErrors;
@@ -438,7 +438,7 @@ public class FileManagerBean
         
         if( sAccount != null )
         {
-            fileErrors = _delete( sAccount, nFileId );
+            _delete( sAccount, nFileId, fileErrors );
         }
         
         return fileErrors;
@@ -516,14 +516,12 @@ public class FileManagerBean
     
     //------------------------------------------------------------------------//
     // PRIVATE SCOPE
- 
+    
     // Recursively moves files and directories from and to the trashcan
     // If the _file is found it can always been moved to and from trashcan.
-    private ArrayList<FileDescriptor> _trashCan( String sAccount, int nFileId, boolean bInTrashCan )
+    private void _trashCan( String sAccount, int nFileId, boolean bInTrashCan, ArrayList<FileDescriptor> fileErrors )
             throws JoingServerVFSException
-    {
-        ArrayList<FileDescriptor> fileErrors = new ArrayList<FileDescriptor>();
-        
+    {        
         try
         {
             FileEntity _file = em.find( FileEntity.class, nFileId );
@@ -542,13 +540,19 @@ public class FileManagerBean
                 List<FileEntity> _fChilds = VFSTools.getChilds( em, sAccount, _file );
                 
                 for( FileEntity _f : _fChilds )
-                    fileErrors.addAll( _trashCan( sAccount, _f.getIdFile(), bInTrashCan ) );
+                    _trashCan( sAccount, _f.getIdFile(), bInTrashCan, fileErrors );
             }
             else                          // Is a _file
             {
-                _file.setIsInTrashcan( (short) (bInTrashCan ? 1 : 0) );
-                em.persist( _file );
-                // FIXME: Aquí habría que añadir los ficheros que fallan a fileErrors.
+                try
+                {
+                    _file.setIsInTrashcan( (short) (bInTrashCan ? 1 : 0) );
+                    em.persist( _file );
+                }
+                catch( Exception exc )
+                {
+                    fileErrors.add( (new FileDTOs( _file )).createFileDescriptor() );
+                }
             }
         }
         catch( RuntimeException exc )
@@ -561,18 +565,14 @@ public class FileManagerBean
             
             throw exc;
         }
-        
-        return fileErrors;
     }
  
     // Recursively deletes a _file or a directory in DB (not in FS)
     // Note: This method returns an ArrayList instead of int[] to increase overall speed.
-    private ArrayList<FileDescriptor> _delete( String sAccount, int nFileId )
+    private void _delete( String sAccount, int nFileId,  ArrayList<FileDescriptor> fileErrors )
             throws JoingServerVFSException
     {
-        ArrayList<FileDescriptor> fileErrors = new ArrayList<FileDescriptor>();
-        
-        try
+       try
         {
             FileEntity _file = em.find( FileEntity.class, nFileId );
             
@@ -593,7 +593,7 @@ public class FileManagerBean
                 List<FileEntity> _fChilds = VFSTools.getChilds( em, sAccount, _file );
                 
                 for( FileEntity _f : _fChilds )
-                    fileErrors.addAll( _delete( sAccount, _f.getIdFile() ) );
+                    _delete( sAccount, _f.getIdFile(), fileErrors );
                 
                 // Si borrase el _file y algunos fics no se pudieron borrar, se quedarían en el limbo para siempre
                 if( fileErrors.size() == 0 )
@@ -601,9 +601,16 @@ public class FileManagerBean
             }
             else
             {
-                em.remove( _file );
-                if( ! NativeFileSystemTools.deleteFile( sAccount, _file.getIdFile() ) )
+                try
+                {
+                    em.remove( _file );
+                    if( ! NativeFileSystemTools.deleteFile( sAccount, _file.getIdFile() ) )
+                        fileErrors.add( (new FileDTOs( _file )).createFileDescriptor() );
+                }
+                catch( Exception exc )
+                {
                     fileErrors.add( (new FileDTOs( _file )).createFileDescriptor() );
+                }
             }
         }
         catch( RuntimeException exc )
@@ -616,8 +623,6 @@ public class FileManagerBean
             
             throw exc;
         }
-        
-        return fileErrors;
     }
     
     // Creates a new entry: either a directory or a _file
@@ -650,7 +655,7 @@ public class FileManagerBean
         try
         {
             Date date = new Date();
-// FIXME: Esto no va así: revisar le owner
+            
             // When the EntityManager persists the entity, it first creates a new record,
             // and the record has the values defined in "DEFAULT" clause in "CREATE TABLE",
             // but after that, EntityManager overwrites these values because it copies all
