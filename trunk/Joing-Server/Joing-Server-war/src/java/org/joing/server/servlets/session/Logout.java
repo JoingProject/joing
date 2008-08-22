@@ -47,18 +47,25 @@ public class Logout extends HttpServlet
      */
     protected void processRequest( HttpServletRequest request, HttpServletResponse response )
               throws ServletException, IOException
-    {
-        ObjectInputStream reader = new ObjectInputStream( request.getInputStream() );
+    {        
+        response.setContentType( "application/octet-stream" );
+        
+        ObjectInputStream  reader = new ObjectInputStream(  request.getInputStream()   );
+        ObjectOutputStream writer = new ObjectOutputStream( response.getOutputStream() );
         
         try
         {
             String sSessionId = (String) reader.readObject();
-         
-            sessionManagerBean.logout( sSessionId );   
+            
+            sessionManagerBean.logout( sSessionId );
+            
+            // NEXT: I do not know why, but if I do not read (at client side) something from Servlet, the Servlet is not invoked
+            writer.writeObject( Boolean.TRUE );
+            writer.flush();
         }
         catch( Exception exc )
         {
-            // As logout(...) does not return this exception do not need to be reported (throw)
+            // Exception is not need to be reported (thrown)
             log( "Error in Servlet: "+ getClass().getName(), exc );
         }
         finally
