@@ -32,10 +32,6 @@ public class JoingServerUserException extends JoingServerException
     public final static String INVALID_ACCOUNT      = JoingServerUserException.getAccountRestrictions();
     public final static String INVALID_PASSWORD     = JoingServerUserException.getPasswordRestrictions();
     
-    // These vars are also in UserManagerBean: changes must be done in both sides
-    private static final int nMIN_LEN =  6;   // For account and password
-    private static final int nMAX_LEN = 32;   // For account and password
-    
     //------------------------------------------------------------------------//
     
     public JoingServerUserException()
@@ -54,20 +50,18 @@ public class JoingServerUserException extends JoingServerException
     }
     
     //------------------------------------------------------------------------//
-    
+   // NEXT: Hay que leer los tamaños max y min para account y password de algún sitio
     private static String getAccountRestrictions()
     {
         return "Invalid account (user name). It has to follow these rules:"+ 
-               "\n   * Minimum length = "+ nMIN_LEN +
-               "\n   * Maximum length = "+ nMAX_LEN +
+               "\n   * Minimum length =  4"+
+               "\n   * Maximum length = 32"+
                "\n   * Numbers and lowercase letters"+
-               "\n   * Following characters: '.' '-' '_'";
+               "\n   * Following characters: '.' '_'";
     }
     
     private static String getPasswordRestrictions()
     {
-        return "Invalid password length, minimum = "+ 
-               nMIN_LEN +" and maximum = "+ nMAX_LEN + 
-               "characters.";
+        return "Invalid password length, minimum = 6 and maximum = 32 characters.";
     }
 }
