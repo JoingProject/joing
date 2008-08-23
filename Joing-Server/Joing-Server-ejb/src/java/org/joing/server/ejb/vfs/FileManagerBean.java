@@ -476,16 +476,19 @@ public class FileManagerBean
        return _file;
     }
     
-    public void createExamples( String sAccount )
+    public void createInitialFiles( String sAccount )
     {
-        createEntry( sAccount, "/", "Examples", true );
+        createEntry( sAccount, "/", "Documents", true );
+        createEntry( sAccount, "/", "Music"    , true );
+        createEntry( sAccount, "/", "Images"   , true );
+        createEntry( sAccount, "/", "Videos"   , true );
         
         try
         {
-            FileDescriptor fdWelcome = createEntry( sAccount, "/Examples", "welcome.txt"   , false );
+            FileDescriptor fdWelcome = createEntry( sAccount, "/Documents", "welcome.txt"   , false );
             java.io.File   fWelcome  = NativeFileSystemTools.getFile( sAccount, fdWelcome.getId() );
             FileWriter writer = new FileWriter( fWelcome );
-                       writer.write( "Welcome to Join'g.\n\nThis is just a text file example.\nAmong other things, you can modify it and save back to server.");
+                       writer.write( "Welcome to Join'g.\n\nThis is just a text file example.\nAmong other things, you can modify it and save back to server.\n\nEnjoy and bye.");
                        writer.close();
         }
         catch( IOException exc )
@@ -495,7 +498,7 @@ public class FileManagerBean
         
         try
         {
-            FileDescriptor fdNasaPict = createEntry( sAccount, "/Examples", "HomeByNASA.jpg", false );
+            FileDescriptor fdNasaPict = createEntry( sAccount, "/Images", "HomeByNASA.jpg", false );
             java.io.File   fNasaPict  = NativeFileSystemTools.getFile( sAccount, fdNasaPict.getId() );
             
             FileInputStream  fis = new FileInputStream( getClass().getResource( "homebynasa.jpg" ).getFile() );

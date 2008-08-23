@@ -28,8 +28,10 @@ import javax.ejb.Timer;
  * This is the business interface for SessionTimer enterprise bean.
  */
 @Local
-public interface SessionTimerLocal
+public interface SessionCleanerTimerLocal
 {
+    void initialize();
+    
     @Timeout
     void updateStatus( Timer timer );
 }
