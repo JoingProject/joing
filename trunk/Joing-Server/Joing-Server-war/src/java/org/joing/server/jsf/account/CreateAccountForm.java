@@ -95,7 +95,7 @@ public class CreateAccountForm extends ManagedBean {
 	    ctx.addMessage(null, new FacesMessage(
 		FacesMessage.SEVERITY_ERROR,
 		"Invalid account name format",
-		"Account names must be between 6 and 32 characters long and "+
+		"Account names must be between 4 and 32 characters long and "+
 		"can only contain lowercase letters, numbers, dots and "+
 		"underscores (low line)"));
 	}

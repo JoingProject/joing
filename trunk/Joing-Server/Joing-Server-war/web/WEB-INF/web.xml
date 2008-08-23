@@ -148,6 +148,7 @@
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    
     <!-- ******************************************************************* -->
     <!-- SERVLET MAPPING -->
     <servlet-mapping>
@@ -258,6 +259,7 @@
         <servlet-name>ApplicationServlet</servlet-name>
         <url-pattern>/servlets/ApplicationServlet</url-pattern>
     </servlet-mapping>
+    
     <!-- ******************************************************************* -->
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
@@ -281,4 +283,11 @@
         <error-code>404</error-code>
         <location>/error/not_found.html</location>
     </error-page>
-    </web-app>
+    
+    <!-- ******************************************************************* -->
+    <!-- LISTENERS -->
+	<listener>
+		<listener-class>org.joing.server.servlets.session.SessionCleanerTimerStarter</listener-class>
+	</listener>
+
+</web-app>
