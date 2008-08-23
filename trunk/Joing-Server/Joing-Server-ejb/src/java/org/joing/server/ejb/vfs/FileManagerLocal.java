@@ -38,9 +38,9 @@ public interface FileManagerLocal extends FileManagerRemote
     public FileEntity createRootEntity( String sAccount );
     
     /**
-     * Creates a directory named "Examples" and some files in it.
+     * Creates several directories and some files inside them.
      * 
      * @param sAccount User Account to create examples to.
      */
-    public void createExamples( String sAccount );
+    public void createInitialFiles( String sAccount );
 }

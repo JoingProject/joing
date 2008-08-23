@@ -56,9 +56,10 @@ public class UserManagerBean
 {
     private static final long serialVersionUID = 1L;    // TODO: cambiarlo usando: serialver -show
     
-    // These vars are also in JoingServerUserException: changes must be done in both sides
-    private static final int nMIN_LEN =  6;   // For account and password
-    private static final int nMAX_LEN = 32;   // For account and password
+    /** A regular expression that can be used to check if an account String is valid or not */
+    public static final String sREG_EXP_VALID_ACCOUNT  = "[a-z][a-z1-9\\.\\_]{3,31}";
+    /** A regular expression that can be used to check if a password String is valid or not */
+    public static final String sREG_EXP_VALID_PASSWORD = ".{6,32}";
     
     @PersistenceContext
     private EntityManager em;
@@ -177,7 +178,7 @@ public class UserManagerBean
            throws JoingServerUserException
     {
         User user = null;
-        
+        sAccount.matches("[a-z][a-z1-9\\.\\_]{3,31}");
         if( ! isValidAccount( sAccount ) )
             throw new JoingServerUserException( JoingServerUserException.INVALID_ACCOUNT );
         
@@ -229,7 +230,7 @@ public class UserManagerBean
                 em.persist( new UsersWithAppsEntity( sAccount, app.getIdApplication() ) );
             
             // Creates "Examples" directory and its files
-            fileManagerBean.createExamples( sAccount );
+            fileManagerBean.createInitialFiles( sAccount );
         }
         catch( RuntimeException exc )
         {
@@ -276,34 +277,36 @@ public class UserManagerBean
     // account is available (including System.account()).
     public boolean isValidAccount( String s )
     {
-        boolean bValid = false;
-        
-        if( (s != null)              && 
-            (s.length() >= nMIN_LEN) && 
-            (s.length() <= nMAX_LEN) )
-        {
-            char[] ac = s.toCharArray();  // Unicode can be converted to char (both are 16 bits)
-            
-            for( int n = 0; n < ac.length; n++ )
-            {
-                bValid = (ac[n] >= 48 && ac[n] <=  57) ||   // Is number
-                         (ac[n] >= 97 && ac[n] <= 122) ||   // Is LowerCase
-                          ac[n] == '_'                 ||
-                          ac[n] == '.';
-                
-                if( ! bValid )
-                    break;
-            }
-        }
-        
-        return bValid;
+        return (s != null & s.matches( sREG_EXP_VALID_ACCOUNT ));
+//        boolean bValid = false;
+//        
+//        if( (s != null)                                                  && 
+//            (s.length() >= JoingServerUserException.nMIN_ACCOUNT_LENGTH) && 
+//            (s.length() <= JoingServerUserException.nMAX_ACCOUNT_LENGTH) )
+//        {
+//            char[] ac = s.toCharArray();  // Unicode can be converted to char (both are 16 bits)
+//            
+//            for( int n = 0; n < ac.length; n++ )
+//            {
+//                bValid = (ac[n] >= 48 && ac[n] <=  57) ||   // Is number
+//                         (ac[n] >= 97 && ac[n] <= 122) ||   // Is LowerCase
+//                          ac[n] == '_'                 ||
+//                          ac[n] == '.';
+//                
+//                if( ! bValid )
+//                    break;
+//            }
+//        }
+//        
+//        return bValid;
     }
     
     public boolean isValidPassword( String s )
     {
-        return (s != null              && 
-                s.length() >= nMIN_LEN && 
-                s.length() <= nMAX_LEN );
+        return (s != null & s.matches( sREG_EXP_VALID_PASSWORD ));
+//        return (s != null                                                   && 
+//                s.length() >= JoingServerUserException.nMIN_PASSWORD_LENGTH && 
+//                s.length() <= JoingServerUserException.nMAX_PASSWORD_LENGTH );
     }
     
     //------------------------------------------------------------------------//

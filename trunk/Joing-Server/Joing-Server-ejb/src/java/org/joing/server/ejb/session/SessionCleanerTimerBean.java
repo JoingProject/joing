@@ -20,8 +20,8 @@
  */
 package org.joing.server.ejb.session;
 
+import java.util.Date;
 import org.joing.server.ejb.Constant;
-import java.sql.Date;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
@@ -33,14 +33,26 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 /**
- *
- * Note: Good article about Timers in EJB 3.0:
- *       http://www.javabeat.net/javabeat/ejb3/articles/timer_services_api_in_ejb_3_0_1.php
+ * This class cretaes a timer that periodically clean (delete) all inactive
+ * sessions.<br>
+ * A session is considered incative when it did not make one single call to 
+ * Join'g Server in a time defined in <code>Constant.getSessionTimeOut()</code>.
+ * <p>
+ * The timer contained in this clas is created by invoking <code>this::initialize()</code>.
+ * This invocation is donde by class:
+ * <code>SessionCleanerTimerStarter implements ServletContextListener</code>
+ * <p>
+ * Note 1: To start timer automatically, look here:
+ *         http://www.onjava.com/pub/a/onjava/2004/10/13/j2ee-timers.html?page=2
+ * 
+ * Note 2: A good article about Timers in EJB 3.0:
+ *         http://www.javabeat.net/javabeat/ejb3/articles/timer_services_api_in_ejb_3_0_1.php
+ * 
  * @author Francisco Morero Peyrona
  */
 @Stateless
-public class SessionTimerBean 
-       implements org.joing.server.ejb.session.SessionTimerLocal
+public class SessionCleanerTimerBean 
+       implements org.joing.server.ejb.session.SessionCleanerTimerLocal
 {
     @Resource
     private SessionContext context;
@@ -50,32 +62,36 @@ public class SessionTimerBean
     private EntityManager em;
     private Query         query;
     
-    /** Creates a new instance of SessionTimerBean */
-    public SessionTimerBean()
-    { // TODO: Para arrancar el timer automaticamente, mirar esto:
-      //       http://www.onjava.com/pub/a/onjava/2004/10/13/j2ee-timers.html?page=2
+    /** Creates a new instance of SessionCleanerTimerBean */
+    public SessionCleanerTimerBean()
+    {
+        initialize();
+    }
+    
+    public void initialize()
+    {
         long nInterval = 15 * 60 * 1000;   // 15 minutes
-        
-        this.timer = this.context.getTimerService().createTimer( nInterval, nInterval );
-        this.query = this.em.createQuery( "SELECT s FROM Session s WHERE s.accesed < :nTime" );
+        nInterval = 3000;   // TODO: 3 segundos QUITARLO
+        timer = context.getTimerService().createTimer( nInterval, nInterval, "Session Cleaner Timer" );
+        query = em.createQuery( "SELECT s FROM Session s WHERE s.accesed < :nTime" );
     }
     
     @Timeout
     public void updateStatus( Timer timer )
     {
         List<SessionEntity> timedOutSessions;
-            
+        
         // As Timers exists for ever, it is a good practice to read
         // from Constant class periodically (the value could changed)
         long nTime = System.currentTimeMillis() - Constant.getSessionTimeOut();
-        
+        System.out.println( nTime ); // TODO: quitar esta lin y los rem de las siguietes
         // Get all sessions without activity since nTime
-        query.setParameter( "nTime", new Date( nTime ) );
-        timedOutSessions = (List<SessionEntity>) query.getResultList();
-
-        for( SessionEntity s : timedOutSessions )
-            em.remove( s );
+//        query.setParameter( "nTime", new Date( nTime ) );
+//        timedOutSessions = (List<SessionEntity>) query.getResultList();
+//        
+//        for( SessionEntity s : timedOutSessions )
+//            em.remove( s );
         
-        Constant.getLogger().info( "Se han borrando "+ timedOutSessions.size() +" sessiones inactivas." );
+//        Constant.getLogger().info( "["+ new Date() +"]"+ timedOutSessions.size() +" inactive sessions were deleted." );
     }
 }
