@@ -25,9 +25,9 @@ package org.joing.runtime.bridge2server;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.rmi.RemoteException;
 import org.joing.common.exception.JoingServerException;
 import org.joing.common.clientAPI.jvmm.Platform;
@@ -109,7 +109,7 @@ public class BridgeServletBaseImpl
      */
     protected class Channel    // TODO: hcaer que pueda ir tb vía SSL
     {
-        private URLConnection      connServer;
+        private HttpURLConnection  connServer;
         private ObjectOutputStream writer;
         private ObjectInputStream  reader;
         
@@ -124,17 +124,18 @@ public class BridgeServletBaseImpl
             try
             {
                 URL url = new URL( BridgeServletBaseImpl.this.sBaseURL + sServletName );
-
-                connServer = url.openConnection();
-
+                
+                connServer = (HttpURLConnection) url.openConnection();
+                connServer.setRequestMethod( "POST" );
+                
                 // Inform the connection that we will send output and accept input
                 connServer.setDoInput( bDoInput );
                 connServer.setDoOutput( bDoOutput );
-
+                
                 // Don't use a cached version of URL connection.
                 connServer.setUseCaches( false );
                 connServer.setDefaultUseCaches( false );
-
+                
                 // Specify the content type
                 connServer.setRequestProperty( "Content-Type", "application/octet-stream" );
                 connServer.connect();
