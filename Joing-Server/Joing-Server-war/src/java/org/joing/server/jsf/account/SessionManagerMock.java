@@ -43,7 +43,12 @@ class SessionManagerMock implements SessionManagerLocal {
     public void logout(String sSessionId) throws JoingServerSessionException {
 	throw new UnsupportedOperationException("Not supported yet.");
     }
-
+    
+    public boolean isValidPassword( String sSessionId, String sPassword ) throws JoingServerSessionException
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+    
     public String composeAccount(String sAccount) {
 	return String.format("%s@%s", sAccount, Constant.getSystemName());
     }

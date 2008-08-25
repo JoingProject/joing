@@ -18,36 +18,40 @@
  * GNU Classpath; see the file COPYING.  If not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
+
 package org.joing.server.servlets.session;
 
-import org.joing.server.ejb.session.SessionManagerLocal;
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import javax.ejb.EJB;
-
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.joing.common.exception.JoingServerException;
+import org.joing.common.exception.JoingServerServletException;
+import org.joing.server.ejb.session.SessionManagerLocal;
 
 /**
  *
- * @author Francisco Morero Peyrona
- * @version
+ * @author fmorero
  */
-public class Logout extends HttpServlet
+public class IsValidPassword extends HttpServlet
 {
     @EJB
     private SessionManagerLocal sessionManagerBean;
     
     //------------------------------------------------------------------------//
-    
+   
     /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     */
-    protected void processRequest( HttpServletRequest request, HttpServletResponse response )
-              throws ServletException, IOException
-    {        
+    * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+    * @param request servlet request
+    * @param response servlet response
+    */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException
+    {
         response.setContentType( "application/octet-stream" );
         
         ObjectInputStream  reader = new ObjectInputStream(  request.getInputStream()   );
@@ -55,55 +59,66 @@ public class Logout extends HttpServlet
         
         try
         {
-            String sSessionId = (String) reader.readObject();
+            // Read from Client (desktop)    
+            String sSession  = (String) reader.readObject();
+            String sPassword = (String) reader.readObject();
             
-            sessionManagerBean.logout( sSessionId );
+            // Get the session ID from the EJB
+            boolean result = sessionManagerBean.isValidPassword( sSession, sPassword );
             
-            // NEXT: I do not know why, but if I do not read (at client side) something from Servlet, the Servlet is not invoked
-            writer.writeObject( Boolean.TRUE );
+            // Write to Client (desktop)
+            writer.writeObject( result );
+            writer.flush();
+        }
+        catch( JoingServerException exc )
+        {
+            writer.writeObject( exc );
             writer.flush();
         }
         catch( Exception exc )
         {
-            // Exception is not need to be reported (thrown)
             log( "Error in Servlet: "+ getClass().getName(), exc );
+            // Makes the exception to be contained into a JoingServerServletException
+            JoingServerServletException jsse = new JoingServerServletException( getClass(), exc );
+            writer.writeObject( jsse );
+            writer.flush();
         }
         finally
         {
             if( reader != null )
                 try{ reader.close(); }catch( IOException exc ) { }
-            
+                
             if( writer != null )
                 try{ writer.close(); }catch( IOException exc ) { }
         }
-    }
-    
+    } 
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     */
+    /** 
+    * Handles the HTTP <code>GET</code> method.
+    * @param request servlet request
+    * @param response servlet response
+    */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException
-    {
+    throws ServletException, IOException {
         processRequest(request, response);
-    }
-    
-    /** Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     */
+    } 
+
+    /** 
+    * Handles the HTTP <code>POST</code> method.
+    * @param request servlet request
+    * @param response servlet response
+    */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException
-    {
+    throws ServletException, IOException {
         processRequest(request, response);
     }
-    
-    /** Returns a short description of the servlet.
-     */
-    public String getServletInfo()
-    {
+
+    /** 
+    * Returns a short description of the servlet.
+    */
+    public String getServletInfo() {
         return "Short description";
-    }
-    // </editor-fold>
+    }// </editor-fold>
+
 }
