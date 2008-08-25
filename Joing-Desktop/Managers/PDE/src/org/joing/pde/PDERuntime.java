@@ -48,7 +48,8 @@ import org.joing.swingtools.JErrorPanel;
 /**
  * The Runtime class.
  * <p>
- * Contains miscellaneous methods (all static) used intensively and extensively through all WebPC.
+ * Contains miscellaneous methods (all static) used intensively and extensively 
+ * through all Join'g.
  * 
  * @author Francisco Morero Peyrona
  */
