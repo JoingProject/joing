@@ -292,9 +292,10 @@ public class AppDescriptor implements Serializable
     
     /**
      * Set if this application can or can not be executed remotely (in the 
-     * WebPC Server).
+     * Join'g Server).
      * <p>
-     * Note: this field is package scope -> client apps can't modify it
+     * Note: this field is package scope -> client apps can't modify it.
+     * 
      * @param description The description for this application.
      */
     public void setRemoteExecutionAllowed( boolean allowRemote )

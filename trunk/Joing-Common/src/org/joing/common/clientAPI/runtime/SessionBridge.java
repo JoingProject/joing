@@ -10,6 +10,7 @@
 package org.joing.common.clientAPI.runtime;
 
 import org.joing.common.dto.session.LoginResult;
+import org.joing.common.dto.session.SystemInfo;
 import org.joing.common.exception.JoingServerSessionException;
 
 /**
@@ -36,6 +37,23 @@ public interface SessionBridge
      * an exception.    
      */
     void logout();
+    
+    /**
+     * Retreives usefull information insde a data structure
+     * @return An instace of data structure <code>SystemInfo</code>
+     */
+    SystemInfo getSystemInfo()
+            throws JoingServerSessionException;
+    
+    /**
+     * Checks if passed password corresponds with passed session ID or not.
+     * 
+     * @param sPassword The user password
+     * @return <code>true</code> if passed password corresponds with passed 
+     *         session, <code>false</code> otherwise.
+     */
+    boolean isValidPassword( String sPassword )
+            throws JoingServerSessionException;
     
     /**
      * Gets the current session Id.
