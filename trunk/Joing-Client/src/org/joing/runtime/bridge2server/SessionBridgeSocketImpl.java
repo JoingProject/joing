@@ -26,6 +26,7 @@ import org.joing.common.clientAPI.runtime.SessionBridge;
 import org.joing.common.dto.session.LoginResult;
 
 // NEXT: Implementar esta clase
+import org.joing.common.dto.session.SystemInfo;
 import org.joing.common.exception.JoingServerSessionException;
 
 /**
@@ -60,6 +61,16 @@ public class SessionBridgeSocketImpl
         throw new UnsupportedOperationException( "Not supported yet." );
     }
 
+    public boolean isValidPassword( String sPassword ) throws JoingServerSessionException
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+    
+    public SystemInfo getSystemInfo()
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+    
     public String getSessionId()
     {
         throw new UnsupportedOperationException( "Not supported yet." );
