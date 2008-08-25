@@ -55,4 +55,16 @@ public interface SessionManagerRemote
      * @param sSessionId An existing Session ID.
      */
     void logout( String sSessionId );
+    
+    /**
+     * Check if passed password corresponds with passed session ID or not.
+     * 
+     * @param sSessionId An existing Session ID.
+     * @param sPassword The user password
+     * @return <code>true</code> if passed password corresponds with passed 
+     *         session, <code>false</code> otherwise.
+     * @throws JoingServerSessionException If something goes wrong.
+     */
+    boolean isValidPassword( String sSessionId, String sPassword )
+            throws JoingServerSessionException;
 }
