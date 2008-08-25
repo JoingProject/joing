@@ -40,12 +40,21 @@
         <servlet-class>org.joing.server.servlets.session.Login</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>GetUser</servlet-name>
-        <servlet-class>org.joing.server.servlets.user.GetUser</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>Logout</servlet-name>
         <servlet-class>org.joing.server.servlets.session.Logout</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>IsValidPassword</servlet-name>
+        <servlet-class>org.joing.server.servlets.session.IsValidPassword</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>GetSystemInfo</servlet-name>
+        <servlet-class>org.joing.server.servlets.session.GetSystemInfo</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GetUser</servlet-name>
+        <servlet-class>org.joing.server.servlets.user.GetUser</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GetAvailableLocales</servlet-name>
@@ -159,7 +168,15 @@
         <servlet-name>Logout</servlet-name>
         <url-pattern>/servlets/session/Logout</url-pattern>
     </servlet-mapping>
-     <servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>IsValidPassword</servlet-name>
+        <url-pattern>/servlets/session/IsValidPassword</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetSystemInfo</servlet-name>
+        <url-pattern>/servlets/session/GetSystemInfo</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>GetUser</servlet-name>
         <url-pattern>/servlets/user/GetUser</url-pattern>
     </servlet-mapping>
@@ -257,7 +274,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ApplicationServlet</servlet-name>
-        <url-pattern>/servlets/ApplicationServlet</url-pattern>
+        <url-pattern>/servlets/app/ApplicationServlet</url-pattern>
     </servlet-mapping>
     
     <!-- ******************************************************************* -->
