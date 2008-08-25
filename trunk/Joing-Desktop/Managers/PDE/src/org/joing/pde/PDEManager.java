@@ -51,8 +51,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import org.joing.common.JoingManifestEntry;
-import org.joing.common.clientAPI.runtime.Bridge2Server;
 import org.joing.common.desktopAPI.DesktopManager;
 import org.joing.common.desktopAPI.StandardImage;
 import org.joing.common.desktopAPI.StandardSound;
@@ -82,27 +82,37 @@ public class PDEManager implements DesktopManager
     public PDEManager()
     {
         // Initialised via thread to make things smoother
-        new Thread( new Runnable()
+        SwingWorker sw = new SwingWorker<Void,Void>()
         {
-            public void run()
+            private User user = null;
+            
+            protected Void doInBackground() throws Exception
             {
-                User user = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().getUserBridge().getUser();
+                user = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().getUserBridge().getUser();
+                
                 // Changes default local to the one perfered by user. In this way all apps opened by
                 // user in Join'g will use the user locale instead of machine default locale.
                 if( user != null )
-                {
-                    Locale.setDefault( user.getLocale() );
+                {    
+                    if( user.getLocale() != null )
+                        Locale.setDefault( user.getLocale() );
                 }
-                else
+                
+                return null;
+            }
+            
+            protected void done()
+            {
+                if( user == null )
                 {
-                    PDEManager.this.getRuntime().showMessageDialog( "Can't set user language", 
+                    PDEManager.this.getRuntime().showMessageDialog( "Can't set user language",
                             "Due to a problem retrieving user preferences,\n"+
-                            "preferred language can not be sat.\n"+
-                            "\n"+
+                            "preferred language can not be sat.\n\n"+
                             "Using default language: "+ Locale.getDefault().getDisplayLanguage() );
                 }
             }
-        } ).start();
+        };
+        sw.execute();
         
         runtime = new PDERuntime();   // Constructor is empty
         desktop = new PDEDesktop();   // Constructor not empty, but very fast
@@ -309,16 +319,19 @@ public class PDEManager implements DesktopManager
                     
                     try
                     {
-                        Bridge2Server b2s = RuntimeFactory.getPlatform().getBridge();
-                        boolean       bOk = sPassword.length() > 0; // TODO: implementar un servicio en el servidor para comprobar la password
+                        boolean bValid = RuntimeFactory.getPlatform().getBridge().getSessionBridge().isValidPassword( sPassword );
                         
-                        if( bOk )    // Unlock the screen
+                        if( bValid )    // Unlock the screen
                         {
                             MyGlassPane myGlass = (MyGlassPane) frame.getGlassPane();
                                         myGlass.unlock();
-
+                            
                             frame.setGlassPane( myGlass.getPreviousGlassPane() );
                             myGlass = null;
+                        }
+                        else
+                        {
+                            // NEXT: Poner un msg en la pantalla indicando que es errónea y que desaparezca en 5 segs
                         }
                     }
                     catch( Exception exc )
