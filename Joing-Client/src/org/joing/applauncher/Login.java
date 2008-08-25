@@ -20,6 +20,7 @@ import org.joing.common.dto.session.LoginResult;
 import org.joing.common.exception.JoingServerException;
 import org.joing.common.clientAPI.runtime.Bridge2Server;
 import org.joing.common.dto.app.AppDescriptor;
+import org.joing.common.dto.session.SystemInfo;
 import org.joing.jvmm.RuntimeFactory;
 
 /**
@@ -53,6 +54,7 @@ class Login extends JDialog
         //--------------------------------
     }
     
+    // NEXT: En lugar de boolean sería mejor devolver un LoginResult porque se da mucha más inf.
     boolean isLoginSuccessful()
     {
         return bValid;
@@ -92,27 +94,27 @@ class Login extends JDialog
         // This method is executed in a separated thread to increase speed
         SwingWorker sw = new SwingWorker<Void,Void>()
         {
-             private String              sSrvName = null;
-             private List<AppDescriptor> desktops = null;
-             
+            private SystemInfo          sysinfo  = null;
+            private List<AppDescriptor> desktops = null; 
             
             protected Void doInBackground() throws Exception
             {
-                sSrvName = "joing.org"; // TODO: Preguntarle al Servidor su nombre
+                sysinfo  = RuntimeFactory.getPlatform().getBridge().getSessionBridge().getSystemInfo();
                 desktops = RuntimeFactory.getPlatform().getBridge().getAppBridge().getAvailableDesktops();
                 return null;
             }
             
             protected void done()
             {
-                if( sSrvName == null )
+                if( sysinfo == null )
                 {
                     JOptionPane.showMessageDialog( Login.this, "Error: sever seems to be out of service.\nCan't continue." );
+                    Login.this.dispose();
                 }
                 else
                 {
-                    String sText = txtAccount.getText() +"@"+ sSrvName;
-                    int    nPos  = sText.length() - sSrvName.length() - 1;
+                    String sText = txtAccount.getText() +"@"+ sysinfo.getName();
+                    int    nPos  = sText.length() - sysinfo.getName().length() - 1;
                     txtAccount.setText( sText );
                     txtAccount.setCaretPosition( Math.max( 0, Math.min( sText.length(), nPos ) ) );
                 }
@@ -124,10 +126,10 @@ class Login extends JDialog
                 }
                 else
                 {
-                    for( AppDescriptor app : desktops )
+                    for( AppDescriptor desk : desktops )
                     {
-                        Login.this.cmbDesktop.addItem( app.getName() );
-                        Login.this.cmbDesktop.putClientProperty( app.getName(), app );
+                        Login.this.cmbDesktop.addItem( desk.getName() );
+                        Login.this.cmbDesktop.putClientProperty( desk.getName(), desk );
                     }
 
                     btnOk.setText( "Ok" );
@@ -135,7 +137,7 @@ class Login extends JDialog
                 }
             }
         };
-        sw.execute();        
+        sw.execute();
     }
 
     /** This method is called from within the constructor to

@@ -24,6 +24,7 @@ package org.joing.runtime.bridge2server;
 
 import org.joing.common.clientAPI.runtime.SessionBridge;
 import org.joing.common.dto.session.LoginResult;
+import org.joing.common.dto.session.SystemInfo;
 import org.joing.common.exception.JoingServerSessionException;
 
 /**
@@ -67,6 +68,7 @@ public class SessionBridgeServletImpl
     }
     
     public void logout()
+           throws JoingServerSessionException
     {
         if (sSessionId != null)
         {
@@ -75,6 +77,33 @@ public class SessionBridgeServletImpl
                     channel.read();    // NEXT: I do not know why, but if I do not read something from Servlet, the Servlet is not invoked
                     channel.close();
         }
+    }
+    
+    
+    public boolean isValidPassword( String sPassword )
+            throws JoingServerSessionException
+    {
+        boolean bValid = false;
+        
+        Channel channel = new Channel( SESSION_IS_VALID_PASSWORD );
+                channel.write( sSessionId );
+                channel.write( sPassword );
+        bValid = (Boolean) channel.read();
+                channel.close();
+                
+        return bValid;
+    }
+    
+    public SystemInfo getSystemInfo()
+           throws JoingServerSessionException
+    {
+        SystemInfo result = null;
+        
+        Channel channel = new Channel( SESSION_GET_SYSTEM_INFO );
+        result = (SystemInfo) channel.read();
+                channel.close();
+                
+        return result;
     }
     
     public String getSessionId()
