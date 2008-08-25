@@ -115,6 +115,26 @@ public class SessionManagerBean
         }
     }
     
+    public boolean isValidPassword( String sSessionId, String sPassword )
+    {
+        boolean bCorrect = false;
+        
+        if( sSessionId != null && sPassword != null )
+        {
+            SessionEntity _session = em.find( SessionEntity.class, sSessionId );
+
+                if( _session != null )
+                {
+                    UserEntity _user = em.find( UserEntity.class, composeAccount( _session.getAccount() ) );
+                    
+                    if( _user != null )
+                        bCorrect = _user.getPassword().equals( sPassword );    // User account password can't be null
+                }
+        }
+        
+        return bCorrect;
+    }
+    
     //------------------------------------------------------------------------//
     // INTERFACE LOCAL
     

@@ -45,7 +45,8 @@ public class Constant
     private static long   nSessionTimeOut;
     
     //-----------------------------
-    
+
+    // Porperties file entry names
     private static final String sSYSTEM_NAME     = "system_name";
     private static final String sBASE_DIR        = "base_dir";
     private static final String sEMAIL_SRV       = "email_server";
@@ -120,13 +121,19 @@ public class Constant
         return fAppDir;
     }
     
+    /**
+     * Join'g email server URL.
+     * 
+     * @return Join'g email server URL.
+     */
     public static URL getEmailServer()
     {
         return emailServer;
     }
     
     /**
-     * Maximum inactivity time for a session before delete it
+     * Maximum inactivity time for a session before delete it (in milliseconds).
+     * 
      * @return Maximum inactivity time in milliseconds
      */
     public static long getSessionTimeOut()
@@ -168,6 +175,7 @@ public class Constant
         }
         catch( Exception exc )
         {
+            // If can not read the file, create a file with default values
             String sHome = System.getProperty( "user.home" );
             char   cDir  = File.separatorChar;
             
@@ -178,9 +186,10 @@ public class Constant
             props.setProperty( sSYSTEM_NAME    , "joing.org" );
             props.setProperty( sBASE_DIR       , cDir +"joing" );
             props.setProperty( sEMAIL_SRV      , "localhost" );
-            props.setProperty( sSESSION_TIMEOUT, Long.toString(nTimeOut) );
+            props.setProperty( sSESSION_TIMEOUT, Long.toString( nTimeOut ));
         }
         
+        // Read properties from created props
         sVersion = "0.1"; // It's better to hardcode this property than to store it in a file
         sSysName = props.getProperty( sSYSTEM_NAME );
         fBaseDir = new File( props.getProperty( sBASE_DIR ) );
@@ -198,18 +207,18 @@ public class Constant
         
         try
         {
-            emailServer = new URL(props.getProperty(sEMAIL_SRV));
+            emailServer = new URL( props.getProperty( sEMAIL_SRV ) );
         }
-        catch (MalformedURLException exc)
+        catch( MalformedURLException exc )
         {
             emailServer = null;
         }
         
         try
-        {
-            nSessionTimeOut = Long.parseLong(props.getProperty(sSESSION_TIMEOUT)) * 1000; // in milliseconds
+        {    // From minutes (in file) to milliseconds
+            nSessionTimeOut = Long.parseLong( props.getProperty( sSESSION_TIMEOUT ) ) * 60 * 1000;
         }
-        catch (NumberFormatException exc)
+        catch( NumberFormatException exc )
         {
             nSessionTimeOut = nTimeOut;
         }
