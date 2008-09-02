@@ -12,7 +12,7 @@ import org.joing.common.clientAPI.jvmm.Platform;
  * de Platform será la que se regresa. Esta desicion debera ser influida
  * por ejemplo por factores como la plataforma (JavaSE, JavaME, etc).
  * 
- * @author antoniovl
+ * @author Antonio Varela Lizardi <antonio@icon.net.mx>
  */
 public class RuntimeFactory {
 
@@ -24,7 +24,7 @@ public class RuntimeFactory {
     
     public RuntimeFactory() {
         if (platform == null) {
-            throw new RuntimeException("Platform was not initialized.");
+            throw new RuntimeException("Critical: Platform instance not initialized.");
         }
     }
     
