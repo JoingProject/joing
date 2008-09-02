@@ -8,7 +8,9 @@
  */
 package org.joing.jvmm;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.joing.common.clientAPI.jvmm.App;
 import org.joing.common.clientAPI.jvmm.AppListener;
@@ -86,5 +88,15 @@ public class AppManagerImpl implements AppManager {
         for (int i = 0; i < arr.length; i++) {
             arr[i].applicationAdded(app);
         }
+    }
+
+    @Override
+    public List<App> applications() {
+        
+        List<App> list = new ArrayList<App>();
+        
+        list.addAll(this.apps);
+        
+        return list;
     }
 }
