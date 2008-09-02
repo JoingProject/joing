@@ -90,7 +90,7 @@ class PlatformImpl implements Platform {
                 // Let's hope the user have defined custom properties...
             }
         } else {
-            logger.warning("No default properties found.");
+            logger.info("No default {0} file found.", propsFileName);
         }
         
         String usrHome = System.getProperty("user.home") + "/.joing/";
@@ -107,6 +107,12 @@ class PlatformImpl implements Platform {
             } catch (IOException ioe) {
                 logger.critical("Error loading custom properties: {0}",
                         ioe.getMessage());
+            }
+        } else if (!usrHomeDir.exists()) {
+            try {
+                usrHomeDir.mkdir();
+            } catch (Exception e) {
+                logger.critical("UsrHomeDir.mkdir(): {0}", e.getMessage());
             }
         }
         

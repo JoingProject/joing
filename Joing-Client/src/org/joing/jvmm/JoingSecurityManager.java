@@ -27,6 +27,7 @@ public class JoingSecurityManager extends SecurityManager {
     private final Logger logger = SimpleLoggerFactory.getLogger(JoingLogger.ID);
     
     public JoingSecurityManager() {
+        logger.debugJVMM("Instance of joingSecurityManager created.");
     }
 
     @Override

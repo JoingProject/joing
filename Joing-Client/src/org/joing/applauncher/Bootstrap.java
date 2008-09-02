@@ -276,18 +276,10 @@ public class Bootstrap {
         // TODO: Fix this.
         while (!done) {
 
-            // We need to find a way to know when to break the
-            // loop. Currently the Security manager is't preventing
-            // the app to terminate via the System.exit() call.
-//            DesktopManager desktop = platform.getDesktopManager();
-//            
-//            if (desktop == null) {
-//                done = true;
-//                continue;
-//            }
-
             if (platform.isHalted()) {
                 done = true;
+                logger.debugJVMM("Terminating the main loop, see you later.");
+                continue;
             }
 
             try {

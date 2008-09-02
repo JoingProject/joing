@@ -51,20 +51,21 @@ public class JThreadGroupImpl extends JThreadGroup {
 
     public void close() {
 
-        try {
-            out.close();
-        } catch (IOException e) {
+        //try {
+            // esto me trae problemas con el debugger
+            //out.close();
+        //} catch (IOException e) {
             // No fue posible cerrar el output Stream, sin embargo
             // podemos continuar.
-        }
+        //}
 
-        if (err != out) {
-            try {
-                err.close();
-            } catch (IOException e) {
-                // similar al anterior
-            }
-        }
+//        if (err != out) {
+//            try {
+//                err.close();
+//            } catch (IOException e) {
+//                // similar al anterior
+//            }
+//        }
 
         err = null;
         // Esta transformación es amigable al Garbage Collector
