@@ -5,6 +5,8 @@
 
 package org.joing.common.clientAPI.jvmm;
 
+import java.util.List;
+
 /**
  *
  * @author Antonio Varela Lizardi <antonio@icon.net.mx>
@@ -18,4 +20,6 @@ public interface AppManager {
     
     void fireAppRemoved(App app) ;
     void fireAppAdded(App app);
+    
+    List<App> applications();
 }
