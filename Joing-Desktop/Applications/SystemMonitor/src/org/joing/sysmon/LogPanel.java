@@ -25,9 +25,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.AbstractAction;
 import javax.swing.JPopupMenu;
-import org.joing.common.clientAPI.log.Levels;
-import org.joing.common.clientAPI.log.LogListener;
-import org.joing.common.clientAPI.log.Logger;
+import org.joing.kernel.api.kernel.log.JoingLogger;
+import org.joing.kernel.api.kernel.log.Levels;
+import org.joing.kernel.api.kernel.log.LogListener;
+import org.joing.kernel.api.kernel.log.Logger;
+import org.joing.kernel.api.kernel.log.SimpleLoggerFactory;
 
 /**
  * 
@@ -58,7 +60,7 @@ class LogPanel extends javax.swing.JPanel implements LogListener
         clear();
         
         // Add AppManager Listener
-        Logger logger = org.joing.common.clientAPI.log.SimpleLoggerFactory.getLogger( org.joing.common.clientAPI.log.JoingLogger.ID );
+        Logger logger = SimpleLoggerFactory.getLogger( JoingLogger.ID );
                logger.addListener( this );
     }
     

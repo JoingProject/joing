@@ -25,9 +25,9 @@ import java.util.Vector;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
-import org.joing.common.clientAPI.jvmm.App;
-import org.joing.common.clientAPI.jvmm.AppListener;
-        
+import org.joing.kernel.api.kernel.jvmm.App;
+import org.joing.kernel.api.kernel.jvmm.AppListener;
+
 /**
  *
  * Note: This class has package scope, to be instantiated only by SystemMonitor.
@@ -49,7 +49,7 @@ class ProcessesPanel extends JPanel implements AppListener
         spTableProcesses.setViewportView( tblProcesses );
         
         // Add AppManager Listener
-        org.joing.jvmm.RuntimeFactory.getPlatform().getAppManager().addAppListener( this );
+        org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getAppManager().addAppListener( this );
     }
     
     //------------------------------------------------------------------------//
@@ -88,7 +88,7 @@ class ProcessesPanel extends JPanel implements AppListener
         if( nRow != -1 )
         {
             App app  = vRows.get( nRow );
-            org.joing.jvmm.RuntimeFactory.getPlatform().getAppManager().removeApp( app );
+            org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getAppManager().removeApp( app );
         }
     }
     

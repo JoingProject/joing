@@ -22,8 +22,8 @@ package org.joing.sysmon;
 
 import java.awt.Image;
 import javax.swing.ImageIcon;
-import org.joing.common.desktopAPI.DesktopManager;
-import org.joing.common.desktopAPI.StandardImage;
+import org.joing.kernel.api.desktop.DesktopManager;
+import org.joing.kernel.api.desktop.StandardImage;
 
 /**
  *
@@ -36,7 +36,7 @@ class AboutPanel extends javax.swing.JPanel
     /** Creates new form AboutPanel */
     AboutPanel()
     {
-        DesktopManager dm = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+        DesktopManager dm = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
         
         initComponents();
         
