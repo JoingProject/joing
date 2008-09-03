@@ -29,7 +29,7 @@ import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.dto.vfs.VFSFileBase;
 import org.joing.common.exception.JoingServerException;
 
 /**
@@ -63,7 +63,7 @@ public class CreateFile extends HttpServlet
             boolean bCreateParents = (Boolean) reader.readObject();
             
             // Process request
-            FileDescriptor file = fileManagerBean.createFile( sSessionId, sPath, sFileName, bCreateParents );
+            VFSFileBase file = fileManagerBean.createFile( sSessionId, sPath, sFileName, bCreateParents );
             
             // Write to Client (desktop)
             writer.writeObject( file );

@@ -28,7 +28,6 @@ import javax.ejb.EJB;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import org.joing.common.dto.app.AppDescriptor;
-import org.joing.common.dto.app.Application;
 import org.joing.common.exception.JoingServerAppException;
 import org.joing.common.exception.JoingServerServletException;
 import org.joing.common.pkt.app.ApplicationReply;
@@ -83,18 +82,10 @@ public class ApplicationServlet extends HttpServlet {
 
         ApplicationReply reply = new ApplicationReply();
 
-        String sessionId = request.getSessionId();
-        String name = request.getName();
         int code = request.getCode();
-        Application app = null;
         
         try {
             switch (code) {
-                case ApplicationRequest.APP_BY_NAME:
-                    app =applicationManagerBean.getApplicationByName(sessionId, name);
-                    reply.setReply(app);
-                    reply.setOk(true);
-                    break;
                 case ApplicationRequest.AVAILABLE_DESKTOPS:
                     List<AppDescriptor> appList = applicationManagerBean.getAvailableDesktops();
                     reply.setReply(appList);

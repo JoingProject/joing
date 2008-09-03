@@ -20,7 +20,6 @@
  */
 package org.joing.server.servlets.app;
 
-import org.joing.common.dto.app.AppDescriptor;
 import org.joing.server.ejb.app.ApplicationManagerLocal;
 import org.joing.common.exception.JoingServerException;
 import java.io.*;
@@ -55,11 +54,11 @@ public class Uninstall extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String        sSessionId  = (String)        reader.readObject();
-            AppDescriptor application = (AppDescriptor) reader.readObject();
+            String sSessionId  = (String)  reader.readObject();
+            int    nAppId      = (Integer) reader.readObject();
             
             // Process request
-            boolean bSuccess = applicationManagerBean.uninstall( sSessionId, application );
+            boolean bSuccess = applicationManagerBean.uninstall( sSessionId, nAppId );
             
             // Write to Client (desktop)
             writer.writeObject( bSuccess );

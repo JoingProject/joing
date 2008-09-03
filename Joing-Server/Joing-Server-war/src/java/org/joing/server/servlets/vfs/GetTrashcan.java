@@ -23,7 +23,7 @@ package org.joing.server.servlets.vfs;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.dto.vfs.VFSFileBase;
 import org.joing.common.exception.JoingServerServletException;
 import org.joing.server.ejb.vfs.ListManagerLocal;
 import java.util.List;
@@ -59,7 +59,7 @@ public class GetTrashcan extends HttpServlet
         {
             String sSessionId = (String) reader.readObject();
             
-            List<FileDescriptor> files = fileManagerBean.getTrashCan( sSessionId );
+            List<VFSFileBase> files = fileManagerBean.getTrashCan( sSessionId );
             
             writer.writeObject( files );
             writer.flush();

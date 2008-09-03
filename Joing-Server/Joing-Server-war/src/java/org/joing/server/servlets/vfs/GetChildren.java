@@ -20,17 +20,17 @@
  */
 package org.joing.server.servlets.vfs;
 
-import org.joing.common.exception.JoingServerServletException;
-import org.joing.server.ejb.vfs.FileManagerLocal;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import org.joing.common.exception.JoingServerServletException;
+import org.joing.server.ejb.vfs.ListManagerLocal;
 import java.util.List;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.dto.vfs.VFSFileBase;
 import org.joing.common.exception.JoingServerException;
 
 /**
@@ -38,10 +38,10 @@ import org.joing.common.exception.JoingServerException;
  * @author Francisco Morero Peyrona
  * @version
  */
-public class Trashcan extends HttpServlet
+public class GetChildren extends HttpServlet
 {
-    @EJB()
-    private FileManagerLocal fileManagerBean;
+    @EJB
+    private ListManagerLocal listManagerBean;
     
     /** Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
@@ -57,27 +57,12 @@ public class Trashcan extends HttpServlet
         
         try
         {
-            // Read from client (desktop)
-            String  sSessionId = (String)  reader.readObject();
-            Object  o2ndParam  =           reader.readObject();
-            boolean bInTashcan = (Boolean) reader.readObject();
+            String sSessionId = (String)  reader.readObject();
+            int    nFileDirId = (Integer) reader.readObject();
             
-            List<FileDescriptor> errors = null;     // FileDescriptors that were not sent to trashcan
+            List<VFSFileBase> files = listManagerBean.getChilds( sSessionId, nFileDirId );
             
-            // Process request
-            if( o2ndParam instanceof Integer )
-            {
-                int nFileId = (Integer) o2ndParam;
-                errors = fileManagerBean.trashcan( sSessionId, nFileId, bInTashcan );
-            }
-            else
-            {
-                int[] anFileIds = (int[]) o2ndParam;
-                errors = fileManagerBean.trashcan( sSessionId, anFileIds, bInTashcan );
-            }
-            
-            // Write to Client (desktop)
-            writer.writeObject( errors );
+            writer.writeObject( files );
             writer.flush();
         }
         catch( JoingServerException exc )

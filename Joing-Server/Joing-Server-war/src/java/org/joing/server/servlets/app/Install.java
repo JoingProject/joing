@@ -20,7 +20,6 @@
  */
 package org.joing.server.servlets.app;
 
-import org.joing.common.dto.app.AppDescriptor;
 import org.joing.server.ejb.app.ApplicationManagerLocal;
 import java.io.*;
 import javax.ejb.EJB;
@@ -55,11 +54,11 @@ public class Install extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String        sSessionId  = (String)        reader.readObject();
-            AppDescriptor application = (AppDescriptor) reader.readObject();
+            String sSessionId = (String)  reader.readObject();
+            int    nAppId     = (Integer) reader.readObject();
             
             // Process request
-            boolean bSuccess = applicationManagerBean.install( sSessionId, application );
+            boolean bSuccess = applicationManagerBean.install( sSessionId, nAppId );
             
             // Write to Client (desktop)
             writer.writeObject( bSuccess );

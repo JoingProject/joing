@@ -23,7 +23,7 @@ package org.joing.server.servlets.vfs;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.dto.vfs.VFSFileBase;
 import org.joing.common.exception.JoingServerServletException;
 import org.joing.server.ejb.vfs.ListManagerLocal;
 import java.util.List;
@@ -63,7 +63,7 @@ public class GetByNotes extends HttpServlet
             boolean bGlobal    = (Boolean) reader.readObject();
             
             // Process request
-            List<FileDescriptor> files = listManagerBean.getByNotes( sSessionId, sSubString, bGlobal );
+            List<VFSFileBase> files = listManagerBean.getByNotes( sSessionId, sSubString, bGlobal );
             
             // Write to Client (desktop)
             writer.writeObject( files );

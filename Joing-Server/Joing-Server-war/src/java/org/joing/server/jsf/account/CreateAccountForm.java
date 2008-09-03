@@ -86,7 +86,7 @@ public class CreateAccountForm extends ManagedBean {
 	
 	boolean ok = !testEmpty(ctx, name, "account name");
 	
-	if(ok && !userManager.isValidAccount(name)) {
+	if(ok && !name.matches( Constant.sREG_EXP_VALID_ACCOUNT )) {
 	    
 	    ok = false;
 	    
@@ -123,7 +123,7 @@ public class CreateAccountForm extends ManagedBean {
 	
 	boolean ok = !testEmpty(ctx, password, "password");
 	
-	if(ok && !userManager.isValidPassword(password)) {
+	if(ok && !password.matches( Constant.sREG_EXP_VALID_PASSWORD )) {
 	    
 	    ok = false;
 	    

@@ -29,7 +29,7 @@ import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.dto.vfs.VFSFileBase;
 import org.joing.common.exception.JoingServerException;
 import org.joing.common.exception.JoingServerServletException;
 
@@ -61,7 +61,7 @@ public class GetRoots extends HttpServlet
             String sSessionId = (String) reader.readObject();
             
             // Process request
-            List<FileDescriptor> roots = listManagerBean.getRoots( sSessionId );
+            List<VFSFileBase> roots = listManagerBean.getRoots( sSessionId );
             
             // Write to Client (desktop)
             writer.writeObject( roots );

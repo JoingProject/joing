@@ -26,7 +26,6 @@ import java.util.Locale;
 import org.joing.common.dto.user.Local;
 import org.joing.common.dto.user.User;
 import org.joing.common.exception.JoingServerUserException;
-import org.joing.server.ejb.user.UserManagerBean;
 
 class UserManagerMock implements UserManagerLocal {
 
@@ -46,14 +45,6 @@ class UserManagerMock implements UserManagerLocal {
 
     public void removeUser(User user) throws JoingServerUserException {
 	throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public boolean isValidAccount(String sAccount) {
-	return (sAccount != null && sAccount.matches( UserManagerBean.sREG_EXP_VALID_ACCOUNT ));
-    }
-
-    public boolean isValidPassword(String sPassword) {
-	return (sPassword != null && sPassword.matches( UserManagerBean.sREG_EXP_VALID_PASSWORD ));
     }
 
     public User getUser(String sSessionId) throws JoingServerUserException {

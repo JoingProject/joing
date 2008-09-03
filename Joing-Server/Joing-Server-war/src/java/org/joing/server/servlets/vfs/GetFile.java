@@ -20,17 +20,16 @@
  */
 package org.joing.server.servlets.vfs;
 
+import org.joing.common.dto.vfs.VFSFileBase;
+import org.joing.common.exception.JoingServerServletException;
+import org.joing.server.ejb.vfs.FileManagerLocal;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import org.joing.common.exception.JoingServerServletException;
-import org.joing.server.ejb.vfs.ListManagerLocal;
-import java.util.List;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.exception.JoingServerException;
 
 /**
@@ -38,10 +37,10 @@ import org.joing.common.exception.JoingServerException;
  * @author Francisco Morero Peyrona
  * @version
  */
-public class GetChilds extends HttpServlet
+public class GetFile extends HttpServlet
 {
-    @EJB
-    private ListManagerLocal listManagerBean;
+    @EJB()
+    private FileManagerLocal fileManagerBean;
     
     /** Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
@@ -57,12 +56,16 @@ public class GetChilds extends HttpServlet
         
         try
         {
-            String sSessionId = (String)  reader.readObject();
-            int    nFileDirId = (Integer) reader.readObject();
+            // Read from client (desktop)
+            String  sSessionId = (String)  reader.readObject();
+            String  sPath      = (String)  reader.readObject();
+            boolean bCreate    = (Boolean) reader.readObject();    // Create file if not exsists
             
-            List<FileDescriptor> files = listManagerBean.getChilds( sSessionId, nFileDirId );
+            // Process request
+            VFSFileBase file = fileManagerBean.getFile( sSessionId, sPath, bCreate );
             
-            writer.writeObject( files );
+            // Write to Client (desktop)
+            writer.writeObject( file );
             writer.flush();
         }
         catch( JoingServerException exc )
@@ -73,6 +76,7 @@ public class GetChilds extends HttpServlet
         catch( Exception exc )
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
+            exc.printStackTrace();
             // Makes the exception to be contained into a JoingServerServletException
             JoingServerServletException jsse = new JoingServerServletException( getClass(), exc );
             writer.writeObject( jsse );

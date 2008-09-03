@@ -23,7 +23,7 @@ package org.joing.server.servlets.vfs;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.dto.vfs.VFSFileBase;
 import org.joing.common.exception.JoingServerServletException;
 import org.joing.server.ejb.vfs.FileManagerLocal;
 import javax.ejb.EJB;
@@ -56,8 +56,8 @@ public class CreateDirectory extends HttpServlet
         
         try
         {
-            String         sSessionId = (String) reader.readObject();
-            FileDescriptor file       = null;
+            String      sSessionId = (String) reader.readObject();
+            VFSFileBase file       = null;
             
             if( request.getParameterMap().size() == 2 )    // NEXT: Debe haber un modo más simple de saber cuántos parámetros se han enviado en la request
             {

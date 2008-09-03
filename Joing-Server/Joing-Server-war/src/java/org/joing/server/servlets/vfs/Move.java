@@ -30,7 +30,7 @@ import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.dto.vfs.VFSFileBase;
 import org.joing.common.exception.JoingServerException;
 
 /**
@@ -57,11 +57,11 @@ public class Move extends HttpServlet
         
         try
         {
-            String sSessionId = (String)  reader.readObject();
-            int    nFileId    = (Integer) reader.readObject();
-            int    nToDirId   = (Integer) reader.readObject();
+            String sSessionId   = (String)  reader.readObject();
+            int    nFileOrDirId = (Integer) reader.readObject();
+            int    nToDirId     = (Integer) reader.readObject();
             
-            List<FileDescriptor> errors = fileManagerBean.move( sSessionId, nFileId, nToDirId );
+            List<VFSFileBase> errors = fileManagerBean.move( sSessionId, nFileOrDirId, nToDirId );
             
             writer.writeObject( errors );
             writer.flush();
