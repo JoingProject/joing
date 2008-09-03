@@ -23,9 +23,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.event.InternalFrameAdapter;
-import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.DesktopManager;
-import org.joing.common.desktopAPI.pane.DeskFrame;
+import org.joing.kernel.api.desktop.DeskComponent;
+import org.joing.kernel.api.desktop.DesktopManager;
+import org.joing.kernel.api.desktop.pane.DeskFrame;
 
 /**
  * The main class of the Tetris game. This class contains the necessary methods to run the game.
@@ -45,7 +45,7 @@ public class Tetris extends JPanel implements DeskComponent
     
     public void showInFrame()
     {
-        DesktopManager dm   = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+        DesktopManager dm   = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
         ImageIcon      icon = new ImageIcon( getClass().getResource( "tetris.png" ) );
         
         if( dm != null )
