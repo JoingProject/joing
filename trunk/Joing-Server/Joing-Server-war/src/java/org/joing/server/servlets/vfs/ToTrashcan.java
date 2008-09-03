@@ -20,16 +20,17 @@
  */
 package org.joing.server.servlets.vfs;
 
-import org.joing.common.dto.vfs.FileDescriptor;
 import org.joing.common.exception.JoingServerServletException;
 import org.joing.server.ejb.vfs.FileManagerLocal;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.List;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import org.joing.common.dto.vfs.VFSFileBase;
 import org.joing.common.exception.JoingServerException;
 
 /**
@@ -37,7 +38,7 @@ import org.joing.common.exception.JoingServerException;
  * @author Francisco Morero Peyrona
  * @version
  */
-public class GetFileDescriptor extends HttpServlet
+public class ToTrashcan extends HttpServlet
 {
     @EJB()
     private FileManagerLocal fileManagerBean;
@@ -58,14 +59,25 @@ public class GetFileDescriptor extends HttpServlet
         {
             // Read from client (desktop)
             String  sSessionId = (String)  reader.readObject();
-            String  sPath      = (String)  reader.readObject();
-            boolean bCreate    = (Boolean) reader.readObject();    // Create file if not exsists
+            Object  o2ndParam  =           reader.readObject();
+            boolean bInTashcan = (Boolean) reader.readObject();
+            
+            List<VFSFileBase> errors = null;     // FileDescriptors that were not sent to trashcan
             
             // Process request
-            FileDescriptor fileDesc = fileManagerBean.getFileDescriptor( sSessionId, sPath, bCreate );
+            if( o2ndParam instanceof Integer )
+            {
+                int nFileId = (Integer) o2ndParam;
+                errors = fileManagerBean.toTrashcan( sSessionId, nFileId, bInTashcan );
+            }
+            else
+            {
+                int[] anFileIds = (int[]) o2ndParam;
+                errors = fileManagerBean.toTrashcan( sSessionId, anFileIds, bInTashcan );
+            }
             
             // Write to Client (desktop)
-            writer.writeObject( fileDesc );
+            writer.writeObject( errors );
             writer.flush();
         }
         catch( JoingServerException exc )
@@ -76,7 +88,6 @@ public class GetFileDescriptor extends HttpServlet
         catch( Exception exc )
         {
             log( "Error in Servlet: "+ getClass().getName(), exc );
-            exc.printStackTrace();
             // Makes the exception to be contained into a JoingServerServletException
             JoingServerServletException jsse = new JoingServerServletException( getClass(), exc );
             writer.writeObject( jsse );

@@ -27,7 +27,7 @@ import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.dto.vfs.VFSFileBase;
 import org.joing.common.exception.JoingServerException;
 
 /**
@@ -55,11 +55,11 @@ public class UpdateFile extends HttpServlet
         try
         {
             // Read from client (desktop)
-            String         sSessionId = (String)         reader.readObject();
-            FileDescriptor file       = (FileDescriptor) reader.readObject();
+            String      sSessionId = (String)      reader.readObject();
+            VFSFileBase file       = (VFSFileBase) reader.readObject();
             
             // Process request
-            file = fileManagerBean.updateFileDescriptor( sSessionId, file );
+            file = fileManagerBean.updateFile( sSessionId, file );
             
             // Write to Client (desktop)
             writer.writeObject( file );

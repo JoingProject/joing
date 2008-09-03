@@ -20,13 +20,13 @@
  */
 package org.joing.server.servlets.app;
 
-import org.joing.common.dto.app.AppDescriptor;
 import org.joing.server.ejb.app.ApplicationManagerLocal;
 import java.io.*;
 import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.exception.JoingServerException;
 import org.joing.common.exception.JoingServerServletException;
 
@@ -59,10 +59,10 @@ public class GetPreferredForType extends HttpServlet
             String sFileType  = (String) reader.readObject();
             
             // Process request
-            AppDescriptor application = applicationManagerBean.getPreferredForType( sSessionId, sFileType );
+            AppDescriptor appDesc = applicationManagerBean.getPreferredForType( sSessionId, sFileType );
             
             // Write to Client (desktop)
-            writer.writeObject( application );
+            writer.writeObject( appDesc );
             writer.flush();
         }
         catch( JoingServerException exc )

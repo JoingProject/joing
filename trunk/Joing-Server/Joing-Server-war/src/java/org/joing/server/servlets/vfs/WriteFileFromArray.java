@@ -30,7 +30,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.dto.vfs.VFSFileBase;
 import org.joing.common.exception.JoingServerException;
 import org.joing.common.exception.JoingServerServletException;
 
@@ -63,9 +63,9 @@ public class WriteFileFromArray extends HttpServlet
             byte[] ab         = (byte[])  reader.readObject();
             
             ByteArrayInputStream bais = new ByteArrayInputStream( ab );
-            FileDescriptor fileDescr  = fileManagerBean.writeFile( sSessionId, nFileId, bais );
+            VFSFileBase          file = fileManagerBean.writeFile( sSessionId, nFileId, bais );
             
-            writer.writeObject( fileDescr );
+            writer.writeObject( file );
             writer.flush();
         }
         catch( JoingServerException exc )

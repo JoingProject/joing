@@ -89,8 +89,8 @@
         <servlet-class>org.joing.server.servlets.app.GetPreferredForType</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>GetChilds</servlet-name>
-        <servlet-class>org.joing.server.servlets.vfs.GetChilds</servlet-class>
+        <servlet-name>GetChildren</servlet-name>
+        <servlet-class>org.joing.server.servlets.vfs.GetChildren</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GetByNotes</servlet-name>
@@ -101,8 +101,8 @@
         <servlet-class>org.joing.server.servlets.vfs.GetTrashcan</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>GetFileDescriptor</servlet-name>
-        <servlet-class>org.joing.server.servlets.vfs.GetFileDescriptor</servlet-class>
+        <servlet-name>GetFile</servlet-name>
+        <servlet-class>org.joing.server.servlets.vfs.GetFile</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>UpdateFile</servlet-name>
@@ -133,8 +133,8 @@
         <servlet-class>org.joing.server.servlets.vfs.Move</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>Trashcan</servlet-name>
-        <servlet-class>org.joing.server.servlets.vfs.Trashcan</servlet-class>
+        <servlet-name>ToTrashcan</servlet-name>
+        <servlet-class>org.joing.server.servlets.vfs.ToTrashcan</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Delete</servlet-name>
@@ -162,119 +162,119 @@
     <!-- SERVLET MAPPING -->
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
-        <url-pattern>/servlets/session/Login</url-pattern>
+        <url-pattern>/joing/servlets/session/Login</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Logout</servlet-name>
-        <url-pattern>/servlets/session/Logout</url-pattern>
+        <url-pattern>/joing/servlets/session/Logout</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>IsValidPassword</servlet-name>
-        <url-pattern>/servlets/session/IsValidPassword</url-pattern>
+        <url-pattern>/joing/servlets/session/IsValidPassword</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GetSystemInfo</servlet-name>
-        <url-pattern>/servlets/session/GetSystemInfo</url-pattern>
+        <url-pattern>/joing/servlets/session/GetSystemInfo</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GetUser</servlet-name>
-        <url-pattern>/servlets/user/GetUser</url-pattern>
+        <url-pattern>/joing/servlets/user/GetUser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>UpdateUser</servlet-name>
-        <url-pattern>/servlets/user/UpdateUser</url-pattern>
+        <url-pattern>/joing/servlets/user/UpdateUser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GetAvailableLocales</servlet-name>
-        <url-pattern>/servlets/user/GetAvailableLocales</url-pattern>
+        <url-pattern>/joing/servlets/user/GetAvailableLocales</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GetAvailableForUser</servlet-name>
-        <url-pattern>/servlets/app/GetAvailableForUser</url-pattern>
+        <url-pattern>/joing/servlets/app/GetAvailableForUser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GetNotInstalledForUser</servlet-name>
-        <url-pattern>/servlets/app/GetNotInstalledForUser</url-pattern>
+        <url-pattern>/joing/servlets/app/GetNotInstalledForUser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GetInstalledForUser</servlet-name>
-        <url-pattern>/servlets/app/GetInstalledForUser</url-pattern>
+        <url-pattern>/joing/servlets/app/GetInstalledForUser</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Install</servlet-name>
-        <url-pattern>/servlets/app/Install</url-pattern>
+        <url-pattern>/joing/servlets/app/Install</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Uninstall</servlet-name>
-        <url-pattern>/servlets/app/Uninstall</url-pattern>
+        <url-pattern>/joing/servlets/app/Uninstall</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GetPreferredForType</servlet-name>
-        <url-pattern>/servlets/app/GetPreferredForType</url-pattern>
+        <url-pattern>/joing/servlets/app/GetPreferredForType</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>GetChilds</servlet-name>
-        <url-pattern>/servlets/vfs/GetChilds</url-pattern>
+        <servlet-name>GetChildren</servlet-name>
+        <url-pattern>/joing/servlets/vfs/GetChildren</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GetByNotes</servlet-name>
-        <url-pattern>/servlets/vfs/GetByNotes</url-pattern>
+        <url-pattern>/joing/servlets/vfs/GetByNotes</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GetTrashCan</servlet-name>
-        <url-pattern>/servlets/vfs/GetTrashCan</url-pattern>
+        <url-pattern>/joing/servlets/vfs/GetTrashCan</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>GetFileDescriptor</servlet-name>
-        <url-pattern>/servlets/vfs/GetFileDescriptor</url-pattern>
+        <servlet-name>GetFile</servlet-name>
+        <url-pattern>/joing/servlets/vfs/GetFile</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>UpdateFile</servlet-name>
-        <url-pattern>/servlets/vfs/UpdateFile</url-pattern>
+        <url-pattern>/joing/servlets/vfs/UpdateFile</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CreateDirectory</servlet-name>
-        <url-pattern>/servlets/vfs/CreateDirectory</url-pattern>
+        <url-pattern>/joing/servlets/vfs/CreateDirectory</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CreateFile</servlet-name>
-        <url-pattern>/servlets/vfs/CreateFile</url-pattern>
+        <url-pattern>/joing/servlets/vfs/CreateFile</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Copy</servlet-name>
-        <url-pattern>/servlets/vfs/Copy</url-pattern>
+        <url-pattern>/joing/servlets/vfs/Copy</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Move</servlet-name>
-        <url-pattern>/servlets/vfs/Move</url-pattern>
+        <url-pattern>/joing/servlets/vfs/Move</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>Trashcan</servlet-name>
-        <url-pattern>/servlets/vfs/Trashcan</url-pattern>
+        <servlet-name>ToTrashcan</servlet-name>
+        <url-pattern>/joing/servlets/vfs/ToTrashcan</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Delete</servlet-name>
-        <url-pattern>/servlets/vfs/Delete</url-pattern>
+        <url-pattern>/joing/servlets/vfs/Delete</url-pattern>
     </servlet-mapping>    
     <servlet-mapping>
         <servlet-name>ReadFileToArray</servlet-name>
-        <url-pattern>/servlets/vfs/ReadFileToArray</url-pattern>
+        <url-pattern>/joing/servlets/vfs/ReadFileToArray</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>WriteFileFromArray</servlet-name>
-        <url-pattern>/servlets/vfs/WriteFileFromArray</url-pattern>
+        <url-pattern>/joing/servlets/vfs/WriteFileFromArray</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GetApplication</servlet-name>
-        <url-pattern>/servlets/app/GetApplication</url-pattern>
+        <url-pattern>/joing/servlets/app/GetApplication</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GetRoots</servlet-name>
-        <url-pattern>/servlets/vfs/GetRoots</url-pattern>
+        <url-pattern>/joing/servlets/vfs/GetRoots</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ApplicationServlet</servlet-name>
-        <url-pattern>/servlets/app/ApplicationServlet</url-pattern>
+        <url-pattern>/joing/servlets/app/ApplicationServlet</url-pattern>
     </servlet-mapping>
     
     <!-- ******************************************************************* -->

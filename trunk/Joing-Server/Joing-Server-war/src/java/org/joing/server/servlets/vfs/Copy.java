@@ -30,7 +30,7 @@ import javax.ejb.EJB;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.dto.vfs.VFSFileBase;
 import org.joing.common.exception.JoingServerException;
 
 /**
@@ -63,7 +63,7 @@ public class Copy extends HttpServlet
             int    nToDirId     = (Integer) reader.readObject();
             
             // Process request
-            List<FileDescriptor> errors = fileManagerBean.copy( sSessionId, nFileOrDirId, nToDirId );
+            List<VFSFileBase> errors = fileManagerBean.copy( sSessionId, nFileOrDirId, nToDirId );
             
             // Write to Client (desktop)
             writer.writeObject( errors );

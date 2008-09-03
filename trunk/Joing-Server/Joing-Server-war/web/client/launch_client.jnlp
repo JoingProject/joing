@@ -2,11 +2,11 @@
 <jnlp spec="1.0+" codebase="http://peyrona.dnsalias.com:8080/Joing-Server-war/client/" 
                       href="http://peyrona.dnsalias.com:8080/Joing-Server-war/client/launch_client.jnlp">
     <information>
-        <title>Join'g Client Bootstrap</title>
+        <title>Join'g Client Kernel</title>
         <vendor>Join'g Project Team</vendor>
         <homepage href="http://www.joing.org"/>
-        <description>Join'g Client Bootstrap</description>
-        <description kind="short">Join'g base application used as bootstrap.</description>
+        <description>Join'g Client Kernel</description>
+        <description kind="short">Join'g client-side base application.</description>
         <icon href="/Joing-Server-war/client/joing_icon.png" kind="default"/>
         <offline-allowed/>
     </information>
@@ -17,10 +17,10 @@
     
     <resources>
         <j2se version="1.6+"/>
-        <jar href="/Joing-Server-war/client/Joing-Client.jar" main="true" download="eager"/>
-        <jar href="/Joing-Server-war/client/lib/Joing-Common.jar" download="eager"/>
+        <jar href="/Joing-Server-war/client/Joing-Kernel.jar" main="true" download="eager"/>
+        <jar href="/Joing-Server-war/client/Joing-Common.jar" download="eager"/>
     </resources>
     
-    <application-desc main-class="org.joing.Main">
+    <application-desc main-class="org.joing.kernel.Main">
     </application-desc>
 </jnlp>
