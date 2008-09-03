@@ -24,9 +24,9 @@ import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
-import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.DesktopManager;
-import org.joing.common.desktopAPI.pane.DeskFrame;
+import org.joing.kernel.api.desktop.DeskComponent;
+import org.joing.kernel.api.desktop.DesktopManager;
+import org.joing.kernel.api.desktop.pane.DeskFrame;
 
 /**
  * A GUI to change configure Proxy.
@@ -50,7 +50,7 @@ public class ProxyConfig extends JPanel implements DeskComponent
     
     public void showInFrame()
     {
-        DesktopManager dm   = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+        DesktopManager dm   = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
         ImageIcon      icon = new ImageIcon( getClass().getResource( "proxy_config.png" ) );
         
         // Show this panel in a frame created by DesktopManager Runtime.
@@ -64,7 +64,7 @@ public class ProxyConfig extends JPanel implements DeskComponent
     
     public static void main( String[] asArg )
     {
-        (new ProxyConfig()).showInFrame();;
+        (new ProxyConfig()).showInFrame();
     }
     
     //------------------------------------------------------------------------//
