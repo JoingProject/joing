@@ -37,7 +37,7 @@ import org.joing.common.exception.JoingServerVFSException;
 public interface ApplicationManagerRemote
 {    
     /**
-     * Retrieve a <code>List</code> with instances of <code>Application</code> 
+     * Retrieves a <code>List</code> with instances of <code>Application</code> 
      * class (the DTO for <code>ApplicationEntity</code>) containing, all
      * applications that user can install (regardless of their installation
      * status).
@@ -53,7 +53,7 @@ public interface ApplicationManagerRemote
                    throws JoingServerAppException;
     
     /**
-     * Retrieve a <code>List</code> with instances of <code>Application</code> 
+     * Retrieves a <code>List</code> with instances of <code>Application</code> 
      * class (the DTO for <code>ApplicationEntity</code>) containing, all the
      * set of applications that user can install, only those that are not
      * installed yet.
@@ -69,7 +69,7 @@ public interface ApplicationManagerRemote
                    throws JoingServerAppException;
     
     /**
-     * Retrieve a <code>List</code> with instances of <code>Application</code> 
+     * Retrieves a <code>List</code> with instances of <code>Application</code> 
      * class (the DTO for <code>ApplicationEntity</code>) containing, from the
      * set of applications that user can install, only those that already have
      * installed.
@@ -85,38 +85,49 @@ public interface ApplicationManagerRemote
                    throws JoingServerAppException;
     
     /**
-     * Mark an application as to be installed for certain user.
+     * Returns all available desktops.
+     * 
+     * @return All available desktops.
+     * @throws org.joing.common.exception.JoingServerAppException
+     */
+    // NEXT: Return only those available for current user
+    List<AppDescriptor> getAvailableDesktops() throws JoingServerAppException;
+    
+    /**
+     * Marks an application as to be installed for certain user.
      * <p>
      * This only means that the application will be shown in the user's menu.
      *
      * @param sSessionId A valid session (sSessionId in order to obtain the user).
-     * @param app The <code>Application</code> instance to be installed.
+     * @param nAppId The application Id to be installed.
      */
-    boolean install( String sSessionId, AppDescriptor app )
+    boolean install( String sSessionId, int nAppId )
             throws JoingServerAppException;
     
     /**
-     * Mark an application as not installed for certain user.
+     * Marks an application as not installed for certain user.
      * <p>
      * This only means that the application will not be shown in the user's menu.
      *
      * @param sSessionId A valid session (sSessionId in order to obtain the user).
-     * @param app The <code>Application</code> instance to be uninstalled.
+     * @param nAppId The application Id to be installed.
      */
-    boolean uninstall( String sSessionId, AppDescriptor app )
+    boolean uninstall( String sSessionId, int nAppId )
             throws JoingServerAppException;
     
     /**
-     * Returns the prefrerred application (if any) for requested file extension.
+     * Returns user prefrerred application (if any) for passed file extension.
      * <p>
-     * Note: As this intormation is not relevant and is not attached to the User,
-     * Session ID is not requested by this method.
-     *
-     * @param sSessionId A valid session (sSessionId in order to obtain the user).
-     * @param sFileExtension The file extension to be checked (without the 
-     *                       initial dot '.', just the extension)
-     * @return The prefrerred application or <code>null</code> if there is not a
-     *         registered application for this file extension
+     * It first checks if user has any prefrerred application associtaed with
+     * passed extension if so, this app ID is returned. Otherwise, all apps are
+     * checked to find if can handle files of passed type, if any, the first one
+     * found is retruned, if there is no app than can handle passeed extension,
+     * <code>null</code> is returned.
+     * 
+     * @param sSessionId A valid session ID.
+     * @param sFileExtension The file extension to be checked.
+     * @return The prefrerred application descriptor or <code>null</code> if 
+     *         there is not a registered application for this file extension.
      */
     AppDescriptor getPreferredForType( String sSessionId, String sFileExtension )
                   throws JoingServerAppException;

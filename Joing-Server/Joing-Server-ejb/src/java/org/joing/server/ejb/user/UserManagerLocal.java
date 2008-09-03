@@ -77,20 +77,4 @@ public interface UserManagerLocal extends UserManagerRemote
      */
     void removeUser( User user )
          throws JoingServerUserException;
-   
-    /**
-     * Checks if passed value is a valid account.
-     * Note: It is public to be invoked from the Joing's Web side.
-     * 
-     * @param sAccount Account to be checked.
-     */
-    boolean isValidAccount( String sAccount );
-    
-    /**
-     * Checks if passed value is a valid password.
-     * Note: It is public to be invoked from the Joing's Web side.
-     * 
-     * @param sPassword Password to be checked.
-     */
-    boolean isValidPassword( String sPassword );
 }

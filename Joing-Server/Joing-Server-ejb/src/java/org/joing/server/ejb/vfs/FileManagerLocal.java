@@ -29,18 +29,17 @@ import javax.ejb.Local;
 public interface FileManagerLocal extends FileManagerRemote
 {
     /**
-     * Create a FileEntity that represents the root directory for the passed
-     * account.
-     * The entity is returned but it is not persisted by this method.
-     * @param sAccount A valid user account ID
-     * @return A FileEntity that represents the root directory for the passed
+     * Creates a FileEntity that represents the root directory for the passed
+     * account and persists it.
+     * 
+     * @param sAccount A valid (existing) user account.
      */
-    public FileEntity createRootEntity( String sAccount );
+    public void createRootFor( String sAccount );
     
     /**
      * Creates several directories and some files inside them.
      * 
-     * @param sAccount User Account to create examples to.
+     * @param sAccount User Account to create initial files to.
      */
-    public void createInitialFiles( String sAccount );
+    public void createInitialFilesFor( String sAccount );
 }

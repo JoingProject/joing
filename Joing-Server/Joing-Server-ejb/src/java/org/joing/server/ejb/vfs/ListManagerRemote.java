@@ -22,7 +22,7 @@ package org.joing.server.ejb.vfs;
 
 import java.util.List;
 import javax.ejb.Remote;
-import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.dto.vfs.VFSFileBase;
 import org.joing.common.exception.JoingServerVFSException;
 
 /**
@@ -40,11 +40,12 @@ public interface ListManagerRemote
      * belong to more than one community.
      * 
      * @param sSessionId The client session ID
-     * @return All roots that user has
+     * @return All roots that user has: at least one (or null if something goes 
+     *         wrong).
      * @throws If any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
-    List<FileDescriptor> getRoots( String sSessionId )
+    List<VFSFileBase> getRoots( String sSessionId )
             throws JoingServerVFSException;
     
     /**
@@ -63,7 +64,7 @@ public interface ListManagerRemote
      * @throws If any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
-    List<FileDescriptor> getChilds( String sSessionId, int nDirId )
+    List<VFSFileBase> getChilds( String sSessionId, int nDirId )
             throws JoingServerVFSException;
     
     /**
@@ -79,10 +80,12 @@ public interface ListManagerRemote
      * @param bGlobal If true searches in all public files on all users of the
      *        same community, if false searches on all files (public or not) of
      *        current user only.
+     * @return All files containing passed String or <code>null</code> if
+     *         sSessionId is invalid or the String was not found.
      * @throws If any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
-    List<FileDescriptor> getByNotes( String sSessionId, String sSubString, boolean bGlobal )
+    List<VFSFileBase> getByNotes( String sSessionId, String sSubString, boolean bGlobal )
             throws JoingServerVFSException; 
 
     /**
@@ -94,6 +97,6 @@ public interface ListManagerRemote
      * @throws If any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
-    List<FileDescriptor> getTrashCan( String sSessionId )
+    List<VFSFileBase> getTrashCan( String sSessionId )
             throws JoingServerVFSException;
 }

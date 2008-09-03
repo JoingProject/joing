@@ -52,7 +52,7 @@ import javax.persistence.TemporalType;
                     query = "SELECT f FROM FileEntity f"+
                             " WHERE f.account  = :account"+
                             "   AND f.filePath = :path" ),
-                            
+        
         @NamedQuery(name  = "FileEntity.findInTrashcan",
                     query = "SELECT f FROM FileEntity f"+
                             " WHERE f.account = :account"+
@@ -553,12 +553,7 @@ public class FileEntity implements Serializable
      */
     @Override
     public String toString()
-    {
-        String sFilePath = filePath;
-        
-        if( (! filePath.equals( "/" )) && (! fileName.endsWith( "/" )) )
-            sFilePath += "/";
-        
-        return "ejb.vfs.FileEntity[name="+ sFilePath + fileName +", account="+ account +"]";
+    {        
+        return "ejb.vfs.FileEntity[name="+ (filePath == null ? "" : filePath) + fileName +", account="+ account +"]";
     }   
 }

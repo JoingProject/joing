@@ -20,7 +20,7 @@
  */
 package org.joing.server.ejb.vfs;
 
-import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.dto.vfs.VFSFileBase;
 
 /**
  *
@@ -35,18 +35,18 @@ class FileDTOs
         this.fileEntity = fileEntity;
     }
     
-    FileDescriptor createFileDescriptor()
+    VFSFileBase createVFSFileBase()
     {
-        FileDescriptor fileDescriptor = new FileDescriptor();
+        VFSFileBase file = new VFSFileBase( fileEntity.getFilePath(), 
+                                            fileEntity.getFileName());   
+        transfer( fileEntity, file );
         
-        transfer( fileEntity, fileDescriptor );
-        
-        return fileDescriptor;
+        return file;
     }
     
     //------------------------------------------------------------------------//
     
-    private void transfer( FileEntity fromFileEntity, FileDescriptor toFileDescriptor )
+    private void transfer( FileEntity fromFileEntity, VFSFileBase toFileDescriptor )
     {
         long nSize = 0;
         
@@ -55,7 +55,7 @@ class FileDTOs
         
         int nIdOriginal = (fromFileEntity.getIdOriginal() == null) ? -1 : fromFileEntity.getIdOriginal();
         
-        toFileDescriptor.setIdFile(     fromFileEntity.getIdFile()   );
+        toFileDescriptor.setHandler(    fromFileEntity.getIdFile()   );
         toFileDescriptor.setAccount(    fromFileEntity.getAccount()  );
         toFileDescriptor.setName(       fromFileEntity.getFileName() );
         toFileDescriptor.setPath(       fromFileEntity.getFilePath() );

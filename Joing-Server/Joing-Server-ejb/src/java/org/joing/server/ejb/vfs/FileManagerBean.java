@@ -38,13 +38,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.swing.UIManager;
 import org.joing.common.dto.user.User;
-import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.dto.vfs.VFSFileBase;
 import org.joing.common.exception.JoingServerException;
 import org.joing.common.exception.JoingServerVFSException;
 
 /**
  * Functionality related to Virtual File System (VFS) files' manipulation.
- *  <p>
+ * <p>
  * For the API javadoc, refer to the 'remote' and 'local' interfaces.
  *
  * @author Francisco Morero Peyrona
@@ -66,10 +66,10 @@ public class FileManagerBean
     
     //------------------------------------------------------------------------//
     
-    public FileDescriptor getFileDescriptor( String sSessionId, String sFilePath, boolean bCreateIfNotExists )
+    public VFSFileBase getFile( String sSessionId, String sFilePath, boolean bCreateIfNotExists )
     {
-        FileDescriptor fdRet    = null;
-        String         sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        VFSFileBase fRet     = null;
+        String      sAccount = sessionManagerBean.getUserAccount( sSessionId );
         
         if( sAccount != null )
         {
@@ -80,7 +80,7 @@ public class FileManagerBean
             
             if( _file != null )
             {
-                fdRet = (new FileDTOs( _file )).createFileDescriptor();
+                fRet = (new FileDTOs( _file )).createVFSFileBase();
             }
             else if( bCreateIfNotExists )
             {
@@ -89,44 +89,44 @@ public class FileManagerBean
                 String sFileName = ((nIndex >= sFilePath.length() - 1) ? getGeneratedName( sAccount, sParent, false ) :
                                                                          sFilePath.substring( nIndex + 1 ));
                 mkDirs( sAccount, sParent );
-                fdRet = createEntry( sAccount, sParent, sFileName, false );
+                fRet = createEntry( sAccount, sParent, sFileName, false );
             }
         }
         
-        return fdRet;
+        return fRet;
     }
     
-    public FileDescriptor createDirectories( String sSessionId, String sPath )
+    public VFSFileBase createDirectories( String sSessionId, String sPath )
     {
-        FileDescriptor fdRet    = null;
-        String         sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        VFSFileBase fRet     = null;
+        String      sAccount = sessionManagerBean.getUserAccount( sSessionId );
         
         if( sAccount != null )
         {
-            fdRet = mkDirs( sAccount, sPath );
+            fRet = mkDirs( sAccount, sPath );
         }
         
-        return fdRet;
+        return fRet;
     }
     
-    public FileDescriptor createDirectory( String sSessionId, String sParent, String sDir )
+    public VFSFileBase createDirectory( String sSessionId, String sParent, String sDir )
            throws JoingServerVFSException
     {
-        FileDescriptor fdRet    = null;
-        String         sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        VFSFileBase fRet     = null;
+        String      sAccount = sessionManagerBean.getUserAccount( sSessionId );
         
         if( sAccount != null )
         {
             if( sDir == null )
                 sDir = getGeneratedName( sAccount, sParent, true );
             
-            fdRet = createEntry( sAccount, sParent, sDir, true );
+            fRet = createEntry( sAccount, sParent, sDir, true );
         }
         
-        return fdRet;
+        return fRet;
     }
     
-    public FileDescriptor createFile( String sSessionId, String sParent, String sFileName, boolean bCreateParentDirs )
+    public VFSFileBase createFile( String sSessionId, String sParent, String sFileName, boolean bCreateParentDirs )
            throws JoingServerVFSException
     {
         String sAccount = sessionManagerBean.getUserAccount( sSessionId );
@@ -195,11 +195,11 @@ public class FileManagerBean
         return is;
     }
     
-    public FileDescriptor writeFile( String sSessionId, int nFileId, InputStream reader )
+    public VFSFileBase writeFile( String sSessionId, int nFileId, InputStream reader )
            throws JoingServerVFSException
     {
-        FileDescriptor fileDesc = null;
-        String         sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        VFSFileBase file     = null;
+        String      sAccount = sessionManagerBean.getUserAccount( sSessionId );
         
         if( sAccount != null )
         {
@@ -245,8 +245,8 @@ public class FileManagerBean
                 _file.setAccessed( new Date() );
                 _file.setModified( new Date() );
                 em.persist( _file );
-                fileDesc = (new FileDTOs( _file )).createFileDescriptor();
-                fileDesc.setSize( NativeFileSystemTools.getFileSize( sAccount, nFileId ) );
+                file = (new FileDTOs( _file )).createVFSFileBase();
+                file.setSize( NativeFileSystemTools.getFileSize( sAccount, nFileId ) );
             }
             catch( RuntimeException exc )
             {
@@ -265,38 +265,38 @@ public class FileManagerBean
             }
         }
         
-        return fileDesc;
+        return file;
     }
     
     // This method does not need to implement the logic to handle (validate) _file 
-    // attributes: the logic (validation) is done by class FileDescriptor.
+    // attributes: the logic (validation) is done by class VFSFileBase.
     // In this way, there is no need to send _file attributes from Client to the 
     // Server in order to be validated.
-    public FileDescriptor updateFileDescriptor( String sSessionId, FileDescriptor fileIn )
+    public VFSFileBase updateFile( String sSessionId, VFSFileBase file )
            throws JoingServerVFSException
     {
-        String         sAccount = sessionManagerBean.getUserAccount( sSessionId );
-        FileDescriptor fileOut  = null;
+        String      sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        VFSFileBase fileOut  = null;
         
         if( sAccount != null )
         {
             try
             {
-                if( ! isFileInUserSpace( sAccount, fileIn ) )
+                if( ! isFileInUserSpace( sAccount, file ) )
                     throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
                 
-                if( ! fileIn.getOwner().equals( sAccount ) )    // Only owner can modify
+                if( ! file.getOwner().equals( sAccount ) )    // Only owner can modify
                     throw new JoingServerVFSException( JoingServerVFSException.INVALID_OWNER );
                 
                 // TODO: Revisar este metodo
                                 
                 // Get the original _file name: this is the only attribute that has 
-                // to be checked: the rest of them are done in FileDescriptor class,
+                // to be checked: the rest of them are done in VFSFileBase class,
                 // because (obviously) the name can't be cheked at Client side.
-                FileEntity _file = em.find( FileEntity.class, fileIn.getId() );
+                FileEntity _file = em.find( FileEntity.class, file.getHandler() );
                 
                 // Attribute name is changed
-                String sNameNew = fileIn.getName();
+                String sNameNew = file.getName();
                 String sNameOld = _file.getFileName();
                 
                 if( (! sNameOld.equals( sNameNew )) && (sNameNew != null) )
@@ -313,7 +313,7 @@ public class FileManagerBean
                     // And have to be renamed before their parent changes its name.
                     if( _file.getIsDir() == 1 )
                     {
-                        List<FileEntity> lstChilds = VFSTools.getChilds( em, sAccount, _file );
+                        List<FileEntity> lstChilds = VFSTools.getChildren( em, sAccount, _file );
                         renamePath( sAccount, lstChilds, sNameOld, sNameNew );
                     }
                     
@@ -321,7 +321,7 @@ public class FileManagerBean
                     _file.setFileName( sNameNew );
                     _file.setAccessed( new Date() );  // Modified flag changes only when contents are modified, not when name is modified
                     em.persist( _file );
-                    fileOut = (new FileDTOs( _file )).createFileDescriptor();
+                    fileOut = (new FileDTOs( _file )).createVFSFileBase();
                 }
             }
             catch( RuntimeException exc )
@@ -339,7 +339,7 @@ public class FileManagerBean
         return fileOut;
     }
     
-    public List<FileDescriptor> copy( String sSessionId, int nFileId, int nToDirId )
+    public List<VFSFileBase> copy( String sSessionId, int nFileId, int nToDirId )
            throws JoingServerVFSException
     {
         throw new JoingServerVFSException( "Operation not yet implemented" );
@@ -352,7 +352,7 @@ public class FileManagerBean
         return bSuccess;*/
     }
     
-    public List<FileDescriptor> move( String sSessionId, int nFileId, int nToDirId )
+    public List<VFSFileBase> move( String sSessionId, int nFileId, int nToDirId )
            throws JoingServerVFSException
     {
         throw new JoingServerVFSException( "Operation not yet implemented" );
@@ -362,7 +362,7 @@ public class FileManagerBean
         
         if( sAccount != null )
         {
-            if( ! isFileInUserSpace( sAccount, fileBinary.getId() ) )
+            if( ! isFileInUserSpace( sAccount, fileBinary.getHandler() ) )
                 throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );
             
             if( ! isOwnerOfFile( sAccount, nFileId ) )
@@ -386,11 +386,11 @@ public class FileManagerBean
         return bSuccess;*/
     }
     
-    public List<FileDescriptor> trashcan( String sSessionId, int[] anFileId, boolean bInTrashCan )
+    public List<VFSFileBase> toTrashcan( String sSessionId, int[] anFileId, boolean bInTrashCan )
             throws JoingServerVFSException
     {
-        String                    sAccount   = sessionManagerBean.getUserAccount( sSessionId );
-        ArrayList<FileDescriptor> fileErrors = new ArrayList<FileDescriptor>();
+        String                 sAccount   = sessionManagerBean.getUserAccount( sSessionId );
+        ArrayList<VFSFileBase> fileErrors = new ArrayList<VFSFileBase>();
         
         if( sAccount != null )
         {
@@ -401,11 +401,11 @@ public class FileManagerBean
         return fileErrors;
     }
     
-    public List<FileDescriptor> trashcan( String sSessionId, int nFileId, boolean bInTrashCan )
+    public List<VFSFileBase> toTrashcan( String sSessionId, int nFileId, boolean bInTrashCan )
             throws JoingServerVFSException
     {
-        String sAccount = sessionManagerBean.getUserAccount( sSessionId );
-        ArrayList<FileDescriptor> fileErrors = new ArrayList<FileDescriptor>();
+        String                 sAccount   = sessionManagerBean.getUserAccount( sSessionId );
+        ArrayList<VFSFileBase> fileErrors = new ArrayList<VFSFileBase>();
         
         if( sAccount != null )
         {
@@ -415,11 +415,11 @@ public class FileManagerBean
         return fileErrors;
     }
     
-    public List<FileDescriptor> delete( String sSessionId, int[] anFileId )
+    public List<VFSFileBase> delete( String sSessionId, int[] anFileId )
             throws JoingServerVFSException
     {
-        String sAccount = sessionManagerBean.getUserAccount( sSessionId );
-        ArrayList<FileDescriptor> fileErrors = new ArrayList<FileDescriptor>();
+        String                 sAccount   = sessionManagerBean.getUserAccount( sSessionId );
+        ArrayList<VFSFileBase> fileErrors = new ArrayList<VFSFileBase>();
         
         if( sAccount != null )
         {
@@ -430,11 +430,11 @@ public class FileManagerBean
         return fileErrors;
     }
     
-    public List<FileDescriptor> delete( String sSessionId, int nFileId )
+    public List<VFSFileBase> delete( String sSessionId, int nFileId )
             throws JoingServerVFSException
     {
-        String sAccount = sessionManagerBean.getUserAccount( sSessionId );
-        ArrayList<FileDescriptor> fileErrors = new ArrayList<FileDescriptor>();
+        String                 sAccount   = sessionManagerBean.getUserAccount( sSessionId );
+        ArrayList<VFSFileBase> fileErrors = new ArrayList<VFSFileBase>();
         
         if( sAccount != null )
         {
@@ -447,15 +447,15 @@ public class FileManagerBean
     //------------------------------------------------------------------------//
     // LOCAL INTERFACE
     
-    public FileEntity createRootEntity( String sAccount )
+    public void createRootFor( String sAccount )
     {
         Date dNow = new Date();
         
-        // All fields must be set
+        // All fields must be sat
         FileEntity _file = new FileEntity();
                    _file.setIdOriginal( null );
-                   _file.setAccount( sAccount );    // Can't be null
-                   _file.setFilePath( "" );         // Can't be null
+                   _file.setAccount( sAccount );  // Can't be null
+                   _file.setFilePath( null );     // Has to be null
                    _file.setFileName( "/" );
                    _file.setOwner( Constant.getSystemAccount() );   // It's guaranted that will never be Account.equals( SystemName ). (see: sessionManagerBean.isAccountAvailable)
                    _file.setLockedBy( null );
@@ -473,11 +473,11 @@ public class FileManagerBean
                    _file.setModified( dNow );
                    _file.setAccessed( dNow );
                    
-       return _file;
+       em.persist( _file );
     }
     
-    public void createInitialFiles( String sAccount )
-    {
+    public void createInitialFilesFor( String sAccount )
+    {// NEXT: This can be added to a Java Messages queue
         createEntry( sAccount, "/", "Documents", true );
         createEntry( sAccount, "/", "Music"    , true );
         createEntry( sAccount, "/", "Images"   , true );
@@ -485,8 +485,8 @@ public class FileManagerBean
         
         try
         {
-            FileDescriptor fdWelcome = createEntry( sAccount, "/Documents", "welcome.txt"   , false );
-            java.io.File   fWelcome  = NativeFileSystemTools.getFile( sAccount, fdWelcome.getId() );
+            VFSFileBase fdWelcome = createEntry( sAccount, "/Documents", "welcome.txt"   , false );
+            java.io.File   fWelcome  = NativeFileSystemTools.getFile( sAccount, fdWelcome.getHandler() );
             FileWriter writer = new FileWriter( fWelcome );
                        writer.write( "Welcome to Join'g.\n\nThis is just a text file example.\nAmong other things, you can modify it and save back to server.\n\nEnjoy and bye.");
                        writer.close();
@@ -498,8 +498,8 @@ public class FileManagerBean
         
         try
         {
-            FileDescriptor fdNasaPict = createEntry( sAccount, "/Images", "HomeByNASA.jpg", false );
-            java.io.File   fNasaPict  = NativeFileSystemTools.getFile( sAccount, fdNasaPict.getId() );
+            VFSFileBase  fbNasaPict = createEntry( sAccount, "/Images", "HomeByNASA.jpg", false );
+            java.io.File fNasaPict  = NativeFileSystemTools.getFile( sAccount, fbNasaPict.getHandler() );
             
             FileInputStream  fis = new FileInputStream( getClass().getResource( "homebynasa.jpg" ).getFile() );
             FileOutputStream fos = new FileOutputStream( fNasaPict );
@@ -522,7 +522,7 @@ public class FileManagerBean
     
     // Recursively moves files and directories from and to the trashcan
     // If the _file is found it can always been moved to and from trashcan.
-    private void _trashCan( String sAccount, int nFileId, boolean bInTrashCan, ArrayList<FileDescriptor> fileErrors )
+    private void _trashCan( String sAccount, int nFileId, boolean bInTrashCan, ArrayList<VFSFileBase> fileErrors )
             throws JoingServerVFSException
     {        
         try
@@ -540,7 +540,7 @@ public class FileManagerBean
                 
             if( _file.getIsDir() != 0 )   // Is a directory: get all _file's childs
             {
-                List<FileEntity> _fChilds = VFSTools.getChilds( em, sAccount, _file );
+                List<FileEntity> _fChilds = VFSTools.getChildren( em, sAccount, _file );
                 
                 for( FileEntity _f : _fChilds )
                     _trashCan( sAccount, _f.getIdFile(), bInTrashCan, fileErrors );
@@ -554,7 +554,7 @@ public class FileManagerBean
                 }
                 catch( Exception exc )
                 {
-                    fileErrors.add( (new FileDTOs( _file )).createFileDescriptor() );
+                    fileErrors.add( (new FileDTOs( _file )).createVFSFileBase() );
                 }
             }
         }
@@ -572,7 +572,7 @@ public class FileManagerBean
  
     // Recursively deletes a _file or a directory in DB (not in FS)
     // Note: This method returns an ArrayList instead of int[] to increase overall speed.
-    private void _delete( String sAccount, int nFileId,  ArrayList<FileDescriptor> fileErrors )
+    private void _delete( String sAccount, int nFileId,  ArrayList<VFSFileBase> fileErrors )
             throws JoingServerVFSException
     {
        try
@@ -593,7 +593,7 @@ public class FileManagerBean
 
             if( _file.getIsDir() != 0 )  // Is a directory: get all _file's childs
             {
-                List<FileEntity> _fChilds = VFSTools.getChilds( em, sAccount, _file );
+                List<FileEntity> _fChilds = VFSTools.getChildren( em, sAccount, _file );
                 
                 for( FileEntity _f : _fChilds )
                     _delete( sAccount, _f.getIdFile(), fileErrors );
@@ -608,11 +608,11 @@ public class FileManagerBean
                 {
                     em.remove( _file );
                     if( ! NativeFileSystemTools.deleteFile( sAccount, _file.getIdFile() ) )
-                        fileErrors.add( (new FileDTOs( _file )).createFileDescriptor() );
+                        fileErrors.add( (new FileDTOs( _file )).createVFSFileBase() );
                 }
                 catch( Exception exc )
                 {
-                    fileErrors.add( (new FileDTOs( _file )).createFileDescriptor() );
+                    fileErrors.add( (new FileDTOs( _file )).createVFSFileBase() );
                 }
             }
         }
@@ -629,11 +629,11 @@ public class FileManagerBean
     }
     
     // Creates a new entry: either a directory or a _file
-    private FileDescriptor createEntry( String sAccount, String sParent, String sChild, boolean bIsDir )
+    private VFSFileBase createEntry( String sAccount, String sParent, String sChild, boolean bIsDir )
             throws JoingServerVFSException
     {
-        FileDescriptor fileDesc  = null;
-        FileEntity     _feParent = VFSTools.path2File( em, sAccount, sParent );
+        VFSFileBase file      = null;
+        FileEntity  _feParent = VFSTools.path2File( em, sAccount, sParent );
 
         if( _feParent == null )
             throw new JoingServerVFSException( JoingServerVFSException.PARENT_DIR_NOT_EXISTS );
@@ -695,7 +695,7 @@ public class FileManagerBean
             if( ! bIsDir )  // Files exist in FILES table and in host FS, dirs only in FILES table
                 NativeFileSystemTools.createFile( sAccount, _file.getIdFile() );
 
-            fileDesc = (new FileDTOs( _file )).createFileDescriptor();
+            file = (new FileDTOs( _file )).createVFSFileBase();
         }
         catch( RuntimeException exc )
         {
@@ -713,20 +713,20 @@ public class FileManagerBean
             throw new JoingServerVFSException( JoingServerException.ACCESS_NFS, exc );
         }
         
-        return fileDesc;
+        return file    ;
     }
     
     // Creates all non existing directories in sPath
     // Returns last created dir
-    private FileDescriptor mkDirs( String sAccount, String sPath ) throws JoingServerVFSException
+    private VFSFileBase mkDirs( String sAccount, String sPath ) throws JoingServerVFSException
     {
-        FileDescriptor fd = null;
+        VFSFileBase file = null;
         
         if( sPath == null || sPath.length() == 0 || sPath.charAt( 0 ) != '/' )
                 throw new JoingServerVFSException( JoingServerVFSException.INVALID_PARENT );
         
         if( sPath.endsWith( "/" ) )
-            sPath = sPath.substring( 0, sPath.length() - 2 );   // Removes last '/'
+            sPath = sPath.substring( 0, sPath.length() - 1 );   // Removes last '/'
 
         String[] asDir = sPath.split( "/" );
 
@@ -741,10 +741,10 @@ public class FileManagerBean
 
             // If not exists, create it
             if( ! VFSTools.existsName( em, sAccount, sbFather.toString(), asDir[n] ) )
-                fd = createEntry( sAccount, sbFather.toString(), asDir[n], true );
+                file = createEntry( sAccount, sbFather.toString(), asDir[n], true );
         }
         
-        return fd;
+        return file;
     }
     
     // Recursively rename all passed directory childs 
@@ -756,7 +756,7 @@ public class FileManagerBean
         {
             if( fe.getIsDir() == 1 )  // Childs have to be renamed before parent changes its name.
             {
-                List<FileEntity> childs = VFSTools.getChilds( em, sAccount, fe );   
+                List<FileEntity> childs = VFSTools.getChildren( em, sAccount, fe );   
                 renamePath( sAccount, childs, sNameOld, sNameNew );
             }
             
@@ -782,11 +782,11 @@ public class FileManagerBean
     
     // This is just a security meassure against people trying to explode Join'g
     // (by sending random FileDescriptors)
-    private boolean isFileInUserSpace( String sAccount, FileDescriptor fd )
+    private boolean isFileInUserSpace( String sAccount, VFSFileBase fd )
     {
-        if( fd.getAccount() != null && fd.getAccount().equals( sAccount ) )   // Account got from SessionId and Account from FileDescriptor match.
+        if( fd.getAccount() != null && fd.getAccount().equals( sAccount ) )   // Account got from SessionId and Account from VFSFileBase match.
         {
-            FileEntity _fReal = em.find( FileEntity.class, fd.getId() );      // Get the real FileEntity from DB that corresponds to passed _file (by Id)
+            FileEntity _fReal = em.find( FileEntity.class, fd.getHandler() );      // Get the real FileEntity from DB that corresponds to passed _file (by Id)
         
             return _fReal.getAccount().equals( sAccount );  // Compare both accounts  (Note: sAccount was already compared 2 lines above)
         }

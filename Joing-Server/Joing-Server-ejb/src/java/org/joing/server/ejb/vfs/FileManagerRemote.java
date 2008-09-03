@@ -22,8 +22,8 @@ package org.joing.server.ejb.vfs;
 
 import java.io.InputStream;
 import java.util.List;
-import org.joing.common.dto.vfs.FileDescriptor;
 import javax.ejb.Remote;
+import org.joing.common.dto.vfs.VFSFileBase;
 import org.joing.common.exception.JoingServerVFSException;
 
 /**
@@ -38,20 +38,20 @@ import org.joing.common.exception.JoingServerVFSException;
 public interface FileManagerRemote
 {
     /** 
-     * Returns an instance of class <code>File</code> that represents the file 
-     * or directory denoted by passed path.
+     * Returns an instance of class <code>VFSFile</code> that represents the 
+     * file or folder denoted by passed path.
      *
      * @param sSessionId The session ID assigned to client at login
      * @param sFilePath Path starting at root ("/") and ending with the file or
      *        directory name.
      * @param bCreateIfNotExists Creates the file (and all necessary intermediate
      *        folders) if file does not exists.
-     * @return An instance of class <code>File</code> that represents the file 
+     * @return An instance of class <code>VFSFile</code> that represents the file 
      *         or directory denoted by passed path or <code>null</code> if the 
      *         path does not corresponds with an existing file or passed Session 
      *         ID is invalid.
      */
-    FileDescriptor getFileDescriptor( String sSessionId, String sFilePath, boolean bCreateIfNotExists );
+    VFSFileBase getFile( String sSessionId, String sFilePath, boolean bCreateIfNotExists );
     
     /**
      * Creates all directories represented by sPath.<br>
@@ -69,12 +69,12 @@ public interface FileManagerRemote
      *  
      * @param sSessionId The session ID assigned to client at login
      * @param sPath A secuence of direcotries starting from root ('/')
-     * @return An instance of FileDescriptor representing the last directory 
+     * @return An instance of <code>VFSFile</code> representing the last directory 
      *         created or <code>null</code> if something goes wrong.
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
-    FileDescriptor createDirectories( String sSessionId, String sPath )
+    VFSFileBase createDirectories( String sSessionId, String sPath )
             throws JoingServerVFSException;
             
     /**
@@ -99,13 +99,13 @@ public interface FileManagerRemote
      *             name will be generated.
      * @param bCreateParentDirs If true, all non existing directories in sParent
      *        will be created.
-     * @return An instance of FileDescriptor representing the last directory 
+     * @return An instance of <code>VFSFile</code> representing the last directory 
      *         created (sDir) or <code>null</code> if something goes wrong.
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      * @see #createDirectories(java.lang.String, java.lang.String) 
      */
-    FileDescriptor createDirectory( String sSessionId, String sPath, String sDir ) 
+    VFSFileBase createDirectory( String sSessionId, String sPath, String sDir ) 
             throws JoingServerVFSException;
     
     /**
@@ -127,12 +127,12 @@ public interface FileManagerRemote
      *                  is generated).
      * @param bCreateParentDirs If true, all non existing directories in sParent
      *        will be created.
-     * @return An instance of class <code>File</code> or <code>null</code> if
+     * @return An instance of class <code>VFSFile</code> or <code>null</code> if
      *         something goes wrong.
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
-    FileDescriptor createFile( String sSessionId, String sPath, String sFileName, boolean bCreateParentDirs )
+    VFSFileBase createFile( String sSessionId, String sPath, String sFileName, boolean bCreateParentDirs )
             throws JoingServerVFSException;
     
     /**
@@ -142,11 +142,11 @@ public interface FileManagerRemote
      * 
      * @param sSessionId The session ID assigned to client at login
      * @param nFileId An unique file identifier (normaly obtained by invoking:
-     *        <code>FileDescriptor::getId()</code> method).
+     *        <code>VFSFile::getHandler()</code> method).
      * @return An instance of <code>InputStream</code> class that access to file
      *         contents. Internally the file can be strored into native FS, a DB
-     *         or any other layer.
-     *         Returns <code>null</code> if something went wrong.
+     *         or any other layer. Returns <code>null</code> if something went 
+     *         wrong.
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      * @see #writeFile
@@ -164,36 +164,56 @@ public interface FileManagerRemote
      * 
      * @param sSessionId The session ID assigned to client at login.
      * @param nFileId An unique file identifier (normaly obtained by invoking:
-     *        <code>FileDescriptor::getId()</code> method).
+     *        <code>VFSFile::getHandler()</code> method).
      * @param reader An <code>InputStream</code> to read file contents.
-     * @return The updated (new file size, ...) <code>FileDescriptor<code> that 
+     * @return The updated (new file size, ...) <code>VFSFile<code> that 
                represents this text file.
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      * @see #readFile
      */
-    FileDescriptor writeFile( String sSessionId, int nFileId, InputStream reader )
+    VFSFileBase writeFile( String sSessionId, int nFileId, InputStream reader )
             throws JoingServerVFSException;
     
     /**
      * Updates <code>FileDescriptor</code> information (file propeties) 
      * including file name.
      *
-     * @param sSessionId The session ID assigned to client at login
-     * @param file  An instance of <code>FileDescriptor</code>.
-     * @return The recieved instance modified to reflect the updates (one
-     *         or more properties would or would not change during the updating 
+     * @param sSessionId The session ID assigned to client at login.
+     * @param file An instance of <code>VFSFile</code>.
+     * @return The recieved instance modified to reflect the updates (one or
+     *         more properties would or would not change during the updating 
      *         process), or <code>null</code> if something goes wrong.
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
-    FileDescriptor updateFileDescriptor(  String sSessionId, FileDescriptor fd  )
+    VFSFileBase updateFile( String sSessionId, VFSFileBase file )
             throws JoingServerVFSException;
     
-    List<FileDescriptor> copy( String sSessionId, int nFileId, int nToDirId )
+    /**
+     * Copy (duplicate) files and folders from source to destination.
+     * 
+     * @param sSessionId sSessionId The session ID assigned to client at login.
+     * @param nFileId An unique file (or folder) identifier representing the
+     *        source.
+     * @param nToDirId An unique folder identifier representing the destination.
+     * @return // NEXT: documentar
+     * @throws org.joing.common.exception.JoingServerVFSException
+     */
+    List<VFSFileBase> copy( String sSessionId, int nFileId, int nToDirId )
             throws JoingServerVFSException;
     
-    List<FileDescriptor> move( String sSessionId, int nFileId, int nToDirId )
+    /**
+     * Moves files and folders from source to destination.
+     * 
+     * @param sSessionId sSessionId The session ID assigned to client at login.
+     * @param nFileId An unique file (or folder) identifier representing the
+     *        source.
+     * @param nToDirId An unique folder identifier representing the destination.
+     * @return // NEXT: documentar
+     * @throws org.joing.common.exception.JoingServerVFSException
+     */
+    List<VFSFileBase> move( String sSessionId, int nFileId, int nToDirId )
             throws JoingServerVFSException;
     
     /**
@@ -210,17 +230,18 @@ public interface FileManagerRemote
      *       ACCESSED flag, so this method does not do it neither.
      *
      * @param sSessionId The session ID assigned to client at login.
-     * @param anFileId An array with files ID (the result of invokink 
-     *        <code>File.getId()</code>)
+     * @param anFileId An array with files ID (the result of invoking
+     *        <code>VFSFile.getHandler()</code>) representing files (or folders) 
+     *        to send to trashcan.
      * @param bInTrashCan <code>true</code> to place the file (or dir) in
      *        trashcan and <code>false</code> to move it in its original place.
-     * @return A list of <code>FileDescriptor</code> instances representing
+     * @return A list of <code>VFSFile</code> instances representing
      *         those files and directories that failed when moving them to or 
      *         from trashcan.
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
-    List<FileDescriptor> trashcan(String sSessionId, int[] anFileId, boolean bInTrashCan )
+    List<VFSFileBase> toTrashcan( String sSessionId, int[] anFileId, boolean bInTrashCan )
             throws JoingServerVFSException;
     
     /**
@@ -237,16 +258,18 @@ public interface FileManagerRemote
      *       ACCESSED flag, so this method does not do it neither.
      * 
      * @param sSessionId The session ID assigned to client at login.
-     * @param nFileId The result of invokink <code>File.getId()</code>
+     * @param nFileId A file ID (the result of invoking
+     *        <code>VFSFile.getHandler()</code>) representing files (or folders) 
+     *        to send to trashcan.
      * @param bInTrashCan <code>true</code> to place the file (or dir) in
      *        trashcan and <code>false</code> to move it in its original place.
-     * @return A list of <code>FileDescriptor</code> instances representing
+     * @return A list of <code>VFSFile</code> instances representing
      *         those files and directories that failed when moving them to or 
      *         from trashcan.
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
-    List<FileDescriptor> trashcan( String sSessionId, int nFileId , boolean bInTrashCan )
+    List<VFSFileBase> toTrashcan( String sSessionId, int nFileId , boolean bInTrashCan )
             throws JoingServerVFSException;
     
     /**
@@ -254,12 +277,12 @@ public interface FileManagerRemote
      *
      * @param sSessionId The session ID assigned to client at login
      * @param anFileId The result of invokink <code>File.getId()</code>
-     * @return A list of <code>FileDescriptor</code> instances representing
+     * @return A list of <code>VFSFile</code> instances representing
      *         those files and directories that failed to be deleted.
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
-    List<FileDescriptor> delete( String sSessionId, int[] anFileId )
+    List<VFSFileBase> delete( String sSessionId, int[] anFileId )
             throws JoingServerVFSException;
 
     /**
@@ -267,11 +290,11 @@ public interface FileManagerRemote
      *
      * @param sSessionId The session ID assigned to client at login
      * @param nFileId The result of invokink <code>File.getId()</code>
-     * @return A list of <code>FileDescriptor</code> instances representing
+     * @return A list of <code>VFSFile</code> instances representing
      *         those files and directories that failed to be deleted.
      * @throws JoingServerVFSException if any prerequisite was not satisfied or 
      *         a wrapped third-party exception if something went wrong.
      */
-    List<FileDescriptor> delete( String sSessionId, int nFileId )
+    List<VFSFileBase> delete( String sSessionId, int nFileId )
             throws JoingServerVFSException;
 }

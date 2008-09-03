@@ -21,7 +21,6 @@
 package org.joing.server.ejb.user;
 
 import org.joing.server.ejb.Constant;
-import org.joing.server.ejb.app.ApplicationEntity;
 import org.joing.common.dto.user.Local;
 import org.joing.common.dto.user.User;
 import org.joing.common.exception.JoingServerException;
@@ -41,6 +40,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import org.joing.server.ejb.app.ApplicationManagerLocal;
 import org.joing.server.ejb.session.SessionManagerLocal;
 
 /**
@@ -56,11 +56,6 @@ public class UserManagerBean
 {
     private static final long serialVersionUID = 1L;    // TODO: cambiarlo usando: serialver -show
     
-    /** A regular expression that can be used to check if an account String is valid or not */
-    public static final String sREG_EXP_VALID_ACCOUNT  = "[a-z][a-z1-9\\.\\_]{3,31}";
-    /** A regular expression that can be used to check if a password String is valid or not */
-    public static final String sREG_EXP_VALID_PASSWORD = ".{6,32}";
-    
     @PersistenceContext
     private EntityManager em;
     
@@ -69,6 +64,9 @@ public class UserManagerBean
  
     @EJB
     private FileManagerLocal fileManagerBean;
+    
+    @EJB
+    private ApplicationManagerLocal appManagerBean;
     
     //------------------------------------------------------------------------//
     // REMOTE INTERFACE
@@ -159,16 +157,6 @@ public class UserManagerBean
         return locals;
     }
     
-    public boolean areLinked( String sSessionId, String sPassword )
-    {
-        User       user  = getUser( sSessionId );
-        UserEntity _user = em.find( UserEntity.class, user.getAccount() );
-        
-        // TODO: implementar el resto: servlet y la parte del cliente
-        
-        return (sPassword != null && sPassword.equals( _user.getPassword() ));
-    }
-    
     //------------------------------------------------------------------------//
     // LOCAL INTERFACE
     
@@ -178,11 +166,10 @@ public class UserManagerBean
            throws JoingServerUserException
     {
         User user = null;
-        sAccount.matches("[a-z][a-z1-9\\.\\_]{3,31}");
-        if( ! isValidAccount( sAccount ) )
+        if( ! sAccount.matches( Constant.sREG_EXP_VALID_ACCOUNT ) )
             throw new JoingServerUserException( JoingServerUserException.INVALID_ACCOUNT );
         
-        if( ! isValidPassword( sPassword ) )
+        if( ! sPassword.matches( Constant.sREG_EXP_VALID_ACCOUNT ) )
             throw new JoingServerUserException( JoingServerUserException.INVALID_PASSWORD );
         
         sAccount = sessionManagerBean.composeAccount( sAccount );
@@ -202,35 +189,35 @@ public class UserManagerBean
             // Creates user in USERS DB table
             UserEntity _user = new UserEntity();
                        _user.setAccount( sAccount );
+                       _user.setPassword( sPassword );
                        _user.setEmail( sEmail );
                        _user.setFirstName( sFirstName );
+                       _user.setSecondName( sSecondName );
                        _user.setIsMale( (short) (bIsMale ? 1 : 0) );
                        _user.setIdLocale( _local );
-                       _user.setPassword( sPassword );
-                       _user.setSecondName( sSecondName );
                        _user.setQuota( nQuota );
 
             em.persist( _user );
 
             // Creates root ("/") in FILES DB table
-            em.persist( fileManagerBean.createRootEntity( _user.getAccount() ) );
+            fileManagerBean.createRootFor( sAccount );
             
             // Create home directory for user
-            NativeFileSystemTools.createAccount( _user.getAccount() );
+            NativeFileSystemTools.createAccount( sAccount );
             
+            // Even if code after this line can not be executed, the user has 
+            // accomplished all pre-requisites to exists: following code will
+            // make things nicer, but is not mandatory.
             user = UserDTOs.createUser( _user );
             
             // Apps Welcome Pack: Basic (free) apps that are available for all users
-            // TODO: Para salr del paso las añado todas, pero habría que leer de algún
-            //       sitio cuáles son las básicas y añadir sólo esas
-            Query                   query   = em.createQuery( "SELECT a FROM ApplicationEntity a" );
-            List<ApplicationEntity> lstApps = query.getResultList();
+            appManagerBean.attachInitialAppsTo( sAccount );
             
-            for( ApplicationEntity app : lstApps )
-                em.persist( new UsersWithAppsEntity( sAccount, app.getIdApplication() ) );
+            // Creates initial directory and its files
+            fileManagerBean.createInitialFilesFor( sAccount );
             
-            // Creates "Examples" directory and its files
-            fileManagerBean.createInitialFiles( sAccount );
+            // Save all changes
+            em.flush();
         }
         catch( RuntimeException exc )
         {
@@ -270,43 +257,6 @@ public class UserManagerBean
             Constant.getLogger().throwing( getClass().getName(), "removeUser(...)", exc );
             throw new JoingServerUserException( JoingServerException.ACCESS_DB, exc );
         }
-    }
-    
-    // This method checks only that the chars in passed account name are valid.
-    // And SessionManagerBean.isAccountAvailable( sAccount ) checks that the 
-    // account is available (including System.account()).
-    public boolean isValidAccount( String s )
-    {
-        return (s != null & s.matches( sREG_EXP_VALID_ACCOUNT ));
-//        boolean bValid = false;
-//        
-//        if( (s != null)                                                  && 
-//            (s.length() >= JoingServerUserException.nMIN_ACCOUNT_LENGTH) && 
-//            (s.length() <= JoingServerUserException.nMAX_ACCOUNT_LENGTH) )
-//        {
-//            char[] ac = s.toCharArray();  // Unicode can be converted to char (both are 16 bits)
-//            
-//            for( int n = 0; n < ac.length; n++ )
-//            {
-//                bValid = (ac[n] >= 48 && ac[n] <=  57) ||   // Is number
-//                         (ac[n] >= 97 && ac[n] <= 122) ||   // Is LowerCase
-//                          ac[n] == '_'                 ||
-//                          ac[n] == '.';
-//                
-//                if( ! bValid )
-//                    break;
-//            }
-//        }
-//        
-//        return bValid;
-    }
-    
-    public boolean isValidPassword( String s )
-    {
-        return (s != null & s.matches( sREG_EXP_VALID_PASSWORD ));
-//        return (s != null                                                   && 
-//                s.length() >= JoingServerUserException.nMIN_PASSWORD_LENGTH && 
-//                s.length() <= JoingServerUserException.nMAX_PASSWORD_LENGTH );
     }
     
     //------------------------------------------------------------------------//

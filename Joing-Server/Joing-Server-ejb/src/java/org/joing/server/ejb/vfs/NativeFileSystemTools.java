@@ -93,13 +93,31 @@ public class NativeFileSystemTools
     }
     
     /**
+     * Returns a File representing the JAR application file denoted by passed
+     * arguments.
      * 
-     * 
-     * @param sAppName Full app name including path (if any) from Apps base dir.
+     * @param sExec  Application name
+     * @param sExtraPath  Extra path from App base dir (if any, can be null)
+     * @return A File representing the JAR application file denoted by passed
+     *         arguments.
      */
-    public static synchronized java.io.File getApplication( String sAppName )
+    public static synchronized java.io.File getApplication( String sExec, String sExtraPath )
     {
-        return new java.io.File( Constant.getAppDir(), sAppName );
+        if( sExtraPath != null && sExtraPath.length() > 0 )
+        {
+            sExtraPath = sExtraPath.trim();
+            
+            // Removes leading and trailing "/"
+            if( sExtraPath.charAt( 0 ) == '/' )
+                sExtraPath = sExtraPath.substring( 1 );
+            
+            if( sExtraPath.charAt( sExtraPath.length() - 1 ) == '/' )
+                sExtraPath = sExtraPath.substring( 0, sExtraPath.length() - 1 );
+            
+            sExec = sExtraPath +'/'+ sExec;
+        }
+        
+        return new java.io.File( Constant.getAppDir(), sExec );
     }
     
     /**
