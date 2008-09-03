@@ -27,7 +27,7 @@ import java.beans.PropertyChangeListener;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import org.joing.common.desktopAPI.workarea.Wallpaper;
+import org.joing.kernel.api.desktop.workarea.Wallpaper;
 
 /**
  * A Swing component (JPanel in this case) that uses the Wallpaper interface

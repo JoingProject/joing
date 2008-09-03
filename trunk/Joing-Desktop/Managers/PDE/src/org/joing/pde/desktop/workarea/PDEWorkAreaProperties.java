@@ -29,7 +29,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
-import org.joing.common.desktopAPI.workarea.WorkArea;
+import org.joing.kernel.api.desktop.workarea.WorkArea;
 
 /**
  *

@@ -26,11 +26,11 @@ import java.awt.Image;
 import java.beans.PropertyVetoException;
 import javax.swing.ImageIcon;
 import javax.swing.JInternalFrame;
-import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.StandardImage;
-import org.joing.common.desktopAPI.pane.DeskWindow;
-import org.joing.common.desktopAPI.workarea.WorkArea;
-import org.joing.swingtools.JoingSwingUtilities;
+import org.joing.kernel.api.desktop.DeskComponent;
+import org.joing.kernel.api.desktop.StandardImage;
+import org.joing.kernel.api.desktop.pane.DeskWindow;
+import org.joing.kernel.api.desktop.workarea.WorkArea;
+import org.joing.kernel.swingtools.JoingSwingUtilities;
 
 /**
  *
@@ -44,7 +44,7 @@ public class PDEWindow extends JInternalFrame implements DeskWindow
         super( sTitle, bResizable, bClosable, bMaximizable, bMinimizable );
         
         // As this class is for PDE internal use only, the icon will always be PDE
-        setIcon( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.DESKTOP ) );
+        setIcon( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.DESKTOP ) );
     }
     
     //------------------------------------------------------------------------//

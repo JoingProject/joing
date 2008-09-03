@@ -30,7 +30,7 @@ import javax.swing.JProgressBar;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import org.joing.common.desktopAPI.StandardImage;
+import org.joing.kernel.api.desktop.StandardImage;
 import org.joing.pde.desktop.container.PDECanvas;
 
 /**
@@ -67,7 +67,7 @@ class NotificationPanel extends PDECanvas
         }
         
         if( icon == null )
-            icon = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.NOTIFICATION );
+            icon = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.NOTIFICATION );
         
         label.setIcon( new ImageIcon( icon ) );
         

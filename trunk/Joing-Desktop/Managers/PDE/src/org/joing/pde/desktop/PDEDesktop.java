@@ -37,11 +37,11 @@ import javax.swing.SwingWorker;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import org.joing.common.desktopAPI.desktop.Desktop;
-import org.joing.common.desktopAPI.desktop.DesktopListener;
-import org.joing.common.desktopAPI.workarea.WorkArea;
+import org.joing.kernel.api.desktop.desktop.Desktop;
+import org.joing.kernel.api.desktop.desktop.DesktopListener;
+import org.joing.kernel.api.desktop.workarea.WorkArea;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
-import org.joing.common.desktopAPI.taskbar.TaskBar;
+import org.joing.kernel.api.desktop.taskbar.TaskBar;
 import org.joing.pde.desktop.container.PDECanvas;
 import org.joing.pde.desktop.taskbar.PDETaskBar;
 import org.joing.pde.swing.EventListenerList;
@@ -85,6 +85,7 @@ public class PDEDesktop extends JPanel implements Desktop
     {
         SwingWorker sw = new SwingWorker()
         {
+            @Override
             protected Object doInBackground() throws Exception
             {
                 // Do not move next lines !
@@ -94,11 +95,15 @@ public class PDEDesktop extends JPanel implements Desktop
                     createDefaultDesktop();
 //                else
 //                    processSavedStatus( ftSavedStatus.getContent() );
-    
-                setActiveWorkArea( getWorkAreas().get( 0 ) );
                 
                 return null;
             }
+            
+            @Override
+            protected void done()
+            {
+                setActiveWorkArea( getWorkAreas().get( 0 ) );
+            }   
         };
         sw.execute();
     }
@@ -114,8 +119,6 @@ public class PDEDesktop extends JPanel implements Desktop
         
         for( int n = 0; n < 3; n++ )
             addWorkArea( new PDEWorkArea() );
-        
-        Just4Testing.createTestComponents();
     }
     
     private void processSavedStatus( BufferedReader in )

@@ -36,19 +36,20 @@ import javax.swing.JPopupMenu;
 import javax.swing.MenuElement;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import org.joing.common.desktopAPI.DesktopManager;
-import org.joing.common.desktopAPI.StandardImage;
-import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
-import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncherListener;
-import org.joing.common.desktopAPI.workarea.WorkArea;
+import javax.swing.border.LineBorder;
+import org.joing.kernel.api.desktop.DesktopManager;
+import org.joing.kernel.api.desktop.StandardImage;
+import org.joing.kernel.api.desktop.deskwidget.deskLauncher.DeskLauncher;
+import org.joing.kernel.api.desktop.deskwidget.deskLauncher.DeskLauncherListener;
+import org.joing.kernel.api.desktop.workarea.WorkArea;
 import org.joing.pde.desktop.workarea.PDEWorkArea;
 import org.joing.pde.desktop.deskwidget.PDEDeskWidget;
-import org.joing.swingtools.JoingSwingUtilities;
+import org.joing.kernel.swingtools.JoingSwingUtilities;
 import org.joing.pde.media.PDEColorSchema;
 import org.joing.pde.swing.EventListenerList;
-import org.joing.swingtools.ImageHighlightFilter;
-import org.joing.swingtools.JRoundLabel;
-import org.joing.swingtools.JRoundPanel;
+import org.joing.kernel.swingtools.ImageHighlightFilter;
+import org.joing.kernel.swingtools.JRoundLabel;
+import org.joing.kernel.swingtools.JRoundPanel;
 
 /**
  * This is the base class for all DeskLaunchers: Applications and Folders.
@@ -253,7 +254,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     //       capturarlo el container (WorkArea)
     public void delete()
     {
-        DesktopManager dm = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+        DesktopManager dm = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
         
         if( dm.getRuntime().showYesNoDialog( "Delete launcher", 
                                              "Are you sure you want to delete it?\n"+
@@ -271,7 +272,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     
     public void toTrashcan()
     {
-        DesktopManager dm = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+        DesktopManager dm = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
         
         if( dm.getRuntime().showYesNoDialog( "Send launcher to trashcan", 
                                              "Are you sure you want to send it to trashcan?" ) )
@@ -290,7 +291,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
     {
         PDEDeskLauncherPropertiesPanel panel = new PDEDeskLauncherPropertiesPanel( this );
         
-        if( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showAcceptCancelDialog( "Launcher Properties", panel ) )
+        if( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showAcceptCancelDialog( "Launcher Properties", panel ) )
             panel.createLauncher();
     }
     
@@ -329,7 +330,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
         pnlAll.setBackground( PDEColorSchema.getInstance().getDeskLauncherTextBackground() );
         pnlAll.setTransparency( 85 );
         pnlAll.setLayout( new BorderLayout( 0,2 ) );
-        pnlAll.setBorder( new EmptyBorder( 5,5,5,5 ) );
+        pnlAll.setBorder( new EmptyBorder( 7,7,7,7 ) );
         pnlAll.add( icon, BorderLayout.CENTER );
         pnlAll.add( text, BorderLayout.SOUTH  );
         
@@ -379,7 +380,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
             this.image = image;
             
             if( image == null )
-                image = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.LAUNCHER );
+                image = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.LAUNCHER );
             
             imgIcon = new ImageIcon( image );
 
@@ -451,7 +452,7 @@ public class PDEDeskLauncher extends PDEDeskWidget implements DeskLauncher
                       item.addActionListener( this );
                       
             if( icon != null )
-                item.setIcon( new ImageIcon( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( icon, 16, 16 ) ) );
+                item.setIcon( new ImageIcon( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( icon, 16, 16 ) ) );
             
             return item;
         }

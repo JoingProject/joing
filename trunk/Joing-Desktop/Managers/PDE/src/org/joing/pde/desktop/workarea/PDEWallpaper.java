@@ -24,7 +24,7 @@ import java.awt.Image;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import javax.swing.ImageIcon;
-import org.joing.common.desktopAPI.workarea.Wallpaper;
+import org.joing.kernel.api.desktop.workarea.Wallpaper;
 
 /**
  * PDE Implementation of Wallpaper interface.

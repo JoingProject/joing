@@ -28,11 +28,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import org.joing.common.desktopAPI.StandardImage;
-import org.joing.common.desktopAPI.workarea.WorkArea;
+import org.joing.kernel.api.desktop.StandardImage;
+import org.joing.kernel.api.desktop.workarea.WorkArea;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncherPropertiesPanel;
-import org.joing.swingtools.JoingSwingUtilities;
+import org.joing.kernel.swingtools.JoingSwingUtilities;
 import org.joing.pde.swing.FrameAcceptCancel;
 
 /**
@@ -58,8 +58,8 @@ class PDEWorkAreaPopupMenu extends JPopupMenu implements ActionListener
         addSeparator();
         add( createMenuItem( "Preferences"    , StandardImage.PROPERTIES, "PROPERTIES"   ) );
         
-        List<WorkArea> lstWorkAreas = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getWorkAreas();
-        WorkArea       waActive     = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
+        List<WorkArea> lstWorkAreas = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getWorkAreas();
+        WorkArea       waActive     = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
         
         if( lstWorkAreas.size() > 1 )
         {
@@ -89,7 +89,7 @@ class PDEWorkAreaPopupMenu extends JPopupMenu implements ActionListener
         ImageIcon icon = null;
         
         if( image != null )
-            icon = new ImageIcon( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( image, 16, 16 ) );
+            icon = new ImageIcon( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( image, 16, 16 ) );
         else
             icon = JoingSwingUtilities.getIcon( this, "images/grid", 16, 16 );
                   
@@ -113,26 +113,26 @@ class PDEWorkAreaPopupMenu extends JPopupMenu implements ActionListener
     private void switchToWorkArea( JMenuItem item )
     {
         WorkArea waTarget = (WorkArea) item.getClientProperty( "WORK_AREA" );
-        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().setActiveWorkArea( waTarget ); 
+        org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().setActiveWorkArea( waTarget ); 
     }
     
     private void createLauncher( boolean bDir )
     {
         PDEDeskLauncherPropertiesPanel panel = new PDEDeskLauncherPropertiesPanel( bDir );
         
-        if( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showAcceptCancelDialog( "Create new Launcher", panel ) )
+        if( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showAcceptCancelDialog( "Create new Launcher", panel ) )
         {
             PDEDeskLauncher launcher = panel.createLauncher();
                             launcher.setLocation( ptWhere );
                             
-            org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( launcher );
+            org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( launcher );
         }
     }
     
     private void toggleAlign()
     {
         // TODO: hacerlo
-        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
+        org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
     }
     
     private void editProperties()
@@ -144,11 +144,11 @@ class PDEWorkAreaPopupMenu extends JPopupMenu implements ActionListener
             {
                 wap.applyChanges();
                 super.onAccept();
-                org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
+                org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().showMessageDialog( null, "Option not yet implemented" );
             }
         };
         
         frame.setResizable( false );
-        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
+        org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( frame );
     }
 }
