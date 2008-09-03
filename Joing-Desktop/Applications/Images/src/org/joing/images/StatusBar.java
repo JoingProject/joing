@@ -46,25 +46,25 @@ class StatusBar extends Box
         Dimension dimScreen = Toolkit.getDefaultToolkit().getScreenSize();
         Font      font      = new Font( "Dialog", Font.PLAIN, 10 );
 
-        lblHelp = new JLabel( " ", SwingConstants.LEADING );
+        lblHelp = new JLabel( " ", SwingConstants.CENTER );
         lblHelp.setFont( font );
         lblHelp.setPreferredSize( new Dimension( (int) (0.6 * dimScreen.width), 22 ) );
         lblHelp.setBorder( BorderFactory.createLoweredBevelBorder() );
         add( lblHelp, null );
 
-        lblSize = new JLabel( " ", SwingConstants.LEADING );
+        lblSize = new JLabel( " ", SwingConstants.CENTER );
         lblSize.setFont( font );
         lblSize.setPreferredSize( new Dimension( (int) (0.2 * dimScreen.width), 22 ) );
         lblSize.setBorder( BorderFactory.createLoweredBevelBorder() );
         add( lblSize, null );
         
-        lblScale = new JLabel( " ", SwingConstants.LEADING );
+        lblScale = new JLabel( " ", SwingConstants.CENTER );
         lblScale.setFont( font );
         lblScale.setPreferredSize( new Dimension( (int) (0.1 * dimScreen.width), 22 ) );
         lblScale.setBorder( BorderFactory.createLoweredBevelBorder() );
         add( lblScale, null );
         
-        lblRotation = new JLabel( " ", SwingConstants.LEADING );
+        lblRotation = new JLabel( " ", SwingConstants.CENTER );
         lblRotation.setFont( font );
         lblRotation.setPreferredSize( new Dimension( (int) (0.1 * dimScreen.width), 22 ) );
         lblRotation.setBorder( BorderFactory.createLoweredBevelBorder() );

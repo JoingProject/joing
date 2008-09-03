@@ -33,23 +33,23 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JViewport;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.DesktopManager;
-import org.joing.common.desktopAPI.pane.DeskDialog;
-import org.joing.common.desktopAPI.pane.DeskFrame;
-import org.joing.common.dto.vfs.VFSFile4IO;
-import org.joing.runtime.swap.JoingFileChooser;
-import org.joing.runtime.swap.JoingFileChooserPreviewImage;
-import org.joing.runtime.vfs.VFSFile;
-import org.joing.swingtools.JoingPanel;
+import org.joing.kernel.api.desktop.DeskComponent;
+import org.joing.kernel.api.desktop.DesktopManager;
+import org.joing.kernel.api.desktop.pane.DeskDialog;
+import org.joing.kernel.api.desktop.pane.DeskFrame;
+import org.joing.kernel.swingtools.filesystem.JoingFileChooser;
+import org.joing.kernel.swingtools.filesystem.JoingFileChooserPreviewImage;
+import org.joing.kernel.runtime.vfs.JoingFileSystemView;
+import org.joing.kernel.runtime.vfs.VFSFile;
+import org.joing.kernel.swingtools.JoingPanel;
 
 /**
  * A simple image viewer.
@@ -92,16 +92,22 @@ public class Images extends JPanel implements DeskComponent
     
     public void showInFrame()
     {
-        DesktopManager dm   = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
-        ImageIcon      icon = new ImageIcon( getClass().getResource( "images/images.png" ) );
+        final DesktopManager dm   = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+        final ImageIcon      icon = new ImageIcon( getClass().getResource( "images/images.png" ) );
         
-        // Show this panel in a frame created by DesktopManager Runtime.
-        DeskFrame frame = dm.getRuntime().createFrame();
-                  frame.setTitle( "Images" );
-                  frame.setIcon( icon.getImage() );
-                  frame.add( (DeskComponent) this );
+        SwingUtilities.invokeLater( new Runnable()
+        {
+            public void run()
+            {
+                // Show this panel in a frame created by DesktopManager Runtime.
+                DeskFrame frame = dm.getRuntime().createFrame();
+                          frame.setTitle( "Images" );
+                          frame.setIcon( icon.getImage() );
+                          frame.add( (DeskComponent) Images.this );
 
-        dm.getDesktop().getActiveWorkArea().add( frame );
+                dm.getDesktop().getActiveWorkArea().add( frame );
+            }
+        } );
     }
     
     //------------------------------------------------------------------------//
@@ -142,12 +148,14 @@ public class Images extends JPanel implements DeskComponent
                     abImage = abTemp;
                 }
             }
-            
-            is.close();
         }
         catch( IOException exc )
         {
             abImage = null;
+        }
+        finally
+        {
+            try{ is.close(); } catch( IOException exc ) { }
         }
         
         if( abImage != null )
@@ -173,10 +181,44 @@ public class Images extends JPanel implements DeskComponent
         toolbar.updateButtons();
     }
     
+    public void addImage( String sFileFullName )
+    {
+        if( sFileFullName.trim().length() > 0 )
+            addImage( JoingFileSystemView.getFileSystemView().createFileObject( sFileFullName ) );
+    }
+    
+    public void addImage( File fImage )
+    {
+        InputStream is = null;
+        
+        if( fImage.exists() )
+        {
+            try
+            {
+                if( fImage instanceof VFSFile )
+                {   
+                    is = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getBridge().
+                            getFileBridge().getFileReaderAndWriter( (VFSFile) fImage ).getByteReader();
+                }
+                else
+                {
+                    is = new FileInputStream( fImage );
+                }
+                
+                addImage( fImage.getName(), is );
+            }
+            catch( IOException exc )
+            {
+                org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().
+                        getRuntime().showException( exc, "Error opening file" );
+            }
+        }
+    }
+    
     public WImage getSelectedImage()
     {
-        WImage image = null;
-        JScrollPane   sp    = (JScrollPane) tabs.getSelectedComponent();
+        WImage      image = null;
+        JScrollPane sp    = (JScrollPane) tabs.getSelectedComponent();
         
         if( sp != null )
             image = (WImage) sp.getViewport().getView();
@@ -204,94 +246,75 @@ public class Images extends JPanel implements DeskComponent
         this.status.setHelp( comp );
     }
     
+    //------------------------------------------------------------------------//
     // Available actions
     
-    public void Open()
+    public void open()
     {
         JoingFileChooser jfc = new JoingFileChooser();
                          jfc.setAcceptAllFileFilterUsed( false );
                          jfc.addChoosableFileFilter( JoingFileChooserPreviewImage.getFilter() );
-                                 
+        
         if( jfc.showDialog( this ) == JoingFileChooser.APPROVE_OPTION )
         {
-            File fImage = jfc.getSelectedFile();
-            
-            try
-            {
-                if( fImage instanceof VFSFile )
-                {
-                    VFSFile4IO vfs4IO = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().
-                            getFileBridge().getFile( ((VFSFile) fImage).getFileDescriptor() );
-
-                    addImage( fImage.getName(), vfs4IO.getByteReader() );
-                }
-                else
-                {
-                    addImage( fImage.getName(), new FileInputStream( fImage ) );
-                }
-            }
-            catch( IOException exc )
-            {
-                org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().
-                        getRuntime().showException( exc, "Error opening file" );
-            }
-            
-            Images.this.toolbar.updateButtons();
+            for( File file : jfc.getSelectedFiles() )
+                addImage( file );
         }
     }
     
-    public void Print()    
+    public void print()    
     {
-        JOptionPane.showMessageDialog( this, "Option not yet implemented." );
+        org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().
+                getRuntime().showMessageDialog( null, "Option not yet implemented." );
     }
     
-    public void RotateLeft()    
+    public void rotateLeft()    
     {
         getSelectedImage().incrRotation( -90 );
         Images.this.status.setRotation( getSelectedImage() );
     }
     
-    public void RotateRight()    
+    public void rotateRight()    
     {
         getSelectedImage().incrRotation( 90 );
         Images.this.status.setRotation( getSelectedImage() );
     }
     
-    public void ZoomIn()    
+    public void zoomIn()    
     {
         getSelectedImage().incrZoom( 10 );
         Images.this.toolbar.updateButtons();
         Images.this.status.setScale( getSelectedImage() );
     }
     
-    public void ZoomOut()    
+    public void zoomOut()    
     {
         getSelectedImage().incrZoom( -10 );
         Images.this.toolbar.updateButtons();
         Images.this.status.setScale( getSelectedImage() );
     }
     
-    public void Zoom100()    
+    public void zoom100()    
     {
         getSelectedImage().incrZoom( 0 );   // 0 == original size 
         Images.this.toolbar.updateButtons();
         Images.this.status.setScale( getSelectedImage() );
     }
     
-    public void ZoomStretch()    
+    public void zoomStretch()    
     {
         getSelectedImage().setStretched( ! getSelectedImage().isStretched() );
         Images.this.toolbar.updateButtons();
         Images.this.status.setScale( getSelectedImage() );
     }
     
-    public void Close()    
+    public void close()    
     {
         closeSelectedTab();
         Images.this.toolbar.updateButtons();
     }
     
-    public void About()    
+    public void about()    
     {
         JLabel        label  = new JLabel( "<html><body><b><div align=\"center\">Images</b><p>"+
                                            "An images viewer application.<p>"+
@@ -303,23 +326,40 @@ public class Images extends JPanel implements DeskComponent
                       panel.setLayout( new BorderLayout( 10,10 ) );
                       panel.add( new JLabel( icon ), BorderLayout.WEST );
                       panel.add( label, BorderLayout.CENTER );
-                      panel.setBorder( new EmptyBorder( 7,7,7,7 ) );
+                      panel.setBorder( new EmptyBorder( 9,9,9,9 ) );
         
-        DeskDialog dialog = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().createDialog();
+        DeskDialog dialog = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().createDialog();
                    dialog.setTitle( "About Notes" );
                    dialog.add( (DeskComponent) panel );
                    
         if( icon != null )
             dialog.setIcon( icon.getImage() );
 
-        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
+        org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
     }
     
     //------------------------------------------------------------------------//
     // Application entering point
     
-    public static void main( String[] asArg ) throws IOException
+    public static void main( String[] asArg )
     {
-        (new Images()).showInFrame();
+//        //".*"|\s+
+//        
+//        String[] cadenas= "/home/fco/fichero.txt \"/home/fco/mis docs\" /home/fco/otro_fichero.txt /home/fco/otro_mas".split( "\".*\"|\\s+");
+//        
+//        for( String s : cadenas )
+//            System.out.println( s );
+//        
+//        System.exit(0);
+        
+        
+        Images images = new Images();
+               images.showInFrame();
+        
+        if( asArg.length > 0 )
+        {
+            for( String sFile : asArg )
+                images.addImage( sFile );
+        }
     }
 }
