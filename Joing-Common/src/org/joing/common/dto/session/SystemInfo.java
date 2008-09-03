@@ -25,7 +25,8 @@ import java.io.Serializable;
 import java.net.URL;
 
 /**
- *
+ * Information about Join'g Server which user (client side) is connected to.
+ * 
  * @author Francisco Morero Peyrona
  */
 public class SystemInfo implements Serializable
