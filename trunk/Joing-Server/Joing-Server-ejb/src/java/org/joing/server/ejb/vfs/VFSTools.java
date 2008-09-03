@@ -61,8 +61,7 @@ class VFSTools
               
         try
         {
-            FileEntity _file = (FileEntity) qryFindFile.getSingleResult();
-            bExists = (_file != null);
+            bExists = (qryFindFile.getSingleResult() != null);
         }
         catch( NoResultException exc )
         {
@@ -89,8 +88,7 @@ class VFSTools
            throws JoingServerVFSException
     {
         FileEntity _file = null;
-        String     sPath = null;
-        String     sName = null;
+        Query      qryFindFile;
         
         if( sFullName == null )
             throw new NullPointerException( "File name can't be null." );
@@ -105,11 +103,18 @@ class VFSTools
         
         if( sFullName.equals( sROOT ) )
         {
-            sPath = "";
-            sName = sFullName;
+            qryFindFile = em.createQuery( "SELECT f FROM FileEntity f"  +
+                                          " WHERE f.account  = :account"+
+                                          "   AND f.fileName = :name"   +
+                                          "   AND f.filePath IS NULL" );
+            qryFindFile.setParameter( "account", sAccount  );
+            qryFindFile.setParameter( "name"   , sFullName );
         }
         else
         {
+            String sPath = null;
+            String sName = null;
+            
             int nIndex = sFullName.lastIndexOf( '/' ) + 1;
 
             if( nIndex > 0 && nIndex < sFullName.length() )
@@ -117,38 +122,38 @@ class VFSTools
                 sPath = sFullName.substring( 0, nIndex );
                 sName = sFullName.substring( nIndex );
             }
-        }
         
-        // If sPath != '/' and ends with '/' then removes last '/'
-        if( sPath.length() > 1 && sPath.endsWith( sROOT ) )
-            sPath = sPath.substring( 0, sPath.length() - 1 );
-        
-        if( sName == null )
-            throw new JoingServerVFSException( "File name can't be null." );
-        
-        sName = sName.trim();
-        
-        if( sName.length() == 0 )
-            throw new JoingServerVFSException( "File name can't be empty." );
-        
-        if( sPath.length() > 0 )    // sName is not root (we are not talking about root)
-        {
-            // Name can't have '/' (leading or trailing)
-            if( sName.startsWith( sROOT ) )
-                sName = sName.substring( 1 );
-                
-            if( sName.endsWith( sROOT ) )
-                sName = sName.substring( 0, sName.length() - 2 );
-        }
-        
-        if( sName.length() == 0 )
-            throw new JoingServerVFSException( "File name can't be empty." );
-        
-        Query qryFindFile = em.createNamedQuery( "FileEntity.findByPathAndName" );
-              qryFindFile.setParameter( "account", sAccount );
-              qryFindFile.setParameter( "path"   , sPath    );
-              qryFindFile.setParameter( "name"   , sName    );
+            // If sPath != '/' and ends with '/' then removes last '/'
+            if( sPath != null && sPath.length() > 1 && sPath.endsWith( sROOT ) )
+                sPath = sPath.substring( 0, sPath.length() - 1 );
 
+            if( sName == null )
+                throw new JoingServerVFSException( "File name can't be null." );
+
+            sName = sName.trim();
+
+            if( sName.length() == 0 )
+                throw new JoingServerVFSException( "File name can't be empty." );
+
+            if( sPath != null )    // sName is not root (we are not talking about root)
+            {
+                // Name can't have '/' (leading or trailing)
+                if( sName.startsWith( sROOT ) )
+                    sName = sName.substring( 1 );
+
+                if( sName.endsWith( sROOT ) )
+                    sName = sName.substring( 0, sName.length() - 1 );
+            }
+
+            if( sName.length() == 0 )
+                throw new JoingServerVFSException( "File name can't be empty." );
+            
+            qryFindFile = em.createNamedQuery( "FileEntity.findByPathAndName" );
+            qryFindFile.setParameter( "account", sAccount );
+            qryFindFile.setParameter( "path"   , sPath    );
+            qryFindFile.setParameter( "name"   , sName    );
+        }
+        
         try
         {
             _file = (FileEntity) qryFindFile.getSingleResult();
@@ -169,7 +174,7 @@ class VFSTools
      * @return
      * @throws org.joing.common.exception.JoingServerVFSException
      */
-    static synchronized List<FileEntity> getChilds( EntityManager em, String sAccount, FileEntity _file )
+    static synchronized List<FileEntity> getChildren( EntityManager em, String sAccount, FileEntity _file )
             throws JoingServerVFSException
     {
         if( _file.getIsDir() == 0 )
@@ -235,8 +240,9 @@ class VFSTools
         // TODO: posiblemente aquí haya que tener en cuenta cosas como si está 
         //       en la Trashcan o si es un Link a otro fichero
         
-        // Neither fe.getFilePath() nor fe.getFileName() can be null and are already trimmed
-        return fe.getFilePath().concat( fe.getFileName() );
+        // fe.getFilePath() can be null, but fe.getFileName() can't (they are already trimmed).
+        return (fe.getFilePath() == null ? fe.getFileName() :
+                                           fe.getFilePath().concat( fe.getFileName() ));
     }
     
     //------------------------------------------------------------------------//

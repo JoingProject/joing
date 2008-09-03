@@ -30,7 +30,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import org.joing.common.dto.vfs.FileDescriptor;
+import org.joing.common.dto.vfs.VFSFileBase;
 import org.joing.common.exception.JoingServerVFSException;
 
 /**
@@ -55,29 +55,29 @@ public class ListManagerBean
     //------------------------------------------------------------------------//
     // REMOTE INTERFACE
     
-    public List<FileDescriptor> getRoots( String sSessionId )
+    public List<VFSFileBase> getRoots( String sSessionId )
             throws JoingServerVFSException
     {
-        String               sAccount = sessionManagerBean.getUserAccount( sSessionId );
-        List<FileDescriptor> roots    = null;
+        String            sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        List<VFSFileBase> roots    = null;
             
         if( sAccount != null )
         {
             // NEXT: mejorarlo buscando en otras comunidades donde esté el user
             FileEntity _file = VFSTools.path2File( em, sAccount, "/" );
             
-            roots = new ArrayList<FileDescriptor>();
-            roots.add( (new FileDTOs( _file )).createFileDescriptor() );
+            roots = new ArrayList<VFSFileBase>();
+            roots.add( (new FileDTOs( _file )).createVFSFileBase() );
         }
         
         return roots;
     }
     
-    public List<FileDescriptor> getChilds( String sSessionId, int nFileDirId )
+    public List<VFSFileBase> getChilds( String sSessionId, int nFileDirId )
            throws JoingServerVFSException
     {
-        List<FileDescriptor> files    = null;
-        String               sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        List<VFSFileBase> files    = null;
+        String            sAccount = sessionManagerBean.getUserAccount( sSessionId );
 
         if( sAccount != null )
         {
@@ -86,7 +86,7 @@ public class ListManagerBean
             if( _file != null )
             {
                 if( _file.getAccount().equals( sAccount ) )
-                    files = fromEntity2DTO( VFSTools.getChilds( em, sAccount, _file ) );
+                    files = fromEntity2DTO( VFSTools.getChildren( em, sAccount, _file ) );
                 else
                     throw new JoingServerVFSException( JoingServerVFSException.FILE_NOT_EXISTS );  // File is not in user files space
             }
@@ -99,11 +99,11 @@ public class ListManagerBean
         return files;
     }
     
-    public List<FileDescriptor> getByNotes( String sSessionId, String sSubString, boolean bGlobal )
+    public List<VFSFileBase> getByNotes( String sSessionId, String sSubString, boolean bGlobal )
            throws JoingServerVFSException
     {// TODO: Implemetar el bGlobal (ver javadoc)
-        String               sAccount = sessionManagerBean.getUserAccount( sSessionId );
-        List<FileDescriptor> files    = null;
+        String            sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        List<VFSFileBase> files    = null;
         
         if( sAccount != null )
         {
@@ -128,11 +128,11 @@ public class ListManagerBean
         return files;
     }
     
-    public List<FileDescriptor> getTrashCan( String sSessionId )
+    public List<VFSFileBase> getTrashCan( String sSessionId )
            throws JoingServerVFSException
     {
         String               sAccount = sessionManagerBean.getUserAccount( sSessionId );
-        List<FileDescriptor> files    = null;
+        List<VFSFileBase> files    = null;
         
         if( sAccount != null )
         {
@@ -156,12 +156,12 @@ public class ListManagerBean
     //------------------------------------------------------------------------//
     // PRIVATES
     
-    private List<FileDescriptor> fromEntity2DTO( List<FileEntity> fes )
+    private List<VFSFileBase> fromEntity2DTO( List<FileEntity> fes )
     {
-        List<FileDescriptor> files = new ArrayList<FileDescriptor>( fes.size() );
+        List<VFSFileBase> files = new ArrayList<VFSFileBase>( fes.size() );
         
         for( FileEntity fe : fes )
-            files.add( (new FileDTOs( fe )).createFileDescriptor() );
+            files.add( (new FileDTOs( fe )).createVFSFileBase() );
         
         return files;
     }

@@ -68,14 +68,4 @@ public interface UserManagerRemote
      */
     List<Local> getAvailableLocales( String sSessionId )
                 throws JoingServerUserException;
-    
-    /**
-     * Validates the password by cheking that passed password corresponds to 
-     * passed session identifier.
-     * 
-     * @param SessionId to be checked
-     * @param Password to be checked
-     * @return <code>true</code> if both are linked.
-     */
-    boolean areLinked( String sSessionId, String sPassword );
 }

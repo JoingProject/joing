@@ -67,14 +67,14 @@ class AppDTOs
         
         if( app.getExecutable() != null )
         {
-            java.io.File fJAR = createFileForJAR( appEntity.getExtraPath(), appEntity.getExecutable() );
+            java.io.File fJAR = NativeFileSystemTools.getApplication( app.getExecutable(), app.getExtraPath() );
             app.setContents( getContents( fJAR ) );
         }
         
         return app;
     }
     
-    /* This method does not exists because the Client can't change the App properties:
+    /* Next line method does not exists because the Client can't change the App properties:
      * static ApplicationEntity createApplicationEntity( AppDescriptor appDTO )
      */
     
@@ -82,21 +82,19 @@ class AppDTOs
     
     private static void transfer( ApplicationEntity appEntity, AppDescriptor appDTO )
     {
-        String sExecutable = appEntity.getExecutable();
-        
-        if( sExecutable.toUpperCase().endsWith( ".JAR" ) )
+        if( appEntity.getExecutable().toUpperCase().endsWith( ".JAR" ) )
         {
             JarFile jar = null;
             
             try
             {
-                java.io.File       fJAR = createFileForJAR( appEntity.getExtraPath(), appEntity.getExecutable() );
+                java.io.File       fJAR = NativeFileSystemTools.getApplication( appEntity.getExecutable(), appEntity.getExtraPath() );
                                    jar  = new JarFile( fJAR );
                 JoingManifestEntry jm   = new JoingManifestEntry( jar.getManifest() );
                 
                 String sAppName = jm.getAppName();
                 
-                if( sAppName == null )     // Can't be null
+                if( sAppName == null )     // Should not be null
                 {
                     sAppName = fJAR.getName();
                 
@@ -128,24 +126,8 @@ class AppDTOs
         }
         
         appDTO.setId( appEntity.getIdApplication() );
+        appDTO.setExtraPath( appEntity.getExtraPath() );
         appDTO.setExecutable( appEntity.getExecutable() );
-    }
-    
-    private static java.io.File createFileForJAR( String sExtraPath, String sExec )
-    {
-        if( sExtraPath != null && sExtraPath.length() > 0 )
-        {
-            // Removes leading and trailing "/"
-            if( sExtraPath.charAt( 0 ) == '/' )
-                sExtraPath = sExtraPath.substring( 1 );
-            
-            if( sExtraPath.charAt( sExtraPath.length() - 1 ) == '/' )
-                sExtraPath = sExtraPath.substring( 0, sExtraPath.length() - 1 );
-            
-            sExec = sExtraPath +'/'+ sExec;
-        }
-        
-        return NativeFileSystemTools.getApplication( sExec );
     }
     
     // Application contents is sat by this method

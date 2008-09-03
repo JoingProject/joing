@@ -20,11 +20,7 @@
  */
 package org.joing.server.ejb.app;
 
-import java.util.List;
 import javax.ejb.Local;
-import org.joing.common.dto.app.AppDescriptor;
-import org.joing.common.dto.app.Application;
-import org.joing.common.exception.JoingServerAppException;
 
 /**
  * This is the business interface for ApplicationManager enterprise bean.
@@ -32,7 +28,11 @@ import org.joing.common.exception.JoingServerAppException;
 @Local
 public interface ApplicationManagerLocal extends ApplicationManagerRemote
 {
-    Application getApplicationByName(String sessionId, String executableName) throws JoingServerAppException;
-
-    List<AppDescriptor> getAvailableDesktops() throws JoingServerAppException;
+    /**
+     * Applicationss Welcome Pack: Basic (free) apps that are available for all 
+     * users after they sign up (create their account).
+     * 
+     * @param sAccount A valid account.
+     */
+    void attachInitialAppsTo( String sAccount );
 }

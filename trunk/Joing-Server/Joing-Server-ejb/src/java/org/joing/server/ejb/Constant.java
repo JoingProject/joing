@@ -36,6 +36,11 @@ import java.util.logging.Logger;
  */
 public class Constant
 {
+    /** A regular expression that can be used to check if an account String is valid or not */
+    public static final String sREG_EXP_VALID_ACCOUNT  = "[a-z][a-z1-9\\.\\_]{3,31}";
+    /** A regular expression that can be used to check if a password String is valid or not */
+    public static final String sREG_EXP_VALID_PASSWORD = ".{5,31}";
+    
     private static String sVersion;
     private static String sSysName;    // System name (decided by Join'g provider)
     private static File   fBaseDir;    // Joing base directory

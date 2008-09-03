@@ -20,6 +20,8 @@
  */
 package org.joing.server.ejb.app;
 
+import java.io.File;
+import java.io.IOException;
 import org.joing.server.ejb.Constant;
 import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.app.Application;
@@ -34,17 +36,20 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.JarFile;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.sql.DataSource;
+import org.joing.common.JoingManifestEntry;
 import org.joing.common.dto.app.AppGroupKey;
 import org.joing.common.exception.JoingServerAppException;
 import org.joing.common.exception.JoingServerException;
+import org.joing.server.ejb.user.UsersWithAppsEntity;
+import org.joing.server.ejb.vfs.NativeFileSystemTools;
 
 /**
  * This class implements operations related with the applications that can be
@@ -65,62 +70,102 @@ public class ApplicationManagerBean
     
     @Resource(name = "joing_db")
     private DataSource joing_db;
+    
     @PersistenceContext
     private EntityManager em;
+    
     @EJB
     private SessionManagerLocal sessionManagerBean;
 
     //------------------------------------------------------------------------//
+    // PUBLIC INTERFACE
     
     public List<AppGroup> getAvailableForUser( String sSessionId, AppGroupKey groupKey )
             throws JoingServerAppException
     {
-        return getApplicationDescriptors( sSessionId, APPS_ALL, groupKey );
+        return getApplicationGroups( sSessionId, APPS_ALL, groupKey );
     }
 
     public List<AppGroup> getNotInstalledForUser( String sSessionId, AppGroupKey groupKey )
             throws JoingServerAppException
     {
-        return getApplicationDescriptors( sSessionId, APPS_NOT_INSTALLED, groupKey );
+        return getApplicationGroups( sSessionId, APPS_NOT_INSTALLED, groupKey );
     }
 
     public List<AppGroup> getInstalledForUser( String sSessionId, AppGroupKey groupKey )
             throws JoingServerAppException
     {
-        return getApplicationDescriptors( sSessionId, APPS_INSTALLED, groupKey );
+        return getApplicationGroups( sSessionId, APPS_INSTALLED, groupKey );
     }
 
-    public boolean install( String sSessionId, AppDescriptor app )
+    public boolean install( String sSessionId, int nAppId )
             throws JoingServerAppException
     {
-        return install( sSessionId, app, true );
+        return _install( sSessionId, nAppId, true );
     }
 
-    public boolean uninstall( String sSessionId, AppDescriptor app )
+    public boolean uninstall( String sSessionId, int nAppId )
             throws JoingServerAppException
     {
-        return install( sSessionId, app, false );
+        return _install( sSessionId, nAppId, false );
     }
-
+    
     public AppDescriptor getPreferredForType( String sSessionId, String sFileExtension )
             throws JoingServerAppException
     {
-        String        sAccount      = sessionManagerBean.getUserAccount( sSessionId );
-        AppDescriptor appDescriptor = null;
-
+        String sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        
         if( sAccount != null && sFileExtension != null )
         {
             sFileExtension = sFileExtension.trim().toLowerCase();
 
             if( sFileExtension.charAt( 0 ) == '.' )
                 sFileExtension = sFileExtension.substring( 1 );
+            
+            // First checks if user has any preferred app
+            try
+            {
+                UserEntity _user = em.find( UserEntity.class, sAccount );
+                // NEXT: Terminarlo haciendo return aquí   // CARE! return here
+            }
+            catch( RuntimeException exc )
+            {
+                Constant.getLogger().throwing( getClass().getName(), "getPreferredForType(...)", exc );
+                throw new JoingServerAppException( JoingServerException.ACCESS_DB, exc );
+            }
+            
+            // If there is no user preference, find the first app that can handle the extension
+            List<AppGroup> lstAppByGroup = getInstalledForUser( sSessionId, AppGroupKey.ALL );
 
-            // TODO: Pensar cómo hacerlo (en la DB, en user_preferences, etc) e implementarlo
+            for( AppGroup group : lstAppByGroup )
+            {
+                for( AppDescriptor appdesc : group.getApplications() )
+                {
+                    try
+                    {// NEXT: This assumes that all executables will be JARs. if it is not the case this will crashes.
+                        File               fJAR = NativeFileSystemTools.getApplication( appdesc.getExecutable(), appdesc.getExtraPath() );
+                        JarFile            jar  = new JarFile( fJAR );
+                        JoingManifestEntry jm   = new JoingManifestEntry( jar.getManifest() );
+                        List<String>       exts = jm.getFileTypes();
+
+                        for( String sExt : exts )
+                        {
+                            if( sExt.equalsIgnoreCase( sFileExtension ) )
+                                return appdesc;   // CARE! return here
+                        }
+                    }
+                    catch( IOException exc )
+                    {
+                        Constant.getLogger().throwing( getClass().getName(), "getPreferredForType(...)", exc );
+                        throw new JoingServerAppException( JoingServerAppException.JAR_ACCESS_ERROR, exc );
+                    }
+                }
+            }
         }
         
-        return appDescriptor;
+        return null;
     }
-
+    
     public Application getApplication( String sSessionId, int nAppId )
             throws JoingServerAppException
     {
@@ -163,50 +208,28 @@ public class ApplicationManagerBean
 
         return app;
     }
-
-    public Application getApplicationByName( String sessionId, String executableName )
-            throws JoingServerAppException
+    
+    //------------------------------------------------------------------------//
+    // LOCAL INTERFACE
+                
+    public void attachInitialAppsTo( String sAccount )
     {
-        Application app = null;
-        String account = sessionManagerBean.getUserAccount( sessionId );
-
-        if( account != null )
-        {
-            Query q = null;
-
-            try
-            {
-                q = em.createNamedQuery( "ApplicationEntity.findByExecutable" );
-                q.setParameter( "executable", executableName );
-                ApplicationEntity appEnt = (ApplicationEntity) q.getSingleResult();
-
-                app = AppDTOs.createApplication( appEnt );
-            }
-            catch( NoResultException nre )
-            {
-                throw new JoingServerAppException( JoingServerException.ACCESS_DB, nre );
-            }
-
-            // Para poder determinar el acceso necesito primero obtener el
-            // id de app., y para ello ocupo obtener la app.
-            if( ! hasAccess( account, app.getId() ) )
-            {
-                throw new JoingServerAppException( JoingServerAppException.INVALID_OWNER );
-            }
-        }
+        // TODO: Para salir del paso las añado todas, pero habría que leer de algún
+        //       sitio cuáles son las básicas y añadir sólo esas
+        Query                   query   = em.createQuery( "SELECT a FROM ApplicationEntity a" );
+        List<ApplicationEntity> lstApps = query.getResultList();
         
-        return app;
+        for( ApplicationEntity app : lstApps )
+            em.persist( new UsersWithAppsEntity( sAccount, app.getIdApplication() ) );
     }
-
+    
     //------------------------------------------------------------------------//
     // PRIVATES
     
-    private List<AppGroup> getApplicationDescriptors( String sSessionId, int nInstallMode, AppGroupKey groupKey )
+    private List<AppGroup> getApplicationGroups( String sSessionId, int nInstallMode, AppGroupKey groupKey )
             throws JoingServerAppException
     {
-        // TODO: Validate the case when this method is invoked with null 
-        // sessionId.
-        String sAccount = sessionManagerBean.getUserAccount( sSessionId );
+        String         sAccount  = sessionManagerBean.getUserAccount( sSessionId );
         List<AppGroup> lstGroups = new ArrayList<AppGroup>();
 
         if( sAccount != null )
@@ -235,7 +258,7 @@ public class ApplicationManagerBean
                         AppGroup group = new AppGroup( currentGroupKey );
                                  group.setName( rs.getString( "GROUP_NAME" ) );
                                  group.setDescription( rs.getString( "GROUP_DESC" ) );
-                        // TODO: añadirle los iconos Pixel y Vector al grupo
+                        // FIXME: añadirle los iconos Pixel y Vector al grupo
 
                         lstGroups.add( group );
                     }
@@ -318,7 +341,7 @@ public class ApplicationManagerBean
     }
 
     // To install and uninstall apps
-    private boolean install( String sSessionId, AppDescriptor app, boolean bInstall )
+    private boolean _install( String sSessionId, int nAppId, boolean bInstall )
             throws JoingServerAppException
     {
         boolean bSuccess = false;
