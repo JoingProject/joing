@@ -22,6 +22,7 @@ package org.joing.notes;
 
 import java.awt.Insets;
 
+import java.io.File;
 import javax.swing.JTextArea;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
@@ -35,12 +36,15 @@ import javax.swing.undo.UndoManager;
 class Editor extends JTextArea
 {
     private UndoManager undomanager;
-
+    private File        file = null;
+    
+    //------------------------------------------------------------------------//
+    
     Editor()
     {
-        this( null );
+        this( (String) null );
     }
-
+    
     Editor( String sText )
     {
         super( sText );
@@ -58,6 +62,22 @@ class Editor extends JTextArea
         
         undomanager = new UndoManager();
         undomanager.setLimit( 999 );
+        ///bNewDoc = (sText == null);
+    }
+    
+    /**
+     * Get associated file or null.
+     * 
+     * @return Associated file or null
+     */
+    File getFile()
+    {
+        return file;
+    }
+    
+    void setFile( File file )
+    {
+        this.file = file;
     }
 
     boolean canUndo()

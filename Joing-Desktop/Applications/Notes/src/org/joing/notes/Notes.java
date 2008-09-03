@@ -29,15 +29,11 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -61,84 +57,239 @@ import javax.swing.event.ChangeListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
-import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.DesktopManager;
-import org.joing.common.desktopAPI.StandardImage;
-import org.joing.common.desktopAPI.pane.DeskDialog;
-import org.joing.common.desktopAPI.pane.DeskFrame;
-import org.joing.common.dto.vfs.VFSFile4IO;
-import org.joing.runtime.swap.JoingFileChooser;
-import org.joing.runtime.vfs.VFSFile;
-import org.joing.swingtools.JoingPanel;
+import org.joing.kernel.api.desktop.DeskComponent;
+import org.joing.kernel.api.desktop.DesktopManager;
+import org.joing.kernel.api.desktop.StandardImage;
+import org.joing.kernel.api.desktop.pane.DeskDialog;
+import org.joing.kernel.api.desktop.pane.DeskFrame;
+import org.joing.kernel.runtime.vfs.JoingFileReader;
+import org.joing.kernel.runtime.vfs.JoingFileSystemView;
+import org.joing.kernel.runtime.vfs.JoingFileWriter;
+import org.joing.kernel.swingtools.JoingPanel;
+import org.joing.kernel.swingtools.filesystem.JoingFileChooser;
 
 /**
- * A simple plain text editor similar to Windows NotePad.
- * <p>
- * This class deals with the user interface part of the application.
+ * A simple multi-tab plain text editor.
  * 
  * @author Francisco Morero Peyrona
  */
 public class Notes extends JPanel implements DeskComponent
 {
-    private int nCount = 1;    // Para "Noname1", "Noname2", ....
+    private int nCount = 1;    // To produce "Noname1", "Noname2", ...
     
-    private DesktopManager desktop = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
-    private File           file    = null;   // Sat after the user saves for 1st time the document
-    private VFSFile4IO     vfs4IO  = null;   // FIXME: Esta es una solución temp hasta que VFSFile4IO herede de VFSFile
+    private DesktopManager deskMgr = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager();  // Just to make things easier to read
     private ToolBar        toolbar = new ToolBar();
     private JTabbedPane    tabs    = new JTabbedPane();
     private StatusBar      status  = new StatusBar();
     
     //------------------------------------------------------------------------//
     
+    /**
+     * Class constructor
+     */
     public Notes()
     {
-        tabs.addChangeListener( new ChangeListener() 
-            {
-                public void stateChanged( ChangeEvent e )
-                {
-                    Editor editor = Notes.this.getSelectedEditor(); 
-                 
-                    Notes.this.toolbar.updateButtons( editor );
-                    Notes.this.status.updateCaret( editor );
-                }
-            } );
-        
-        setPreferredSize( new Dimension( 640,480 ) );
-        
-        setLayout( new BorderLayout() );
-        add( toolbar, BorderLayout.NORTH  );
-        add( tabs   , BorderLayout.CENTER );
-        add( status , BorderLayout.SOUTH  );
-        
-        toolbar.updateButtons( null );
+        initGUI();
     }
     
+    //------------------------------------------------------------------------//
+    // FROM HERE TO NEXT BLOCK, CODE REFERS TO JOIN'G THINGS
+    
+    /**
+     * Open an empty editor tab.
+     */
     public void addEditor()
     {
         addEditor( (String) null, (String) null );
     }
     
+    /**
+     * Open a new editor tab showing passed text.
+     * 
+     * @param sName Tab's title (normaly file name).
+     * @param sText Text to be shown in editor.
+     */
     public void addEditor( String sName, String sText )
     {
-        if( sName == null || sName.length() == 0 )
-            sName = "Noname" + nCount++;
-        
-        _addEditor( sName, sText );
+        _addEditor( sName, sText, null );
     }
     
+    /**
+     * Open a new editor tab showing passed file name contents.
+     * <p>
+     * It resolves file name to a local or remote file and then open it.<br>
+     * If both file names exits (locally and remotelly), local one is used.
+     * 
+     * @param sFileFullName A valid local or remote file name.
+     */
+    public void addEditor( String sFileFullName )
+    {
+        if( sFileFullName.trim().length() > 0 )
+        {
+            // This returns either an instance of java.io.File (representing a local file)
+            // or an instance of org.joing.runtime.vfs.VFSFile (representing a remote file).
+            File f = JoingFileSystemView.getFileSystemView().createFileObject( sFileFullName );
+            
+            if( f.exists() )
+                addEditor( f );
+        }
+    }
+    
+    /**
+     * Open a new editor tab showing passed file contents.
+     * 
+     * @param file Either an instance of File (local) or VFSFile (remote).
+     */
+    public void addEditor( File file )
+    {
+        String sText = null;
+        
+        if( file.exists() )
+        {
+            InputStreamReader  isr = null;
+        
+            try
+            {
+                // These classes act as FileReader and FileWriter, but they handle
+                // instances of File (local files) as well as VFSFile (remote files).
+                // Soon, normal FileReader and FileWriter will be used instead.
+                isr = new JoingFileReader( file );
+
+                // As text files are _normally_ small, we read it up in one step.
+                char[] chr  = new char[ (int) file.length() ];
+                isr.read( chr );
+                sText = String.valueOf( chr );
+            }
+            catch( Exception exc )
+            {
+                deskMgr.getRuntime().showException( exc, "Error opening file" );
+            }
+            finally
+            {
+                if( isr != null )
+                    try{ isr.close(); } catch( IOException exc ) { /* Nothing to do */ }
+            }
+        }
+        
+        _addEditor( file.getName(), sText, file );
+    }
+    
+    /**
+     * Shows the application (a JPanel) inside a Joing frame (a DeskFrame) and 
+     * place the frame inside desktop.
+     */
     public void showInFrame()
     {
-        // Show this panel in a frame created by DesktopManager Runtime.
-        DeskFrame frame = desktop.getRuntime().createFrame();
-                  frame.setTitle( "Notes" );
-                  frame.setIcon( getIcon( "notes" ).getImage() );
-                  frame.add( this );
-
-        desktop.getDesktop().getActiveWorkArea().add( frame );
+        SwingUtilities.invokeLater( new Runnable()
+        {
+            public void run()
+            {                
+                // Creates an apropriate frame for current desktop (every 
+                // desktop can create their own type of frames, but all must 
+                // implement DeskFrame interface).
+                DeskFrame frame = Notes.this.deskMgr.getRuntime().createFrame();
+                          frame.setTitle( "Notes" );
+                          frame.setIcon( Notes.this.getIcon( "notes" ).getImage() );
+                          frame.add( Notes.this );
+                          
+                // This line adds the frame to active (current) work area.
+                Notes.this.deskMgr.getDesktop().getActiveWorkArea().add( frame );
+            }
+         } );
     }
     
+    private void _addEditor( String sName, String sText, File file )
+    {
+        final String sTabText = ((sName == null || sName.length() == 0) ? "Noname" + nCount++ : sName) +
+                                (file != null && ! file.canWrite() ? " [r/o]" : "");
+        final String sContent = sText;
+        final File   f        = file;     // Used to save editor changes back to file
+        
+        SwingUtilities.invokeLater( new Runnable() 
+        {
+            public void run()
+            {
+                Editor editor = new Editor( sContent );
+                       editor.setFile( f );
+                       editor.addCaretListener( new CaretListener()
+                       {
+                           public void caretUpdate( CaretEvent e )
+                           {
+                               toolbar.updateButtons( Notes.this.getSelectedEditor() );
+                               status.updateCaret( Notes.this.getSelectedEditor() );
+                           }
+                       } );
+                       
+                 if( f != null && ! f.canWrite() )
+                     editor.setEditable( false );
+                       
+                tabs.addTab( sTabText, new JScrollPane( editor ) );
+                tabs.setSelectedIndex( tabs.getTabCount() - 1 );
+                
+                toolbar.updateButtons( Notes.this.getSelectedEditor() );
+                Notes.this.getSelectedEditor().requestFocus();
+            }
+        } );
+    }
+    
+    private void _save()
+    {
+        File file = getSelectedEditor().getFile();
+        
+        if( file == null )
+        {
+            // TODO: Abrir un JoingFileChooser para Save
+            JOptionPane.showMessageDialog( Notes.this, "Save new file: option not yet implemented." );
+        }
+        
+        if( file != null )
+        {
+            OutputStreamWriter osw = null;
+            
+            try
+            {
+                if( ! file.exists() )
+                    file.createNewFile();
+        
+                 osw = new JoingFileWriter( file );
+                 osw.write( getSelectedEditor().getText() );
+                 osw.flush();
+            }
+            catch( IOException exc )
+            {
+                deskMgr.getRuntime().showException( exc, "Error opening file" );
+            }
+            finally
+            {
+                if( osw != null )
+                    try{ osw.close(); } catch( IOException exc ) { /* Nothing to do */ }
+            }
+        }
+        
+        sendFocusToSelectedEditor();
+    }
+    
+    /**
+     * As any other Java application, Join'g applications can have a main method
+     * as entry point.
+     * 
+     * @param asArg One or more file names to be opened.
+     */
+    public static void main( String[] asArg )
+    {   
+        Notes notes = new Notes();
+              notes.showInFrame();
+        
+        if( asArg.length > 0 )
+        {
+            for( String sFile : asArg )
+                notes.addEditor( sFile );
+        }
+    }
+    
+    // END OF JOIN'G THINS
     //------------------------------------------------------------------------//
+    // FROM HERE TO THE END OF THE FILE CODE REFERS TO SWING (NOT TO JOIN'G)
     
     private Editor getSelectedEditor()
     {
@@ -149,90 +300,6 @@ public class Notes extends JPanel implements DeskComponent
             editor = (Editor)  sp.getViewport().getView();
         
         return editor;
-    }
-    
-    private void open()
-    {
-        InputStreamReader isr = null;
-
-        try
-        {
-            if( file instanceof VFSFile )
-            {
-                vfs4IO = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().
-                            getFileBridge().getFile( ((VFSFile) file).getFileDescriptor() );
-                isr = vfs4IO.getCharReader();
-            }
-            else
-            {
-                isr = new FileReader( file );
-            }
-
-            // As text files are normally small, we read it up in one step
-            char[] chr  = new char[ (int) file.length() ];
-            isr.read( chr );
-            _addEditor( file.getName(), String.valueOf( chr ) );
-        }
-        catch( Exception exc )
-        {
-            desktop.getRuntime().showException( exc, "Error opening file" );
-        }
-        finally
-        {
-            if( isr != null )
-                try{ isr.close(); } catch( IOException exc ) { /* Nothing to do */ }
-        }
-    }
-    
-    private void save()
-    {
-        OutputStreamWriter osw = null;
-
-        try
-        {
-            if( file instanceof VFSFile )
-                osw = vfs4IO.getCharWriter();
-            else
-                osw = new FileWriter( file );
-            
-            osw.write( getSelectedEditor().getText() );
-        }
-        catch( IOException exc )
-        {
-            desktop.getRuntime().showException( exc, "Error opening file" );
-        }
-        finally
-        {
-            if( osw != null )
-                try{ osw.close(); } catch( IOException exc ) { /* Nothing to do */ }
-        }
-            
-        sendFocusToSelectedEditor();
-    }
-    
-    private void _addEditor( final String sName, final String sText )
-    {
-        SwingUtilities.invokeLater( new Runnable() 
-        {
-            public void run()
-            {
-                Editor editor = new Editor( sText );
-                       editor.addCaretListener( new CaretListener()
-                       {
-                           public void caretUpdate( CaretEvent e )
-                           {
-                               toolbar.updateButtons( Notes.this.getSelectedEditor() );
-                               status.updateCaret( Notes.this.getSelectedEditor() );
-                           }
-                       } );
-                       
-                tabs.addTab( sName, new JScrollPane( editor ) );
-                tabs.setSelectedIndex( tabs.getTabCount() - 1 );
-                
-                toolbar.updateButtons( Notes.this.getSelectedEditor() );
-                Notes.this.getSelectedEditor().requestFocus();
-            }
-        } );
     }
     
     private void closeSelectedEditor()
@@ -251,9 +318,54 @@ public class Notes extends JPanel implements DeskComponent
         
         toolbar.updateButtons( getSelectedEditor() );
     }
+     
+    private void sendFocusToSelectedEditor()
+    {
+        SwingUtilities.invokeLater( new Runnable()
+        {
+            public void run()
+            {
+                Notes.this.getSelectedEditor().requestFocus();
+            }
+        } );
+    }
+    
+    private ImageIcon getIcon( String sName )
+    {
+        return new ImageIcon( getClass().getResource( "images/"+ sName +".png" ) ); 
+    }
+    
+    private void initGUI()
+    {
+        SwingUtilities.invokeLater( new Runnable()
+        {
+            public void run()
+            {
+                tabs.addChangeListener( new ChangeListener() 
+                {
+                    public void stateChanged( ChangeEvent e )
+                    {
+                        Editor editor = Notes.this.getSelectedEditor(); 
+
+                        Notes.this.toolbar.updateButtons( editor );
+                        Notes.this.status.updateCaret( editor );
+                    }
+                } );
+                
+                setPreferredSize( new Dimension( 640,480 ) );
+                
+                setLayout( new BorderLayout() );
+                add( toolbar, BorderLayout.NORTH  );
+                add( tabs   , BorderLayout.CENTER );
+                add( status , BorderLayout.SOUTH  );
+
+                toolbar.updateButtons( null );
+            }
+        } );
+    }
     
     //------------------------------------------------------------------------//
-    // ACTIONS: INNER CLASSES
+    // INNER CLASS: Actions
     //------------------------------------------------------------------------//
     
     private class New extends AbstractAction
@@ -261,7 +373,7 @@ public class Notes extends JPanel implements DeskComponent
         private New()
         {
             super( "New" );
-            putValue( AbstractAction.SMALL_ICON       , new ImageIcon( desktop.getRuntime().getImage( StandardImage.NEW, 22, 22 ) ) );
+            putValue( AbstractAction.SMALL_ICON       , new ImageIcon( deskMgr.getRuntime().getImage( StandardImage.NEW, 22, 22 ) ) );
             putValue( AbstractAction.SHORT_DESCRIPTION, "Create a new empty tab" );
             putValue( AbstractAction.ACCELERATOR_KEY  , KeyStroke.getKeyStroke( new Integer( KeyEvent.VK_N ), InputEvent.CTRL_MASK ) );
         }
@@ -289,8 +401,8 @@ public class Notes extends JPanel implements DeskComponent
             
             if( jfc.showDialog( Notes.this ) == JoingFileChooser.APPROVE_OPTION )
             {
-                Notes.this.file = jfc.getSelectedFile();
-                open();
+                for( File file : jfc.getSelectedFiles() )
+                    addEditor( file );
             }
         }
     }
@@ -307,14 +419,7 @@ public class Notes extends JPanel implements DeskComponent
 
         public void actionPerformed( ActionEvent evt )
         {
-            if( file == null )
-            {
-                // TODO: Abrir un JoingFileChooser para Save
-                JOptionPane.showMessageDialog( Notes.this, "Option not yet implemented." );
-            }
-            
-            if( file != null )   // Can be null if user cancels JoingFileChooser            
-                save();
+            _save();
         }
     }
     
@@ -323,7 +428,7 @@ public class Notes extends JPanel implements DeskComponent
         private Print()
         {
             super( "Print" );
-            putValue( AbstractAction.SMALL_ICON       , new ImageIcon( desktop.getRuntime().getImage( StandardImage.PRINT, 22, 22 ) ) );
+            putValue( AbstractAction.SMALL_ICON       , new ImageIcon( deskMgr.getRuntime().getImage( StandardImage.PRINT, 22, 22 ) ) );
             putValue( AbstractAction.SHORT_DESCRIPTION, "Print text" );
             putValue( AbstractAction.ACCELERATOR_KEY  , KeyStroke.getKeyStroke( new Integer( KeyEvent.VK_P ), InputEvent.CTRL_MASK ) );
         }
@@ -379,7 +484,7 @@ public class Notes extends JPanel implements DeskComponent
         private Cut()
         {
             super( "Cut" );
-            putValue( AbstractAction.SMALL_ICON       , new ImageIcon( desktop.getRuntime().getImage( StandardImage.CUT, 22, 22 ) ) );
+            putValue( AbstractAction.SMALL_ICON       , new ImageIcon( deskMgr.getRuntime().getImage( StandardImage.CUT, 22, 22 ) ) );
             putValue( AbstractAction.SHORT_DESCRIPTION, "Cut selected text   Ctrl-X" );
         }
 
@@ -395,7 +500,7 @@ public class Notes extends JPanel implements DeskComponent
         private Copy()
         {
             super( "Copy" );
-            putValue( AbstractAction.SMALL_ICON       , new ImageIcon( desktop.getRuntime().getImage( StandardImage.COPY, 22, 22 ) ) );
+            putValue( AbstractAction.SMALL_ICON       , new ImageIcon( deskMgr.getRuntime().getImage( StandardImage.COPY, 22, 22 ) ) );
             putValue( AbstractAction.SHORT_DESCRIPTION, "Copy selected text   Ctrl-C" );
         }
 
@@ -411,7 +516,7 @@ public class Notes extends JPanel implements DeskComponent
         private Paste()
         {
             super( "Paste" );
-            putValue( AbstractAction.SMALL_ICON       , new ImageIcon( desktop.getRuntime().getImage( StandardImage.PASTE, 22, 22 ) ) );
+            putValue( AbstractAction.SMALL_ICON       , new ImageIcon( deskMgr.getRuntime().getImage( StandardImage.PASTE, 22, 22 ) ) );
             putValue( AbstractAction.SHORT_DESCRIPTION, "Paste text from clipboard   Ctrl-V" );
         }
 
@@ -442,7 +547,7 @@ public class Notes extends JPanel implements DeskComponent
         private About()
         {
             super( "About" );
-            putValue( AbstractAction.SMALL_ICON       , new ImageIcon( desktop.getRuntime().getImage( StandardImage.INFO, 22, 22 ) ) );
+            putValue( AbstractAction.SMALL_ICON       , new ImageIcon( deskMgr.getRuntime().getImage( StandardImage.INFO, 22, 22 ) ) );
             putValue( AbstractAction.SHORT_DESCRIPTION, "About this application" );
         }
 
@@ -457,31 +562,19 @@ public class Notes extends JPanel implements DeskComponent
                        panel.add( label, BorderLayout.CENTER );
                        panel.setBorder( new EmptyBorder( 7,7,7,7 ) );
                        
-            DeskDialog dialog = desktop.getRuntime().createDialog();
+            DeskDialog dialog = deskMgr.getRuntime().createDialog();
                        dialog.setTitle( "About Notes" );
                        dialog.setIcon( getIcon( "notes" ).getImage() );
                        dialog.add( (DeskComponent) panel );
                        
-            desktop.getDesktop().getActiveWorkArea().add( dialog );
+            deskMgr.getDesktop().getActiveWorkArea().add( dialog );
         }
     }
-    
-    private void sendFocusToSelectedEditor()
-    {
-        SwingUtilities.invokeLater( new Runnable()
-        {
-            public void run()
-            {
-                Notes.this.getSelectedEditor().requestFocus();
-            }
-        } );
-    }
-    
+   
     //------------------------------------------------------------------------//
-    // INNER CLASSES
+    // INNER CLASS: Tool bar
     //------------------------------------------------------------------------//
     
-    // La toolbar
     private final class ToolBar extends JToolBar
     {
         private JButton save   = createButton( new Save()   );
@@ -520,7 +613,7 @@ public class Notes extends JPanel implements DeskComponent
             {
                 boolean bSelection = text.getSelectedText() != null;
                 
-                this.save.getAction().setEnabled( true );
+                this.save.getAction().setEnabled( text.isEditable() );
                 this.print.getAction().setEnabled( true );
                 
                 this.cut.getAction().setEnabled( bSelection );
@@ -545,7 +638,7 @@ public class Notes extends JPanel implements DeskComponent
             }
         }
         
-        private JButton createButton( Action action )
+        private JButton createButton( AbstractAction action )
         {
             JButton button = new JButton( action );
                     button.setFocusPainted( false );
@@ -573,8 +666,9 @@ public class Notes extends JPanel implements DeskComponent
             
             if( keyStroke != null )
             {
-                button.getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW ).put( keyStroke, "action" );
-                button.getActionMap().put( "action",
+                String sName = action.getValue( AbstractAction.NAME ).toString();
+                button.getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW ).put( keyStroke, sName );
+                button.getActionMap().put( sName,
                     new AbstractAction()
                     {
                         public void actionPerformed( java.awt.event.ActionEvent ae )
@@ -584,12 +678,15 @@ public class Notes extends JPanel implements DeskComponent
                     }
                 );
             }
-                    
+            
             return button;
         }
     }
     
-    // La status bar
+    //------------------------------------------------------------------------//
+    // INNER CLASS: The status bar
+    //------------------------------------------------------------------------//
+    
     private final class StatusBar extends Box
     {
         private JLabel lblHelp, lblCaret;
@@ -606,7 +703,7 @@ public class Notes extends JPanel implements DeskComponent
             lblHelp.setPreferredSize( new Dimension( (int) (0.85 * screenSize.width), 22 ) );
             lblHelp.setBorder( BorderFactory.createLoweredBevelBorder() );
             add( lblHelp, null );
-
+            
             // Add the JLabel displaying the line and colum caret position.
             lblCaret = new JLabel( "", SwingConstants.LEADING );
             lblCaret.setFont( lblCaret.getFont().deriveFont( Font.PLAIN ) );
@@ -620,7 +717,7 @@ public class Notes extends JPanel implements DeskComponent
         
         private void setHelp( JComponent comp )
         {
-            String sHelp = " ";      // Sino, se ve fatal
+            String sHelp = " ";      // Si no, se ve fatal
             
             if( comp != null )
                 sHelp += comp.getToolTipText();   
@@ -658,19 +755,5 @@ public class Notes extends JPanel implements DeskComponent
      
             return nCaret - lineStart;
         }
-    }
- 
-    //------------------------------------------------------------------------//
-    
-    private ImageIcon getIcon( String sName )
-    {
-        return new ImageIcon( getClass().getResource( "images/"+ sName +".png" ) ); 
-    }
-    
-    //------------------------------------------------------------------------//
-    
-    public static void main( String[] asArg )
-    {
-        (new Notes()).showInFrame();
     }
 }
