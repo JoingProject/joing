@@ -20,6 +20,7 @@
  */
 package org.joing.images;
 
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -33,6 +34,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import org.joing.kernel.api.desktop.StandardImage;
 
 /**
  * 
@@ -167,7 +169,7 @@ public class ToolBar extends JToolBar
 
         public void actionPerformed( ActionEvent evt )
         {
-            owner.Open();
+            owner.open();
         }
     }
         
@@ -176,14 +178,18 @@ public class ToolBar extends JToolBar
         private Print()
         {
             super( "Print" );
-            putValue( AbstractAction.SMALL_ICON       , getIcon( "print" ) );
-            putValue( AbstractAction.SHORT_DESCRIPTION, "Print text" );
+            
+            Image image = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().
+                          getRuntime().getImage( StandardImage.PRINT, 22, 22 );
+            
+            putValue( AbstractAction.SMALL_ICON       , new ImageIcon( image ) );
+            putValue( AbstractAction.SHORT_DESCRIPTION, "Print image" );
             putValue( AbstractAction.ACCELERATOR_KEY  , KeyStroke.getKeyStroke( new Integer( KeyEvent.VK_P ), InputEvent.CTRL_MASK ) );
         }
-
+        
         public void actionPerformed( ActionEvent evt )
         {
-            owner.Print();
+            owner.print();
         }
     }
     
@@ -198,7 +204,7 @@ public class ToolBar extends JToolBar
 
         public void actionPerformed( ActionEvent evt )
         {
-            owner.RotateLeft();
+            owner.rotateLeft();
         }
     }
     
@@ -213,7 +219,7 @@ public class ToolBar extends JToolBar
 
         public void actionPerformed( ActionEvent evt )
         {
-            owner.RotateRight();
+            owner.rotateRight();
         }
     }
     
@@ -228,7 +234,7 @@ public class ToolBar extends JToolBar
 
         public void actionPerformed( ActionEvent evt )
         {
-            owner.ZoomIn();
+            owner.zoomIn();
         }
     }
     
@@ -243,7 +249,7 @@ public class ToolBar extends JToolBar
 
         public void actionPerformed( ActionEvent evt )
         {
-            owner.ZoomOut();
+            owner.zoomOut();
         }
     }
     
@@ -258,7 +264,7 @@ public class ToolBar extends JToolBar
 
         public void actionPerformed( ActionEvent evt )
         {
-            owner.Zoom100();
+            owner.zoom100();
         }
     }
     
@@ -273,7 +279,7 @@ public class ToolBar extends JToolBar
 
         public void actionPerformed( ActionEvent evt )
         {
-            owner.ZoomStretch();
+            owner.zoomStretch();
         }
     }
     
@@ -288,7 +294,7 @@ public class ToolBar extends JToolBar
 
         public void actionPerformed( ActionEvent evt )
         {
-            owner.Close();
+            owner.close();
         }
     }
     
@@ -297,13 +303,17 @@ public class ToolBar extends JToolBar
         private About()
         {
             super( "About" );
-            putValue( AbstractAction.SMALL_ICON       , getIcon( "about" ) );
+            
+            Image image = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().
+                          getRuntime().getImage( StandardImage.INFO, 22, 22 );
+            
+            putValue( AbstractAction.SMALL_ICON       , new ImageIcon( image ) );
             putValue( AbstractAction.SHORT_DESCRIPTION, "About this application" );
         }
 
         public void actionPerformed( ActionEvent evt )
         {
-            owner.About();
+            owner.about();
         }
     }
     
