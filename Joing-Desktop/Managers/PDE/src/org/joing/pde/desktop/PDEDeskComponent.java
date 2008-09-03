@@ -21,7 +21,7 @@
 package org.joing.pde.desktop;
 
 import javax.swing.JPanel;
-import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.kernel.api.desktop.DeskComponent;
 
 /**
  *

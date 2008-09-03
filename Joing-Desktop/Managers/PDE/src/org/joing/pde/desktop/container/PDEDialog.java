@@ -26,8 +26,8 @@ import java.awt.Image;
 import java.util.List;
 import javax.swing.JDialog;
 import javax.swing.JInternalFrame;
-import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.pane.DeskDialog;
+import org.joing.kernel.api.desktop.DeskComponent;
+import org.joing.kernel.api.desktop.pane.DeskDialog;
 
 /**
  * 
@@ -43,7 +43,7 @@ public class PDEDialog extends JDialog implements DeskDialog
     {
         setLayout( new BorderLayout() );
         setModalityType( ModalityType.APPLICATION_MODAL );
-        setDefaultCloseOperation( JInternalFrame.DISPOSE_ON_CLOSE );
+        setDefaultCloseOperation( JDialog.DISPOSE_ON_CLOSE );
     }
     
     public boolean isModal()

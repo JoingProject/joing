@@ -32,13 +32,13 @@ import java.awt.event.WindowListener;
 import javax.swing.JInternalFrame;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
-import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.desktop.DesktopListener;
-import org.joing.common.desktopAPI.pane.DeskFrame;
-import org.joing.common.desktopAPI.taskbar.TaskBar;
-import org.joing.common.desktopAPI.workarea.Wallpaper;
-import org.joing.common.desktopAPI.workarea.WorkArea;
-import org.joing.common.desktopAPI.workarea.WorkAreaListener;
+import org.joing.kernel.api.desktop.DeskComponent;
+import org.joing.kernel.api.desktop.desktop.DesktopListener;
+import org.joing.kernel.api.desktop.pane.DeskFrame;
+import org.joing.kernel.api.desktop.taskbar.TaskBar;
+import org.joing.kernel.api.desktop.workarea.Wallpaper;
+import org.joing.kernel.api.desktop.workarea.WorkArea;
+import org.joing.kernel.api.desktop.workarea.WorkAreaListener;
 import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.taskbar.PDETaskBarPanel;
 
@@ -70,7 +70,7 @@ public class FrameList extends PDETaskBarPanel
         twl  = new TheWindowListener();
         tifl = new TheIntenalFrameListener();
         
-        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().addDesktopListener( tdl );
+        org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().addDesktopListener( tdl );
         
         setMinimumSize( new Dimension( 120,22 ) );
         setMaximumSize( new Dimension( Integer.MAX_VALUE, Integer.MAX_VALUE ) );
@@ -169,10 +169,10 @@ public class FrameList extends PDETaskBarPanel
         FrameButton btn = (FrameButton) ae.getSource();
         Container   frm = btn.getFrame();
         
-        if( (WorkArea) frm.getParent() != org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea() )
+        if( (WorkArea) frm.getParent() != org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea() )
         {
             // If the frame was in a different workarea, then change active work area
-            org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().setActiveWorkArea( (WorkArea) frm.getParent() );
+            org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().setActiveWorkArea( (WorkArea) frm.getParent() );
             
             // And if it was minimized, then restore; but if it was restored don't minimize. Always make selected
             if( frm instanceof PDEFrame )
@@ -230,7 +230,7 @@ public class FrameList extends PDETaskBarPanel
     
     private void updateSelected()
     {
-        WorkArea    waActive = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
+        WorkArea    waActive = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
         Component[] aComp    = getComponents();
         
         for( int n = 0; n < aComp.length; n++ )

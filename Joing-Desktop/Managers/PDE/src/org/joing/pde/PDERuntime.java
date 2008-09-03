@@ -29,21 +29,21 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import org.joing.common.desktopAPI.StandardImage;
-import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.StandardSound;
-import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
-import org.joing.common.desktopAPI.pane.DeskCanvas;
-import org.joing.common.desktopAPI.pane.DeskDialog;
-import org.joing.common.desktopAPI.pane.DeskFrame;
-import org.joing.common.desktopAPI.workarea.WorkArea;
+import org.joing.kernel.api.desktop.StandardImage;
+import org.joing.kernel.api.desktop.DeskComponent;
+import org.joing.kernel.api.desktop.StandardSound;
+import org.joing.kernel.api.desktop.deskwidget.deskLauncher.DeskLauncher;
+import org.joing.kernel.api.desktop.pane.DeskCanvas;
+import org.joing.kernel.api.desktop.pane.DeskDialog;
+import org.joing.kernel.api.desktop.pane.DeskFrame;
+import org.joing.kernel.api.desktop.workarea.WorkArea;
 import org.joing.pde.desktop.container.PDECanvas;
 import org.joing.pde.desktop.container.PDEDialog;
 import org.joing.pde.desktop.container.PDEFrame;
 import org.joing.pde.desktop.deskwidget.deskLauncher.PDEDeskLauncher;
 import org.joing.pde.media.images.ImagesUtil;
 import org.joing.pde.media.sounds.SoundsUtil;
-import org.joing.swingtools.JErrorPanel;
+import org.joing.kernel.swingtools.JErrorPanel;
 
 /**
  * The Runtime class.
@@ -53,7 +53,7 @@ import org.joing.swingtools.JErrorPanel;
  * 
  * @author Francisco Morero Peyrona
  */
-public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
+public final class PDERuntime implements org.joing.kernel.api.desktop.Runtime
 {
     // Only PDEManager has an instance of PDERuntime
     PDERuntime()
@@ -124,7 +124,7 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
     
     public void showMessageDialog( String sTitle, String sMessage )
     {
-        WorkArea workArea = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
+        WorkArea workArea = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
         // TODO: Can't use showInternalMessageDialog(...) because bug ID = 6178755
         JOptionPane.showMessageDialog( (Component) workArea, sMessage, sTitle,
                                                JOptionPane.INFORMATION_MESSAGE );
@@ -141,14 +141,14 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
                            dialog.setAcceptText( sAcceptText );
                            dialog.setCancelText( sCancelText );
         
-        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
+        org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
         
         return dialog.getExitStatus() == DialogAcceptCancel.ACCEPTED;
     }
     
     public boolean showYesNoDialog( String sTitle, String sMessage )
     {
-        WorkArea workArea = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
+        WorkArea workArea = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
         // TODO: Can't use showInternalMessageDialog(...) because bug ID = 6178755
         return JOptionPane.showConfirmDialog( 
                                      (Component) workArea, sMessage, sTitle,
@@ -164,7 +164,7 @@ public final class PDERuntime implements org.joing.common.desktopAPI.Runtime
                   dialog.setTitle( sTitle );
                   dialog.add( (DeskComponent) new JErrorPanel( exc ) );
                   
-        org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
+        org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea().add( dialog );
         
         exc.printStackTrace();
     }

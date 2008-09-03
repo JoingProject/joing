@@ -22,7 +22,7 @@ package org.joing.pde.desktop.deskwidget;
 
 import java.awt.Point;
 import javax.swing.JPopupMenu;
-import org.joing.common.desktopAPI.deskwidget.DeskWidget;
+import org.joing.kernel.api.desktop.deskwidget.DeskWidget;
 import org.joing.pde.desktop.container.PDECanvas;
 
 /**

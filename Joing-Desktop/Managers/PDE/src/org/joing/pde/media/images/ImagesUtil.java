@@ -20,7 +20,7 @@
  */
 package org.joing.pde.media.images;
 
-import org.joing.common.desktopAPI.StandardImage;
+import org.joing.kernel.api.desktop.StandardImage;
 
 /**
  *

@@ -21,7 +21,7 @@
 package org.joing.pde.media.sounds;
 
 import java.net.URL;
-import org.joing.common.desktopAPI.StandardSound;
+import org.joing.kernel.api.desktop.StandardSound;
 
 /**
  *

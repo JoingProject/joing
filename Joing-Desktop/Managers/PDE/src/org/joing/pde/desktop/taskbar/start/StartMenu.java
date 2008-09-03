@@ -32,8 +32,8 @@ import javax.swing.JMenuItem;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import org.joing.common.desktopAPI.StandardImage;
-import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
+import org.joing.kernel.api.desktop.StandardImage;
+import org.joing.kernel.api.desktop.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.dto.app.AppDescriptor;
 import org.joing.common.dto.app.AppGroup;
 import org.joing.common.dto.app.AppGroupKey;
@@ -41,8 +41,8 @@ import org.joing.common.dto.user.User;
 import org.joing.pde.media.PDEColorSchema;
 import org.joing.pde.PDEManager;
 import org.joing.pde.apps.EditUser;
-import org.joing.swingtools.JoingSwingUtilities;
-import org.joing.swingtools.JScrollablePopupMenu;
+import org.joing.kernel.swingtools.JoingSwingUtilities;
+import org.joing.kernel.swingtools.JScrollablePopupMenu;
 
 /**
  *
@@ -78,13 +78,14 @@ class StartMenu extends JScrollablePopupMenu
                   item.setBorder( new EmptyBorder( 4,4,4,4 ) );
                   item.setFont( item.getFont().deriveFont( Font.BOLD, item.getFont().getSize() + 4 ) );
 
-        User user = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().getUserBridge().getUser();
+        User user = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getBridge().
+                        getUserBridge().getUser();
         
         if( user != null )
         {
             StandardImage image = (user.isMale() ? StandardImage.USER_MALE : StandardImage.USER_FEMALE);
             
-            item.setIcon( new ImageIcon( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( image, ICON_SIZE+5, ICON_SIZE+5 ) ) );
+            item.setIcon( new ImageIcon( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( image, ICON_SIZE+5, ICON_SIZE+5 ) ) );
             item.setText( user.getFirstName() +" "+ user.getSecondName() );
 
             item.addActionListener( new ActionListener()
@@ -111,7 +112,7 @@ class StartMenu extends JScrollablePopupMenu
                   {
                       public void actionPerformed( ActionEvent ae )
                       {
-                          ((PDEManager) org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager()).lock();
+                          ((PDEManager) org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager()).lock();
                       }
                   } );
         add( itmLock );
@@ -125,7 +126,7 @@ class StartMenu extends JScrollablePopupMenu
                   {
                       public void actionPerformed( ActionEvent ae )
                       {
-                          ((PDEManager) org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager()).exit();
+                          ((PDEManager) org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager()).exit();
                       }
                   } );
         add( itmExit );
@@ -133,7 +134,8 @@ class StartMenu extends JScrollablePopupMenu
     
     private void addApplications()
     {
-        List<AppGroup> lstGroups = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().getAppBridge().getInstalledForUser( AppGroupKey.ALL );
+        List<AppGroup> lstGroups = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getBridge().
+                                       getAppBridge().getInstalledForUser( AppGroupKey.ALL );
                                               
         if( lstGroups != null )
         {

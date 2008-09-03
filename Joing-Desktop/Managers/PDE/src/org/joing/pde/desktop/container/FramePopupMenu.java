@@ -30,8 +30,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import org.joing.common.desktopAPI.pane.DeskFrame;
-import org.joing.common.desktopAPI.workarea.WorkArea;
+import org.joing.kernel.api.desktop.pane.DeskFrame;
+import org.joing.kernel.api.desktop.workarea.WorkArea;
 
 /**
  * PopupMenu for both: Frame and PDEFrame (JInterbalFrame).
@@ -184,8 +184,8 @@ public class FramePopupMenu extends JPopupMenu
                           } );                          
         add( itemCheck );
 
-        List<WorkArea> lstWorkAreas = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getWorkAreas();
-        WorkArea       waActive     = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
+        List<WorkArea> lstWorkAreas = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getWorkAreas();
+        WorkArea       waActive     = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getDesktop().getActiveWorkArea();
 
         if( lstWorkAreas.size() > 1 )
         {

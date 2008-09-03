@@ -20,7 +20,7 @@
  */
 package org.joing.pde.desktop.deskwidget.deskLauncher;
 
-import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncherListener;
+import org.joing.kernel.api.desktop.deskwidget.deskLauncher.DeskLauncherListener;
 
 /**
  *

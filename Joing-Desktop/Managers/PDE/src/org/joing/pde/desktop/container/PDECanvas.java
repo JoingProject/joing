@@ -26,11 +26,11 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import javax.swing.JPanel;
-import org.joing.common.desktopAPI.Closeable;
-import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.pane.DeskCanvas;
-import org.joing.common.desktopAPI.workarea.WorkArea;
-import org.joing.swingtools.JoingSwingUtilities;
+import org.joing.kernel.api.desktop.Closeable;
+import org.joing.kernel.api.desktop.DeskComponent;
+import org.joing.kernel.api.desktop.pane.DeskCanvas;
+import org.joing.kernel.api.desktop.workarea.WorkArea;
+import org.joing.kernel.swingtools.JoingSwingUtilities;
 
 /**
  * A very basic component.

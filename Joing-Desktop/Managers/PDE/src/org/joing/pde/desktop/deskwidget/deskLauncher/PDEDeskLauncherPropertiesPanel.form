@@ -107,18 +107,21 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Component id="lblArguments" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
-                          <Component id="txtArguments" pref="306" max="32767" attributes="0"/>
-                      </Group>
                       <Component id="radApp" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="lblApplication" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="txtApplication" pref="276" max="32767" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btnSelectApp" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="lblArguments" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblApplication" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="txtApplication" min="-2" pref="62" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="btnSelectApp" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="txtArguments" alignment="0" pref="306" max="32767" attributes="0"/>
+                          </Group>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -132,8 +135,8 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="lblApplication" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="btnSelectApp" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="txtApplication" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnSelectApp" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -148,7 +151,7 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="lblApplication">
           <Properties>
-            <Property name="text" type="java.lang.String" value="ID or Name"/>
+            <Property name="text" type="java.lang.String" value="App. ID"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="lblArguments">

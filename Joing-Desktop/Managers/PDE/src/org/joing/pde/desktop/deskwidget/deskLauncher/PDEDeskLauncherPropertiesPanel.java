@@ -25,15 +25,15 @@ import java.io.File;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
-import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.StandardImage;
-import org.joing.common.desktopAPI.deskwidget.deskLauncher.DeskLauncher;
+import org.joing.kernel.api.desktop.DeskComponent;
+import org.joing.kernel.api.desktop.StandardImage;
+import org.joing.kernel.api.desktop.deskwidget.deskLauncher.DeskLauncher;
 import org.joing.common.dto.app.AppDescriptor;
-import org.joing.runtime.vfs.VFSFile;
-import org.joing.swingtools.JoingApplicationChooser;
-import org.joing.runtime.swap.JoingFileChooser;
-import org.joing.runtime.swap.JoingFileChooserPreviewImage;
-import org.joing.swingtools.filesystem.JoingFolderChooser;
+import org.joing.kernel.runtime.vfs.VFSFile;
+import org.joing.kernel.swingtools.JoingApplicationChooser;
+import org.joing.kernel.swingtools.filesystem.JoingFileChooser;
+import org.joing.kernel.swingtools.filesystem.JoingFileChooserPreviewImage;
+import org.joing.kernel.swingtools.filesystem.JoingFolderChooser;
 
 /**
  *
@@ -148,7 +148,7 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
         btnSelectDirectory.setEnabled( radDir.isSelected() );
         
         StandardImage si    = (radApp.isSelected() ? StandardImage.LAUNCHER : StandardImage.FOLDER);
-        Image         image = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( si, 48, 48 );
+        Image         image = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( si, 48, 48 );
         setIcon4IconButton( image );
     }
     
@@ -197,7 +197,7 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
 
         pnlApp.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        lblApplication.setText("ID or Name");
+        lblApplication.setText("App. ID");
 
         lblArguments.setText("Arguments");
 
@@ -223,17 +223,18 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
             .addGroup(pnlAppLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlAppLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlAppLayout.createSequentialGroup()
-                        .addComponent(lblArguments)
-                        .addGap(14, 14, 14)
-                        .addComponent(txtArguments, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE))
                     .addComponent(radApp)
                     .addGroup(pnlAppLayout.createSequentialGroup()
-                        .addComponent(lblApplication)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtApplication, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSelectApp)))
+                        .addGroup(pnlAppLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblArguments)
+                            .addComponent(lblApplication))
+                        .addGap(14, 14, 14)
+                        .addGroup(pnlAppLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlAppLayout.createSequentialGroup()
+                                .addComponent(txtApplication, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnSelectApp))
+                            .addComponent(txtArguments, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         pnlAppLayout.setVerticalGroup(
@@ -243,8 +244,8 @@ public class PDEDeskLauncherPropertiesPanel extends javax.swing.JPanel implement
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlAppLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblApplication)
-                    .addComponent(btnSelectApp)
-                    .addComponent(txtApplication, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtApplication, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSelectApp))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlAppLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblArguments)

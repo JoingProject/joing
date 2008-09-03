@@ -53,11 +53,10 @@ import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import org.joing.common.JoingManifestEntry;
-import org.joing.common.desktopAPI.DesktopManager;
-import org.joing.common.desktopAPI.StandardImage;
-import org.joing.common.desktopAPI.StandardSound;
+import org.joing.kernel.api.desktop.DesktopManager;
+import org.joing.kernel.api.desktop.StandardImage;
+import org.joing.kernel.api.desktop.StandardSound;
 import org.joing.common.dto.user.User;
-import org.joing.jvmm.RuntimeFactory;
 
 /**
  * DesktopManager interface implementation.
@@ -88,7 +87,7 @@ public class PDEManager implements DesktopManager
             
             protected Void doInBackground() throws Exception
             {
-                user = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().getUserBridge().getUser();
+                user = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getBridge().getUserBridge().getUser();
                 
                 // Changes default local to the one perfered by user. In this way all apps opened by
                 // user in Join'g will use the user locale instead of machine default locale.
@@ -141,7 +140,7 @@ public class PDEManager implements DesktopManager
         return runtime;
     }
     
-    // Called from Platform: can't be used by PDEManager
+    // To be called from Platform: don't use it.
     public void shutdown()
     {
         if( frame != null )   // It could be that frame was not yet built
@@ -153,15 +152,12 @@ public class PDEManager implements DesktopManager
             //       WorkAreas, habría que crear aquí una thread (o un bucle) donde se comprueba
             //       cada cierto tiempo que todas las Frames están cerradas, y si pasado
             //       un tiempo máximo, las que aún no están cerradas, se cierran a las bravas.
-        
-            // FIXME: Esto tiene que ir en PlatformImpl, no aquí
-            org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().getSessionBridge().logout();
             
             halt();
         }
     }
     
-    // Called from Platform: can't be used by PDEManager
+    // To be called from Platform: don't use it.
     public void halt()
     {
         if( frame != null )   // It could be that frame was not yet built
@@ -190,7 +186,7 @@ public class PDEManager implements DesktopManager
      */
     public void exit()
     {
-        org.joing.jvmm.RuntimeFactory.getPlatform().shutdown();   // Platform calls this::shutdown()
+        org.joing.kernel.jvmm.RuntimeFactory.getPlatform().shutdown();   // Platform calls this::shutdown()
     }
     
     //------------------------------------------------------------------------//
@@ -254,9 +250,9 @@ public class PDEManager implements DesktopManager
             public void run()
             {
                 GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-                // Due to a bug in Ubuntu and also in JDK, gs.isFullScreenSupported() always return false.
-                // NEXT: When fixed, use gsisFullScreenSupported().
-                boolean bFull = bFullScreen; ///&& gs.isFullScreenSupported();
+                // Due to a bug in Ubuntu and also in JDK, gd.isFullScreenSupported() always return false.
+                // NEXT: When fixed, use gd.isFullScreenSupported().
+                boolean bFull = bFullScreen; ///&& gd.isFullScreenSupported();
                 
                 try
                 {
@@ -319,7 +315,8 @@ public class PDEManager implements DesktopManager
                     
                     try
                     {
-                        boolean bValid = RuntimeFactory.getPlatform().getBridge().getSessionBridge().isValidPassword( sPassword );
+                        boolean bValid = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getBridge().
+                                             getSessionBridge().isValidPassword( sPassword );
                         
                         if( bValid )    // Unlock the screen
                         {
@@ -429,7 +426,7 @@ public class PDEManager implements DesktopManager
     
     public static void main( String[] asArg )
     {
-        org.joing.applauncher.Bootstrap.init();
-        org.joing.applauncher.Bootstrap.loginDialog();
+        System.setProperty( "JoingDebug", "true" );   // "true" or whatever except null
+        org.joing.kernel.Main.main( new String[] { } );
     }
 }

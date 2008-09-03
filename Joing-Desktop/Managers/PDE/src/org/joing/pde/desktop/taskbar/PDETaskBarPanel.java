@@ -25,8 +25,8 @@ import java.awt.Graphics;
 import javax.swing.BoxLayout;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.taskbar.TaskBarPanel;
+import org.joing.kernel.api.desktop.DeskComponent;
+import org.joing.kernel.api.desktop.taskbar.TaskBarPanel;
 import org.joing.pde.swing.JToolBarHandle;
 
 /**

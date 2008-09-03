@@ -38,7 +38,7 @@ import javax.swing.JInternalFrame;
 import javax.swing.JToggleButton;
 import javax.swing.JToolTip;
 import javax.swing.event.MouseInputAdapter;
-import org.joing.common.desktopAPI.DeskComponent;
+import org.joing.kernel.api.desktop.DeskComponent;
 import org.joing.pde.desktop.container.FramePopupMenu;
 import org.joing.pde.desktop.container.PDEFrame;
 

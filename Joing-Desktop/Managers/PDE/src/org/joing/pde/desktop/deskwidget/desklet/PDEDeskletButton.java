@@ -29,8 +29,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.FilteredImageSource;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import org.joing.swingtools.JoingSwingUtilities;
-import org.joing.swingtools.ImageHighlightFilter;
+import org.joing.kernel.swingtools.JoingSwingUtilities;
+import org.joing.kernel.swingtools.ImageHighlightFilter;
 
 /**
  *

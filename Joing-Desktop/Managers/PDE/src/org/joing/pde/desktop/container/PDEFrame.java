@@ -29,7 +29,7 @@ import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
-import org.joing.common.desktopAPI.pane.DeskFrame;
+import org.joing.kernel.api.desktop.pane.DeskFrame;
 
 /**
  * An improved JInternalFrame.

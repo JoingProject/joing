@@ -21,10 +21,10 @@
 package org.joing.pde.apps;
 
 import javax.swing.JPanel;
-import org.joing.common.desktopAPI.StandardImage;
-import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.DesktopManager;
-import org.joing.common.desktopAPI.pane.DeskFrame;
+import org.joing.kernel.api.desktop.StandardImage;
+import org.joing.kernel.api.desktop.DeskComponent;
+import org.joing.kernel.api.desktop.DesktopManager;
+import org.joing.kernel.api.desktop.pane.DeskFrame;
 import org.joing.common.dto.user.User;
 
 /**
@@ -41,12 +41,12 @@ public class EditUser extends JPanel implements DeskComponent
     public EditUser()
     {
         initComponents();
-        user = org.joing.jvmm.RuntimeFactory.getPlatform().getBridge().getUserBridge().getUser();
+        user = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getBridge().getUserBridge().getUser();
     }
     
     public void showFrame()
     {
-        DesktopManager dm    = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+        DesktopManager dm    = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
         StandardImage  image = (user.isMale() ? StandardImage.USER_MALE : StandardImage.USER_FEMALE);
         
         frame = dm.getRuntime().createFrame();

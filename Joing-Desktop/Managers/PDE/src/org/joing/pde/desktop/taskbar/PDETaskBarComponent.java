@@ -25,9 +25,9 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import org.joing.common.desktopAPI.StandardImage;
-import org.joing.common.desktopAPI.taskbar.TaskBarComponent;
-import org.joing.common.desktopAPI.taskbar.TaskBarListener;
+import org.joing.kernel.api.desktop.StandardImage;
+import org.joing.kernel.api.desktop.taskbar.TaskBarComponent;
+import org.joing.kernel.api.desktop.taskbar.TaskBarListener;
 import org.joing.pde.desktop.PDEDeskComponent;
 
 /**
@@ -97,30 +97,30 @@ public abstract class PDETaskBarComponent extends PDEDeskComponent implements Ta
         {   
             itemPreferences = new JMenuItem( "Preferences" );
             itemPreferences.addActionListener( this );
-            itemPreferences.setIcon( new ImageIcon( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.PROPERTIES, 16, 16 ) ) );
+            itemPreferences.setIcon( new ImageIcon( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.PROPERTIES, 16, 16 ) ) );
             add( itemPreferences );
             
             itemAbout = new JMenuItem( "About" );
             itemAbout.addActionListener( this );
-            itemAbout.setIcon( new ImageIcon( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.INFO, 16, 16 ) ) );
+            itemAbout.setIcon( new ImageIcon( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.INFO, 16, 16 ) ) );
             add( itemAbout );
             
             addSeparator();
             
             itemRemove = new JMenuItem( "Remove" );
             itemRemove.addActionListener( this );
-            itemRemove.setIcon( new ImageIcon( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.REMOVE, 16, 16 ) ) );
+            itemRemove.setIcon( new ImageIcon( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.REMOVE, 16, 16 ) ) );
             add( itemRemove );
             
             itemMove = new JMenuItem( "Move" );
             itemMove.addActionListener( this );
-            itemMove.setIcon( new ImageIcon( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.MOVE, 16, 16 ) ) );
+            itemMove.setIcon( new ImageIcon( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.MOVE, 16, 16 ) ) );
             itemMove.setEnabled( ! isLocked() );
             add( itemMove );
             
             itemLock = new JMenuItem( isLocked() ? "Unlock" : "Lock" );
             itemLock.addActionListener( this );
-            itemLock.setIcon( new ImageIcon( org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.LOCK, 16, 16 ) ) );
+            itemLock.setIcon( new ImageIcon( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.LOCK, 16, 16 ) ) );
             add( itemLock );
         }
         

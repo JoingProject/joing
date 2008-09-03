@@ -21,7 +21,7 @@
 package org.joing.pde.media;
 
 import org.joing.pde.*;
-import org.joing.common.desktopAPI.ColorSchema;
+import org.joing.kernel.api.desktop.ColorSchema;
 import java.awt.Color;
 
 /**
