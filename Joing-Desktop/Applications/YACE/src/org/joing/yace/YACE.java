@@ -25,9 +25,9 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
-import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.DesktopManager;
-import org.joing.common.desktopAPI.pane.DeskFrame;
+import org.joing.kernel.api.desktop.DeskComponent;
+import org.joing.kernel.api.desktop.DesktopManager;
+import org.joing.kernel.api.desktop.pane.DeskFrame;
 
 /**
  * YACE: Yet Another Community Explorer.
@@ -58,7 +58,7 @@ public class YACE extends javax.swing.JPanel implements DeskComponent
     
     public void showInFrame()
     {
-        DesktopManager dm   = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+        DesktopManager dm   = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
         ImageIcon      icon = new ImageIcon( getClass().getResource( "images/yace.png" ) );
         
         if( dm == null )
