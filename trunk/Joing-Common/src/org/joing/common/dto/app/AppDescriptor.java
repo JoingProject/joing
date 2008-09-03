@@ -1,10 +1,22 @@
 /*
- * Application.java
+ * Copyright (C) 2007, 2008 Join'g Team Members. All Rights Reserved.
+ * Join'g Team Members are listed at project's home page. By the time of 
+ * writting this at: https://joing.dev.java.net/servlets/ProjectMemberList.
  *
- * Created on 18 de mayo de 2007, 17:42
+ * This file is part of Join'g project: www.joing.org
  *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
+ * GNU Classpath is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the free
+ * Software Foundation; either version 3, or (at your option) any later version.
+ * 
+ * GNU Classpath is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * GNU Classpath; see the file COPYING.  If not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
 package org.joing.common.dto.app;
@@ -30,6 +42,7 @@ public class AppDescriptor implements Serializable
     private int          id;
     private String       name;
     private String       version;
+    private String       extraPath;
     private String       executable;
     private String[]     arguments;
     private byte[]       iconPixel;     // PNG like
@@ -71,6 +84,16 @@ public class AppDescriptor implements Serializable
     public String getVersion()
     {
         return version;
+    }
+    
+    /**
+     * Extra path from applications base dir.
+     * 
+     * @return Extra path from applications base dir.
+     */
+    public String getExtraPath()
+    {
+        return extraPath;
     }
     
     /**
@@ -215,7 +238,7 @@ public class AppDescriptor implements Serializable
     }
     
     //------------------------------------------------------------------------//
-    // NEXT: Los siguientes métodos debieran ser package (o al menos protected)
+    // NEXT: Los siguientes métodos debieran ser accesibles sólo desde el servidor
     
     /**
      * Class constructor (this class is a DTO).
@@ -238,22 +261,27 @@ public class AppDescriptor implements Serializable
         this.id = id;
     }
     
-    public void setName(String name)
+    public void setName( String name )
     {
         this.name = (name == null ? null : name.trim());
     }
     
-    public void setVersion(String version)
+    public void setVersion( String version )
     {
         this.version = (version == null ? null : version.trim());
     }
     
-    public void setExecutable(String executable)
+    public void setExtraPath( String extraPath )
+    {
+        this.extraPath = extraPath;
+    }
+    
+    public void setExecutable( String executable )
     {
         this.executable = (executable == null ? null : executable.trim());
     }
     
-    public void setArguments(String[] arguments)
+    public void setArguments( String[] arguments )
     {
         if( arguments == null )
         {
@@ -272,17 +300,17 @@ public class AppDescriptor implements Serializable
         }
     }
 
-    public void setIconPixel(byte[] iconPNG)
+    public void setIconPixel( byte[] iconPNG )
     {
         this.iconPixel = iconPNG;
     }
     
-    public void setIconVector(byte[] iconSVG)
+    public void setIconVector( byte[] iconSVG )
     {
         this.iconVector = iconSVG;
     }
     
-    public void setFileTypes(List<String> fileTypes)
+    public void setFileTypes( List<String> fileTypes )
     {
         if( fileTypes == null )
             fileTypes = new ArrayList<String>();  // Good practice: empty list instead of null

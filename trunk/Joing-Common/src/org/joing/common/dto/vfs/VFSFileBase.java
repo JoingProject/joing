@@ -1,73 +1,148 @@
 /*
- * Copyright (C) 2007 Francisco Morero Peyrona
+ * Copyright (C) 2007, 2008 Join'g Team Members. All Rights Reserved.
+ * Join'g Team Members are listed at project's home page. By the time of 
+ * writting this at: https://joing.dev.java.net/servlets/ProjectMemberList.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or (at
- * your option) any later version.
+ * This file is part of Join'g project: www.joing.org
  *
- * This program is distributed in the hope that it will be useful, but
+ * GNU Classpath is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the free
+ * Software Foundation; either version 3, or (at your option) any later version.
+ * 
+ * GNU Classpath is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * GNU Classpath; see the file COPYING.  If not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
 package org.joing.common.dto.vfs;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
- * DTO class for FileDescriptor.
+ * This is class is instatiated and used only at Server side, at Client side
+ * VFSFile (a subclass of this one) is used.
  * <p>
- * This class implements the logic to handle (validate) file attributes). In 
- * this way, there is no need to send them to the Server in order to be 
- * validated (this class is used by the Client).
- *
+ * Just to make things more clear, I decided to divide VFSFile into two classes:
+ * This class has extra variables (non available in java.io.File) and its 
+ * related methods.
+ * 
  * @author Francisco Morero Peyrona
  */
-public class FileDescriptor implements Serializable
+public class VFSFileBase extends File implements Serializable
 {
+    /**
+     * The system-dependent default name-separator character.  This field is
+     * initialized to contain the first character of the value of the system
+     * property <code>file.separator</code>. Join'g uses same as UNIX systems, 
+     * the value of this field is <code>'/'</code>.
+     *
+     * @see     java.lang.System#getProperty(java.lang.String)
+     */
+    public static final char separatorChar = '/';
+
+    /**
+     * The system-dependent default name-separator character, represented as a
+     * string for convenience.  This string contains a single character, namely
+     * <code>{@link #separatorChar}</code>.
+     */
+    public static final String separator = "" + separatorChar;
+
+    /**
+     * The system-dependent path-separator character.  This field is
+     * initialized to contain the first character of the value of the system
+     * property <code>path.separator</code>.  This character is used to
+     * separate filenames in a sequence of files given as a <em>path list</em>.
+     * Join'g uses same as UNIX systems, this character is <code>':'</code>.
+     *
+     * @see     java.lang.System#getProperty(java.lang.String)
+     */
+    public static final char pathSeparatorChar = ':';
+
+    /**
+     * The system-dependent path-separator character, represented as a string
+     * for convenience.  This string contains a single character, namely
+     * <code>{@link #pathSeparatorChar}</code>.
+     */
+    public static final String pathSeparator = "" + pathSeparatorChar;
+    
+    //---------------------------------------------//
+    
     private static final long serialVersionUID = 1L;    // TODO: cambiarlo usando: serialver -show
     
     // PK --------------------
-    private String  account;           // read-only
-    private String  name;              // read-only
-    private String  path;              // read-only (path from root except the file name)
+    private String  account      = null;    // read-only
+    private String  name         = null;    // read-only
+    private String  path         = null;    // read-only (path from root except the file name)
     //------------------------
-    private int     idFile;            // read-only
-    private int     idOriginal;        // TODO: no creo que esto vaya así: tendría que estar aquí el original y sobrarían el resto de los campos
-    private boolean isDir;             // read-only
-    private String  owner;             // read-only
-    private String  lockedBy;
+    private int     idFile       = -1;      // read-only
+    private int     idOriginal   = -1;      // TODO: no creo que esto vaya así: tendría que estar aquí el original y sobrarían el resto de los campos
+    private boolean isDir        = false;   // read-only
+    private String  owner        = null;    // read-only
+    private String  lockedBy     = null;
     
-    private boolean isHidden;
-    private boolean isPublic;
-    private boolean isReadable;
-    private boolean isModifiable;
-    private boolean isDeleteable;
-    private boolean isExecutable;
-    private boolean isDuplicable;
-    private boolean isAlterable;
-    private boolean isInTrashcan;
+    private boolean isHidden     = false;
+    private boolean isPublic     = false;
+    private boolean isReadable   = true;
+    private boolean isModifiable = true;
+    private boolean isDeleteable = true;
+    private boolean isExecutable = false;
+    private boolean isDuplicable = true;
+    private boolean isAlterable  = true;
+    private boolean isInTrashcan = false;
     
-    private Date    created;           // read-only
-    private Date    modified;          // read-only
-    private Date    accessed;          // read-only
-    private String  notes;
-    private long    size;              // read-only
+    private Date    created      = null;    // read-only
+    private Date    modified     = null;    // read-only
+    private Date    accessed     = null;    // read-only
+    private String  notes        = null;
+    private long    size         = -1L;     // read-only
     
     //---------------------------------------------//
     
     private String  sFailedToChangeAttributeReason = null;
-            
+    
     //------------------------------------------------------------------------//
     
-    public int getId()
+    public VFSFileBase( String sPathAndName )
+    {
+        super( sPathAndName );
+        
+        String[] as = { null, null };
+        
+        sPathAndName = sPathAndName.trim();
+        
+        if( separator.equals( sPathAndName ) )
+        {
+            as[0] = null;          // Not needed, just for clarity
+            as[1] = sPathAndName;
+        }
+        else
+        {
+            int nIndex = sPathAndName.lastIndexOf( separatorChar );
+            as[0] = sPathAndName.substring( 0, nIndex - 1 );
+            as[1] = sPathAndName.substring( 0, nIndex + 1 );
+        }
+        
+        path = as[0];
+        name = as[1];
+    }
+    
+    public VFSFileBase( String sPath, String sName )
+    {
+        super( buildFullPath( sPath, sName ) );
+        name = sName.trim();    // Can't use setName( sName ) because invokes canChange()
+        setPath( sPath );
+    }
+    
+    //------------------------------------------------------------------------//
+    
+    public int getHandler()
     {
         return this.idFile;
     }
@@ -81,10 +156,15 @@ public class FileDescriptor implements Serializable
     {
         return account;
     }
+    
     /**
      * Return all except the file name.
+     * <p>
+     * Note: By contract with java.io.Parent, if file is root, it has to 
+     * return null.
      * 
-     * @return All except the file name.
+     * @return All except the file name. If file is root, return null.
+     * @see java.io.File#getParent()
      */
     public String getParent()
     {
@@ -95,6 +175,7 @@ public class FileDescriptor implements Serializable
      * Just the name of the file or directory (it does not include the path).
      * 
      * @return Just the name of the file or directory.
+     * @see java.io.File#getName()
      */
     public String getName()
     {
@@ -117,6 +198,9 @@ public class FileDescriptor implements Serializable
         return owner;
     }
     
+    /**
+     * @see java.io.File#isDirectory()
+     */
     public boolean isDirectory()
     {
         return isDir;
@@ -126,6 +210,7 @@ public class FileDescriptor implements Serializable
      * Return the path from root, including file name.
      * 
      * @return Path from root, including file name.
+     * @see java.io.File#getAbsolutePath()
      */
     public String getAbsolutePath()
     {
@@ -135,17 +220,17 @@ public class FileDescriptor implements Serializable
         String sName = getName();   // Can't be null and is already trimmed
         String sPath = null;
         
-        if( sName.equals( "/" ) )
+        if( sName.equals( separator ) )
         {
             sPath = sName;
         }
         else
         {
             StringBuffer sb = new StringBuffer( 256 );
-                         sb.append( path  );
+                         sb.append( path );
 
-            if( ! path.endsWith( "/" ) )
-                sb.append( '/' );
+            if( ! path.endsWith( separator ) )
+                sb.append( separatorChar );
 
             sb.append( sName );
             sPath = sb.toString();
@@ -153,7 +238,10 @@ public class FileDescriptor implements Serializable
         
         return sPath;
     }
-
+    
+    /**
+     * @see java.io.File#isHidden()
+     */
     public boolean isHidden()
     {
         return isHidden;
@@ -175,6 +263,11 @@ public class FileDescriptor implements Serializable
         return isReadable;
     }
 
+    /**
+     * @see java.io.File#setReadable( boolean readable )
+     * @param isReadable
+     * @return
+     */
     public boolean setReadable(boolean isReadable)
     {
         if( canChange() )
@@ -223,6 +316,9 @@ public class FileDescriptor implements Serializable
         return isExecutable;
     }
 
+    /**
+     * @see java.io.File#setExecutable( boolean executable )
+     */
     public boolean setExecutable(boolean isExecutable)
     {
         boolean bSuccess = canChange();
@@ -409,27 +505,14 @@ public class FileDescriptor implements Serializable
     }
     
     //------------------------------------------------------------------------//
-    // NEXT: Los siguientes métodos debieran ser package (o al menos protected)
-    
-    /** 
-     * Class constructor (this class is a DTO).
-     * 
-     * For security and encapsulation reasons, the constructor has package scope:
-     * only the Manager EJB can create them.<br>
-     * If any other part of the application would need to create for example an
-     * empty instance of this class, then a method can be added to the Manager
-     * EJB (this method can return an empty instance).
-     */
-    public FileDescriptor()
-    {
-    }
+    // Following methods should be only known by Server or at least  protected.
     
     public void setAccount( String account )
     {
         this.account = account;
     }
     
-    public void setIdFile( int nIdFile )
+    public void setHandler( int nIdFile )
     {
         this.idFile = nIdFile;
     }
@@ -446,7 +529,15 @@ public class FileDescriptor implements Serializable
     
     public void setPath( String sPath )
     {
-        this.path = ((sPath == null) ? "" : sPath.trim());
+        if( sPath != null )
+        {
+            sPath = sPath.trim();
+            
+            if( sPath.length() == 0 )
+                sPath = null;
+        }
+        
+        this.path = sPath;
     }
     
     public void setOwner( String sOwner )
@@ -481,18 +572,49 @@ public class FileDescriptor implements Serializable
      */
     public void setSize( long size )
     {
-        if( ! isDirectory() )
+        if( isDirectory() )
+            this.size = 0L;
+        else
             this.size = ((size < 0) ? 0 : size);
     }
     
     //------------------------------------------------------------------------//
+    
+    protected void updateFrom( VFSFileBase fBase )
+    {
+        // Don't use methods because some of them (v.g. setName(...)) include restrictions
+        idFile       = fBase.getHandler();
+        account      = fBase.getAccount();
+        name         = fBase.getName();
+        path         = fBase.getParent();
+        idOriginal   = fBase.getIdOriginal();
+        owner        = fBase.getOwner();
+        lockedBy     = fBase.getLockedBy();
+        
+        isDir        = fBase.isDirectory();
+        isHidden     = fBase.isHidden();
+        isPublic     = fBase.isPublic();
+        isReadable   = fBase.isReadable();
+        isModifiable = fBase.isModifiable();
+        isDeleteable = fBase.isDeleteable();
+        isExecutable = fBase.isExecutable();
+        isDuplicable = fBase.isDuplicable();
+        isAlterable  = fBase.isAlterable();
+        isInTrashcan = fBase.isInTrashcan();
+        
+        created      = fBase.getCreated();
+        modified     = fBase.getModified();
+        accessed     = fBase.getAccessed();
+        notes        = fBase.getNotes();
+        size         = fBase.getSize();
+    }
     
     private boolean canChange()
     {// FIXME: Faltan un montón de comprobaciones (repasar todos los permisos)
         boolean      bSuccess = true;
         StringBuffer sbReason = new StringBuffer( 512 );
         
-        if( ! account.equals( owner ) )
+        if( account != null && ! account.equals( owner ) )
         {
             sbReason.append( "You have to be the owner of the file" );
             bSuccess = false;
@@ -513,5 +635,54 @@ public class FileDescriptor implements Serializable
         sFailedToChangeAttributeReason = ((sbReason.length() == 0) ? null : sbReason.toString());
         
         return true;
+    }
+    
+    /**
+     * Constructs a file-path based on parent and child passed strings.
+     * 
+     * @param sParent
+     * @param sChild
+     * @return The full path composed by passed parent and child
+     */
+    private static String buildFullPath( String sParent, String sChild )
+    {
+        StringBuffer sb = new StringBuffer( 256 );
+        
+        // Parent part: must exists and start on root ('/')
+        if( sParent == null || sParent.trim().length() == 0 )
+        {
+            sb.append( separatorChar );
+        }
+        else
+        {
+            sParent = sParent.trim();
+            
+            if( sParent.charAt( 0 ) != '/' )
+                sb.append( '/' );
+                        
+            sb.append( sParent );
+        }
+        
+        // Child part: can't start with root and can exists or not
+        if( sChild != null && sChild.trim().length() > 0 )
+        {
+            if( sb.charAt( sb.length() - 1 ) != separatorChar )  // If not ends with sep, append it
+                sb.append( separatorChar );
+             
+            sChild = sChild.trim();
+            
+            if( ! separator.equals( sChild ) )
+            {
+                if( sChild.charAt( 0 ) == separatorChar )
+                    sChild = sChild.substring( 1 );                           // Removes first '/'
+                
+                if( sChild.charAt( sChild.length() - 1 ) == separatorChar )   // Removes last '/'
+                    sChild = sChild.substring( 0, sChild.length() - 1 );
+                
+                sb.append( sChild );
+            }
+        }
+        
+        return sb.toString();
     }
 }

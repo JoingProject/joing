@@ -1,23 +1,22 @@
 /*
- * Application.java
+ * Copyright (C) 2007, 2008 Join'g Team Members. All Rights Reserved.
+ * Join'g Team Members are listed at project's home page. By the time of 
+ * writting this at: https://joing.dev.java.net/servlets/ProjectMemberList.
+ *
+ * This file is part of Join'g project: www.joing.org
+ *
+ * GNU Classpath is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the free
+ * Software Foundation; either version 3, or (at your option) any later version.
  * 
- * Created on 31-jul-2007, 18:39:54
- * 
- * Author: Francisco Morero Peyrona.
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or (at
- * your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but
+ * GNU Classpath is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * You should have received a copy of the GNU General Public License along with
+ * GNU Classpath; see the file COPYING.  If not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
 package org.joing.common.dto.app;
@@ -28,8 +27,8 @@ import java.io.Serializable;
 import org.joing.common.exception.JoingServerAppException;
 
 /**
- * This class has all the properties plus the content (normally the JAR) of the 
- * application.
+ * This class has all the properties plus the content (normally the JAR) for
+ * the application that the instance represents to.
  *
  * @author Francisco Morero Peyrona
  */
@@ -46,28 +45,6 @@ public class Application extends AppDescriptor implements Serializable
         return new ByteArrayInputStream( btContent );
     }
     
-    //------------------------------------------------------------------------//
-    // NEXT: Los siguientes métodos debieran ser package (o al menos protected)
-    
-    /**
-     * Class constructor (this class is a DTO).
-     * <p>
-     * For security and encapsulation reasons, the constructor has package scope:
-     * only the Manager EJB can create them.<br>
-     * If any other part of the application would need to create for example an
-     * empty instance of this class, then a method can be added to the Manager
-     * EJB (this method can return an empty instance).
-     */
-    public Application() throws JoingServerAppException
-    {
-    }
-    
-    // Package scope: this content is injected by AppTransferer
-    public void setContents( byte[] btContent )
-    {
-        this.btContent = btContent;      // TODO: hacer copia defensiva
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -90,4 +67,25 @@ public class Application extends AppDescriptor implements Serializable
         return hash;
     }
     
+    //------------------------------------------------------------------------//
+    // NEXT: Los siguientes métodos debieran ser package (o al menos protected)
+    
+    /**
+     * Class constructor (this class is a DTO).
+     * <p>
+     * For security and encapsulation reasons, the constructor has package scope:
+     * only the Manager EJB can create them.<br>
+     * If any other part of the application would need to create for example an
+     * empty instance of this class, then a method can be added to the Manager
+     * EJB (this method can return an empty instance).
+     */
+    public Application() throws JoingServerAppException
+    {
+    }
+    
+    // Package scope: this content is injected by AppTransferer
+    public void setContents( byte[] btContent )
+    {
+        this.btContent = btContent;      // TODO: hacer copia defensiva
+    }    
 }
