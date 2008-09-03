@@ -24,11 +24,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JSplitPane;
-import org.joing.common.desktopAPI.DeskComponent;
-import org.joing.common.desktopAPI.DesktopManager;
-import org.joing.common.desktopAPI.pane.DeskFrame;
+import org.joing.kernel.api.desktop.DeskComponent;
+import org.joing.kernel.api.desktop.DesktopManager;
+import org.joing.kernel.api.desktop.pane.DeskFrame;
 
 /**
  * This class implements a simple calculator pane.
@@ -67,28 +66,16 @@ class Calculator extends JSplitPane implements ActionListener, DeskComponent
     
     public void showInFrame()
     {
-        DesktopManager dm   = org.joing.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
+        DesktopManager dm   = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager();
         ImageIcon      icon = new ImageIcon( getClass().getResource( "images/calculator.png" ) );
         
-        if( dm != null )
-        {
-            // Show this panel in a frame created by DesktopManager Runtime.
-            DeskFrame frame = dm.getRuntime().createFrame();
-                      frame.setTitle( "Basic Calculator" );
-                      frame.setIcon( icon.getImage() );
-                      frame.add( (DeskComponent) this );
-        
-            dm.getDesktop().getActiveWorkArea().add( frame );
-        }
-        else
-        {
-            JFrame frm = new JFrame();
-                   frm.setIconImage( icon.getImage() );
-                   frm.add( this );
-                   frm.pack();
-                   frm.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-                   frm.setVisible( true );
-        }
+        // Show this panel in a frame created by DesktopManager Runtime.
+        DeskFrame frame = dm.getRuntime().createFrame();
+                  frame.setTitle( "Basic Calculator" );
+                  frame.setIcon( icon.getImage() );
+                  frame.add( (DeskComponent) this );
+
+        dm.getDesktop().getActiveWorkArea().add( frame );
     }
     
     //------------------------------------------------------------------------//
