@@ -251,9 +251,12 @@ public class Images extends JPanel implements DeskComponent
     
     public void open()
     {
+        JoingFileChooserPreviewImage jfcpi = new JoingFileChooserPreviewImage();
         JoingFileChooser jfc = new JoingFileChooser();
                          jfc.setAcceptAllFileFilterUsed( false );
                          jfc.addChoosableFileFilter( JoingFileChooserPreviewImage.getFilter() );
+                         jfc.setAccessory( jfcpi );
+                         jfc.addPropertyChangeListener( jfcpi );
         
         if( jfc.showDialog( this ) == JoingFileChooser.APPROVE_OPTION )
         {
