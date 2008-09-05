@@ -71,15 +71,7 @@ public class JoingFileSystemTree extends JoingSwingTree implements FileSystemAct
             public void mousePressed( MouseEvent me )
             {
                 if( me.isPopupTrigger() )
-                {
-                    TreePath path = getPathForLocation( me.getX(), me.getY() );
-                    
-                    if( (path != null) && (! isPathSelected( path )) )
-                        setSelectionPath( path );
-                    
-                    if( JoingFileSystemTree.this.popup != null )
-                        JoingFileSystemTree.this.popup.show( JoingFileSystemTree.this, me.getX(), me.getY() );
-                }
+                    showPopup( me );
             }
             
             public void mouseClicked(  MouseEvent me )
@@ -95,8 +87,24 @@ public class JoingFileSystemTree extends JoingSwingTree implements FileSystemAct
                     }
                 }
             }
+
+            public void mouseReleased( MouseEvent me )   // Needed for Windows
+            {
+                if( me.isPopupTrigger() )
+                    showPopup( me );
+            }
+
+            private void showPopup( MouseEvent me )
+            {
+                TreePath path = getPathForLocation( me.getX(), me.getY() );
+                    
+                if( (path != null) && (! isPathSelected( path )) )
+                    setSelectionPath( path );
+
+                if( JoingFileSystemTree.this.popup != null )
+                    JoingFileSystemTree.this.popup.show( JoingFileSystemTree.this, me.getX(), me.getY() );
+            }
             
-            public void mouseReleased( MouseEvent me )  {  }
             public void mouseEntered(  MouseEvent me )  {  }
             public void mouseExited(   MouseEvent me )  {  }
         } );

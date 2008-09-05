@@ -27,7 +27,6 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -151,50 +150,6 @@ public class JoingSwingUtilities
         
         return Toolkit.getDefaultToolkit().createCustomCursor( image, pHotSpot, sName );        
     }
-    
-    /**
-     * Scales passed image to new size keeping the aspect (ratio between width
-     * and height)
-     * 
-     * @param icon Icon to scale.
-     * @param newWidth New width.
-     * @param newHeight New height.
-     * @param observer The observer needed to scale.
-     * @return Scaled icon.
-     */
-//    public ImageIcon scaleImageKeepingAspect( ImageIcon icon, int newWidth, int newHeight, ImageObserver observer )
-//    {
-//        Image  image   = icon.getImage();
-//        int    nWidth  = image.getWidth( observer );
-//        int    nHeight = image.getHeight( observer );
-//        double nRatio  = 1.0;
-//        
-//        if( nWidth >= nHeight )
-//        {
-//            nRatio = (double) (nCOMP_SIZE - 5) / nWidth;
-//            nWidth = nCOMP_SIZE - 5;
-//            nHeight = (int) (nHeight * nRatio);
-//        }
-//        else
-//        {
-//            if( getHeight() > 150 )
-//            {
-//                nRatio = (double) (nCOMP_SIZE - 5) / nHeight;
-//                nHeight = nCOMP_SIZE - 5;
-//                nWidth = (int) (nWidth * nRatio);
-//            }
-//            else
-//            {
-//                nRatio = (double) getHeight() / nHeight;
-//                nHeight = getHeight();
-//                nWidth = (int) (nWidth * nRatio);
-//            }
-//        }
-//
-//        image = image.getScaledInstance( nWidth, nHeight, Image.SCALE_DEFAULT );
-//        
-//        return new ImageIcon( image );
-//    }
     
     public static synchronized WorkArea findWorkAreaFor( DeskComponent comp )
     {
