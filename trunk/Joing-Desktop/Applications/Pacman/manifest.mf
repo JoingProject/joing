@@ -1,3 +1,16 @@
 Manifest-Version: 1.0
 X-COMMENT: Main-Class will be added automatically by build
 
+Name: Join'g
+AppName: Pacman
+Version: 1.0
+IconPixel: org/joing/pacman/pacman.png
+IconVector: 
+Description: Pacman game
+WebSite: www.joing.org
+Author: Francisco Morero Peyrona
+Vendor: Join'g Team
+License: GPL-V3
+CallSyntax: 
+Arguments: 
+FileTypes: 
