@@ -171,6 +171,12 @@ class FrameButton extends JToggleButton implements DeskComponent
                 if( me.isPopupTrigger() )
                     showPopupMenu( me.getPoint() );
             }
+            
+            public void mouseReleased( MouseEvent me )   // Needed for Windows
+            {
+                if( me.isPopupTrigger() )
+                    showPopupMenu( me.getPoint() );
+            }
         } );
     }
 }

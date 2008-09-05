@@ -53,7 +53,7 @@ public class GlassPaneWidget extends GlassPaneBase
         }
     }
     
-    protected void mousePressed( MouseEvent me )  
+    protected void mousePressed( MouseEvent me )
     {
         // I prefer to handle events personally in order to show the popup. 
         // See: http://www.jguru.com/forums/view.jsp?EID=1239349
@@ -71,6 +71,12 @@ public class GlassPaneWidget extends GlassPaneBase
             else
                 ptMousePosition = null;   // Used also as flag to know if drag was started by left (BUTTON1) click
         }
+    }
+    
+    public void mouseReleased( MouseEvent me )   // Needed for Windows
+    {
+        if( me.isPopupTrigger() )
+            widget.showPopup( me.getPoint() );
     }
 
     protected void mouseDragged( MouseEvent me )
