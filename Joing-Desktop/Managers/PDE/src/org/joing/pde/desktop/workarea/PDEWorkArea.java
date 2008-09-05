@@ -138,7 +138,7 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
      */
     protected void showPopupMenu( Point p )
     {
-        // Has to be created every time because some items can change from ivocation to invocation.
+        // Has to be created every time because some items can change from invocation to invocation.
         // And in this way, we also save memory (it exists in memory only while needed).
         PDEWorkAreaPopupMenu popup = new PDEWorkAreaPopupMenu( this, p );
                           popup.show( this, p.x, p.y );
@@ -295,16 +295,24 @@ public class PDEWorkArea extends JDesktopPane implements WorkArea
                     PDEWorkArea.this.requestFocusInWindow();
                 
                 if( me.isPopupTrigger() )
+                {
                     showPopupMenu( me.getPoint() );
+                }
                 else
                 {   // Si llega aqui es q se ha hecho clic en el desktop, ya q si se hace clic en un 
                     // componente contenido en el desktop, el desktop no llega a recibir el evento.
                     Component[] aComp = getComponents();
-
+                    
                     for( int n = 0; n < aComp.length; n++ )
                         if( aComp[n] instanceof Selectable )
                             ((Selectable) aComp[n]).setSelected( false );
                 }
+            }
+            
+            public void mouseReleased( MouseEvent me )   // Needed for Windows
+            {
+                if( me.isPopupTrigger() )
+                    showPopupMenu( me.getPoint() );
             }
         }  );
     }
