@@ -62,15 +62,13 @@ public class JoingFileSystemList extends JList implements FileSystemActionable
             public void mousePressed( MouseEvent me )
             {
                 if( me.isPopupTrigger() )
-                {
-                    int nIndex = locationToIndex( me.getPoint() );
-                    
-                    if( (nIndex > -1) && (! isSelectedIndex( nIndex )) )
-                        setSelectedIndex( nIndex );
-                    
-                    if( JoingFileSystemList.this.popup != null )
-                        JoingFileSystemList.this.popup.show( JoingFileSystemList.this, me.getX(), me.getY() );
-                }
+                    showPopup( me );
+            }
+            
+            public void mouseReleased( MouseEvent me )   // Needed for Windows
+            {
+                if( me.isPopupTrigger() )
+                    showPopup( me );
             }
             
             public void mouseClicked(  MouseEvent me )
@@ -91,7 +89,17 @@ public class JoingFileSystemList extends JList implements FileSystemActionable
                 }
             }
             
-            public void mouseReleased( MouseEvent me )  {  }
+            private void showPopup( MouseEvent me )
+            {
+                int nIndex = locationToIndex( me.getPoint() );
+                    
+                if( (nIndex > -1) && (! isSelectedIndex( nIndex )) )
+                    setSelectedIndex( nIndex );
+
+                if( JoingFileSystemList.this.popup != null )
+                    JoingFileSystemList.this.popup.show( JoingFileSystemList.this, me.getX(), me.getY() );
+            }
+            
             public void mouseEntered(  MouseEvent me )  {  }
             public void mouseExited(   MouseEvent me )  {  }
         } );

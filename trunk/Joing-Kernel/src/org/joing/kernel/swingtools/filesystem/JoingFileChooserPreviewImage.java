@@ -21,7 +21,10 @@
 
 package org.joing.kernel.swingtools.filesystem;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -29,6 +32,10 @@ import java.io.File;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 import org.joing.kernel.runtime.vfs.VFSFile;
 
@@ -36,14 +43,32 @@ import org.joing.kernel.runtime.vfs.VFSFile;
  *
  * @author Francisco Morero Peyrona
  */
-public class JoingFileChooserPreviewImage extends JLabel implements PropertyChangeListener
+public class JoingFileChooserPreviewImage extends JPanel implements PropertyChangeListener
 {   // Next: Add support for BMP images
     private final static String sRENDERIZABLES = ".jpg.jpeg.gif.png.tif.tiff";
-    private final static int    nCOMP_SIZE     = 155;
+    private final static int    nIMAGE_SIZE    = 160;
 
+    private JLabel       lblPreview;
+    private JFileMaxSize fmsLocal;
+    private JFileMaxSize fmsRemote;
+    
+    private FileFilter filter = getFilter();
+
+    //------------------------------------------------------------------------//
+    
     public JoingFileChooserPreviewImage()
     {
-        setPreferredSize( new Dimension( nCOMP_SIZE, -1 ) );
+        lblPreview = new JLabel();
+        lblPreview.setPreferredSize( new Dimension( nIMAGE_SIZE , nIMAGE_SIZE ) );
+        fmsLocal   = new JFileMaxSize( "Max local (in Kb) " , "Maximum size for local files in Kb" , 512 );
+        fmsRemote  = new JFileMaxSize( "Max remote (in Kb) ", "Maximum size for remote files in Kb",  64 );
+
+        setBorder( new EmptyBorder( 0, 5, 0, 5 ) );
+        setLayout( new BorderLayout( 0, 5 ) );
+        add( fmsRemote , BorderLayout.NORTH  );
+        add( lblPreview, BorderLayout.CENTER );
+        add( fmsLocal  , BorderLayout.SOUTH  );
+        setPreferredSize( new Dimension( nIMAGE_SIZE + 60, nIMAGE_SIZE ) );
     }
     
     public void propertyChange( PropertyChangeEvent pce )
@@ -55,17 +80,21 @@ public class JoingFileChooserPreviewImage extends JLabel implements PropertyChan
         {
             File fSelection = (File) pce.getNewValue();
             
-            if( fSelection != null && fSelection.exists() && fSelection.isFile() && 
-                ! (fSelection instanceof VFSFile) )   // VFSFile preview is not affordable: too slow
+            if( fSelection != null && fSelection.exists() && fSelection.isFile() &&
+                filter.accept( fSelection ) && isValidSize( fSelection ) )
             {
-                FileFilter filter = getFilter();
-                String     sPath  = fSelection.getAbsolutePath();
+                // TODO: hay que leer el fichero apropiadamente (esto sólo sirve para los locales, no para lso remotos)
+                String sPath = fSelection.getAbsolutePath();
                 
-                if( sPath != null && filter.accept( fSelection ) )
+                if( sPath != null )
                 {
                     ImageIcon icon = new ImageIcon( sPath );
-                    setIcon( scaleImage( icon ) );
+                    lblPreview.setIcon( scaleImage( icon ) );
                 }
+            }
+            else
+            {
+                lblPreview.setIcon( null );
             }
         }
     }
@@ -117,16 +146,16 @@ public class JoingFileChooserPreviewImage extends JLabel implements PropertyChan
          */
         if( nWidth >= nHeight )
         {
-            nRatio = (double) (nCOMP_SIZE - 5) / nWidth;
-            nWidth = nCOMP_SIZE - 5;
+            nRatio = (double) (nIMAGE_SIZE - 5) / nWidth;
+            nWidth = nIMAGE_SIZE - 5;
             nHeight = (int) (nHeight * nRatio);
         }
         else
         {
             if( getHeight() > 150 )
             {
-                nRatio = (double) (nCOMP_SIZE - 5) / nHeight;
-                nHeight = nCOMP_SIZE - 5;
+                nRatio = (double) (nIMAGE_SIZE - 5) / nHeight;
+                nHeight = nIMAGE_SIZE - 5;
                 nWidth = (int) (nWidth * nRatio);
             }
             else
@@ -140,5 +169,48 @@ public class JoingFileChooserPreviewImage extends JLabel implements PropertyChan
         image = image.getScaledInstance( nWidth, nHeight, Image.SCALE_DEFAULT );
         
         return new ImageIcon( image );
+    }
+    
+    boolean isValidSize( File file )
+    {
+        return (file instanceof VFSFile && file.length() <= (fmsRemote.getFileMaxSize() * 1024)
+               ||
+               (file.length() <= (fmsLocal.getFileMaxSize()*1024)));
+    }
+    
+    //------------------------------------------------------------------------//
+    
+    private final class JFileMaxSize extends JPanel
+    {
+        private JLabel   label   = new JLabel();
+        private JSpinner spinner = new JSpinner();
+                
+        private JFileMaxSize( String sText, String sTooltip, int nSize )
+        {
+            setLayout( new GridBagLayout() );
+            
+            label.setText( sText );
+            GridBagConstraints gbc1 = new GridBagConstraints();
+                               gbc1.gridx  = 0;
+                               gbc1.gridy  = 0;
+                               gbc1.fill   = GridBagConstraints.NONE;
+                               gbc1.anchor = GridBagConstraints.LAST_LINE_START;
+            add( label, gbc1 );
+            
+            spinner.setModel( new SpinnerNumberModel( nSize, 0, 1024*1024*2, 10 ) ); // Max == 2 Gb (in Kb)
+            spinner.setPreferredSize( new Dimension( 60, 20 ) );
+            spinner.setToolTipText( sTooltip );
+            GridBagConstraints gbc2 = new GridBagConstraints();
+                               gbc2.gridx  = 1;
+                               gbc2.gridy  = 0;
+                               gbc2.fill   = GridBagConstraints.HORIZONTAL;
+                               gbc2.anchor = GridBagConstraints.LAST_LINE_END;
+            add( spinner, gbc2 );
+        }
+        
+        private int getFileMaxSize()
+        {
+            return ((SpinnerNumberModel) spinner.getModel()).getNumber().intValue();
+        }
     }
 }
