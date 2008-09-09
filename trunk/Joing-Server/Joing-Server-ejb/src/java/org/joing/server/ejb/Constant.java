@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 public class Constant
 {
     /** A regular expression that can be used to check if an account String is valid or not */
-    public static final String sREG_EXP_VALID_ACCOUNT  = "[a-z][A-Z1-9\\.\\_]{3,31}";
+    public static final String sREG_EXP_VALID_ACCOUNT  = "(?i)[a-z][A-Z1-9\\.\\_]{3,31}";
     /** A regular expression that can be used to check if a password String is valid or not */
     public static final String sREG_EXP_VALID_PASSWORD = ".{5,31}";
     
