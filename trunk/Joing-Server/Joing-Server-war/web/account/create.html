@@ -24,7 +24,7 @@
 
     <dl class="form">
 
-	<dt><h:outputLabel for="user_account" value="Account"/></dt>
+	<dt><h:outputLabel for="user_account" value="Account (min = 4)"/></dt>
 	<dd><h:inputText
 		id="user_account"
 		value="#{CreateAccountForm.account}"
@@ -65,7 +65,7 @@
 	    maxlength="64"
 	    styleClass="create_user_email"/></dd>
 
-	<dt><h:outputLabel for="user_password" value="Password"/></dt>
+	<dt><h:outputLabel for="user_password" value="Password (min = 6)"/></dt>
 	<dd><h:inputSecret
 	    id="user_password"
 	    value="#{CreateAccountForm.password}"
