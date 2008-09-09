@@ -34,8 +34,7 @@ import javax.persistence.EntityManager;
 
 /**
  * This class is in charge of login, logout and basic User management.
- * <p>
- * For the API javadoc, refer to the 'remote' and 'local' interfaces.
+ * <p>For the API javadoc, refer to the 'remote' and 'local' interfaces.</p>
  *
  * @author Francisco Morero Peyrona
  */

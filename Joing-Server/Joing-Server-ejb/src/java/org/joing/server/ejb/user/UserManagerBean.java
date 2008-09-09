@@ -169,7 +169,7 @@ public class UserManagerBean
         if( ! sAccount.matches( Constant.sREG_EXP_VALID_ACCOUNT ) )
             throw new JoingServerUserException( JoingServerUserException.INVALID_ACCOUNT );
         
-        if( ! sPassword.matches( Constant.sREG_EXP_VALID_ACCOUNT ) )
+        if( ! sPassword.matches( Constant.sREG_EXP_VALID_PASSWORD ) )
             throw new JoingServerUserException( JoingServerUserException.INVALID_PASSWORD );
         
         sAccount = sessionManagerBean.composeAccount( sAccount );
@@ -188,7 +188,7 @@ public class UserManagerBean
             
             // Creates user in USERS DB table
             UserEntity _user = new UserEntity();
-                       _user.setAccount( sAccount );
+                       _user.setAccount( sAccount.trim().toLowerCase() );
                        _user.setPassword( sPassword );
                        _user.setEmail( sEmail );
                        _user.setFirstName( sFirstName );
