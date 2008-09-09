@@ -97,11 +97,11 @@ public class VFSFileBase extends File implements Serializable
     private boolean isAlterable  = true;
     private boolean isInTrashcan = false;
     
-    private Date    created      = null;    // read-only
-    private Date    modified     = null;    // read-only
-    private Date    accessed     = null;    // read-only
+    private long    created      = -1L;    // read-only     // Even if this vars are dates as longs:
+    private long    modified     = -1L;    // read-only     // it is it's better to manage them faster
+    private long    accessed     = -1L;    // read-only     // and smaller to be seralized (transported)
+    private long    size         = -1L;    // read-only
     private String  notes        = null;
-    private long    size         = -1L;     // read-only
     
     //---------------------------------------------//
     
@@ -166,6 +166,7 @@ public class VFSFileBase extends File implements Serializable
      * @return All except the file name. If file is root, return null.
      * @see java.io.File#getParent()
      */
+    @Override
     public String getParent()
     {
         return path;
@@ -177,6 +178,7 @@ public class VFSFileBase extends File implements Serializable
      * @return Just the name of the file or directory.
      * @see java.io.File#getName()
      */
+    @Override
     public String getName()
     {
         return name;
@@ -201,6 +203,7 @@ public class VFSFileBase extends File implements Serializable
     /**
      * @see java.io.File#isDirectory()
      */
+    @Override
     public boolean isDirectory()
     {
         return isDir;
@@ -212,6 +215,7 @@ public class VFSFileBase extends File implements Serializable
      * @return Path from root, including file name.
      * @see java.io.File#getAbsolutePath()
      */
+    @Override
     public String getAbsolutePath()
     {
         // TODO: posiblemente aquí haya que tener en cuenta cosas como si está 
@@ -242,6 +246,7 @@ public class VFSFileBase extends File implements Serializable
     /**
      * @see java.io.File#isHidden()
      */
+    @Override
     public boolean isHidden()
     {
         return isHidden;
@@ -258,6 +263,15 @@ public class VFSFileBase extends File implements Serializable
         return false;
     }
 
+    /**
+     * Returns true if file can be read.
+     * <p>
+     * It is equivalent to java.io.File::canRead(), but I create this new 
+     * method because canRead() is not a Java apropriate name.
+     * 
+     * @return Returns true if file can be read.
+     * @see java.io.File#canRead()
+     */
     public boolean isReadable()
     {
         return isReadable;
@@ -268,6 +282,7 @@ public class VFSFileBase extends File implements Serializable
      * @param isReadable
      * @return
      */
+    @Override
     public boolean setReadable(boolean isReadable)
     {
         if( canChange() )
@@ -279,6 +294,15 @@ public class VFSFileBase extends File implements Serializable
         return false;
     }
     
+    /**
+     * Returns true if file can be can written.
+     * <p>
+     * It is equivalent to java.io.File::canWrite(), but I create this new 
+     * method because canWrite() is not a Java apropriate name.
+     * 
+     * @return Returns true if file can be written.
+     * @see java.io.File#canWrite()
+     */
     public boolean isModifiable()
     {
         return isModifiable;
@@ -311,6 +335,15 @@ public class VFSFileBase extends File implements Serializable
         return false;
     }
 
+    /**
+     * Returns true if file can be can executed.
+     * <p>
+     * It is equivalent to java.io.File::canExecute(), but I create this new 
+     * method because canExecute() is not a Java apropriate name.
+     * 
+     * @return Returns true if file can be executed.
+     * @see java.io.File#canExecute()
+     */
     public boolean isExecutable()
     {
         return isExecutable;
@@ -319,6 +352,7 @@ public class VFSFileBase extends File implements Serializable
     /**
      * @see java.io.File#setExecutable( boolean executable )
      */
+    @Override
     public boolean setExecutable(boolean isExecutable)
     {
         boolean bSuccess = canChange();
@@ -451,17 +485,26 @@ public class VFSFileBase extends File implements Serializable
         return account.equals( lockedBy );
     }
     
-    public Date getCreated()
+    public long getCreated()
     {
         return created;
     }
 
-    public Date getModified()
+    /**
+     * Returns last time the file was modified as a long.
+     * <p>
+     * It is equivalent to java.io.File::lastModified(), but I create this new 
+     * method because lastModified() is not a Java apropriate name.
+     * 
+     * @return Last time the file was modified as a long.
+     * @see java.io.File#lastModified()
+     */
+    public long getModified()
     {
         return modified;
     }
 
-    public Date getAccessed()
+    public long getAccessed()
     {
         return accessed;
     }
@@ -482,7 +525,16 @@ public class VFSFileBase extends File implements Serializable
         return false;
     }
     
-    public long getSize()
+    /**
+     * Returns file size.
+     * <p>
+     * It is equivalent to java.io.File::length(), but I create this new method
+     * because length() is not a Java apropriate name.
+     * 
+     * @return File size.
+     * @see java.io.File#length()
+     */
+    public Long getSize()
     {
         return size;
     }
@@ -550,19 +602,19 @@ public class VFSFileBase extends File implements Serializable
         this.lockedBy = sLockedBy;
     }
     
-    public void setCreated( Date date )
+    public void setCreated( long nWhen )
     {
-        this.created = ((date == null) ? new Date( 0 ) : date);
+        this.created = ((nWhen < 0) ? 0 : nWhen);
     }
     
-    public void setModified( Date date )
+    public void setModified( long nWhen )
     {
-        this.modified = ((date == null) ? new Date( 0 ) : date);
+        this.modified = ((nWhen < 0) ? 0 : nWhen);
     }
     
-    public void setAccessed( Date date )
+    public void setAccessed( long nWhen )
     {
-        this.accessed = ((date == null) ? new Date( 0 ) : date);
+        this.accessed = ((nWhen < 0) ? 0 : nWhen);
     }
     
     /**
@@ -606,7 +658,7 @@ public class VFSFileBase extends File implements Serializable
         modified     = fBase.getModified();
         accessed     = fBase.getAccessed();
         notes        = fBase.getNotes();
-        size         = fBase.getSize();
+        size         = fBase.length();
     }
     
     private boolean canChange()
