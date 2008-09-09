@@ -128,10 +128,8 @@ public class Notes extends JPanel implements DeskComponent
         {
             // This returns either an instance of java.io.File (representing a local file)
             // or an instance of org.joing.runtime.vfs.VFSFile (representing a remote file).
-            File f = JoingFileSystemView.getFileSystemView().createFileObject( sFileFullName );
-            
-            if( f.exists() )
-                addEditor( f );
+            File file = JoingFileSystemView.getFileSystemView().createFileObject( sFileFullName ); 
+            addEditor( file );
         }
     }
     
@@ -146,7 +144,7 @@ public class Notes extends JPanel implements DeskComponent
         
         if( file.exists() )
         {
-            InputStreamReader  isr = null;
+            InputStreamReader isr = null;
         
             try
             {
@@ -287,7 +285,7 @@ public class Notes extends JPanel implements DeskComponent
         }
     }
     
-    // END OF JOIN'G THINS
+    // END OF JOIN'G THINGS
     //------------------------------------------------------------------------//
     // FROM HERE TO THE END OF THE FILE CODE REFERS TO SWING (NOT TO JOIN'G)
     
