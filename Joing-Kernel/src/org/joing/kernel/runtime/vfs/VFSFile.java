@@ -326,25 +326,6 @@ public class VFSFile extends VFSFileBase
         return super.hashCode() + getHandler();
     }
     
-    @Override
-    public boolean canExecute()
-    {
-        return isExecutable();
-    }
-    
-    @Override
-    public boolean canRead()
-    {
-        return isReadable();
-    }
-    
-    @Override
-    // A directory can always be written (add files and sub-dirs)
-    public boolean canWrite()
-    {
-        return (isDirectory() ? isReadable() : isModifiable());
-    }
-    
     /**
      * @see java.io.File#isAbsolute()
      */
@@ -363,31 +344,9 @@ public class VFSFile extends VFSFileBase
         return (! isDirectory());
     }
     
-    // Here starts VFS properties that java.io.File does not have
-    
     public boolean isLink()
     {
         return false;    // TODO: implementarlo cuando haya aclarado cómo va lo de los links
-    }
-    
-    //-----------------------------------------------------------
-    
-    /**
-     * @see java.io.File#lastModified()
-     */
-    @Override
-    public long lastModified()
-    {
-        return getModified().getTime();
-    }
-    
-    /**
-     * @see java.io.File#length()
-     */
-    @Override
-    public long length()
-    {
-        return getSize();
     }
     
     /**
@@ -645,6 +604,76 @@ public class VFSFile extends VFSFileBase
     {
         // TODO Hacerlo
         throw new UnsupportedOperationException( "Not supported yet." );
+    }
+    
+    //------------------------------------------------------------------------//
+    // Methods that exists with other names in super-class and has to be overwritten from java.io.File
+    
+    /**
+     * Exists to keep compatibility with java.io.File::lastModified().<br>
+     * It is equivalent to super.getModified().
+     * 
+     * @see java.io.File#lastModified()
+     * @see VFSFileBase#getModified()
+     */
+    @Override
+    public long lastModified()
+    {
+        return super.getModified();
+    }
+    
+    /**
+     * Exists to keep compatibility with java.io.File::length().<br>
+     * It is  equivalent to super.getSize().
+     * 
+     * @see java.io.File#length()
+     * @see VFSFileBase#getSize()
+     */
+    @Override
+    public long length()
+    {
+        return super.getSize();
+    }
+    
+    /**
+     * Exists to keep compatibility with java.io.File::canExecute().<br>
+     * It is  equivalent to super.isExecutable().
+     * 
+     * @see java.io.File#length()
+     * @see VFSFileBase#getSize()
+     */
+    @Override
+    public boolean canExecute()
+    {
+        return isExecutable();
+    }
+    
+    /**
+     * Exists to keep compatibility with java.io.File::canRead().<br>
+     * It is  equivalent to super.isReadable().
+     * 
+     * @see java.io.File#length()
+     * @see VFSFileBase#getSize()
+     */
+    @Override
+    public boolean canRead()
+    {
+        return isReadable();
+    }
+    
+    /**
+     * Exists to keep compatibility with java.io.File::canWrite().<br>
+     * It is  equivalent to super.isReadable() (in case of directory) and
+     * super.isModifiable() (in case of file).
+     * 
+     * @see java.io.File#length()
+     * @see VFSFileBase#getSize()
+     */
+    @Override
+    // A directory can always be written (add files and sub-dirs)
+    public boolean canWrite()
+    {
+        return (isDirectory() ? isReadable() : isModifiable());
     }
     
     //------------------------------------------------------------------------//

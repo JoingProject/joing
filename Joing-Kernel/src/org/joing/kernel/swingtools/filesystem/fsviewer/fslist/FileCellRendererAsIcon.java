@@ -24,6 +24,8 @@ package org.joing.kernel.swingtools.filesystem.fsviewer.fslist;
 import java.awt.Component;
 import java.awt.Font;
 import java.io.File;
+import java.util.Hashtable;
+import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -39,7 +41,21 @@ import org.joing.kernel.swingtools.JoingSwingUtilities;
  * @author Francisco Morero Peyrona
  */
 class FileCellRendererAsIcon extends JRoundLabel implements ListCellRenderer
-{    
+{
+    // Hashtable is choosen over HashMap because (as static variable) different 
+    // instances of FileCellRendererAsIcon can acesses concurrently to the map.
+    private static Map<Integer,ImageIcon> map = new Hashtable<Integer, ImageIcon>( 16 );
+    
+    // NEXT: It should be a small locker to indicate read-only and the image
+    //       could be overlapped (XOR) with the base one
+    private static ImageIcon iconLOCKED = null;
+    //------------------------------------------------
+    
+    // Every FileCellRendererAsIcon instance has to have its own VFSIconMapper instance
+    private VFSIconMapper iconMapper = new VFSIconMapper( 40,40 );
+    
+    //------------------------------------------------------------------------//
+    
     public FileCellRendererAsIcon()
     {
         setFont( getFont().deriveFont( Font.PLAIN ) );
@@ -62,7 +78,7 @@ class FileCellRendererAsIcon extends JRoundLabel implements ListCellRenderer
         else
         {
             File file  = (File) value;
-            icon = (new VFSIconMapper( 40,40 )).getIcon( file );
+            icon  = getIcon( file );    // Returns a not null icon
             sName = file.getName();
         }
         
@@ -81,5 +97,19 @@ class FileCellRendererAsIcon extends JRoundLabel implements ListCellRenderer
         }
         
         return this;
+    }
+    
+    private ImageIcon getIcon( File file )
+    {
+        Integer   nIconId   = iconMapper.getIconId( file );
+        ImageIcon imageIcon = map.get( nIconId );
+        
+        if( imageIcon == null )
+        {
+            imageIcon = iconMapper.getIcon( nIconId );
+            map.put( nIconId, imageIcon );   // By storing just the index we save memory
+        }
+        
+        return imageIcon;
     }
 }
