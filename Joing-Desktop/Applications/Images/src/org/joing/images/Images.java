@@ -24,7 +24,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -45,10 +44,10 @@ import org.joing.kernel.api.desktop.DeskComponent;
 import org.joing.kernel.api.desktop.DesktopManager;
 import org.joing.kernel.api.desktop.pane.DeskDialog;
 import org.joing.kernel.api.desktop.pane.DeskFrame;
+import org.joing.kernel.runtime.vfs.JoingFileInputStream;
 import org.joing.kernel.swingtools.filesystem.JoingFileChooser;
 import org.joing.kernel.swingtools.filesystem.JoingFileChooserPreviewImage;
 import org.joing.kernel.runtime.vfs.JoingFileSystemView;
-import org.joing.kernel.runtime.vfs.VFSFile;
 import org.joing.kernel.swingtools.JoingPanel;
 
 /**
@@ -189,23 +188,11 @@ public class Images extends JPanel implements DeskComponent
     
     public void addImage( File fImage )
     {
-        InputStream is = null;
-        
         if( fImage.exists() )
         {
             try
             {
-                if( fImage instanceof VFSFile )
-                {   
-                    is = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getBridge().
-                            getFileBridge().getFileReaderAndWriter( (VFSFile) fImage ).getByteReader();
-                }
-                else
-                {
-                    is = new FileInputStream( fImage );
-                }
-                
-                addImage( fImage.getName(), is );
+                addImage( fImage.getName(), new JoingFileInputStream( fImage ) );
             }
             catch( IOException exc )
             {
