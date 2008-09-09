@@ -48,7 +48,7 @@ public interface VFSFile4IO
      * @return An <code>InputStream</code> to read remote file contents.
      * @see #getWriter() 
      */
-    InputStream getByteReader() throws IOException;
+    InputStream getInputStream() throws IOException;
     
     /**
      * An <code>OutputStream</code> to write remote file contents as bytes.
@@ -59,39 +59,5 @@ public interface VFSFile4IO
      * @return An <code>OutputStream</code> to write remote file contents.
      * @see #getReader() 
      */
-    OutputStream getByteWriter() throws IOException;
-    
-    /**
-     * An <code>InputStreamReader</code> to read remote file contents as chars.
-     * 
-     * @return An <code>InputStreamReader</code>
-     * @throws java.io.IOException
-     */
-    InputStreamReader getCharReader() throws IOException;
-    
-    /**
-     * An <code>OutputStreamWriter</code> to write remote file contents as chars.
-     * 
-     * @return An <code>OutputStreamWriter</code>
-     * @throws java.io.IOException
-     */
-    OutputStreamWriter getCharWriter() throws IOException;
-    
-    /**
-     * An <code>InputStreamReader</code> to read remote file contents as chars.
-     * 
-     * @param sCharsetName
-     * @return An <code>InputStreamReader</code>
-     * @throws java.io.IOException
-     */
-    InputStreamReader getCharReader( String sCharsetName ) throws IOException;
-    
-    /**
-     * An <code>OutputStreamWriter</code> to write remote file contents as chars.
-     * 
-     * @param sCharsetName
-     * @return An <code>OutputStreamWriter</code>
-     * @throws java.io.IOException
-     */
-    OutputStreamWriter getCharWriter( String sCharsetName ) throws IOException;
+    OutputStream getOutputStream() throws IOException;
 }
