@@ -88,6 +88,7 @@ class ProcessesPanel extends JPanel implements AppListener
         if( nRow != -1 )
         {
             App app  = vRows.get( nRow );
+            // removeApp( app ) will fire an event indicating that app was killed
             org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getAppManager().removeApp( app );
         }
     }
