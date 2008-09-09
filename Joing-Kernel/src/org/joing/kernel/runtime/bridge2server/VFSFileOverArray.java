@@ -25,11 +25,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Vector;
-import org.joing.common.CallBackable;
 import org.joing.common.dto.vfs.VFSFile4IO;
 import org.joing.kernel.runtime.vfs.VFSFile;
 
@@ -40,38 +36,11 @@ import org.joing.kernel.runtime.vfs.VFSFile;
 class VFSFileOverArray extends VFSFile implements VFSFile4IO
 {
     private byte[] abContent = new byte[0];
-    // TODO:  cambiar la linea sig. por --> private EventListenerList listenerlist = new EventListenerList();
-    private Vector<CallBackable> vListeners = new Vector<CallBackable>();
     
     //------------------------------------------------------------------------//
     
-    public InputStreamReader getCharReader() throws IOException
-    {
-        return getCharReader( null );
-    }
-    
-    public OutputStreamWriter getCharWriter() throws IOException
-    {
-        return getCharWriter( null );
-    }
-    
-    public InputStreamReader getCharReader( String sCharsetName ) throws IOException
-    {
-        if( sCharsetName == null || sCharsetName.length() == 0 )
-            return new InputStreamReader( getByteReader() );
-        else
-            return new InputStreamReader( getByteReader(), sCharsetName );
-    }
-    
-    public OutputStreamWriter getCharWriter( String sCharsetName ) throws IOException
-    {
-        if( sCharsetName == null || sCharsetName.length() == 0 )
-            return new OutputStreamWriter( getByteWriter() );
-        else
-            return new OutputStreamWriter( getByteWriter(), sCharsetName );
-    }
-    
-    public InputStream getByteReader() throws IOException
+    @Override
+    public InputStream getInputStream() throws IOException
     {
         if( abContent == null )
             throw new IOException( "Error accessing file '"+ getAbsolutePath() +"'" );
@@ -79,44 +48,10 @@ class VFSFileOverArray extends VFSFile implements VFSFile4IO
             return (new ByteArrayInputStream( abContent ));
     }
     
-    public OutputStream getByteWriter() throws IOException
+    @Override
+    public OutputStream getOutputStream() throws IOException
     {
         return new MyOutputStream();
-    }
-    
-    /**
-     * 
-     * @param l
-     */
-    void addCallBackListener( CallBackable l )
-    {
-        vListeners.add( l );
-    }
-    
-    /**
-     * 
-     * @param l
-     */
-    void removeCallBackListener( CallBackable l )
-    {
-        vListeners.remove( l );
-    }
-    
-    /**
-     * 
-     * @return
-     */
-    byte[] intern()
-    {
-        byte[] ab = new byte[ abContent.length ];
-        System.arraycopy( abContent, 0, ab, 0, abContent.length );   // Defensive copy
-        return ab;
-    }
-    
-    protected void flush()
-    {
-        for( CallBackable cb : vListeners )
-            cb.execute( this );
     }
     
     //------------------------------------------------------------------------//
@@ -131,8 +66,17 @@ class VFSFileOverArray extends VFSFile implements VFSFile4IO
     VFSFileOverArray( VFSFile file, byte[] ab )
     {
         super( file );
-        abContent = new byte[ ab.length ];
-        System.arraycopy( ab, 0, abContent, 0, ab.length );   // Defensive copy
+        abContent = ab;  // Defensive copy is not needed because constructor has package scope
+    }
+    
+    /**
+     * The internal reference to the file contents (a byte[]).
+     * 
+     * @return The internal reference to the file contents (a byte[]).
+     */
+    byte[] intern()
+    {
+        return abContent; // Defensive copy is not needed because intern() has package scope
     }
     
     //------------------------------------------------------------------------//
@@ -145,7 +89,8 @@ class VFSFileOverArray extends VFSFile implements VFSFile4IO
         public void flush() throws IOException
         {
             VFSFileOverArray.this.abContent = super.toByteArray();
-            VFSFileOverArray.this.flush();
+            
+            (new VFSBridgeServletImpl()).writeFileFromArray( VFSFileOverArray.this );
         }
         
         public void close() throws IOException

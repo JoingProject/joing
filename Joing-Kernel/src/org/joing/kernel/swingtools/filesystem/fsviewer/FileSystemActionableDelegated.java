@@ -290,7 +290,7 @@ public class FileSystemActionableDelegated
     {   // Guaranteed to return a non-null array
         FileSystemActionableListener[] listeners = listenerList.getListeners( FileSystemActionableListener.class );
         
-        for( int n = 0; n <= listeners.length; n++ )
+        for( int n = 0; n < listeners.length; n++ )
             listeners[n].selectionChanged( fSelected );
     }
     
@@ -298,7 +298,7 @@ public class FileSystemActionableDelegated
     {   // Guaranteed to return a non-null array
         FileSystemActionableListener[] listeners = listenerList.getListeners( FileSystemActionableListener.class );
         
-        for( int n = 0; n <= listeners.length; n++ )
+        for( int n = 0; n < listeners.length; n++ )
             listeners[n].folderCreated( fCreated );
     }
     
@@ -306,7 +306,7 @@ public class FileSystemActionableDelegated
     {   // Guaranteed to return a non-null array
         FileSystemActionableListener[] listeners = listenerList.getListeners( FileSystemActionableListener.class );
         
-        for( int n = 0; n <= listeners.length; n++ )
+        for( int n = 0; n < listeners.length; n++ )
             listeners[n].fileCreated( fCreated );
     }
     
@@ -314,7 +314,7 @@ public class FileSystemActionableDelegated
     {   // Guaranteed to return a non-null array
         FileSystemActionableListener[] listeners = listenerList.getListeners( FileSystemActionableListener.class );
         
-        for( int n = 0; n <= listeners.length; n++ )
+        for( int n = 0; n < listeners.length; n++ )
             listeners[n].cutted( cutted );
     }
     
@@ -322,7 +322,7 @@ public class FileSystemActionableDelegated
     {   // Guaranteed to return a non-null array
         FileSystemActionableListener[] listeners = listenerList.getListeners( FileSystemActionableListener.class );
         
-        for( int n = 0; n <= listeners.length; n++ )
+        for( int n = 0; n < listeners.length; n++ )
             listeners[n].copied( copied );
     }
     
@@ -330,7 +330,7 @@ public class FileSystemActionableDelegated
     {   // Guaranteed to return a non-null array
         FileSystemActionableListener[] listeners = listenerList.getListeners( FileSystemActionableListener.class );
         
-        for( int n = 0; n <= listeners.length; n++ )
+        for( int n = 0; n < listeners.length; n++ )
             listeners[n].pasted( pasted );
     }
     
@@ -338,7 +338,7 @@ public class FileSystemActionableDelegated
     {   // Guaranteed to return a non-null array
         FileSystemActionableListener[] listeners = listenerList.getListeners( FileSystemActionableListener.class );
         
-        for( int n = 0; n <= listeners.length; n++ )
+        for( int n = 0; n < listeners.length; n++ )
             listeners[n].deleted( deleted );
     }
     
@@ -346,7 +346,7 @@ public class FileSystemActionableDelegated
     {   // Guaranteed to return a non-null array
         FileSystemActionableListener[] listeners = listenerList.getListeners( FileSystemActionableListener.class );
         
-        for( int n = 0; n <= listeners.length; n++ )
+        for( int n = 0; n < listeners.length; n++ )
             listeners[n].movedToTrashcan( trashcan );
     }
     
@@ -354,7 +354,7 @@ public class FileSystemActionableDelegated
     {   // Guaranteed to return a non-null array
         FileSystemActionableListener[] listeners = listenerList.getListeners( FileSystemActionableListener.class );
         
-        for( int n = 0; n <= listeners.length; n++ )
+        for( int n = 0; n < listeners.length; n++ )
             listeners[n].renamed( fRenamed );
     }
     
@@ -362,7 +362,7 @@ public class FileSystemActionableDelegated
     {   // Guaranteed to return a non-null array
         FileSystemActionableListener[] listeners = listenerList.getListeners( FileSystemActionableListener.class );
         
-        for( int n = 0; n <= listeners.length; n++ )
+        for( int n = 0; n < listeners.length; n++ )
             listeners[n].propertiesChanged( fChanged );
     }
     
@@ -370,7 +370,7 @@ public class FileSystemActionableDelegated
     {   // Guaranteed to return a non-null array
         FileSystemActionableListener[] listeners = listenerList.getListeners( FileSystemActionableListener.class );
         
-        for( int n = 0; n <= listeners.length; n++ )
+        for( int n = 0; n < listeners.length; n++ )
             listeners[n].open( fToOpen );
     }
 }

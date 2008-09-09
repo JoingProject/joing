@@ -65,7 +65,7 @@ public class JoingFileWriter extends OutputStreamWriter
     public JoingFileWriter( VFSFile file ) throws IOException
     {
 	super( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getBridge().
-                   getFileBridge().getFileReaderAndWriter( file ).getByteWriter() );
+                   getFileBridge().getFileReaderAndWriter( file ).getOutputStream() );
     }
     
     public JoingFileWriter( VFSFile file, boolean append ) throws IOException
@@ -83,7 +83,7 @@ public class JoingFileWriter extends OutputStreamWriter
         if( file instanceof VFSFile )
         {
             os = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getBridge().
-                     getFileBridge().getFileReaderAndWriter( (VFSFile) file ).getByteWriter(); // FIXME: considerar el append
+                     getFileBridge().getFileReaderAndWriter( (VFSFile) file ).getOutputStream(); // FIXME: considerar el append
         }
         else
         {
