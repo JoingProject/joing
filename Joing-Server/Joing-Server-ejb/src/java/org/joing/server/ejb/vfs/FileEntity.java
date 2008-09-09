@@ -553,7 +553,21 @@ public class FileEntity implements Serializable
      */
     @Override
     public String toString()
-    {        
-        return "ejb.vfs.FileEntity[name="+ (filePath == null ? "" : filePath) + fileName +", account="+ account +"]";
+    {
+        String sFullName = "";
+        
+        if( filePath == null )
+        {
+            sFullName = fileName;
+        }
+        else
+        {
+            if( filePath.endsWith( "/" ) && ! fileName.startsWith( "/") )
+                sFullName = "/";
+            
+            sFullName += fileName;
+        }
+        
+        return "ejb.vfs.FileEntity[name="+ sFullName +", account="+ account +"]";
     }   
 }

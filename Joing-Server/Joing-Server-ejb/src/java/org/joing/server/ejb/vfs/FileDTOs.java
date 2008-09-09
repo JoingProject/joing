@@ -74,10 +74,10 @@ class FileDTOs
         toFileDescriptor.setAlterable(  fromFileEntity.getIsAlterable().intValue()  != 0 );
         toFileDescriptor.setInTrashcan( fromFileEntity.getIsInTrashcan().intValue() != 0 );
         
-        toFileDescriptor.setCreated(    fromFileEntity.getCreated()  );
-        toFileDescriptor.setModified(   fromFileEntity.getModified() );
-        toFileDescriptor.setAccessed(   fromFileEntity.getAccessed() );
+        toFileDescriptor.setCreated(    fromFileEntity.getCreated().getTime()  );
+        toFileDescriptor.setModified(   fromFileEntity.getModified().getTime() );
+        toFileDescriptor.setAccessed(   fromFileEntity.getAccessed().getTime() );
         toFileDescriptor.setNotes(      fromFileEntity.getNotes()    );
-        toFileDescriptor.setSize(       nSize );
+        toFileDescriptor.setSize(       nSize );  // FIXME: no sé qué pasa pero no funciona
     }
 }
