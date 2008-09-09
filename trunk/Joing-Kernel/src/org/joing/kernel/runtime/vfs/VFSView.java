@@ -26,6 +26,7 @@ import java.io.IOException;
 import javax.swing.Icon;
 import javax.swing.filechooser.FileSystemView;
 import org.joing.common.dto.vfs.VFSFileBase;
+import org.joing.common.exception.JoingServerVFSException;
 
 /**
  * A FileSystemView that works with Join'g VFS.
@@ -229,7 +230,18 @@ public class VFSView
         VFSFile[] aRet = null;
         
         if( afRoot == null )
-            afRoot = VFSFile.listRoots();
+        {
+            try
+            {
+                afRoot = VFSFile.listRoots();
+            }
+            catch( JoingServerVFSException exc )
+            {
+                // Something to do?
+                exc.printStackTrace();
+            }
+        }
+            
         
         if( afRoot != null )
         {   // Defensive copy

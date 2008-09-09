@@ -37,7 +37,8 @@ public class SessionBridgeServletImpl
        extends BridgeServletBaseImpl
        implements SessionBridge
 {
-    private static String sSessionId = null;
+    private static String     sSessionId = null;
+    private static SystemInfo systemInfo = null;  // NEXT: save it in cache instead of memory
         
     /**
      * Creates a new instance of SessionBridgeServletImpl
@@ -99,13 +100,14 @@ public class SessionBridgeServletImpl
     public SystemInfo getSystemInfo()
            throws JoingServerSessionException
     {
-        SystemInfo result = null;
+        if( systemInfo == null )
+        {
+            Channel channel = new Channel( SESSION_GET_SYSTEM_INFO );
+            systemInfo = (SystemInfo) channel.read();
+                    channel.close();
+        }
         
-        Channel channel = new Channel( SESSION_GET_SYSTEM_INFO );
-        result = (SystemInfo) channel.read();
-                channel.close();
-                
-        return result;
+        return systemInfo;
     }
     
     @Override

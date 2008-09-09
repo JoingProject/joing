@@ -21,6 +21,7 @@
 
 package org.joing.kernel.swingtools.filesystem.fsviewer;
 
+import java.awt.BorderLayout;
 import java.awt.Insets;
 import java.io.File;
 import java.util.List;
@@ -49,10 +50,11 @@ import org.joing.kernel.swingtools.filesystem.fsviewer.fstree.JoingFileSystemTre
  */
 public class FSExplorerPanel extends javax.swing.JPanel implements DeskComponent
 {
+    private ThisToolBar         toolbar;
     private JoingFileSystemTree tree;
     private JoingFileSystemList list;
     
-    FileSystemActions fsActions = new FileSystemActions();
+    protected FileSystemActions fsActions = new FileSystemActions();
     
     //------------------------------------------------------------------------//
     
@@ -99,6 +101,8 @@ public class FSExplorerPanel extends javax.swing.JPanel implements DeskComponent
         
         initComponents();
         
+        toolbar = new ThisToolBar();
+        
         // Init toolbar for main panel and popup for tree and list panels
         for( int n = 0; n < actions.length; n++ )
         {
@@ -113,6 +117,9 @@ public class FSExplorerPanel extends javax.swing.JPanel implements DeskComponent
                 popup.add( actions[n] );
             }
         }
+        
+        pnl4ToolBar.setLayout( new BorderLayout() );
+        pnl4ToolBar.add( toolbar, BorderLayout.CENTER );
         
         // Init tree
         tree  = new JoingFileSystemTree();
@@ -180,6 +187,45 @@ public class FSExplorerPanel extends javax.swing.JPanel implements DeskComponent
     }
     
     //------------------------------------------------------------------------//
+    // INNER CLASS: TOOLBAR
+    //------------------------------------------------------------------------//
+    private final class ThisToolBar extends JToolBar implements FileSystemActionable 
+    {
+        private FileSystemActionableDelegated fsaca = new FileSystemActionableDelegated();
+        
+        private ThisToolBar()
+        {
+            setRollover( true );
+        }
+        
+        public void setSelected( File f )  { tree.setSelected( f );        }   // Must go against tree
+        public void reloadAll()            { getTarget().reloadAll();      }
+        public void reloadSelected()       { getTarget().reloadSelected(); }
+        public void newFolder()            { getTarget().newFolder();      }
+        public void newFile()              { getTarget().newFile();        }
+        public void cut()                  { getTarget().cut();            }
+        public void copy()                 { getTarget().copy();           }
+        public void paste()                { getTarget().paste();          }
+        public void delete()               { getTarget().delete();         }
+        public void toTrascan()            { getTarget().toTrascan();      }
+        public void rename()               { getTarget().rename();         }
+        public void properties()           { getTarget().properties();     }
+        
+        // Following methods of interface are not used by ThisToolBar
+        public void setShowingFiles( boolean bShowFiles )                { }
+        public boolean isShowingFiles()                                  { return false; }
+        public void setShowingHidden( boolean bShowHidden )              { }
+        public boolean isShowingHidden()                                 { return false; }
+        public File getSelected()                                        { return null;  }
+        public void addListener( FileSystemActionableListener fsal )     { }
+        public void removeListener( FileSystemActionableListener fsal )  { }
+        
+        // Return the target to which resend the action: tree or list
+        private FileSystemActionable getTarget()
+        {
+            return list;  // TODO: hacerlo: buscar cual fue el último ctrl que se usó nates de haecr clic en la toolbar
+        }
+    }
     
     /** This method is called from within the constructor to
      * initialize the form.
@@ -191,16 +237,14 @@ public class FSExplorerPanel extends javax.swing.JPanel implements DeskComponent
     private void initComponents() {
 
         split = new javax.swing.JSplitPane();
-        toolbar = new javax.swing.JToolBar();
         txtBreadcrumb = new javax.swing.JTextField();
         btnGoto = new javax.swing.JButton();
+        pnl4ToolBar = new javax.swing.JPanel();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(3, 3, 3, 3));
 
         split.setContinuousLayout(true);
         split.setOneTouchExpandable(true);
-
-        toolbar.setRollover(true);
 
         txtBreadcrumb.setFont(txtBreadcrumb.getFont().deriveFont(txtBreadcrumb.getFont().getSize()+1f));
         txtBreadcrumb.setPreferredSize(new java.awt.Dimension(10, 24));
@@ -217,27 +261,41 @@ public class FSExplorerPanel extends javax.swing.JPanel implements DeskComponent
             }
         });
 
+        pnl4ToolBar.setMinimumSize(new java.awt.Dimension(100, 36));
+        pnl4ToolBar.setPreferredSize(new java.awt.Dimension(100, 42));
+
+        javax.swing.GroupLayout pnl4ToolBarLayout = new javax.swing.GroupLayout(pnl4ToolBar);
+        pnl4ToolBar.setLayout(pnl4ToolBarLayout);
+        pnl4ToolBarLayout.setHorizontalGroup(
+            pnl4ToolBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 573, Short.MAX_VALUE)
+        );
+        pnl4ToolBarLayout.setVerticalGroup(
+            pnl4ToolBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 42, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(toolbar, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(txtBreadcrumb, javax.swing.GroupLayout.DEFAULT_SIZE, 561, Short.MAX_VALUE)
+                .addComponent(txtBreadcrumb, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnGoto, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addComponent(split, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
+            .addComponent(split, javax.swing.GroupLayout.DEFAULT_SIZE, 573, Short.MAX_VALUE)
+            .addComponent(pnl4ToolBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 573, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(toolbar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pnl4ToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnGoto, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtBreadcrumb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(split, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE))
+                .addComponent(split, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE))
         );
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btnGoto, txtBreadcrumb});
@@ -257,8 +315,8 @@ private void txtBreadcrumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGoto;
+    private javax.swing.JPanel pnl4ToolBar;
     private javax.swing.JSplitPane split;
-    private javax.swing.JToolBar toolbar;
     private javax.swing.JTextField txtBreadcrumb;
     // End of variables declaration//GEN-END:variables
 }

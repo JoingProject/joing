@@ -33,13 +33,11 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 import org.joing.kernel.runtime.vfs.JoingFileSystemView;
 import org.joing.kernel.runtime.vfs.VFSFile;
 import org.joing.kernel.swingtools.filesystem.fsviewer.FileSystemActionable;
-import org.joing.kernel.swingtools.filesystem.fsviewer.FileSystemActionableCommonActions;
+import org.joing.kernel.swingtools.filesystem.fsviewer.FileSystemActionableDelegated;
 import org.joing.kernel.swingtools.filesystem.fsviewer.FileSystemActionableListener;
 
 /**
@@ -53,7 +51,7 @@ public class JoingFileSystemTree extends JoingSwingTree implements FileSystemAct
     private boolean bShowFiles  = false;
     private boolean bShowHidden = false;
     
-    private FileSystemActionableCommonActions fsaca = new FileSystemActionableCommonActions();
+    private FileSystemActionableDelegated fsaca = new FileSystemActionableDelegated();
     
     private JPopupMenu popup;     // See this::setComponentPopupMenu(...)
     
@@ -264,76 +262,91 @@ public class JoingFileSystemTree extends JoingSwingTree implements FileSystemAct
     }
     
     public void delete()
-    {// NEXT: Si son varios ficheros, habría que enviarlos todos a la vez (por si son VFSs)
-        boolean bAll = true;   // Where all selected files deleted?
+    {
+        List<TreeNodeFile> lstNodes  = getAllSelectedNodes();
+        List<File>         lstSelect = new ArrayList<File>( lstNodes.size() );
+        List<File>         lstErrors = null;
         
-        TreePath[] aPath = getSelectionPaths();
-
-        for( int n = 0; n < aPath.length; n++ )
+        for( TreeNodeFile node : lstNodes )
+            lstSelect.add( node.getFile() );
+            
+        lstErrors = fsaca.delete( lstSelect );  // receive those files that were not deleted
+        
+        // Removes from JList only those files that were successfully deleted
+        for( TreeNodeFile node : lstNodes )
         {
-            TreeNodeFile node = (TreeNodeFile) aPath[n].getLastPathComponent();
-
-            if( fsaca.delete( node.getFile() ) )
+            File file = node.getFile();
+            
+            if( ! lstErrors.contains( file ) )
                 delete( node );
-            else
-                bAll = false;
         }
         
-        if( ! bAll )
+        if( lstErrors.size() > 0 )
+        {
+            StringBuilder sb = new StringBuilder( 1024*4 );
+            
+            for( File file : lstErrors )
+                sb.append( '\n' ).append( file.getAbsolutePath() );
+            
             org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
-                showMessageDialog( null, "Error deleteing one or more files." );
+                showMessageDialog( null, "Error deleting following files:"+ sb.toString() );
+        }
     }
     
     public void rename()
     {
         // TODO: hacerlo
-        org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
-                showMessageDialog( null, "Rename: Option not yet implemented" );
         ///startEditingAtPath( getSelectionPath() );
+        fsaca.rename( null, null );
     }
     
     public void properties()
     {
-        fsaca.properties( getFirstSelectedNode().getFile() );
+        List<TreeNodeFile> lstNodes = getAllSelectedNodes();
+        List<File>         lstFiles = new ArrayList<File>( lstNodes.size() );
+        
+        for( TreeNodeFile node : lstNodes )
+            lstFiles.add( node.getFile() );
+            
+        fsaca.properties( lstFiles );
     }
     
     public void cut()
     {
         TreePath[] aPath = getSelectionPaths();
-        // TODO: hacerlo
-        org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
-                showMessageDialog( null, "Cut: Option not yet implemented" );
+        // TODO: Hacerlo
+        fsaca.cut( null );
     }
     
     public void copy()
     {
         TreePath[] node = getSelectionPaths();
         // TODO: hacerlo
-        org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
-        showMessageDialog( null, "Copy: Option not yet implemented" );
+        fsaca.copy( null );
     }
     
     public void paste()
     {
+        // TODO: hacerlo
         org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
         showMessageDialog( null, "Paste: Option not yet implemented" );
     }
     
     public void toTrascan()
     {
-        org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
-        showMessageDialog( null, "To trashcan: Option not yet implemented" );
+        // TODO: Hacerlo
+        fsaca.toTrashcan( null );
     }
     
     // TODO: Notificar los eventos a los listeners
     public void addListener( FileSystemActionableListener fsal )
     {
-        listenerList.add( FileSystemActionableListener.class, fsal );
+        fsaca.addListener( fsal );
     }
     
     public void removeListener( FileSystemActionableListener fsal )
     {
-        listenerList.remove( FileSystemActionableListener.class, fsal );
+        fsaca.removeListener( fsal );
     }
     
     //------------------------------------------------------------------------//
@@ -355,6 +368,23 @@ public class JoingFileSystemTree extends JoingSwingTree implements FileSystemAct
         }
         
         return (path == null ? null : (TreeNodeFile) path.getLastPathComponent());
+    }
+    
+    private List<TreeNodeFile> getAllSelectedNodes()
+    {
+        List<TreeNodeFile> list = new ArrayList<TreeNodeFile>( getSelectionCount() );
+        
+        if( list.size() > 0 )
+        {
+            TreePath[] aPath = getSelectionPaths();
+            
+            for( TreePath path : aPath )
+                list.add( (TreeNodeFile) path.getLastPathComponent() );
+            
+            clearSelection();
+        }
+        
+        return list;
     }
     
     //------------------------------------------------------------------------//

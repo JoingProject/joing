@@ -21,18 +21,20 @@
 
 package org.joing.kernel.swingtools.filesystem.fsviewer;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Event;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import org.joing.kernel.api.desktop.StandardImage;
 import org.joing.kernel.runtime.vfs.JoingFileSystemView;
 import org.joing.kernel.runtime.vfs.VFSFile;
+import org.joing.kernel.runtime.vfs.VFSView;
 
 /**
  * Set of <code>javax.swing.AbstractAction</code> to be used mainly to construct 
@@ -124,8 +126,8 @@ public class FileSystemActions
             {
                 public void actionPerformed( ActionEvent ae )
                 {
-                    File fHome = new File( System.getProperty( "user.home" ) );
-                    ((MyAction) this).getInvoker( ae ).setSelected( fHome );
+                    VFSFile file = VFSView.getFileSystemView().getRoots()[0];
+                    ((MyAction) this).getInvoker( ae ).setSelected( file );
                 }
             };
         }
@@ -172,7 +174,7 @@ public class FileSystemActions
     {
         if( actNewFolder == null )
         {
-            actNewFolder = new MyAction( "New folder", StandardImage.FOLDER, 'F' )
+            actNewFolder = new MyAction( "New folder", StandardImage.FOLDER, 'F', null )
             {
                 public void actionPerformed( ActionEvent ae )
                 {
@@ -194,7 +196,7 @@ public class FileSystemActions
     {
         if( actNewFile == null )
         {
-            actNewFile = new MyAction( "New file", StandardImage.NEW, 'I' )
+            actNewFile = new MyAction( "New file", StandardImage.NEW, 'I', null )
             {
                 public void actionPerformed( ActionEvent ae )
                 {
@@ -216,7 +218,7 @@ public class FileSystemActions
     {
         if( actCut == null )
         {
-            actCut = new MyAction( "Cut", StandardImage.CUT, 'X' )
+            actCut = new MyAction( "Cut", StandardImage.CUT, 'X', null )
             {
                 public void actionPerformed( ActionEvent ae )
                 {
@@ -238,7 +240,7 @@ public class FileSystemActions
     {
         if( actCopy == null )
         {
-            actCopy = new MyAction( "Copy", StandardImage.COPY, 'C' )
+            actCopy = new MyAction( "Copy", StandardImage.COPY, 'C', null )
             {
                 public void actionPerformed( ActionEvent ae )
                 {
@@ -261,7 +263,7 @@ public class FileSystemActions
     {
         if( actPaste == null )
         {
-            actPaste = new MyAction( "Paste", StandardImage.PASTE, 'V' )
+            actPaste = new MyAction( "Paste", StandardImage.PASTE, 'V', null )
             {
                 public void actionPerformed( ActionEvent ae )
                 {
@@ -308,15 +310,16 @@ public class FileSystemActions
     {
         if( actDelete == null )
         {
-            actDelete = new MyAction( "Delete", StandardImage.TRASHCAN, 'D' )
+            actDelete = new MyAction( "Delete", StandardImage.TRASHCAN, 'D', "Move to trashcan the item [Ctrl-D] (with Shift, delete it)" )
             {
                 public void actionPerformed( ActionEvent ae )
                 {
-                    if( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
-                           showYesNoDialog( "Confirm deletion", "Deleted entities can't be recovered.\nPlease confirm to delete." ) )
-                    {
-                        ((MyAction) this).getInvoker( ae ).delete();
-                    }
+                    FileSystemActionable invoker = ((MyAction) this).getInvoker( ae );
+                    
+                    if( (ae.getModifiers() & ActionEvent.SHIFT_MASK) != 0 )
+                        invoker.delete();
+                    else
+                        invoker.toTrascan();
                 }
             };
         }
@@ -335,7 +338,7 @@ public class FileSystemActions
     {
         if( actProperties == null )
         {
-            actProperties = new MyAction( "Properties", StandardImage.PROPERTIES, 'P' )
+            actProperties = new MyAction( "Properties", StandardImage.PROPERTIES, 'P', null )
             {
                 public void actionPerformed( ActionEvent ae )
                 {
@@ -401,18 +404,19 @@ public class FileSystemActions
     
     private abstract class MyAction extends AbstractAction
     {
-        private MyAction( String sText, StandardImage img, char character )
+        private MyAction( String sText, StandardImage img, char character, String sTooltip )
         {
             this( sText, 
                   org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( img ),
-                  character );
+                  character,
+                  sTooltip );
         }
-
+        
         private MyAction( String sText, Image image, char character )
         {
             this( sText, image, character, null );
         }
-
+        
         private MyAction( String sText, Image image, char character, String sToolTip )
         {
             super( sText );
@@ -428,13 +432,18 @@ public class FileSystemActions
             putValue( SHORT_DESCRIPTION, sToolTip );   // Used for tooltips
         }
         
-        // The tree or list that showed up the JPopupMenu (both implement FileSystemActionable)
+        // The toolbar, tree or list (all implement FileSystemActionable)
         private FileSystemActionable getInvoker( ActionEvent ae )
         {
-            JMenuItem  item  = (JMenuItem)  ae.getSource();
-            JPopupMenu popup = (JPopupMenu) item.getParent();
+            Container            parent  = ((Component) ae.getSource()).getParent();
+            FileSystemActionable invoker = null;
             
-            return ((FileSystemActionable) popup.getInvoker());
+            if( parent instanceof JPopupMenu )
+                invoker = (FileSystemActionable) ((JPopupMenu) parent).getInvoker();
+            else   // Has to be an JAbstractButton in toolbar
+                invoker = (FileSystemActionable) parent;
+            
+            return invoker;
         }
     }
 }

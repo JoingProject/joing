@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2007, 2008 Join'g Team Members. All Rights Reserved.  * Join'g Team Members are listed at project's home page. By the time of   * writting this at: https://joing.dev.java.net/servlets/ProjectMemberList.
+ * Copyright (C) 2007, 2008 Join'g Team Members. All Rights Reserved.
+ * Join'g Team Members are listed at project's home page. By the time of
+ * writting this at: https://joing.dev.java.net/servlets/ProjectMemberList.
  *
  * This file is part of Join'g project: www.joing.org
  *
@@ -19,48 +21,47 @@
 
 package org.joing.kernel.runtime.vfs;
 
-import org.joing.kernel.runtime.vfs.VFSFile;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 import javax.swing.ImageIcon;
-import javax.swing.SwingWorker;
 import org.joing.kernel.api.desktop.StandardImage;
 
 /**
- *
+ * Assigns a default icon for passed file.<br>
+ * The return icon is based on several criterias: isRoot(), isDirectory(), ...
+ * And file type: text, binary, packed, ...
+ * <p>
+ * The temptation would we to store in this class all images (a cache) to make
+ * loading icons faster and consuming as low memory as possible; but among other 
+ * things, this class returns icons in different sizes, therofore, each class
+ * that uses VFSIconMapper has to decibe about make its own cache or not.
+ * 
  * @author Francisco Morero Peyrona
  */
 public class VFSIconMapper
-{
-    // Images are static to save memory and increase speed
-    private static Image imgFS_LOCAL      = null;
-    private static Image imgFS_REMOTE     = null;
-    private static Image imgLOCKED        = null;
+{   // NEXT: Add more file extensions 
     
-    private static Image imgBINARY        = null;
-    private static Image imgIMAGE         = null;
-    private static Image imgJAVA          = null;
-    private static Image imgOFFICE_CALC   = null;
-    private static Image imgOFFICE_IMPACT = null;
-    private static Image imgOFFICE_WRITER = null;
-    private static Image imgPACKED        = null;
-    private static Image imgPDF           = null;
-    private static Image imgSOUND         = null;
-    private static Image imgTEXT          = null;
-    private static Image imgVIDEO         = null;
-    private static Image imgWEB           = null;
-    //----------------------------------------------------
+    // Note1: When this array changes, changes nust be done in VFSIconMapper.Icon enum
+    // Note2: I feel today like playing with arrays (they are fast and small)
+    private static final String[][] mapImgExt =
+    { { ".bin.exe.bat.sh",                "binary"        },
+      { ".png.jpg.jpeg.bmp.tiff.gif.svg", "image"         },
+      { ".java.jar.jnlp.ear.war",         "java"          },
+      { ".xls.xlt.ods.",                  "office_calc"   },
+      { ".ppt.odp",                       "office_impact" },
+      { ".doc.odt",                       "office_writer" },
+      { ".zip.rar.deb.rmp.cab",           "packed"        },
+      { ".pdf",                           "pdf"           },
+      { ".ogg.mp3.au",                    "sound"         },
+      { ".txt.text",                      "text"          },
+      { ".wmv.avi",                       "video"         },
+      { ".html.htm.css.url",              "web"           } };
     
-    // Only one instance of this class
-    private static final Map<String,Image> map = new HashMap<String, Image>();
-    
-    static
-    {
-        getSwingWorkerImagesLoad().execute();
-    }
+    private static final int FS_LOCAL_ROOT  = -1;
+    private static final int FS_REMOTE_ROOT = -2;
+    private static final int FOLDER         = -3;
+    private static final int STANDARD_FILE  = -4;
     
     private Dimension dimSize;
     
@@ -73,129 +74,113 @@ public class VFSIconMapper
     
     public VFSIconMapper( int nWidth, int nHeight )
     {
-        dimSize = new Dimension( Math.max( nWidth, 5 ), Math.max( nHeight, 5 ) );
+        dimSize = new Dimension( Math.max( nWidth , Math.min( nWidth , 9999 ) ), 
+                                 Math.max( nHeight, Math.min( nHeight, 9999 ) ) );
     }
     
-    public ImageIcon getIcon( File file )
+    public Integer getIconId( File file )
     {
         if( file.isDirectory() )
-        {            
-            return _getIcon( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().
-                               getRuntime().getImage( StandardImage.FOLDER ) );
+        {
+            return FOLDER;
         }
         else if( JoingFileSystemView.getFileSystemView().isRoot( file ) )
         {
-            return _getIcon( ((file instanceof VFSFile) ? imgFS_REMOTE : imgFS_LOCAL) );
+            return ((file instanceof VFSFile) ? FS_REMOTE_ROOT : FS_LOCAL_ROOT);
         }
         else
         {
-            // NEXT: Sería mejor hacerlo por su MimeType que por la extensión
-            // Mirar aquí : http://www.feedforall.com/mime-types.htm
-            int nIndex = file.getName().lastIndexOf( '.' ) + 1;
+            int nId = getIdForFileExtension( file );
             
-            if( (nIndex > 0) && (nIndex < file.getName().length() - 1) )
-            {
-                String sExt = file.getName().substring( nIndex ).toLowerCase();
-                
-                if( map.containsKey( sExt) )
-                    return _getIcon( map.get( sExt ) );
-            }
+            return (nId == -1 ? STANDARD_FILE : nId);
         }
-        
-        return _getIcon( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().
-                                 getRuntime().getImage( StandardImage.FILE ) );
     }
     
-    //------------------------------------------------------------------------//
+    /**
+     * Returns associated icon to passed file.<br>
+     * This is a shortcut for <code>getIcon( getIconId( file ) )</code>
+     * <p>
+     * Note: if frecuet calls to this method are expected from certain piece,
+     * then it is recomended to create a images caché, what can be easily done
+     * using ::getIconId( file ) in combinatio with ::getIcon( int ).
+     * 
+     * @param file File to get its icon.
+     * @return Associated icon to passed file.
+     * @see #getIcon(int)
+     * @see #getIcon(int)
+     */
+    public ImageIcon getIcon( File file )
+    {
+        return getIcon( getIconId( file ) );
+    }
     
-    private ImageIcon _getIcon( Image image )
+    public ImageIcon getIcon( int nIconId )
     {
         ImageIcon icon = null;
         
-        if( image == null )
-            image = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().getImage( StandardImage.NO_IMAGE );
+        if( nIconId >= 0 && nIconId <= mapImgExt.length )
+        {
+            String sFileName = "images/"+ mapImgExt[nIconId][1] +".png";
+            
+            icon = new ImageIcon( getClass().getResource( sFileName ) );
+        }
+        else
+        {
+            switch( nIconId )
+            {
+                case FS_LOCAL_ROOT :
+                    icon = new ImageIcon( getClass().getResource( "images/fs_local.png"  ) );
+                    break;
+                case FS_REMOTE_ROOT:
+                    icon = new ImageIcon( getClass().getResource( "images/fs_remote.png" ) );
+                    break;
+                case FOLDER: 
+                    icon = new ImageIcon( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().
+                                              getRuntime().getImage( StandardImage.FOLDER ) );
+                    break;
+                case STANDARD_FILE:
+                    icon = new ImageIcon( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().
+                                              getRuntime().getImage( StandardImage.FILE ) );
+                    break;
+            }
+        }
         
-        icon = new ImageIcon( image );   // At this point, image is guaranted to be not null
+        if( icon == null )
+        {
+            icon = new ImageIcon( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().
+                                      getRuntime().getImage( StandardImage.NO_IMAGE ) );
+        }
         
         if( dimSize != null && 
             (icon.getIconWidth()  != dimSize.width ||
              icon.getIconHeight() != dimSize.height) )
-            icon = new ImageIcon( image.getScaledInstance( dimSize.width, dimSize.height, Image.SCALE_SMOOTH ) );
+        {
+            icon = new ImageIcon( icon.getImage().getScaledInstance( dimSize.width, dimSize.height, 
+                                                                     Image.SCALE_SMOOTH ) );
+        }
         
         return icon;
     }
     
-    // A SwingWorker to load images in a background task
-    private static SwingWorker getSwingWorkerImagesLoad()
+    //------------------------------------------------------------------------//
+    
+    private int getIdForFileExtension( File file )
     {
-        return new SwingWorker()
+        // NEXT: Would be better to resolve by MimeType than by file extension?
+        // Look here: http://www.feedforall.com/mime-types.htm
+        int nIndex = file.getName().lastIndexOf( '.' );
+        
+        if( (nIndex > 0) && (nIndex < file.getName().length() - 1) )   // (! endsWidth( "." ))
         {
-            protected Void doInBackground() throws Exception
-            {
-                imgFS_LOCAL      = new ImageIcon( getClass().getResource( "images/fs_local.png"      ) ).getImage();
-                imgFS_REMOTE     = new ImageIcon( getClass().getResource( "images/fs_remote.png"     ) ).getImage();
-                imgLOCKED        = new ImageIcon( getClass().getResource( "images/locked.png"        ) ).getImage();
-                
-                imgBINARY        = new ImageIcon( getClass().getResource( "images/binary.png"        ) ).getImage();
-                imgIMAGE         = new ImageIcon( getClass().getResource( "images/image.png"         ) ).getImage();
-                imgJAVA          = new ImageIcon( getClass().getResource( "images/java.png"          ) ).getImage();
-                imgOFFICE_CALC   = new ImageIcon( getClass().getResource( "images/office_calc.png"   ) ).getImage();
-                imgOFFICE_IMPACT = new ImageIcon( getClass().getResource( "images/office_impact.png" ) ).getImage();
-                imgOFFICE_WRITER = new ImageIcon( getClass().getResource( "images/office_writer.png" ) ).getImage();
-                imgPACKED        = new ImageIcon( getClass().getResource( "images/packed.png"        ) ).getImage();
-                imgPDF           = new ImageIcon( getClass().getResource( "images/pdf.png"           ) ).getImage();
-                imgSOUND         = new ImageIcon( getClass().getResource( "images/sound.png"         ) ).getImage();
-                imgTEXT          = new ImageIcon( getClass().getResource( "images/text.png"          ) ).getImage();
-                imgVIDEO         = new ImageIcon( getClass().getResource( "images/video.png"         ) ).getImage();
-                imgWEB           = new ImageIcon( getClass().getResource( "images/web.png"           ) ).getImage();
-                
-                return null;
-            }
+            String sExt = file.getName().substring( nIndex ).toLowerCase();
             
-            protected void done()
-            {    
-                // TODO: poner más extensiones y cambiar el icono de fs_local y fs_remote
-                map.put( "bin" , imgBINARY );
-                map.put( "exe" , imgBINARY );
-                map.put( "bat" , imgBINARY );
-                map.put( "sh"  , imgBINARY );
-                map.put( "png" , imgIMAGE );
-                map.put( "jpg" , imgIMAGE );
-                map.put( "jpeg", imgIMAGE );
-                map.put( "bmp" , imgIMAGE );
-                map.put( "tiff", imgIMAGE );
-                map.put( "gif" , imgIMAGE );
-                map.put( "svg" , imgIMAGE );
-                map.put( "java", imgJAVA );
-                map.put( "jar" , imgJAVA );
-                map.put( "jnlp", imgJAVA );
-                map.put( "ear" , imgJAVA );
-                map.put( "war" , imgJAVA );
-                map.put( "xls" , imgOFFICE_CALC );
-                map.put( "xlt" , imgOFFICE_CALC );
-                map.put( "ods" , imgOFFICE_CALC );
-                map.put( "ppt" , imgOFFICE_IMPACT );
-                map.put( "odp" , imgOFFICE_IMPACT );
-                map.put( "doc" , imgOFFICE_WRITER );
-                map.put( "odt" , imgOFFICE_WRITER );
-                map.put( "zip" , imgPACKED );
-                map.put( "rar" , imgPACKED );
-                map.put( "deb" , imgPACKED );
-                map.put( "rmp" , imgPACKED );
-                map.put( "cab" , imgPACKED );
-                map.put( "pdf" , imgPDF );
-                map.put( "ogg" , imgSOUND );
-                map.put( "mp3" , imgSOUND );
-                map.put( "au"  , imgSOUND );
-                map.put( "txt" , imgTEXT );
-                map.put( "text", imgTEXT );
-                map.put( "wmv" , imgVIDEO );
-                map.put( "avi" , imgVIDEO );
-                map.put( "html", imgWEB );
-                map.put( "htm" , imgWEB );
-                map.put( "css" , imgWEB );
-                map.put( "url" , imgWEB );
+            for( int n = 0; n < mapImgExt.length; n++ )
+            {
+                if( mapImgExt[n][0].indexOf( sExt ) > -1 )
+                    return n;
             }
-        };
+        }
+        
+        return -1;
     }
 }

@@ -24,6 +24,7 @@ package org.joing.kernel.swingtools.filesystem.fsviewer.fslist;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
@@ -31,7 +32,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import org.joing.kernel.swingtools.filesystem.fsviewer.FileSystemActionable;
-import org.joing.kernel.swingtools.filesystem.fsviewer.FileSystemActionableCommonActions;
+import org.joing.kernel.swingtools.filesystem.fsviewer.FileSystemActionableDelegated;
 import org.joing.kernel.swingtools.filesystem.fsviewer.FileSystemActionableListener;
 
 /**
@@ -44,7 +45,7 @@ public class JoingFileSystemList extends JList implements FileSystemActionable
     private boolean bShowHidden = false;
     private boolean bShowFiles  = true;
     
-    private FileSystemActionableCommonActions fsaca = new FileSystemActionableCommonActions();
+    private FileSystemActionableDelegated fsaca = new FileSystemActionableDelegated();
     
     private JPopupMenu  popup;  // See ::setComponentPopupMenu(...)
     
@@ -79,12 +80,12 @@ public class JoingFileSystemList extends JList implements FileSystemActionable
                     
                     if( fSelected != null )
                     {
-                        fireOpen( fSelected );
-
                         if( fSelected.isDirectory() )
                             scan( fSelected );
                         else
                             JoingFileSystemList.this.fsaca.openFile( fSelected );
+                        
+                        JoingFileSystemList.this.fsaca.fireOpen( fSelected );
                     }
                 }
             }
@@ -176,7 +177,7 @@ public class JoingFileSystemList extends JList implements FileSystemActionable
 
     public void reloadAll()
     {
-        // TODO: hacerlo
+        reloadSelected();   // Both (all & selected) are the same: current folder
     }
 
     public void reloadSelected()
@@ -202,79 +203,86 @@ public class JoingFileSystemList extends JList implements FileSystemActionable
 
     public void cut()
     {
-        org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
-                showMessageDialog( null, "Cut: Option not yet implemented" );
+        // TODO: Hacerlo
+        fsaca.cut( null );
     }
     
     public void copy()
     {
-        org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
-                showMessageDialog( null, "Copy: Option not yet implemented" );
+        // TODO: Hacerlo
+        fsaca.copy( null );
     }
 
     public void paste()
     {
+        // TODO: Hacerlo
         org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
-                showMessageDialog( null, "Paste: Option not yet implemented" );
+        showMessageDialog( null, "Paste: Option not yet implemented" );
     }
 
     public void delete()
-    {// NEXT: Si son varios ficheros, habría que enviarlos todos a la vez (por si son VFSs)
-        boolean bAll       = true;   // Where all selected files deleted?
-        int[]   anSelected = getSelectedIndices();
+    {
+        int[]      anSelected = getSelectedIndices();   // Receives an empty array in case of empty selection
+        List<File> lstSelect  = new ArrayList<File>( anSelected.length );
+        List<File> lstErrors  = null;
         
         for( int n = 0; n < anSelected.length; n++ )
+            lstSelect.add( (File) getModel().getElementAt( n ) );
+        
+        lstErrors = fsaca.delete( lstSelect );  // receive those files that were not deleted
+        
+        // Removes from JList only those files that were successfully deleted
+        for( int n = 0; n < anSelected.length; n++ )
         {
-            if( fsaca.delete( (File) getModel().getElementAt( n ) ) )
+            File file = (File) getModel().getElementAt( n );
+            
+            if( ! lstErrors.contains( file ) )
                 getSelectionModel().removeIndexInterval( n, n );
-            else
-                bAll = false;
         }
         
-        if( ! bAll )
+        if( lstErrors.size() > 0 )
+        {
+            StringBuilder sb = new StringBuilder( 1024*4 );
+            
+            for( File file : lstErrors )
+                sb.append( '\n' ).append( file.getAbsolutePath() );
+            
             org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
-                showMessageDialog( null, "Error deleteing one or more files." );
+                showMessageDialog( null, "Error deleting following files:"+ sb.toString() );
+        }
     }
-
+    
     public void rename()
     {
-        org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
-                showMessageDialog( null, "Rename: Option not yet implemented" );
+        // TODO: Hacerlo
+        fsaca.rename( null, null );
     }
     
     public void properties()
     {
-        fsaca.properties( getSelected() );
+        int[]      anSelected = getSelectedIndices();   // Receives an empty array in case of empty selection
+        List<File> lstFiles   = new ArrayList<File>( anSelected.length );
+        
+        for( int n = 0; n < anSelected.length; n++ )
+            lstFiles.add( (File) getModel().getElementAt( n ) );
+        
+        fsaca.properties( lstFiles );
     }
     
     public void toTrascan()
     {
-        org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
-                showMessageDialog( null, "To trashcan: Option not yet implemented" );
+        fsaca.toTrashcan( null );
     }
-
+    
     // TODO: Notificar los eventos a los listeners
     public void addListener( FileSystemActionableListener fsal )
     {
-        listenerList.add( FileSystemActionableListener.class, fsal );
+        fsaca.addListener( fsal );
     }
     
     public void removeListener( FileSystemActionableListener fsal )
     {
-        listenerList.remove( FileSystemActionableListener.class, fsal );
-    }
-    
-    //------------------------------------------------------------------------//
-    
-    protected void fireOpen( File fSelected )
-    {
-        Object[] listeners = listenerList.getListenerList();   // Guaranteed to return a non-null array
-        
-        for( int n = listeners.length - 2; n >= 0; n -= 2 )
-        {
-            if( listeners[n] == FileSystemActionableListener.class )
-                ((FileSystemActionableListener) listeners[n + 1]).open( fSelected );
-        }
+        fsaca.addListener( fsal );
     }
     
     //------------------------------------------------------------------------//
@@ -321,6 +329,6 @@ public class JoingFileSystemList extends JList implements FileSystemActionable
     // f is guaranted not to be null
     private void setSelectedFileInCurrentDir( File f )
     {
-            // TODO: Hacerlo
+        // TODO: Hacerlo
     }
 }
