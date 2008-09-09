@@ -23,7 +23,6 @@ package org.joing.kernel.runtime.bridge2server;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.joing.common.CallBackable;
 import org.joing.common.dto.vfs.VFSFileBase;
 import org.joing.kernel.api.bridge.VFSBridge;
 import org.joing.common.dto.vfs.VFSFile4IO;
@@ -111,26 +110,13 @@ public class VFSBridgeServletImpl
     public VFSFile4IO getFileReaderAndWriter( VFSFile file )
            throws JoingServerVFSException
     {
-        VFSFileOverArray foa = null;
-        
         Channel channel = new Channel( VFS_READ_FILE_TO_ARRAY  );
                 channel.write( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getBridge().getSessionBridge().getSessionId() );
                 channel.write( file.getHandler() );
         byte[] abContent = (byte[]) channel.read();
                 channel.close();
-
-        foa = new VFSFileOverArray( file, abContent );
-        // Add a callback, so when the OutputStream returned by this method is closed, 
-        // the callback will be invoked and the file will be sent to Server to be stored.
-        foa.addCallBackListener( new CallBackable()
-        {
-            public void execute( Object sender )
-            {
-                 VFSBridgeServletImpl.this.writeFileFromArray( (VFSFileOverArray) sender );
-            }
-        } );
-        
-        return foa;
+                
+        return new VFSFileOverArray( file, abContent );
     }
     
     public VFSFile update( VFSFile file )
@@ -293,8 +279,8 @@ public class VFSBridgeServletImpl
         return lstToReturn;
     }
     
-    // To be used internally
-    private VFSFile writeFileFromArray( VFSFileOverArray foa )
+    // To be used internally by VFSFileOverArray
+    VFSFile writeFileFromArray( VFSFileOverArray foa )
            throws JoingServerVFSException
     {
         VFSFileBase fBase = null;

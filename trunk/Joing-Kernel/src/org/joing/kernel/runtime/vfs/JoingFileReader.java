@@ -58,7 +58,7 @@ public class JoingFileReader extends InputStreamReader
     public JoingFileReader( VFSFile file ) throws IOException
     {
         super( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getBridge().
-                   getFileBridge().getFileReaderAndWriter( file ).getByteReader() );
+                   getFileBridge().getFileReaderAndWriter( file ).getInputStream() );
     }
     
     //------------------------------------------------------------------------//
@@ -70,7 +70,7 @@ public class JoingFileReader extends InputStreamReader
         if( file instanceof VFSFile )
         {
             is = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getBridge().
-                     getFileBridge().getFileReaderAndWriter( (VFSFile) file ).getByteReader();
+                     getFileBridge().getFileReaderAndWriter( (VFSFile) file ).getInputStream();
         }
         else
         {
