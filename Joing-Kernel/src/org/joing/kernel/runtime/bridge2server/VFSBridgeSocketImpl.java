@@ -21,9 +21,10 @@
 
 package org.joing.kernel.runtime.bridge2server;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import org.joing.kernel.runtime.vfs.VFSFile;
-import org.joing.common.dto.vfs.VFSFile4IO;
 import org.joing.kernel.api.bridge.VFSBridge;
 // NEXT: Implementar esta clase
 import org.joing.common.exception.JoingServerVFSException;
@@ -67,7 +68,12 @@ public class VFSBridgeSocketImpl
         throw new UnsupportedOperationException( "Not supported yet." );
     }
 
-    public VFSFile4IO getFileReaderAndWriter( VFSFile file )
+    public InputStream getInputStream( VFSFile file )
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+    public OutputStream getOutputStream( VFSFile file, boolean append )
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
@@ -125,5 +131,5 @@ public class VFSBridgeSocketImpl
     public List<VFSFile> getTrashCan() throws JoingServerVFSException
     {
         throw new UnsupportedOperationException( "Not supported yet." );
-    } 
+    }
 }

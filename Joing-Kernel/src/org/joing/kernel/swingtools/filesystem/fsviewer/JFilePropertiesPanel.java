@@ -202,7 +202,7 @@ public class JFilePropertiesPanel extends javax.swing.JPanel implements DeskComp
 
         jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getStyle() & ~java.awt.Font.BOLD, jLabel1.getFont().getSize()-1));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Attributes marked with \"*\" are editable");
+        jLabel1.setText("Attributes marked with * are editable");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

@@ -23,6 +23,7 @@ package org.joing.kernel.runtime.vfs;
 
 import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -44,28 +45,28 @@ public class JoingFileOutputStream extends OutputStream
         local = new FileOutputStream( fdObj );
     }
 
-    public JoingFileOutputStream( String filename ) throws IOException
+    public JoingFileOutputStream( String name ) throws IOException
     {
-        this( JoingFileSystemView.getFileSystemView().createFileObject( filename ) );
+        this( JoingFileSystemView.getFileSystemView().createFileObject( name ) );
     }
     
     public JoingFileOutputStream( File file ) throws IOException
     {
-        if( file instanceof VFSFile )
-            remote = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getBridge().
-                     getFileBridge().getFileReaderAndWriter( (VFSFile) file ).getOutputStream();
-        else
-            local = new FileOutputStream( file );
+        this( file, false );
     }
     
-    public JoingFileOutputStream( String name, boolean append )
+    public JoingFileOutputStream( String name, boolean append ) throws FileNotFoundException
     {
-        
+        this( JoingFileSystemView.getFileSystemView().createFileObject( name ), append );
     }
 
-    public JoingFileOutputStream( File file, boolean append )
+    public JoingFileOutputStream( File file, boolean append ) throws FileNotFoundException
     {
-        
+        if( file instanceof VFSFile )
+            remote = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getBridge().
+                         getFileBridge().getOutputStream( (VFSFile) file, false );
+        else
+            local = new FileOutputStream( file, append );
     }
     
     //------------------------------------------------------------------------//
@@ -73,30 +74,45 @@ public class JoingFileOutputStream extends OutputStream
     @Override
     public void write( int b ) throws IOException
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        if( local != null )
+            local.write( b );
+        else
+            remote.write( b );
     }
     
     @Override
     public void write( byte[] b ) throws IOException
     {
-        super.write( b );
+        if( local != null )
+            local.write( b );
+        else
+            remote.write( b );
     }
     
     @Override
     public void write( byte[] b, int off, int len ) throws IOException
     {
-        super.write( b, off, len );
+        if( local != null )
+            local.write( b, off, len );
+        else
+            remote.write( b, off, len );
     }
     
     @Override
     public void flush() throws IOException
     {
-        super.flush();
+        if( local != null )
+            local.flush();
+        else
+            remote.flush();
     }
     
     @Override
     public void close() throws IOException
     {
-        super.close();
+        if( local != null )
+            local.close();
+        else
+            remote.close();
     }
 }

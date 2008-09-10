@@ -85,7 +85,7 @@ public class FSExplorerPanel extends javax.swing.JPanel implements DeskComponent
         
         // Show this panel in a frame created by DesktopManager Runtime.
         DeskFrame frame = dm.getRuntime().createFrame();
-                  frame.setTitle( "File Explorer" );
+                  frame.setTitle( "YAFE :: File Explorer" );
                   frame.setIcon( icon.getImage() );
                   frame.add( (DeskComponent) FSExplorerPanel.this );
 
@@ -270,7 +270,7 @@ public class FSExplorerPanel extends javax.swing.JPanel implements DeskComponent
         pnl4ToolBar.setLayout(pnl4ToolBarLayout);
         pnl4ToolBarLayout.setHorizontalGroup(
             pnl4ToolBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 544, Short.MAX_VALUE)
+            .addGap(0, 593, Short.MAX_VALUE)
         );
         pnl4ToolBarLayout.setVerticalGroup(
             pnl4ToolBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -281,12 +281,12 @@ public class FSExplorerPanel extends javax.swing.JPanel implements DeskComponent
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnl4ToolBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 544, Short.MAX_VALUE)
+            .addComponent(pnl4ToolBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(txtBreadcrumb, javax.swing.GroupLayout.DEFAULT_SIZE, 505, Short.MAX_VALUE)
+                .addComponent(txtBreadcrumb, javax.swing.GroupLayout.DEFAULT_SIZE, 554, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnGoto, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addComponent(split, javax.swing.GroupLayout.DEFAULT_SIZE, 544, Short.MAX_VALUE)
+            .addComponent(split, javax.swing.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -297,7 +297,7 @@ public class FSExplorerPanel extends javax.swing.JPanel implements DeskComponent
                     .addComponent(btnGoto, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtBreadcrumb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(split, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE))
+                .addComponent(split, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE))
         );
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btnGoto, txtBreadcrumb});
