@@ -78,6 +78,6 @@ class FileDTOs
         toFileDescriptor.setModified(   fromFileEntity.getModified().getTime() );
         toFileDescriptor.setAccessed(   fromFileEntity.getAccessed().getTime() );
         toFileDescriptor.setNotes(      fromFileEntity.getNotes()    );
-        toFileDescriptor.setSize(       nSize );  // FIXME: no sé qué pasa pero no funciona
+        toFileDescriptor.setSize(       nSize );
     }
 }
