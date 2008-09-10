@@ -18,27 +18,29 @@
  * GNU Classpath; see the file COPYING.  If not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
 package org.joing.common.exception;
 
 /**
  *
  * @author Francisco Morero Peyrona
  */
-public class JoingServerAppException extends JoingServerException {
-
-    public static final String INVALID_OWNER    = "The account does not has priviledges to execute this application.";
-    public static final String APP_NOT_EXISTS   = "Requested application does not exists.";
-    public static final String JAR_ACCESS_ERROR = "Error reading associated JAR file.";
-
-    public JoingServerAppException() {
+public class JoingServerAppException extends JoingServerException
+{
+    public static final String INVALID_OWNER    = "INVALID_OWNER";
+    public static final String APP_NOT_EXISTS   = "APP_NOT_EXISTS";
+    public static final String JAR_ACCESS_ERROR = "JAR_ACCESS_ERROR";
+    
+    public JoingServerAppException()
+    {
     }
 
-    public JoingServerAppException(String message) {
-        super(message);
+    public JoingServerAppException( String message )
+    {
+        this( message, null );
     }
 
-    public JoingServerAppException(String message, Throwable cause) {
-        super(message, cause);
+    public JoingServerAppException( String message, Throwable cause )
+    {
+        super( I18N4Exceptions.getLocalized( JoingServerAppException.class, message ), cause );
     }
 }

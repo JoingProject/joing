@@ -27,8 +27,7 @@ package org.joing.common.exception;
  */
 public class JoingServerSessionException extends JoingServerException
 {
-    public final static String LOGIN_EXISTS = "Sorry, the combination of account (user name) and password,\n"+
-                                              "already exists. Please try another one.";
+    public final static String LOGIN_EXISTS = "LOGIN_EXISTS";
     
     public JoingServerSessionException() 
     {
@@ -37,11 +36,11 @@ public class JoingServerSessionException extends JoingServerException
     
     public JoingServerSessionException( String message )
     {
-        super( message );
+        super( message, null );
     }
     
     public JoingServerSessionException( String message, Throwable cause )
     {
-        super( message, cause );
+        super( I18N4Exceptions.getLocalized( JoingServerSessionException.class, message ), cause );
     }
 }

@@ -28,19 +28,19 @@ public class JoingServerVFSException extends JoingServerException
 {
     private static final long serialVersionUID = 1L;    // TODO: cambiarlo usando: serialver -show
     
-    public final static String INVALID_OWNER         = "Operation can not be performed because\nthe account does not ownes the file.";
-    public final static String FILE_NOT_EXISTS       = "File does not exists.";
-    public final static String FILE_NAME_EXISTS      = "File name already exists.";
-    public final static String NOT_DELETEABLE        = "Can not delete: file or directory is marked as not deleteable.";
-    public final static String NOT_ALTERABLE         = "Can not modify attributes:\nfile or directory is marked as not alterable.\nOnly the owner of the entity is allowed to do it.";
-    public final static String NOT_READABLE          = "File is marked as no-readable:\nyou have to change this attribute prior to read it.";
-    public final static String NOT_MODIFIABLE        = "File is marked as un-modifiable:\nyou have to change this attribute prior to write into it.";
-    public final static String LOCKED_BY_ANOTHER     = "Can not write int file:\nit is locked and you do not own the lock.";
-    public final static String PARENT_DIR_NOT_EXISTS = "Invalid parent directory: it does not exists.";
-    public final static String INVALID_PARENT        = "Invalid parent: it is not a directory but a file.";
-    public final static String FILE_ALREADY_EXISTS   = "Invalid name: file already exists.";
-    public final static String DIR_ALREADY_EXISTS    = "Invalid name: directory already exists.";
-    public final static String NO_QUOTA              = "Sorry but file can't be saved:\nyou do not have enought free space in your disk.\nPlease contact with the system administrator.";
+    public final static String INVALID_OWNER         = "INVALID_OWNER";
+    public final static String FILE_NOT_EXISTS       = "FILE_NOT_EXISTS";
+    public final static String FILE_NAME_EXISTS      = "FILE_NAME_EXISTS";
+    public final static String NOT_DELETEABLE        = "NOT_DELETEABLE";
+    public final static String NOT_ALTERABLE         = "NOT_ALTERABLE";
+    public final static String NOT_READABLE          = "NOT_READABLE";
+    public final static String NOT_MODIFIABLE        = "NOT_MODIFIABLE";
+    public final static String LOCKED_BY_ANOTHER     = "LOCKED_BY_ANOTHER";
+    public final static String PARENT_DIR_NOT_EXISTS = "PARENT_DIR_NOT_EXISTS";
+    public final static String INVALID_PARENT        = "INVALID_PARENT";
+    public final static String FILE_ALREADY_EXISTS   = "FILE_ALREADY_EXISTS";
+    public final static String DIR_ALREADY_EXISTS    = "DIR_ALREADY_EXISTS";
+    public final static String NO_QUOTA              = "NO_QUOTA";
     
     public JoingServerVFSException()
     {
@@ -49,11 +49,11 @@ public class JoingServerVFSException extends JoingServerException
     
     public JoingServerVFSException( String message )
     {
-        super( message );
+        this( message, null );
     }
     
     public JoingServerVFSException( String message, Throwable cause )
     {
-        super( message, cause );
+        super( I18N4Exceptions.getLocalized( JoingServerVFSException.class, message ), cause );
     }
 }
