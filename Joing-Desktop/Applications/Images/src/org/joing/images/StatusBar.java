@@ -91,7 +91,7 @@ class StatusBar extends Box
         if( image != null )
             dimSize = image.getOriginalSize();
         
-        lblSize.setText(  " Size: "+ dimSize.width +" x "+ dimSize.height +" Píxeles" );
+        lblSize.setText(  " Size: "+ dimSize.width +" x "+ dimSize.height +" Pixels" );
     }
     
     void setRotation( WImage image )

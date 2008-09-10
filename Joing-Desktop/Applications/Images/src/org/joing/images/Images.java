@@ -200,6 +200,12 @@ public class Images extends JPanel implements DeskComponent
                         getRuntime().showException( exc, "Error opening file" );
             }
         }
+        else
+        {
+            org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().
+                        getRuntime().showMessageDialog( "File not found", 
+                                                        "["+ fImage.getAbsolutePath() +"] not found.");
+        }
     }
     
     public WImage getSelectedImage()
@@ -240,6 +246,7 @@ public class Images extends JPanel implements DeskComponent
     {
         JoingFileChooserPreviewImage jfcpi = new JoingFileChooserPreviewImage();
         JoingFileChooser jfc = new JoingFileChooser();
+                         jfc.setMultiSelectionEnabled( true );
                          jfc.setAcceptAllFileFilterUsed( false );
                          jfc.addChoosableFileFilter( JoingFileChooserPreviewImage.getFilter() );
                          jfc.setAccessory( jfcpi );
