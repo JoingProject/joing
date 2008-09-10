@@ -140,23 +140,21 @@ public class Notes extends JPanel implements DeskComponent
      */
     public void addEditor( File file )
     {
-        String sText = null;
-        
         if( file.exists() )
         {
             InputStreamReader isr = null;
         
             try
             {
-                // These classes act as FileReader and FileWriter, but they handle
-                // instances of File (local files) as well as VFSFile (remote files).
-                // Soon, normal FileReader and FileWriter will be used instead.
+                // This class act as FileReader, but it handles instances of 
+                // File (local files) as well as VFSFile (remote files).
+                // Soon, normal FileReader will be allowed (for local and remote).
                 isr = new JoingFileReader( file );
 
                 // As text files are _normally_ small, we read it up in one step.
                 char[] chr  = new char[ (int) file.length() ];
                 isr.read( chr );
-                sText = String.valueOf( chr );
+                _addEditor( file.getName(), String.valueOf( chr ), file );
             }
             catch( Exception exc )
             {
@@ -168,8 +166,11 @@ public class Notes extends JPanel implements DeskComponent
                     try{ isr.close(); } catch( IOException exc ) { /* Nothing to do */ }
             }
         }
-        
-        _addEditor( file.getName(), sText, file );
+        else
+        {
+            deskMgr.getRuntime().showMessageDialog( "File not found", 
+                                                    "["+ file.getAbsolutePath() +"] not found.");
+        }
     }
     
     /**
@@ -396,6 +397,7 @@ public class Notes extends JPanel implements DeskComponent
         public void actionPerformed( ActionEvent evt )
         {
             JoingFileChooser jfc = new JoingFileChooser();
+                             jfc.setMultiSelectionEnabled( true );
             
             if( jfc.showDialog( Notes.this ) == JoingFileChooser.APPROVE_OPTION )
             {
