@@ -208,7 +208,7 @@ public class FileSystemActionableDelegated
                 org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getDesktopManager().getRuntime().
                     showMessageDialog( "Open file", "There is no application associated with this type of file." );
 
-                AppDescriptor app = JoingApplicationChooser.showDialog();
+                appDesc = JoingApplicationChooser.showDialog();
             }
 
             if( appDesc != null )

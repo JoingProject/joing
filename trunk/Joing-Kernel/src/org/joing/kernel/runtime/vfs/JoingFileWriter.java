@@ -34,19 +34,19 @@ import java.io.OutputStreamWriter;
 // TODO: Decirle al cargador de clases que use esta cuando se pida: FileWriter
 public class JoingFileWriter extends OutputStreamWriter
 {
-    public JoingFileWriter( String fileName ) throws IOException
+    public JoingFileWriter( String name ) throws IOException
     {
-	this( JoingFileSystemView.getFileSystemView().createFileObject( fileName ) );
+	this( JoingFileSystemView.getFileSystemView().createFileObject( name ) );
     }
     
-    public JoingFileWriter( String fileName, boolean append ) throws IOException
+    public JoingFileWriter( String name, boolean append ) throws IOException
     {
-	this( JoingFileSystemView.getFileSystemView().createFileObject( fileName ), append );
+	this( JoingFileSystemView.getFileSystemView().createFileObject( name ), append );
     }
     
     public JoingFileWriter( File file ) throws IOException
     {
-	super( getOutputStream( file, false ) );
+	this( file, false );
     }
     
     public JoingFileWriter( File file, boolean append ) throws IOException
@@ -60,21 +60,6 @@ public class JoingFileWriter extends OutputStreamWriter
     }
     
     //------------------------------------------------------------------------//
-    // Added constructors to handle VFS files
-    
-    public JoingFileWriter( VFSFile file ) throws IOException
-    {
-	super( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getBridge().
-                   getFileBridge().getFileReaderAndWriter( file ).getOutputStream() );
-    }
-    
-    public JoingFileWriter( VFSFile file, boolean append ) throws IOException
-    {   // FIXME: implementarlo
-        this( file );
-        throw new IOException( "Option not yet implemented" );
-    }
-    
-    //------------------------------------------------------------------------//
     
     private static OutputStream getOutputStream( File file, boolean append ) throws IOException
     {
@@ -83,7 +68,7 @@ public class JoingFileWriter extends OutputStreamWriter
         if( file instanceof VFSFile )
         {
             os = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getBridge().
-                     getFileBridge().getFileReaderAndWriter( (VFSFile) file ).getOutputStream(); // FIXME: considerar el append
+                     getFileBridge().getOutputStream( (VFSFile) file, append );
         }
         else
         {

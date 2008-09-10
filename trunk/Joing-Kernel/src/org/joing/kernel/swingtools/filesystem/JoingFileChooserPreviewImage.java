@@ -44,7 +44,7 @@ import org.joing.kernel.runtime.vfs.VFSFile;
  * @author Francisco Morero Peyrona
  */
 public class JoingFileChooserPreviewImage extends JPanel implements PropertyChangeListener
-{   // Next: Add support for BMP images
+{
     private final static String sRENDERIZABLES = ".jpg.jpeg.gif.png.tif.tiff";
     private final static int    nIMAGE_SIZE    = 160;
 
@@ -60,8 +60,8 @@ public class JoingFileChooserPreviewImage extends JPanel implements PropertyChan
     {
         lblPreview = new JLabel();
         lblPreview.setPreferredSize( new Dimension( nIMAGE_SIZE , nIMAGE_SIZE ) );
-        fmsLocal   = new JFileMaxSize( "Max local (in Kb) " , "Maximum size for local files in Kb" , 512 );
-        fmsRemote  = new JFileMaxSize( "Max remote (in Kb) ", "Maximum size for remote files in Kb",  64 );
+        fmsLocal   = new JFileMaxSize( "Max local  ", "Maximum size for local files in Kb" , 512 );
+        fmsRemote  = new JFileMaxSize( "Max remote ", "Maximum size for remote files in Kb",  64 );
 
         setBorder( new EmptyBorder( 0, 5, 0, 5 ) );
         setLayout( new BorderLayout( 0, 5 ) );

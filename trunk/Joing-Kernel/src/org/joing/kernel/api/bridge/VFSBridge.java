@@ -21,8 +21,9 @@
 
 package org.joing.kernel.api.bridge;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
-import org.joing.common.dto.vfs.VFSFile4IO;
 import org.joing.common.exception.JoingServerVFSException;
 import org.joing.kernel.runtime.vfs.VFSFile;
 
@@ -110,13 +111,23 @@ public interface VFSBridge
      */
     VFSFile createFile( String sParent, String sFileName, boolean bCreateParentDirs )
             throws JoingServerVFSException;
+
+    /**
+     * Returns an stream to read binary data.
+     * 
+     * @param file Target file.
+     * @return An stream to read binary data.
+     */
+    InputStream getInputStream( VFSFile file );
     
     /**
+     * Returns an stream to write binary data.
      * 
-     * @param file
-     * @return
+     * @param file Target file.
+     * @param bAppend Create the stream in append mode.
+     * @return An stream to write binary data.
      */
-    VFSFile4IO getFileReaderAndWriter( VFSFile file );
+    OutputStream getOutputStream( VFSFile file, boolean bAppend );
     
     /**
      * Updates <code>VFSFile</code> information (file properties) including file

@@ -22,13 +22,13 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="pnl4ToolBar" alignment="1" pref="544" max="32767" attributes="0"/>
+          <Component id="pnl4ToolBar" alignment="1" pref="593" max="32767" attributes="0"/>
           <Group type="102" alignment="1" attributes="0">
-              <Component id="txtBreadcrumb" pref="505" max="32767" attributes="0"/>
+              <Component id="txtBreadcrumb" pref="554" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="btnGoto" min="-2" pref="33" max="-2" attributes="0"/>
           </Group>
-          <Component id="split" alignment="0" pref="544" max="32767" attributes="0"/>
+          <Component id="split" alignment="0" pref="593" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -41,7 +41,7 @@
                   <Component id="txtBreadcrumb" linkSize="1" min="-2" max="-2" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="split" pref="316" max="32767" attributes="0"/>
+              <Component id="split" pref="348" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -97,7 +97,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="544" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="593" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">

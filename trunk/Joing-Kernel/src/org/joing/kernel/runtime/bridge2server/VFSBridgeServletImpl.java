@@ -21,11 +21,13 @@
 
 package org.joing.kernel.runtime.bridge2server;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import org.joing.common.dto.vfs.VFSFileBase;
 import org.joing.kernel.api.bridge.VFSBridge;
-import org.joing.common.dto.vfs.VFSFile4IO;
 import org.joing.kernel.runtime.vfs.VFSFile;
 import org.joing.common.exception.JoingServerVFSException;
 
@@ -47,6 +49,7 @@ public class VFSBridgeServletImpl
     {
     }
     
+    @Override
     public VFSFile getFile( String sFilePath, boolean bCreateFile )
             throws JoingServerVFSException
     {
@@ -62,6 +65,7 @@ public class VFSBridgeServletImpl
         return (fBase == null ? null : new VFSFile( fBase ));
     }
     
+    @Override
     public VFSFile createDirectories( String sPath )
             throws JoingServerVFSException
     {
@@ -76,6 +80,7 @@ public class VFSBridgeServletImpl
         return (fBase == null ? null : new VFSFile( fBase ));
     }
     
+    @Override
     public VFSFile createDirectory( String sParent, String sDirName )
            throws JoingServerVFSException
     {
@@ -91,6 +96,7 @@ public class VFSBridgeServletImpl
         return (fBase == null ? null : new VFSFile( fBase ));
     }
     
+    @Override
     public VFSFile createFile( String sPath, String sFileName, boolean bCreateParentDirs )
            throws JoingServerVFSException
     {
@@ -107,7 +113,8 @@ public class VFSBridgeServletImpl
         return (fBase == null ? null : new VFSFile( fBase ));
     }
     
-    public VFSFile4IO getFileReaderAndWriter( VFSFile file )
+    @Override
+    public InputStream getInputStream( VFSFile file )
            throws JoingServerVFSException
     {
         Channel channel = new Channel( VFS_READ_FILE_TO_ARRAY  );
@@ -116,9 +123,17 @@ public class VFSBridgeServletImpl
         byte[] abContent = (byte[]) channel.read();
                 channel.close();
                 
-        return new VFSFileOverArray( file, abContent );
+        return (new ByteArrayInputStream( abContent ));
     }
     
+    @Override
+    public OutputStream getOutputStream( VFSFile file, boolean bAppend )
+           throws JoingServerVFSException
+    {
+        return (new ByteArrayOutputStream4VFS( file, bAppend, 1024*64 ));
+    }
+    
+    @Override
     public VFSFile update( VFSFile file )
            throws JoingServerVFSException
     {
@@ -133,6 +148,7 @@ public class VFSBridgeServletImpl
         return (fBase == null ? null : new VFSFile( fBase ));
     }
     
+    @Override
     public List<VFSFile> copy( VFSFile fFromFileOrFolder, VFSFile fToFolder )
            throws JoingServerVFSException
     {
@@ -155,6 +171,7 @@ public class VFSBridgeServletImpl
         return lstToReturn;
     }
     
+    @Override
     public List<VFSFile> move( VFSFile fFromFileOrFolder, VFSFile fToFolder )
            throws JoingServerVFSException
     {
@@ -177,6 +194,7 @@ public class VFSBridgeServletImpl
         return lstToReturn;
     }
     
+    @Override
     public List<VFSFile> toTrashcan( VFSFile file, boolean bInTrashCan )
            throws JoingServerVFSException
     {
@@ -199,6 +217,7 @@ public class VFSBridgeServletImpl
         return lstToReturn;
     }
     
+    @Override
     public List<VFSFile> toTrashcan( List<VFSFile> list, boolean bInTrashCan )
            throws JoingServerVFSException
     {
@@ -229,6 +248,7 @@ public class VFSBridgeServletImpl
         return lstToReturn;
     }
     
+    @Override
     public List<VFSFile> delete( VFSFile file )
            throws JoingServerVFSException
     {
@@ -250,6 +270,7 @@ public class VFSBridgeServletImpl
         return lstToReturn;
     }
     
+    @Override
     public List<VFSFile> delete( List<VFSFile> list )
            throws JoingServerVFSException
     {
@@ -279,16 +300,17 @@ public class VFSBridgeServletImpl
         return lstToReturn;
     }
     
-    // To be used internally by VFSFileOverArray
-    VFSFile writeFileFromArray( VFSFileOverArray foa )
+    // To be used internally by ByteArrayOutputStream4VFS
+    VFSFile writeFileFromArray( ByteArrayOutputStream4VFS foa )
            throws JoingServerVFSException
     {
         VFSFileBase fBase = null;
         
         Channel channel = new Channel( VFS_WRITE_FILE_FROM_ARRAY  );
                 channel.write( org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getBridge().getSessionBridge().getSessionId() );
-                channel.write( foa.getHandler() );
-                channel.write( foa.intern() );
+                channel.write( foa.getFile().getHandler() );
+                // FIXME: Añadir esto --> channel.write( foa.isAppend() );
+                channel.write( foa.toByteArray() );
         fBase = (VFSFileBase) channel.read();
                 channel.close();
         
@@ -297,6 +319,7 @@ public class VFSBridgeServletImpl
     
     //------------------------------------------------------------------------//
     
+    @Override
     public List<VFSFile> getRoots() 
            throws JoingServerVFSException
     {
@@ -317,6 +340,7 @@ public class VFSBridgeServletImpl
         return lstRoots;
     }
     
+    @Override
     public List<VFSFile> getChildren( VFSFile file )
            throws JoingServerVFSException
     {
@@ -338,6 +362,7 @@ public class VFSBridgeServletImpl
         return lstChildren;
     }
     
+    @Override
     public List<VFSFile> getByNotes( String sSubString, boolean bGlobal )
            throws JoingServerVFSException
     {
@@ -359,6 +384,7 @@ public class VFSBridgeServletImpl
         return lstByNotes;
     }
     
+    @Override
     public List<VFSFile> getTrashCan()
            throws JoingServerVFSException
     {

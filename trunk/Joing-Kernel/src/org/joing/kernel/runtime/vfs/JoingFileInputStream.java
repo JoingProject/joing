@@ -56,7 +56,7 @@ public class JoingFileInputStream extends InputStream
     {
         if( file instanceof VFSFile )
             remote = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getBridge().
-                     getFileBridge().getFileReaderAndWriter( (VFSFile) file ).getInputStream();
+                     getFileBridge().getInputStream( (VFSFile) file );
         else
             local = new FileInputStream( file );
     }

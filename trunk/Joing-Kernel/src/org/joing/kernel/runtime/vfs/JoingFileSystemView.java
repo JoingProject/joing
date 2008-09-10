@@ -78,7 +78,7 @@ public class JoingFileSystemView extends FileSystemView
             file = remoteView.createFileObject( path );
         
         // If failed, try in local FS
-        if( file == null )
+        if( file == null || ! file.exists() )
             file = localView.createFileObject( path );
         
         return file;
