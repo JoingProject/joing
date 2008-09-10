@@ -103,7 +103,7 @@ public class PDEDesktop extends JPanel implements Desktop
             protected void done()
             {
                 setActiveWorkArea( getWorkAreas().get( 0 ) );
-            }   
+            }
         };
         sw.execute();
     }

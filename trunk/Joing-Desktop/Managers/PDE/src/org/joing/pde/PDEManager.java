@@ -57,6 +57,7 @@ import org.joing.kernel.api.desktop.DesktopManager;
 import org.joing.kernel.api.desktop.StandardImage;
 import org.joing.kernel.api.desktop.StandardSound;
 import org.joing.common.dto.user.User;
+import org.joing.common.exception.JoingServerUserException;
 
 /**
  * DesktopManager interface implementation.
