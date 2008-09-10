@@ -28,10 +28,8 @@ package org.joing.common.exception;
  */
 public class JoingServerException extends RuntimeException
 {
-    public final static String ACCESS_DB  = "Error accessing database.";
-    public final static String ACCESS_NFS = "Error accessing native file system.";
-    
-    private String sLocalizedMessage;
+    public final static String ACCESS_DB  = "ACCESS_DB";
+    public final static String ACCESS_NFS = "ACCESS_NFS";
     
     //------------------------------------------------------------------------//
     
@@ -42,26 +40,11 @@ public class JoingServerException extends RuntimeException
     
     public JoingServerException( String message )
     {
-        super( message );
+        this( message, null );
     }
     
     public JoingServerException( String message, Throwable cause )
     {
-        super( message, cause );
-    }
-    
-    public String getLocalizedMessage()
-    {
-        return (sLocalizedMessage == null ? getMessage() : sLocalizedMessage);
-    }
-    
-    public void setLocalizedMessage( String sLocalizedMessage )
-    {
-        this.sLocalizedMessage = sLocalizedMessage;
-    }
-    
-    public boolean isThirdParty()
-    {
-        return getCause() != null;
+        super( I18N4Exceptions.getLocalized( JoingServerException.class, message ), cause );
     }
 }

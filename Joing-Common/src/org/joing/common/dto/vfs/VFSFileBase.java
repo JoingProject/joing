@@ -624,10 +624,7 @@ public class VFSFileBase extends File implements Serializable
      */
     public void setSize( long size )
     {
-        if( isDirectory() )
-            this.size = 0L;
-        else
-            this.size = ((size < 0) ? 0 : size);
+        this.size = ((size < 0) ? 0 : size);
     }
     
     //------------------------------------------------------------------------//
@@ -658,7 +655,7 @@ public class VFSFileBase extends File implements Serializable
         modified     = fBase.getModified();
         accessed     = fBase.getAccessed();
         notes        = fBase.getNotes();
-        size         = fBase.length();
+        size         = fBase.getSize();
     }
     
     private boolean canChange()

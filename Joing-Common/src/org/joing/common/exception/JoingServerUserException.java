@@ -27,10 +27,9 @@ package org.joing.common.exception;
  */
 public class JoingServerUserException extends JoingServerException
 {
-    public final static String NOT_ATTRIBUTES_OWNER = "It looks like you are trying to update another user's\n"+
-                                                      "information: an user can change only its own attributes.";
-    public final static String INVALID_ACCOUNT      = JoingServerUserException.getAccountRestrictions();
-    public final static String INVALID_PASSWORD     = JoingServerUserException.getPasswordRestrictions();
+    public final static String NOT_ATTRIBUTES_OWNER = "NOT_ATTRIBUTES_OWNER";
+    public final static String INVALID_ACCOUNT      = "INVALID_ACCOUNT";
+    public final static String INVALID_PASSWORD     = "INVALID_PASSWORD";
     
     //------------------------------------------------------------------------//
     
@@ -41,27 +40,11 @@ public class JoingServerUserException extends JoingServerException
     
     public JoingServerUserException( String message )
     {
-        super( message );
+        this( message, null );
     }
     
     public JoingServerUserException( String message, Throwable cause )
     {
-        super( message, cause );
-    }
-    
-    //------------------------------------------------------------------------//
-   // NEXT: Hay que leer los tamaños max y min para account y password de algún sitio
-    private static String getAccountRestrictions()
-    {
-        return "Invalid account (user name). It has to follow these rules:"+ 
-               "\n   * Minimum length =  4"+
-               "\n   * Maximum length = 32"+
-               "\n   * Numbers and lowercase letters"+
-               "\n   * Following characters: '.' '_'";
-    }
-    
-    private static String getPasswordRestrictions()
-    {
-        return "Invalid password length, minimum = 6 and maximum = 32 characters.";
+        super( I18N4Exceptions.getLocalized( JoingServerUserException.class, message ), cause );
     }
 }
