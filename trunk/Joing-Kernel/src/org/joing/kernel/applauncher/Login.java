@@ -21,6 +21,7 @@
 
 package org.joing.kernel.applauncher;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.util.List;
@@ -29,6 +30,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.LineBorder;
 import org.joing.common.dto.session.LoginResult;
@@ -46,9 +48,9 @@ import org.joing.kernel.api.kernel.log.SimpleLoggerFactory;
  */
 class Login extends JDialog
 {
-    private int     nTries    = 0;        // Number of failed tries to login
-    private boolean bValid    = false;
-    private JDialog wndSplash = null;     // Can't use JWindow: does not render properly via WebStart
+    private int         nTries    = 0;      // Number of failed tries to login
+    private LoginResult result    = null;
+    private JDialog     wndSplash = null;   // TODO: Can't use JWindow: does not render properly via WebStart
     
     //------------------------------------------------------------------------//
     /** Creates new dialog Login */
@@ -64,17 +66,25 @@ class Login extends JDialog
         setDefaultCloseOperation( JDialog.DISPOSE_ON_CLOSE );
         setIconImage( (new ImageIcon( getClass().getResource( "resources/joing_icon.png" ) )).getImage() );
         
-        if( System.getProperty( "JoingDebug" ) != null )
+        if( System.getProperty( "joing.debug" ) != null )
         {
             txtAccount.setText( "guest" );
             txtPassword.setText( "guest." );
         }
     }
     
-    // NEXT: En lugar de boolean sería mejor devolver un LoginResult porque se da mucha más inf.
+    /**
+     * @deprecated Use isFullScreenRequested() instead
+     * @return true if login is valid
+     */
     boolean isLoginSuccessful()
     {
-        return bValid;
+        return result != null && result.isLoginValid();
+    }
+    
+    LoginResult getLoginResult()
+    {
+        return result;
     }
     
     boolean isFullScreenRequested()
@@ -299,16 +309,17 @@ class Login extends JDialog
         
         try
         {
-            LoginResult result = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getBridge().
-                                     getSessionBridge().login( txtAccount.getText(), String.valueOf( txtPassword.getPassword() ) );
+            // NEXT: This call have to be done via HTTPS
+            result = org.joing.kernel.jvmm.RuntimeFactory.getPlatform().getBridge().
+                         getSessionBridge().login( txtAccount.getText(), String.valueOf( txtPassword.getPassword() ) );
             
             if( result.isLoginValid() )
             {
-                bValid = true;
-                dispose();
+                Login.this.dispose();
                 
                 wndSplash = new JDialog();
-                wndSplash.add( new LaunchingDesktopSplash() );
+                wndSplash.setLayout( new BorderLayout() );
+                wndSplash.add( new LaunchingDesktopSplash(), BorderLayout.CENTER );
                 // TODO: Arreglar esto
                 wndSplash.setTitle( "Launching PDE..." );
                 ///wndSplash.setUndecorated( true );
