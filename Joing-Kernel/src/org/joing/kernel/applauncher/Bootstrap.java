@@ -38,6 +38,7 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 import javax.swing.SwingUtilities;
 import org.joing.common.dto.app.Application;
+import org.joing.common.dto.session.LoginResult;
 import org.joing.kernel.Main;
 import org.joing.kernel.api.bridge.Bridge2Server;
 import org.joing.kernel.api.kernel.jvmm.Platform;
@@ -207,7 +208,9 @@ public class Bootstrap {
             Login login = new Login();
             login.setVisible(true);
 
-            if (login.isLoginSuccessful()) {
+            LoginResult result = login.getLoginResult();
+   
+            if ((result != null) && (result.isLoginValid())) {
                 DesktopManager deskmgr =
                         getDesktopManagerInstance(login.getDesktopApplicationId());
 
@@ -218,8 +221,10 @@ public class Bootstrap {
                 } else {
                     deskmgr.showInFrame();
                 }
-                
+
                 login.disposeSplash();
+            } else if (result == null) {
+                logger.critical("Got null LoginResult.");
             } else {
                 logger.info("Terminated, bad username/password.");
                 platform.halt();
