@@ -5,9 +5,8 @@ Name: Join'g
 AppName: PDF Renderer
 Version: 0.1
 IconPixel: com/sun/pdfviewer/gfx/pdf.gif
-IconVector:
 Description: PDF parser and viewer
-WebSite: www.joing.org and https://pdf-renderer.dev.java.net/ for original version
+WebSite: www.joing.org and pdf-renderer.dev.java.net for original version
 Author: joshy. Joing Version by RuGI
 Vendor: Join'g Team
 License: GPL-V2.1

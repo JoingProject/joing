@@ -11,7 +11,7 @@
             <name>PDFRenderer</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <source-roots>
-                <root id="PDFRenderer2.dir" name="Source Packages"/>
+                <root id="src.src.dir"/>
             </source-roots>
             <test-roots/>
         </data>
