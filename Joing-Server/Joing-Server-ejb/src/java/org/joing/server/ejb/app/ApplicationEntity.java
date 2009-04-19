@@ -43,6 +43,8 @@ import javax.persistence.Table;
     })
 public class ApplicationEntity implements Serializable
 {
+    private static final long serialVersionUID = 1L;
+    
     @Id
     @Column(name = "ID_APPLICATION", nullable = false)
     private Integer idApplication;
