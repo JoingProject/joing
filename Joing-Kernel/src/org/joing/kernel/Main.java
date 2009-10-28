@@ -53,13 +53,6 @@ public class Main {
 
     public static void main(final String[] args) {
         
-        // Ejecutamos Bootstrap.init() en su propio Thread.
-//        Thread initWorker = new Thread(new Runnable() {
-//            public void run() {
-//                Bootstrap.init();
-//            }
-//        }, "Bootstrap-Thread");
-//        initWorker.start();
         Bootstrap.init();
 
         boolean useGUI = true;
