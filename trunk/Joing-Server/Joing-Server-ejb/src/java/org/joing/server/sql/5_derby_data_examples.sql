@@ -72,8 +72,9 @@ insert into applications (EXTRA_PATH, EXECUTABLE)
 insert into applications (EXTRA_PATH, EXECUTABLE)
      values ('system', 'SystemMonitor.jar');
 
-insert into applications (EXTRA_PATH, EXECUTABLE)
-     values ('accessories', 'YAFE.jar');
+-- Couldn't find YAFE App inside the desktop project. 
+-- insert into applications (EXTRA_PATH, EXECUTABLE)
+--     values ('accessories', 'YAFE.jar');
 
 insert into applications (EXTRA_PATH, EXECUTABLE)
      values ('accessories', 'YACE.jar');
